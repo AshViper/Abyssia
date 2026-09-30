@@ -37,6 +37,8 @@ public class Abyssia
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modEventBus.addListener(Config::onLoading);
+        modEventBus.addListener(Config::onReloading);
         // Client-only presentation options; a dedicated server never loads them.
         context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         // Other mods' sea animals in the deep ocean: a file of its own so abyssia-common.toml keeps its shape.
