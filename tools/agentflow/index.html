@@ -76,6 +76,31 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
 .tc .nm{font-size:11px;color:var(--mut);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tc .tag{font-size:10px;padding:0 5px;border-radius:99px;margin-left:3px;color:#fff}
 .sub2{font-size:10px;color:var(--mut)}
+/* 画像生成 */
+#gen{padding:12px 16px;display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px}
+@media(max-width:900px){#gen{grid-template-columns:minmax(0,1fr)}}
+#gen>*{min-width:0}
+#slist{list-style:none;margin:0;padding:0}
+#slist li{padding:6px;border-top:1px solid var(--bd);cursor:pointer;border-radius:6px}
+#slist li.on{background:color-mix(in srgb,var(--acc) 14%,transparent)}
+#slist .t{font-weight:600}#slist .k{font-size:11px;color:var(--mut)}
+.st2{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.st2 span{font-size:10px;border-radius:99px;padding:0 6px;border:1px solid var(--bd);color:var(--mut)}
+.st2 span.y{background:var(--done);border-color:var(--done);color:#fff}
+.st2 span.w{background:var(--escalated);border-color:var(--escalated);color:#fff}
+#drop{border:2px dashed var(--bd);border-radius:8px;padding:10px;text-align:center;color:var(--mut);cursor:pointer}
+#drop.over{border-color:var(--acc);color:var(--fg)}
+#cv{display:block;max-width:100%;cursor:crosshair;background:repeating-conic-gradient(#0000 0 25%,#8883 0 50%) 0 0/12px 12px;border-radius:4px}
+#icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:8px}
+.ic{border:1px solid var(--bd);border-radius:8px;padding:6px;background:var(--panel)}
+.ic.skip{opacity:.45}.ic.prot{border-color:var(--failed)}
+.ic .row{display:flex;gap:6px;align-items:center;justify-content:center}
+.ic img{width:56px;height:56px;image-rendering:pixelated;display:block}
+.ic .no{font-size:11px;color:var(--mut)}
+.ic select{font-size:12px;padding:2px 4px;margin-top:4px}
+.warn{color:var(--escalated);font-weight:600}.err{color:var(--failed);font-weight:600}
+#gres .ba{display:inline-flex;gap:2px;align-items:center;margin:3px 8px 3px 0;font-size:11px;color:var(--mut)}
+#gres img{width:40px;height:40px;image-rendering:pixelated}
 </style>
 </head>
 <body>
@@ -93,7 +118,7 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
     <button class="b sub" id="resetBtn">リセット</button>
   </span>
 </header>
-<div class="tabs"><button class="tab on" data-t="flow">フロー</button><button class="tab" data-t="tex">テクスチャ</button></div>
+<div class="tabs"><button class="tab on" data-t="flow">フロー</button><button class="tab" data-t="tex">テクスチャ</button><button class="tab" data-t="gen">画像生成</button></div>
 
 <main id="flow">
   <div>
@@ -140,6 +165,43 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
     <input id="tq" placeholder="名前で検索">
   </div>
   <div id="grid"></div>
+</section>
+
+<section id="gen" hidden>
+  <div class="card">
+    <h2 class="h2">シート (inbox/prompts/sheets.json)</h2>
+    <div class="chip" style="font-size:12px">① プロンプトをコピー → ChatGPT で画像生成 → ② 画像を登録 → ③ 範囲と番号を確認 → ④ 取り込む</div>
+    <ul id="slist"></ul>
+    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+      <button class="b sub" id="gundo">最後の取込を元に戻す</button>
+    </div>
+  </div>
+  <div class="card" id="gmain">
+    <div id="gempty" style="color:var(--mut)">左からシートを選択</div>
+    <div id="gbody" hidden>
+      <div class="bar"><h2 class="h2" style="margin:0" id="gtitle"></h2><span class="chip" id="ginfo"></span>
+        <button class="b sub" id="gcopy">プロンプトをコピー</button><span class="chip" id="gcmsg"></span></div>
+      <details style="margin-bottom:8px"><summary class="chip" style="cursor:pointer">プロンプトを表示</summary><pre id="gprompt" style="white-space:pre-wrap;font-size:12px;max-height:260px;overflow:auto"></pre></details>
+      <div id="drop">生成画像 (png / webp / jpg, 25MB まで) をここにドロップ、またはクリックして選択<input type="file" id="gfile" accept="image/png,image/webp,image/jpeg" hidden></div>
+      <div class="bar" style="margin-top:8px">
+        <span class="chip" id="gimg"></span>
+        <span id="gpanels"></span>
+        <button class="pill" id="gwhole">画像全体</button>
+        <label style="flex-direction:row;align-items:center;gap:6px">結合(merge) <input type="range" id="gmerge" min="1" max="12" value="1" style="width:120px;padding:0"> <b id="gmv">1</b></label>
+        <button class="b sub" id="gdet">再検出</button>
+      </div>
+      <div class="chip" style="font-size:12px">画像上をドラッグして範囲 (パネル) を指定。番号は読み順 (左→右、上→下)。</div>
+      <canvas id="cv"></canvas>
+      <div id="gcount" style="margin-top:6px"></div>
+      <div id="icons"></div>
+      <div class="bar" style="margin-top:10px">
+        <button class="b sub" id="gdry">ドライラン</button>
+        <button class="b" id="gimp">取り込む</button>
+        <span class="chip" id="gmsg"></span>
+      </div>
+      <div id="gres"></div>
+    </div>
+  </div>
 </section>
 
 <script>
@@ -366,10 +428,166 @@ function tgrid(){
 ["tk","tv","tq","tz"].forEach(i=>$(i).addEventListener("input",tgrid));
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));
-  $("flow").hidden=b.dataset.t!=="flow";$("tex").hidden=b.dataset.t!=="tex";
-  if(b.dataset.t==="tex")texLoad();});
+  for(const t of ["flow","tex","gen"])$(t).hidden=b.dataset.t!==t;
+  if(b.dataset.t==="tex")texLoad();
+  if(b.dataset.t==="gen")genLoad();});
 tpills();
 setInterval(()=>{if(!$("tex").hidden)texLoad()},15000);
+
+// ---- 画像生成 (sheets): same functions as tools/agentflow/sheets.py
+let SH=[],gcur=null,gimg=null,gdet=null,gassign=[],gscale=1,gdrag=null,gprompt="";
+const KIND={"block-opaque":"ブロック(不透明)","sprite-bottom":"スプライト(下揃え)","sprite-center":"アイテム(中央)"};
+const jpost=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(async r=>{const j=await r.json();if(!r.ok||j.error)throw new Error(j.error||r.status);return j});
+const mk=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e};
+const cursheet=()=>SH.find(s=>s.name===gcur);
+async function genLoad(){
+  try{SH=await (await fetch("sheets.json",{cache:"no-store"})).json();if(SH.error)throw new Error(SH.error)}catch(e){$("slist").textContent="読み込み失敗: "+e.message;return}
+  const ul=$("slist");ul.innerHTML="";
+  for(const s of SH){
+    const li=mk("li",s.name===gcur?"on":"");li.onclick=()=>gpick(s.name);
+    const t=mk("div","t",`${s.name}  `);t.appendChild(mk("span","k",s.title));
+    const k=mk("div","k",`${KIND[s.kind]||s.kind} → ${s.dest} / ${s.ids.length}個${s.skip.length?` (保護 ${s.skip.length})`:""}`);
+    const st=mk("div","st2");
+    const tag=(txt,c)=>st.appendChild(mk("span",c||"",txt));
+    tag(s.prompt_ok?"プロンプト準備済":"プロンプト不明",s.prompt_ok?"y":"w");
+    tag(s.image?(s.image_source==="uploaded"?"画像登録済":"画像(既存)"):"画像なし",s.image?"y":"");
+    const li2=s.last_import;tag(li2?(li2.undone?"取込を取消済":"取込済 "+new Date(li2.t*1000).toLocaleString()):"GUI取込なし",li2&&!li2.undone?"y":"");
+    tag(`ロック ${s.locked}/${s.ids.length}`);
+    const cp=mk("button","pill","プロンプトをコピー");cp.onclick=e=>{e.stopPropagation();gcopy(s.name,cp)};
+    li.append(t,k,st,cp);ul.appendChild(li);
+  }
+}
+async function gcopy(name,btn){
+  try{const j=await (await fetch("/api/sheet/prompt?name="+encodeURIComponent(name),{cache:"no-store"})).json();if(j.error)throw new Error(j.error);
+    try{await navigator.clipboard.writeText(j.prompt)}catch(_){const ta=mk("textarea");ta.value=j.prompt;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove()}
+    if(btn){const o=btn.textContent;btn.textContent="コピーしました";setTimeout(()=>btn.textContent=o,1500)}return j.prompt;
+  }catch(e){if(btn)btn.textContent="失敗: "+e.message}
+}
+async function gpick(name){
+  gcur=name;gdet=null;gassign=[];$("gres").innerHTML="";$("gmsg").textContent="";
+  document.querySelectorAll("#slist li").forEach((li,i)=>li.classList.toggle("on",SH[i]&&SH[i].name===name));
+  const s=cursheet();$("gempty").hidden=true;$("gbody").hidden=false;
+  $("gtitle").textContent=`${s.name} ${s.title}`;
+  $("ginfo").textContent=`${KIND[s.kind]||s.kind} → textures/${s.dest} / ${s.cols}列 / 色数 ${s.colors} / ${s.lock?"ロック更新":"ロックしない"}${s.derive?" / glow等を再導出":""} / ${s.prompt_file}`;
+  $("gmerge").value=s.merge;$("gmv").textContent=s.merge;
+  try{const j=await (await fetch("/api/sheet/prompt?name="+encodeURIComponent(name))).json();$("gprompt").textContent=j.prompt||j.error}catch(_){}
+  gloadImage();
+}
+function gloadImage(){
+  const s=cursheet();gimg=null;$("icons").innerHTML="";$("gcount").textContent="";$("gpanels").innerHTML="";
+  const cv=$("cv");cv.width=0;cv.height=0;
+  $("gimg").textContent=s.image?`画像: ${s.image}`:"画像なし (ChatGPT の生成画像を登録してください)";
+  if(!s.image)return;
+  const im=new Image();im.onload=()=>{gimg=im;gdetect(null)};im.src="/api/sheet/image?name="+encodeURIComponent(s.name)+"&t="+Date.now();
+}
+async function gdetect(region){
+  const s=cursheet();if(!s||!gimg)return;$("gmsg").textContent="検出中…";
+  try{gdet=await jpost("/api/sheet/detect",{name:s.name,region,merge:+$("gmerge").value});
+    gassign=gdet.icons.map(i=>i.id);$("gmsg").textContent="";gpanels();gdraw();gicons();
+  }catch(e){$("gmsg").textContent="検出失敗: "+e.message}
+}
+function gpanels(){
+  const w=$("gpanels");w.innerHTML="";if(!gdet||gdet.panels.length<2)return;
+  gdet.panels.forEach((p,i)=>{const b=mk("button","pill"+(gdet.region.join()===p.join()?" on":""),`パネル${i}`);b.onclick=()=>gdetect(p);w.appendChild(b)});
+}
+function gdraw(temp){
+  const cv=$("cv");if(!gimg)return;const W=Math.min(gimg.width,Math.max(320,$("gmain").clientWidth-20));
+  gscale=W/gimg.width;cv.width=W;cv.height=Math.round(gimg.height*gscale);
+  const c=cv.getContext("2d");c.imageSmoothingEnabled=false;c.drawImage(gimg,0,0,cv.width,cv.height);
+  const R=(b,col,wd,dash)=>{c.setLineDash(dash||[]);c.strokeStyle=col;c.lineWidth=wd;c.strokeRect(b[0]*gscale,b[1]*gscale,(b[2]-b[0])*gscale,(b[3]-b[1])*gscale)};
+  if(gdet){
+    gdet.panels.forEach(p=>R(p,"#fff",1.5,[6,4]));
+    c.fillStyle="#0006";const r=gdet.region.map(v=>v*gscale);  // dim outside the region
+    c.fillRect(0,0,cv.width,r[1]);c.fillRect(0,r[3],cv.width,cv.height-r[3]);c.fillRect(0,r[1],r[0],r[3]-r[1]);c.fillRect(r[2],r[1],cv.width-r[2],r[3]-r[1]);
+    R(gdet.region,"#2f6fed",3);
+    c.font="bold 13px system-ui";
+    gdet.icons.forEach((ic,i)=>{const id=gassign[i],prot=gdet.skip.includes(id),col=id==="-"?"#888":prot?"#d64545":"#1f9d55";
+      R(ic.bbox,col,2);const x=ic.bbox[0]*gscale,y=ic.bbox[1]*gscale;c.fillStyle=col;c.fillRect(x,y,22,17);c.fillStyle="#fff";c.fillText(String(i+1),x+3,y+13)});
+  }
+  if(temp){c.setLineDash([4,3]);c.strokeStyle="#ffeb3b";c.lineWidth=2;c.strokeRect(temp[0],temp[1],temp[2]-temp[0],temp[3]-temp[1])}
+}
+function gicons(){
+  const s=cursheet(),box=$("icons");box.innerHTML="";if(!gdet)return;
+  const n=gdet.count,m=gdet.expected,cnt=$("gcount");cnt.className=n===m?"":"warn";
+  cnt.textContent=n===m?`検出 ${n} 個 = 期待 ${m} 個`:`検出 ${n} 個 / 期待 ${m} 個 — 範囲をドラッグで指定し直すか、結合(merge)を調整してください。番号を手で割り当てれば、このまま取り込めます。`;
+  gdet.icons.forEach((ic,i)=>{
+    const id=gassign[i],prot=gdet.skip.includes(id);
+    const d=mk("div","ic"+(id==="-"?" skip":"")+(prot?" prot":""));
+    const row=mk("div","row");
+    const nw=mk("img");nw.src="data:image/png;base64,"+ic.png;nw.title="クリックで 取り込まない/戻す";
+    nw.onclick=()=>{gassign[i]=gassign[i]==="-"?(ic._prev||gdet.ids[i]||"-"):(ic._prev=gassign[i],"-");gdraw();gicons()};
+    row.append(mk("span","no",`#${i+1}`),nw);
+    if(id!=="-"){const cur=mk("img");cur.src=`/tex/cur/${s.dest}/${id}.png?t=${Date.now()}`;cur.title="現在のテクスチャ";cur.style.opacity=.85;cur.onerror=()=>cur.replaceWith(mk("span","no","新規"));row.append(mk("span","no","←"),cur)}
+    const sel=mk("select");
+    const opts=[["-","(取り込まない)"],...gdet.ids.map(x=>[x,x+(gdet.skip.includes(x)?" [保護]":"")])];
+    if(id!=="-"&&!gdet.ids.includes(id))opts.push([id,id]);
+    for(const [v,l] of opts){const o=mk("option",null,l);o.value=v;if(v===id)o.selected=true;if(v!=="-"&&v!==id&&gassign.includes(v))o.textContent+=" (#"+(gassign.indexOf(v)+1)+"と入替)";sel.appendChild(o)}
+    sel.onchange=()=>{const v=sel.value,j=gassign.indexOf(v);if(v!=="-"&&j>=0&&j!==i)gassign[j]=gassign[i];gassign[i]=v;gdraw();gicons()};
+    const note=mk("div","no",prot?"保護: 上書きしません":ic.locked?"ロック中 (取込でロック更新)":"");
+    d.append(row,sel,note);box.appendChild(d);
+  });
+}
+function gpos(e){const r=$("cv").getBoundingClientRect();return [(e.clientX-r.left)*($("cv").width/r.width),(e.clientY-r.top)*($("cv").height/r.height)]}
+$("cv").addEventListener("mousedown",e=>{if(!gimg)return;const p=gpos(e);gdrag=[p[0],p[1],p[0],p[1]]});
+$("cv").addEventListener("mousemove",e=>{if(!gdrag)return;const p=gpos(e);gdrag[2]=p[0];gdrag[3]=p[1];gdraw([Math.min(gdrag[0],gdrag[2]),Math.min(gdrag[1],gdrag[3]),Math.max(gdrag[0],gdrag[2]),Math.max(gdrag[1],gdrag[3])])});
+window.addEventListener("mouseup",()=>{if(!gdrag)return;const d=gdrag;gdrag=null;
+  const b=[Math.min(d[0],d[2]),Math.min(d[1],d[3]),Math.max(d[0],d[2]),Math.max(d[1],d[3])].map(v=>Math.round(v/gscale));
+  if(b[2]-b[0]>20&&b[3]-b[1]>20)return gdetect(b);
+  if(!gdet)return;const [x,y]=[b[0],b[1]];   // click: icon -> toggle, panel -> select
+  const k=gdet.icons.findIndex(ic=>x>=ic.bbox[0]&&x<ic.bbox[2]&&y>=ic.bbox[1]&&y<ic.bbox[3]);
+  if(k>=0){const ic=gdet.icons[k];gassign[k]=gassign[k]==="-"?(ic._prev||gdet.ids[k]||"-"):(ic._prev=gassign[k],"-");gdraw();return gicons()}
+  const p=gdet.panels.find(p=>x>=p[0]&&x<p[2]&&y>=p[1]&&y<p[3]);if(p&&p.join()!==gdet.region.join())gdetect(p);else gdraw()});
+$("gmerge").addEventListener("input",()=>$("gmv").textContent=$("gmerge").value);
+$("gmerge").addEventListener("change",()=>gdetect(gdet?gdet.region:null));
+$("gdet").onclick=()=>gdetect(gdet?gdet.region:null);
+$("gwhole").onclick=()=>gimg&&gdetect([0,0,gimg.width,gimg.height]);
+$("gcopy").onclick=()=>gcopy(gcur,$("gcopy"));
+async function gupload(f){
+  const s=cursheet();if(!s||!f)return;
+  if(!/^image\/(png|webp|jpeg)$/.test(f.type)){$("gmsg").textContent="png / webp / jpg のみ";return}
+  if(f.size>25*1024*1024){$("gmsg").textContent="25MB を超えています";return}
+  $("gmsg").textContent="アップロード中…";
+  try{const r=await fetch("/api/sheet/upload?name="+encodeURIComponent(s.name),{method:"POST",headers:{"Content-Type":f.type},body:f});
+    const j=await r.json();if(!r.ok||j.error)throw new Error(j.error||r.status);
+    $("gmsg").textContent=`保存しました: ${j.path} (${j.size.join("x")})`;await genLoad();gloadImage();
+  }catch(e){$("gmsg").textContent="アップロード失敗: "+e.message}
+}
+$("drop").onclick=()=>$("gfile").click();
+$("gfile").onchange=e=>{gupload(e.target.files[0]);e.target.value=""};
+$("drop").addEventListener("dragover",e=>{e.preventDefault();$("drop").classList.add("over")});
+$("drop").addEventListener("dragleave",()=>$("drop").classList.remove("over"));
+$("drop").addEventListener("drop",e=>{e.preventDefault();$("drop").classList.remove("over");gupload(e.dataTransfer.files[0])});
+async function gimport(dry){
+  const s=cursheet();if(!s||!gdet)return;
+  const use=gassign.filter(x=>x!=="-"&&!gdet.skip.includes(x)).length;
+  if(!dry&&!confirm(`${s.name}: ${use} 枚を textures/${s.dest} に書き込みます${s.lock?" (ロックも更新)":""}。上書き前のファイルは inbox/backup/gui-import-* に退避されます。続けますか?`))return;
+  $("gmsg").textContent=dry?"ドライラン中…":"取り込み中…";$("gres").innerHTML="";
+  try{const r=await jpost("/api/sheet/import",{name:s.name,region:gdet.region,merge:gdet.merge,ids:gassign,dry_run:dry});
+    const c=a=>r.plan.filter(e=>e.action===a).length;
+    $("gmsg").textContent=`${dry?"ドライラン: ":"取込完了: "}書込 ${c("write")} / 変化なし ${c("unchanged")} / 保護 ${c("protected")} / 対象外 ${c("ignored")}${c("locked")?` / ロックで除外 ${c("locked")}`:""}`;
+    const res=$("gres");
+    const info=[];
+    if(r.derived_candidates.length)info.push(`再導出${dry?"予定":""}: ${(r.derived?r.derived.written:r.derived_candidates.map(x=>x.split("/").pop().replace(".png",""))).join(", ")||"なし(変化なし)"}`);
+    if(r.backup)info.push(`退避先: ${r.backup}`);
+    if(r.check)info.push(r.check.missing?`check_textures: 欠落 ${r.check.missing} 件 (${r.check.missing_refs.join(", ")})`:"check_textures: 欠落なし");
+    for(const t of info)res.appendChild(mk("div","chip",t));
+    const g=mk("div");g.style.marginTop="6px";
+    for(const e of r.plan.filter(e=>e.action==="write")){
+      const ba=mk("span","ba");const b=mk("img"),a=mk("img");
+      if(e.before){b.src="data:image/png;base64,"+e.before;ba.append(b)}else ba.append(mk("span",null,"新規"));
+      a.src="data:image/png;base64,"+e.after;ba.append("→",a," "+e.id);g.appendChild(ba)}
+    res.appendChild(g);
+    if(!dry){genLoad();gicons()}
+  }catch(e){$("gmsg").textContent="失敗: "+e.message}
+}
+$("gdry").onclick=()=>gimport(true);
+$("gimp").onclick=()=>gimport(false);
+$("gundo").onclick=async()=>{
+  try{const p=await jpost("/api/sheet/undo",{dry_run:true});
+    if(!confirm(`${p.preset} の取込 (${p.backup}) を元に戻します: ${p.files.length} ファイル。続けますか?`))return;
+    const r=await jpost("/api/sheet/undo",{});alert(`元に戻しました: ${r.files.length} ファイル`);genLoad();if(gcur)gicons();
+  }catch(e){alert("元に戻せません: "+e.message)}};
+window.addEventListener("resize",()=>{if(!$("gen").hidden)gdraw()});
 
 render();poll();reqs();aprs();autoPoll();
 setInterval(poll,1200);setInterval(reqs,4000);setInterval(aprs,2000);setInterval(autoPoll,2500);

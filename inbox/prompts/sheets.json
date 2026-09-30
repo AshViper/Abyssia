@@ -1,0 +1,113 @@
+{
+  "_doc": "ChatGPT ImageGen sheet presets for tools/agentflow/sheets.py and the Agent Flow 画像生成 tab. ids are in reading order (left->right, top->bottom). The prompt text is read from prompt.file at request time (section = heading substring; common = heading of a shared fenced block that replaces the '（共通プロンプト）' line; per_id = compose one sheet prompt from '## <id>' sections). skip = ids never overwritten. image = fallback source image (stem under inbox/textures/) when nothing was uploaded to inbox/textures/sheets/<name>.*; panel = index of the auto-detected panel in that shared image. Parameters verified against the committed textures (pixel-identical re-import).",
+  "version": 1,
+  "kinds": {
+    "block-opaque": {"dest": "block", "opaque": true, "bottom": false, "colors": 16, "merge": 1},
+    "sprite-bottom": {"dest": "block", "opaque": false, "bottom": true, "colors": 14, "merge": 3},
+    "sprite-center": {"dest": "item", "opaque": false, "bottom": false, "colors": 14, "merge": 1}
+  },
+  "sheet_note": "Draw all {n} items on ONE sheet image: a grid of {cols} columns and {rows} rows of equal square cells in the order listed below (left to right, top to bottom), each item in its own cell on flat solid magenta (#FF00FF) with wide magenta gutters between cells. No labels, no text, no cell borders.",
+  "sheets": [
+    {
+      "name": "A", "title": "アイテム A: 装備", "kind": "sprite-center", "dest": "item", "cols": 4,
+      "prompt": {"file": "items-textures.md", "section": "シートA", "common": "共通プロンプト"},
+      "image": "items/sheets_ABC", "panel": 0, "colors": 14, "merge": 1, "lock": true, "derive": false,
+      "ids": ["abyssal_alloy_pickaxe", "abyssal_alloy_axe", "abyssal_alloy_shovel", "abyssal_alloy_hoe",
+              "abyssal_alloy_sword", "deep_diver_helmet", "abyssal_flippers"]
+    },
+    {
+      "name": "B", "title": "アイテム B: 金属", "kind": "sprite-center", "dest": "item", "cols": 5,
+      "prompt": {"file": "items-textures.md", "section": "シートB", "common": "共通プロンプト"},
+      "image": "items/sheets_ABC", "panel": 1, "colors": 14, "merge": 1, "lock": true, "derive": false,
+      "ids": ["abyssal_alloy_ingot", "cobalt_ingot", "manganese_ingot", "molybdenum_ingot", "nickel_ingot",
+              "platinum_ingot", "tellurium_ingot", "tungsten_ingot", "vanadium_ingot", "yttrium_ingot",
+              "raw_cobalt", "raw_manganese", "raw_molybdenum", "raw_nickel", "raw_platinum",
+              "raw_tellurium", "raw_tungsten", "raw_vanadium", "raw_yttrium"]
+    },
+    {
+      "name": "C", "title": "アイテム C: 素材", "kind": "sprite-center", "dest": "item", "cols": 6,
+      "prompt": {"file": "items-textures.md", "section": "シートC", "common": "共通プロンプト"},
+      "image": "items/sheets_ABC", "panel": 2, "colors": 14, "merge": 1, "lock": true, "derive": false,
+      "ids": ["abyssal_crystal_shard", "thermal_crystal_shard", "crystal_lens", "crystal_sap", "bio_oil", "refined_oil",
+              "deep_fiber", "deep_pigment", "fiber_rope", "hadal_husk", "hadal_plating", "hard_stalk",
+              "lumen_cell", "lumen_gel", "marine_adhesive", "organic_matter", "plant_resin", "sea_cloth",
+              "sulfur", "thermal_felt", "thermal_fiber"]
+    },
+    {
+      "name": "ORE", "title": "鉱石ブロック", "kind": "block-opaque", "dest": "block", "cols": 5,
+      "prompt": {"file": "ore-crystal-plant-textures.md", "section": "シートORE"},
+      "image": "sheets/ORE_CRYSTAL_PLANT", "panel": 0, "colors": 14, "merge": 1, "lock": true, "derive": true,
+      "ids": ["abyssal_crystal_ore", "abyssal_iron_ore", "cobalt_ore", "deep_copper_ore", "deep_nickel_ore",
+              "manganese_ore", "molybdenum_ore", "platinum_ore", "sulfur_ore", "tellurium_ore",
+              "thermal_crystal_ore", "tungsten_ore", "vanadium_ore", "yttrium_ore"]
+    },
+    {
+      "name": "CRYSTAL", "title": "結晶塊・結晶の芽", "kind": "sprite-bottom", "dest": "block", "cols": 4,
+      "prompt": {"file": "ore-crystal-plant-textures.md", "section": "シートCRYSTAL"},
+      "image": "sheets/ORE_CRYSTAL_PLANT", "panel": 1, "colors": 14, "merge": 3, "lock": true, "derive": true,
+      "ids": ["abyssal_crystal_cluster", "cobalt_cluster", "deep_crystal_cluster", "nickel_cluster",
+              "pale_crystal_cluster", "pressure_crystal_cluster", "sulfur_cluster", "thermal_crystal_cluster",
+              "small_thermal_crystal_bud", "medium_thermal_crystal_bud", "crystal_needle", "crystal_shards"]
+    },
+    {
+      "name": "PLANT1", "title": "植物 1", "kind": "sprite-bottom", "dest": "block", "cols": 4,
+      "prompt": {"file": "ore-crystal-plant-textures.md", "section": "シートPLANT1"},
+      "image": "sheets/ORE_CRYSTAL_PLANT", "panel": 2, "colors": 14, "merge": 3, "lock": true, "derive": true,
+      "ids": ["abyssal_bloom", "abyssal_grass", "abyssal_moss", "abyssal_mushroom", "abyssal_vine", "amber_fan",
+              "ancient_frond", "ashen_abyssal_grass", "cave_bloom", "cave_coral", "cave_fern", "cave_grass",
+              "cave_kelp", "cave_moss", "cave_root", "cave_sponge"],
+      "skip": ["abyssal_moss", "ancient_frond", "cave_grass", "cave_kelp", "cave_moss"]
+    },
+    {
+      "name": "PLANT2", "title": "植物 2", "kind": "sprite-bottom", "dest": "block", "cols": 4,
+      "prompt": {"file": "ore-crystal-plant-textures.md", "section": "シートPLANT2"},
+      "image": "sheets/ORE_CRYSTAL_PLANT", "panel": 3, "colors": 14, "merge": 3, "lock": true, "derive": true,
+      "ids": ["cave_tube_plant", "cave_vine", "cinder_stalk", "deep_kelp", "deep_root", "fallen_kelp",
+              "floating_bloom", "giant_cave_kelp", "giant_kelp", "giant_tube", "glasslace", "glow_anemone",
+              "glow_coral", "glowtip_grass", "hadal_bloom", "hanging_kelp"],
+      "skip": ["fallen_kelp", "giant_cave_kelp", "giant_tube", "hanging_kelp"]
+    },
+    {
+      "name": "PLANT3", "title": "植物 3", "kind": "sprite-bottom", "dest": "block", "cols": 4,
+      "prompt": {"file": "ore-crystal-plant-textures.md", "section": "シートPLANT3"},
+      "image": "sheets/ORE_CRYSTAL_PLANT", "panel": 4, "colors": 14, "merge": 3, "lock": true, "derive": true,
+      "ids": ["heat_moss", "knotstalk", "lumen_quill", "luminous_moss", "mineral_vine", "oil_bladder_weed",
+              "pressure_gourd", "resin_root", "sea_fern", "soul_coral", "sponge_plant", "strandweed",
+              "teal_abyssal_grass", "thermal_plant", "thermal_tube", "tube_plant"],
+      "skip": ["heat_moss", "luminous_moss"]
+    },
+    {
+      "name": "PLANT4", "title": "植物 4", "kind": "sprite-bottom", "dest": "block", "cols": 4,
+      "prompt": {"file": "ore-crystal-plant-textures.md", "section": "シートPLANT4"},
+      "image": "sheets/ORE_CRYSTAL_PLANT", "panel": 5, "colors": 14, "merge": 3, "lock": true, "derive": true,
+      "ids": ["vent_grass", "violet_abyssal_grass", "void_kelp", "void_kelp_plant", "wall_fern", "wall_mineral_vine"],
+      "skip": ["wall_fern", "wall_mineral_vine"]
+    },
+    {
+      "name": "CRUSTBLOCK", "title": "クラスト・結晶ブロック", "kind": "block-opaque", "dest": "block", "cols": 5,
+      "prompt": {"file": "crust-crystalblock-textures.md", "section": "シート CRUSTBLOCK"},
+      "image": "sheets/CRUST_CRYSTALBLOCK", "colors": 16, "merge": 1, "lock": true, "derive": true,
+      "ids": ["manganese_crust", "cobalt_crust", "nickel_crust", "iron_crust", "copper_crust", "cave_mineral_crust",
+              "salt_crust", "cyan_crystal_block", "blue_crystal_block", "violet_crystal_block", "green_crystal_block",
+              "white_crystal_block", "amber_crystal_block", "deep_crystal_block"]
+    },
+    {
+      "name": "ROCK24", "title": "岩ブロック 24種 (rock 系ロック)", "kind": "block-opaque", "dest": "block", "cols": 6,
+      "prompt": {"file": "20260930-173739-textures.md", "per_id": true, "common": "共通プロンプト"},
+      "image": "sheets/ROCK24", "colors": 16, "merge": 1, "tileable": true, "inset": 4, "lock": true, "derive": true,
+      "ids": ["abyssal_cave_rock", "abyssal_rock", "ancient_masonry", "crystal_cave_rock", "crystal_rock",
+              "dark_cave_rock", "deep_sea_rock", "eroded_cave_rock", "fossil_rock", "frozen_rock",
+              "layered_cave_rock", "lumen_rock", "mineral_cave_rock", "mineral_host_rock", "mineral_vent_rock",
+              "molten_volcanic_rock", "organic_cave_rock", "salt_rock", "sulfur_vent_rock", "thermal_cave_rock",
+              "thermal_rock", "trench_rock", "vent_rock", "wet_cave_rock"]
+    },
+    {
+      "name": "GEAR", "title": "水中装備 (個別プロンプトを1枚に)", "kind": "sprite-center", "dest": "item", "cols": 4,
+      "prompt": {"file": "gear-items-textures.md", "per_id": true, "common_para": "共通条件",
+                 "drop": ["透明背景、中央に単一アイコンのみ。", "・余白・複数アイテム"]},
+      "image": "sheets/GEAR", "colors": 14, "merge": 1, "lock": true, "derive": false,
+      "ids": ["abyssal_alloy_pickaxe", "abyssal_alloy_axe", "abyssal_alloy_shovel", "abyssal_alloy_hoe",
+              "abyssal_alloy_sword", "deep_diver_helmet", "abyssal_flippers", "abyssal_alloy_ingot"]
+    }
+  ]
+}

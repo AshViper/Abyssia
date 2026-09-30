@@ -4,7 +4,8 @@
 
 Icons are found as connected non-magenta/non-white blobs, ordered row by row (left to right), and matched to --ids in
 that order. Each icon is fitted (aspect kept) into 16x16, alpha thresholded, colours quantized. Needs Pillow, numpy, scipy.
-A sheet image may contain several panels; blobs are simply read in row order per panel (--panels N splits by white gutters).
+A sheet image may contain several panels; pick one with --x0/--x1/--y0/--y1 (--clean skips title text and frames).
+Importable: blobs(), order(), to_tile() are used by tools/agentflow/sheets.py (GUI/CLI sheet import).
 """
 from __future__ import annotations
 import argparse, json, os
@@ -16,17 +17,33 @@ PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(PROJECT, "src", "main", "resources", "assets", "abyssia", "textures", "item")
 
 
-def blobs(rgb: np.ndarray, min_area: int = 800, merge: int = 1):
+def drop_text(a: np.ndarray, fg: np.ndarray) -> np.ndarray:
+    """fg without dark text-like glyph runs (panel titles, labels): parts mostly near-black and < 48px tall."""
+    fg = fg.copy()
+    lab, _ = ndi.label(ndi.binary_dilation(fg, iterations=1))
+    dark = a.max(axis=2) < 70
+    for i, sl in enumerate(ndi.find_objects(lab), 1):
+        m = (lab[sl] == i) & fg[sl]
+        if m.any() and sl[0].stop - sl[0].start < 48 and dark[sl][m].mean() > 0.45:
+            fg[sl] &= ~m
+    return fg
+
+
+def blobs(rgb: np.ndarray, min_area: int = 800, merge: int = 1, clean: bool = False):
+    """Icon blobs as (slice, mask). ``clean`` also drops title/label text and thin frame lines (panel borders)."""
     a = rgb.astype(int)
     mag = (a[..., 0] > 180) & (a[..., 1] < 110) & (a[..., 2] > 180)
     fg = ~mag & ~(a.min(axis=2) > 225)
+    if clean:
+        fg = drop_text(a, fg)
     lab, n = ndi.label(ndi.binary_dilation(fg, iterations=merge))
     out = []
     for i, sl in enumerate(ndi.find_objects(lab), 1):
         h, w = sl[0].stop - sl[0].start, sl[1].stop - sl[1].start
-        if min(h, w) < 20 or (fg & (lab == i)).sum() < min_area:
-            continue
         m = (lab == i) & fg
+        area = m[sl].sum()
+        if min(h, w) < 20 or area < min_area or (clean and area < 0.05 * h * w):
+            continue
         out.append((sl, m))
     return out
 
@@ -81,11 +98,12 @@ def main() -> int:
     ap.add_argument("--merge", type=int, default=1, help="dilation iterations that join parts of one icon")
     ap.add_argument("--out", default=OUT); ap.add_argument("--colors", type=int, default=14)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--clean", action="store_true", help="ignore title/label text and panel frame lines")
     a = ap.parse_args()
     full = np.asarray(Image.open(a.sheet).convert("RGB"))
     rgb = np.ascontiguousarray(full[a.y0:(a.y1 or full.shape[0]), a.x0:(a.x1 or full.shape[1])])
     ids = a.ids.split(",")
-    found = order(blobs(rgb, merge=a.merge))
+    found = order(blobs(rgb, merge=a.merge, clean=a.clean))
     if len(found) != len(ids):
         print(json.dumps({"error": f"found {len(found)} icons, expected {len(ids)}"})); return 1
     done = []
