@@ -6,6 +6,11 @@ POST /api/request | /api/approval | /api/reset | /api/autorun | /api/autorun/run
 Sheets (画像生成 tab, same functions as the sheets.py CLI): GET sheets.json | /api/sheet/prompt?name= |
 /api/sheet/image?name=; POST /api/sheet/upload?name= (raw image body, max 25MB) | /api/sheet/detect |
 /api/sheet/import | /api/sheet/undo (JSON bodies: name, region [x0,y0,x1,y1], merge, ids, dry_run).
+Texture generator (テクスチャ生成 tab, same functions as tools/texture_gen.py): GET /api/texgen/meta |
+/api/texgen/sources | /api/texgen/candidates?batch= | /api/texgen/image?batch=&name= | /api/texgen/contact?batch=;
+POST /api/texgen/preview {gen, params, seeds} | /api/texgen/add {gen, params, seeds, batch} |
+/api/texgen/apply {items:[{batch,name,as?}], lock, force_locked, dry_run} | /api/texgen/undo {dry_run} |
+/api/texgen/profile {category}.
 
 Auto-run: a new request starts the selected headless runner in the project root. Set
 `runner` to `codex` or `claude` in tools/agentflow/autorun.json (or use the UI).
@@ -16,6 +21,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
+sys.path.insert(1, str(HERE.parent))  # tools/: texture_gen (imported lazily, needs numpy/pillow)
 import flow  # noqa: E402  (state file helpers shared with the CLI)
 import sheets  # noqa: E402  (sheet presets / detect / import shared with the CLI)
 from urllib.parse import parse_qs, urlsplit  # noqa: E402
@@ -376,10 +382,104 @@ class H(http.server.SimpleHTTPRequestHandler):
             return res
         return self._json(404, {"error": "not found"})
 
+    def _texgen(self, fn, *a, **k):
+        try:
+            import texture_gen
+        except ImportError as e:
+            return self._json(500, {"error": f"missing python package: {e.name} (pip install pillow numpy scipy)"})
+        try:
+            return self._json(200, fn(texture_gen, *a, **k))
+        except texture_gen.TexGenError as e:
+            return self._json(400, {"error": str(e)})
+        except Exception as e:  # noqa: BLE001 - report to the UI instead of dropping the connection
+            return self._json(500, {"error": f"{type(e).__name__}: {e}"})
+
+    def _texgen_post(self, path):
+        # same rules as the sheet endpoints: same-machine Host, JSON only (CORS preflight never granted), size limit
+        host = (self.headers.get("Host") or "").rsplit(":", 1)[0]
+        ctype = (self.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+        if host not in ("127.0.0.1", "localhost"):
+            return self._json(403, {"error": "bad host"})
+        if ctype != "application/json":
+            return self._json(415, {"error": "Content-Type must be application/json"})
+        if int(self.headers.get("Content-Length", 0) or 0) > 200_000:
+            return self._json(413, {"error": "body too large"})
+        try:
+            d = self._body(200_000)
+        except (ValueError, json.JSONDecodeError):
+            return self._json(400, {"error": "bad json"})
+        if not isinstance(d, dict):
+            return self._json(400, {"error": "bad json"})
+        params = d.get("params") or {}
+        seeds = d.get("seeds") or [0]
+        if not isinstance(params, dict) or not (isinstance(seeds, list) and all(isinstance(s, int) for s in seeds)):
+            return self._json(400, {"error": "params must be an object, seeds a list of integers"})
+        gen = str(d.get("gen", ""))
+        if path == "/api/texgen/preview":
+            return self._texgen(lambda t: t.preview(gen, params, seeds))
+        if path == "/api/texgen/add":
+            if len(seeds) > 12:
+                return self._json(400, {"error": "max 12 seeds"})
+            return self._texgen(lambda t: {"batch": d.get("batch"), "candidates": t.run_job(
+                gen, params, seeds, str(d.get("batch") or "gui"), suffix_seed=bool(d.get("suffix_seed", len(seeds) > 1)))})
+        if path == "/api/texgen/apply":
+            items = d.get("items")
+            if not isinstance(items, list) or not 0 < len(items) <= 64:
+                return self._json(400, {"error": "items: 1..64 candidates"})
+            res = self._texgen(lambda t: t.apply(items, bool(d.get("lock")), bool(d.get("force_locked")),
+                                                 bool(d.get("dry_run"))))
+            _tex_cache["t"] = 0
+            return res
+        if path == "/api/texgen/undo":
+            res = self._texgen(lambda t: t.undo(bool(d.get("dry_run"))))
+            _tex_cache["t"] = 0
+            return res
+        if path == "/api/texgen/profile":
+            return self._texgen(lambda t: (lambda p: {"name": p["name"], "sources": [x["ref"] for x in p["sources"]],
+                                                      "aggregate": {k: v for k, v in p["aggregate"].items()
+                                                                    if k != "spectrum"}})(
+                t.profile(category=str(d.get("category", "")))))
+        return self._json(404, {"error": "not found"})
+
+    def _png(self, f):
+        body = f.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", "image/png")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        return self.wfile.write(body)
+
+    def _texgen_get(self, path):
+        q = self._query()
+        if path == "/api/texgen/meta":
+            return self._texgen(lambda t: t.meta())
+        if path == "/api/texgen/sources":
+            return self._texgen(lambda t: t.sources())
+        if path == "/api/texgen/candidates":
+            return self._texgen(lambda t: t.list_candidates(q.get("batch") or None))
+        if path in ("/api/texgen/image", "/api/texgen/contact"):
+            try:
+                import texture_gen as t
+                if path.endswith("image"):
+                    f = t.candidate_file(q.get("batch", ""), q.get("name", ""))
+                else:
+                    f = t.P.generated / t.check_batch(q.get("batch", "")) / "contact.png"
+                    if not f.is_file():
+                        raise t.TexGenError("no contact sheet")
+            except ImportError as e:
+                return self._json(500, {"error": f"missing python package: {e.name}"})
+            except ValueError as e:
+                return self._json(404, {"error": str(e)})
+            return self._png(f)
+        return self._json(404, {"error": "not found"})
+
     def do_POST(self):
         path = self.path.split("?")[0]
         if path.startswith("/api/sheet/"):
             return self._sheet_post(path)
+        if path.startswith("/api/texgen/"):
+            return self._texgen_post(path)
         try:
             d = self._body()
         except (ValueError, json.JSONDecodeError):
@@ -449,6 +549,8 @@ class H(http.server.SimpleHTTPRequestHandler):
             return self._json(200, textures())
         if path == "/sheets.json":
             return self._sheet(sheets.status)
+        if path.startswith("/api/texgen/"):
+            return self._texgen_get(path)
         if path == "/api/sheet/prompt":
             name = self._query().get("name", "")
             return self._sheet(lambda: {"name": name, "prompt": sheets.prompt(name)})
