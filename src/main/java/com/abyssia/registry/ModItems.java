@@ -10,6 +10,8 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+import com.abyssia.item.MaterialTools;
 import com.abyssia.item.ModTools;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -56,6 +58,61 @@ public final class ModItems
     public static final RegistryObject<Item> YTTRIUM_INGOT = sourcedItem("yttrium_ingot");
     public static final RegistryObject<Item> ABYSSAL_ALLOY_INGOT = sourcedItem("abyssal_alloy_ingot");
 
+    // Material processing system (docs/material-system.md, tools/material_spec.json): plain items, rarity from the spec.
+    // Tools and armor of the system are in com.abyssia.item.MaterialTools.
+    // TODO(phase2 machines): crusher / refinery_furnace / alloy_furnace / crystal_processor / high_temp_furnace /
+    // energy_device / mining_machine (spec machines_phase2) would register their blocks + menus here and automate
+    // the same spec recipes; machine_frame is already obtainable.
+    // powders and concentrates (crushed with the crushing hammer)
+    public static final RegistryObject<Item> IRON_POWDER = item("iron_powder", Rarity.COMMON);
+    public static final RegistryObject<Item> COBALT_POWDER = item("cobalt_powder", Rarity.COMMON);
+    public static final RegistryObject<Item> NICKEL_POWDER = item("nickel_powder", Rarity.COMMON);
+    public static final RegistryObject<Item> MANGANESE_POWDER = item("manganese_powder", Rarity.COMMON);
+    public static final RegistryObject<Item> VANADIUM_POWDER = item("vanadium_powder", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> TUNGSTEN_POWDER = item("tungsten_powder", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> TELLURIUM_POWDER = item("tellurium_powder", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> YTTRIUM_POWDER = item("yttrium_powder", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> COBALT_CONCENTRATE = item("cobalt_concentrate", Rarity.COMMON);
+    public static final RegistryObject<Item> MANGANESE_CONCENTRATE = item("manganese_concentrate", Rarity.COMMON);
+    public static final RegistryObject<Item> NICKEL_CONCENTRATE = item("nickel_concentrate", Rarity.COMMON);
+    // basic iron/copper parts
+    public static final RegistryObject<Item> IRON_PLATE = item("iron_plate", Rarity.COMMON);
+    public static final RegistryObject<Item> IRON_ROD = item("iron_rod", Rarity.COMMON);
+    public static final RegistryObject<Item> IRON_GEAR = item("iron_gear", Rarity.COMMON);
+    public static final RegistryObject<Item> COPPER_WIRE = item("copper_wire", Rarity.COMMON);
+    // alloys
+    public static final RegistryObject<Item> CORROSION_ALLOY_INGOT = item("corrosion_alloy_ingot", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> HIGH_STRENGTH_ALLOY_INGOT = item("high_strength_alloy_ingot", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> HEAT_RESISTANT_ALLOY_INGOT = item("heat_resistant_alloy_ingot", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> TUNGSTEN_ALLOY_INGOT = item("tungsten_alloy_ingot", Rarity.RARE);
+    public static final RegistryObject<Item> CONDUCTIVE_ALLOY_INGOT = item("conductive_alloy_ingot", Rarity.RARE);
+    public static final RegistryObject<Item> THERMAL_ALLOY_INGOT = item("thermal_alloy_ingot", Rarity.RARE);
+    // plant-based materials
+    public static final RegistryObject<Item> REINFORCED_FIBER = item("reinforced_fiber", Rarity.COMMON);
+    public static final RegistryObject<Item> REINFORCED_CABLE = item("reinforced_cable", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> MARINE_RESIN = item("marine_resin", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> ABYSSAL_COMPOSITE = item("abyssal_composite", Rarity.RARE);
+    // thermal materials
+    public static final RegistryObject<Item> THERMAL_CORE = item("thermal_core", Rarity.RARE);
+    public static final RegistryObject<Item> THERMAL_REAGENT = item("thermal_reagent", Rarity.RARE);
+    // crystal and energy parts
+    public static final RegistryObject<Item> LUMINOUS_CRYSTAL = item("luminous_crystal", Rarity.RARE);
+    public static final RegistryObject<Item> CRYSTAL_CORE = item("crystal_core", Rarity.RARE);
+    public static final RegistryObject<Item> ABYSSAL_ENERGY_CELL = item("abyssal_energy_cell", Rarity.RARE);
+    public static final RegistryObject<Item> ADVANCED_LUMEN_CELL = item("advanced_lumen_cell", Rarity.RARE);
+    public static final RegistryObject<Item> ABYSSAL_LIGHT_CORE = item("abyssal_light_core", Rarity.EPIC);
+    public static final RegistryObject<Item> ADVANCED_ENERGY_CELL = item("advanced_energy_cell", Rarity.EPIC);
+    public static final RegistryObject<Item> ABYSSAL_POWER_CORE = item("abyssal_power_core", Rarity.EPIC);
+    // shared components
+    public static final RegistryObject<Item> HARDENED_TIP = item("hardened_tip", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> TUNGSTEN_TIP = item("tungsten_tip", Rarity.RARE);
+    public static final RegistryObject<Item> DRILL_HEAD = item("drill_head", Rarity.RARE);
+    public static final RegistryObject<Item> PRESSURE_VALVE = item("pressure_valve", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> PRESSURE_SHELL = item("pressure_shell", Rarity.EPIC);
+    public static final RegistryObject<Item> THERMAL_COMPONENT = item("thermal_component", Rarity.RARE);
+    public static final RegistryObject<Item> CONDUCTIVE_COMPONENT = item("conductive_component", Rarity.RARE);
+    public static final RegistryObject<Item> MACHINE_FRAME = item("machine_frame", Rarity.UNCOMMON);
+
     // Spawn eggs (colours match tools/fauna/<species>.py INFO["egg"])
     public static final RegistryObject<Item> ANGLERFISH_SPAWN_EGG = spawnEgg("anglerfish_spawn_egg", ModEntities.ANGLERFISH, 0x1B2029, 0x8FF0FF);
     public static final RegistryObject<Item> GIANT_ISOPOD_SPAWN_EGG = spawnEgg("giant_isopod_spawn_egg", ModEntities.GIANT_ISOPOD, 0xA9A3B5, 0x5D566B);
@@ -91,12 +148,20 @@ public final class ModItems
     {
         ITEMS.register(modBus);
         ModTools.register(ITEMS, TAB_ITEMS);
+        MaterialTools.register(ITEMS, TAB_ITEMS);
         TABS.register(modBus);
     }
 
     private static RegistryObject<Item> item(String name)
     {
         RegistryObject<Item> item = ITEMS.register(name, () -> new Item(new Item.Properties()));
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    private static RegistryObject<Item> item(String name, Rarity rarity)
+    {
+        RegistryObject<Item> item = ITEMS.register(name, () -> new Item(new Item.Properties().rarity(rarity)));
         TAB_ITEMS.add(item);
         return item;
     }

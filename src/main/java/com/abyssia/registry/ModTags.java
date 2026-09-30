@@ -38,6 +38,11 @@ public final class ModTags
     /** Carrion a giant isopod scavenges from the seabed. */
     public static final TagKey<Item> ISOPOD_FOOD = item("isopod_food");
 
+    /** Crystal blocks the crystal pickaxe breaks twice as fast (material system crystal_harvest). */
+    public static final TagKey<Block> CRYSTAL_BLOCKS = block("crystal_blocks");
+    /** Gear exempt from the future hadal pressure damage (pressure_diver_helmet). */
+    public static final TagKey<Item> PRESSURE_PROOF = item("pressure_proof");
+
     private ModTags() {}
 
     private static TagKey<Block> block(String name)

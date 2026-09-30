@@ -1,6 +1,7 @@
 package com.abyssia;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 /** Common (server-synced) options for the deep ocean, terrain, ores and thermal vents. */
 public class Config
@@ -19,6 +20,10 @@ public class Config
             .comment("Ocean world Y at or below which players are moved into the deep ocean.",
                     "Default -61 is inside the bedrock floor (Y -64..-60): only reachable down an abyssal rift")
             .defineInRange("transition_y", -61, -64, 319);
+
+    public static final ForgeConfigSpec.IntValue CONFIG_VERSION = BUILDER
+            .comment("Internal: used to upgrade old defaults (transition_y 0 / coordinate_offset_y 200 -> -61 / 261). Do not edit.")
+            .defineInRange("config_version", 1, 1, 100);
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_RETURN_Y = BUILDER
             .comment("Deep ocean Y at or above which players are moved back to the ocean world")
@@ -315,4 +320,31 @@ public class Config
     }
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
+
+    /**
+     * Config files written by older versions keep the old defaults (transition at Y 0), so the move below the
+     * bedrock would never take effect. Files that still hold exactly the old defaults are upgraded once;
+     * customised values are left alone.
+     */
+    static void migrate(ModConfigEvent event)
+    {
+        if (event.getConfig().getSpec() != SPEC || CONFIG_VERSION.get() >= 2) return;
+        if (DEEP_OCEAN_TRANSITION_Y.get() == 0 && DEEP_OCEAN_COORDINATE_OFFSET_Y.get() == 200)
+        {
+            DEEP_OCEAN_TRANSITION_Y.set(-61);
+            DEEP_OCEAN_COORDINATE_OFFSET_Y.set(261);
+        }
+        CONFIG_VERSION.set(2);
+        SPEC.save();
+    }
+
+    static void onLoading(ModConfigEvent.Loading event)
+    {
+        migrate(event);
+    }
+
+    static void onReloading(ModConfigEvent.Reloading event)
+    {
+        migrate(event);
+    }
 }

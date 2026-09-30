@@ -74,7 +74,8 @@ public final class ModTools {
         if (mult != 1.0F) event.setNewSpeed(event.getNewSpeed() * mult);
     }
 
-    private static final class DiverHelmet extends ArmorItem {
+    // Package-private: MaterialTools' pressure_diver_helmet keeps the same breathing / night vision.
+    static final class DiverHelmet extends ArmorItem {
         DiverHelmet(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
         // IForgeItem#onArmorTick is deprecated for removal in this Forge: hook the
         // non-deprecated onInventoryTick instead and only act while actually worn.

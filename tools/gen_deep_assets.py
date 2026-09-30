@@ -23,6 +23,7 @@ from PIL import Image
 import building_assets
 import cave_assets
 import gen_fauna
+import material_system
 import mineral_textures
 import plant_assets
 import texture_locks
@@ -771,6 +772,8 @@ NAMES.update({
 NAMES.update(cave_assets.CAVE_NAMES)
 NAMES.update(plant_assets.BLOCK_NAMES)
 ITEM_NAMES.update(plant_assets.ITEM_NAMES)
+# Material processing system (tools/material_spec.json via material_system.py)
+ITEM_NAMES.update(material_system.item_names())
 BIOME_NAMES = {
     "twilight_reef": ("Twilight Reef", "薄明の礁"), "deep_sea": ("Deep Sea", "深海"),
     "abyssal_ocean": ("Abyssal Ocean", "深淵の海"), "abyssal_trench": ("Abyssal Trench", "深淵の海溝"),
@@ -915,6 +918,9 @@ def main():
     for name, make in ITEMS.items():
         _emit(make, os.path.join(ITEM_TEX, name + ".png"))
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": "abyssia:item/" + name}})
+    # Material system items: models only.  Their PNGs are placeholders / hand-made art, never drawn here.
+    for name, model in material_system.item_models().items():
+        write(im(name), model)
 
     # Fauna spawn eggs (the rest of the fauna assets come from gen_fauna.py)
     gen_fauna.item_models(write, im)
@@ -931,6 +937,7 @@ def main():
     recipes()
     # Resource plants (plant_defs.py): after the generic loot tables and recipes, which it extends / overrides.
     plants = plant_assets.generate(write, bs, bm, im, cross_model, DATA)
+    material_recipes()
     lang()
     print(f"Resource plants: {plants}")
     print(f"{len(NAMES) - 1} blocks + {len(building_assets.NAMES)} building blocks, {len(ITEMS)} items")
@@ -1046,7 +1053,14 @@ def tags():
           {"replace": False, "values": a(list(building_assets.CRUSTS) + ["cave_mineral_crust"])})
     write(os.path.join(DATA, "abyssia", "tags", "items", "underwater_tools.json"),
           {"replace": False, "values": ["abyssia:abyssal_alloy_pickaxe", "abyssia:abyssal_alloy_axe",
-           "abyssia:abyssal_alloy_shovel", "abyssia:abyssal_alloy_hoe", "abyssia:abyssal_alloy_sword"]})
+           "abyssia:abyssal_alloy_shovel", "abyssia:abyssal_alloy_hoe", "abyssia:abyssal_alloy_sword"]
+           + a(material_system.UNDERWATER)})
+    # Material system: the pressure helmet's future hadal-pressure exemption, and the blocks the crystal pickaxe
+    # breaks twice as fast (com.abyssia.item.MaterialTools).
+    write(os.path.join(DATA, "abyssia", "tags", "items", "pressure_proof.json"),
+          {"replace": False, "values": a(material_system.PRESSURE_PROOF)})
+    write(os.path.join(ours, "crystal_blocks.json"), {"replace": False, "values": a(
+        [n for n in CLUSTERS if "crystal" in n] + ["deep_crystal_block"] + list(cave_assets.CAVERN_CRYSTALS))})
 
 
 def recipes():
@@ -1098,6 +1112,16 @@ def recipes():
     write(rd("abyssal_flippers"), {"type": "minecraft:crafting_shaped", "category": "equipment",
           "pattern": ["A A", "S S"], "key": {"A": {"item": "abyssia:abyssal_alloy_ingot"}, "S": {"item": "abyssia:sea_cloth"}},
           "result": {"item": "abyssia:abyssal_flippers"}})
+
+
+def material_recipes():
+    """Material system recipes (tools/material_spec.json).  Runs last so a clash with any other generated recipe
+    fails loudly instead of silently replacing it."""
+    for rid, recipe in material_system.recipes().items():
+        path = os.path.join(DATA, "abyssia", "recipes", rid + ".json")
+        if os.path.exists(path):
+            raise SystemExit(f"material_spec recipe id clashes with an existing recipe: {rid}")
+        write(path, recipe)
 
 
 def lang():
