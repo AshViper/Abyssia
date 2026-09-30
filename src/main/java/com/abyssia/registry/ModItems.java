@@ -37,6 +37,7 @@ public final class ModItems
     public static final RegistryObject<Item> COBALT_INGOT = item("cobalt_ingot");
     public static final RegistryObject<Item> NICKEL_INGOT = item("nickel_ingot");
     public static final RegistryObject<Item> SULFUR = item("sulfur");
+    public static final RegistryObject<Item> CRUST_POWDER = item("crust_powder");
     public static final RegistryObject<Item> THERMAL_CRYSTAL_SHARD = item("thermal_crystal_shard");
     public static final RegistryObject<Item> ABYSSAL_CRYSTAL_SHARD = item("abyssal_crystal_shard");
 

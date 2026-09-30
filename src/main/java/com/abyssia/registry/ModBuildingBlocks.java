@@ -36,6 +36,9 @@ public final class ModBuildingBlocks
     public record StoneFamily(Shapes shapes, RegistryObject<Block> polished, Shapes polishedShapes, RegistryObject<Block> bricks,
                               Shapes brickShapes, RegistryObject<Block> crackedBricks, RegistryObject<Block> chiseled) {}
 
+    /** A metal crust's building family: polished and bricks with their shapes. */
+    public record CrustFamily(RegistryObject<Block> polished, Shapes polishedShapes, RegistryObject<Block> bricks, Shapes brickShapes) {}
+
     // ---------- Stone families of the main terrain rocks ----------
     public static final StoneFamily DEEP_SEA_ROCK = family("deep_sea_rock", ModBlocks.DEEP_SEA_ROCK);
     public static final StoneFamily ABYSSAL_ROCK = family("abyssal_rock", ModBlocks.ABYSSAL_ROCK);
@@ -57,6 +60,13 @@ public final class ModBuildingBlocks
     public static final Shapes MINERAL_CAVE_ROCK = shapes("mineral_cave_rock", ModBlocks.MINERAL_CAVE_ROCK);
     public static final Shapes ORGANIC_CAVE_ROCK = shapes("organic_cave_rock", ModBlocks.ORGANIC_CAVE_ROCK);
     public static final Shapes ERODED_CAVE_ROCK = shapes("eroded_cave_rock", ModBlocks.ERODED_CAVE_ROCK);
+
+    // ---------- Metal crusts: polished (reusing the crust art) and bricks, each with stairs / slab / wall ----------
+    public static final CrustFamily MANGANESE_CRUST = crustFamily("manganese_crust", ModBlocks.MANGANESE_CRUST);
+    public static final CrustFamily COBALT_CRUST = crustFamily("cobalt_crust", ModBlocks.COBALT_CRUST);
+    public static final CrustFamily NICKEL_CRUST = crustFamily("nickel_crust", ModBlocks.NICKEL_CRUST);
+    public static final CrustFamily IRON_CRUST = crustFamily("iron_crust", ModBlocks.IRON_CRUST);
+    public static final CrustFamily COPPER_CRUST = crustFamily("copper_crust", ModBlocks.COPPER_CRUST);
 
     // ---------- Ancient deep-sea wood (the stem itself is ModBlocks.ANCIENT_STEM) ----------
     // Like the nether's stems it does not burn; it sounds like nether wood and reuses the crimson door / gate sounds.
@@ -102,6 +112,13 @@ public final class ModBuildingBlocks
         RegistryObject<Block> cracked = ModBlocks.block("cracked_" + rock + "_bricks", () -> new Block(copy(base)));
         RegistryObject<Block> chiseled = ModBlocks.block("chiseled_" + rock, () -> new Block(copy(base)));
         return new StoneFamily(shapes, polished, polishedShapes, bricks, brickShapes, cracked, chiseled);
+    }
+
+    private static CrustFamily crustFamily(String crust, RegistryObject<Block> base)
+    {
+        RegistryObject<Block> polished = ModBlocks.block("polished_" + crust, () -> new Block(copy(base)));
+        RegistryObject<Block> bricks = ModBlocks.block(crust + "_bricks", () -> new Block(copy(base)));
+        return new CrustFamily(polished, shapes("polished_" + crust, polished), bricks, shapes(crust + "_brick", bricks));
     }
 
     private static Shapes shapes(String name, RegistryObject<Block> base)

@@ -12,6 +12,8 @@ import os
 import shutil
 import sys
 
+from PIL import Image
+
 import building_assets
 import cave_assets
 import gen_fauna
@@ -231,6 +233,20 @@ def ore_textures(t):
         # Polished variants deliberately reuse the crust artwork: retain its mineral
         # pattern while giving the block family a distinct registered model/shape.
         t["polished_" + name] = t[name]
+        t[name + "_bricks"] = crust_bricks(t[name])
+
+
+def crust_bricks(base):
+    """The crust texture with darker 1px running-bond brick joints (16x16: rows of 4px, bricks 8px wide)."""
+    c = base.copy()
+    for y in range(16):
+        for x in range(16):
+            row = y // 4
+            joint_h = y % 4 == 3
+            joint_v = (x - (4 if row % 2 else 0)) % 8 == 7 and not joint_h
+            if joint_h or joint_v:
+                c.put(x, y, darken(tuple(int(v) for v in c.get(x, y)), 0.45))
+    return c
 
 
 # ---------------------------------------------------------------- cross sprites (clusters, plants)
@@ -545,7 +561,6 @@ CUBES = ["deep_sea_rock", "abyssal_rock", "trench_rock", "thermal_rock", "volcan
          "abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "thermal_crystal_ore", "abyssal_crystal_ore",
          "manganese_ore", "cobalt_ore", "deep_nickel_ore", "manganese_crust", "cobalt_crust", "nickel_crust",
          "iron_crust", "copper_crust", "deep_crystal_block"] + RARE_ORES
-POLISHED_CRUSTS = ["polished_" + n for n in ("manganese_crust", "cobalt_crust", "nickel_crust", "iron_crust", "copper_crust")]
 SOFT = ["deep_sediment", "abyssal_mud", "deep_mud", "mineral_sediment", "crystal_sediment", "organic_sediment", "volcanic_ash",
         "ruin_gravel", "ruin_sediment", "bone_sediment", "fossil_silt", "salt_crust", "brine_silt", "lumen_sand", "glow_silt",
         "frost_silt", "icy_sediment"]
@@ -621,6 +636,9 @@ ITEMS = {
     "sulfur": lambda: powder("sulfur", MINERAL["sulfur"][1:4]),
     "thermal_crystal_shard": lambda: shards_item("thermal_crystal_shard", MINERAL["thermal"]),
     "abyssal_crystal_shard": lambda: shards_item("abyssal_crystal_shard", MINERAL["abyssal"]),
+    # Locked art (grey-brown recolour of deep_pigment); kept in texture_locks so regeneration cannot change it.
+    "crust_powder": lambda: Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "texture_locks", "assets",
+                                                    "textures", "item", "crust_powder.png")).convert("RGBA"),
 }
 
 def alloy_tool_icon(name, kind):
@@ -714,19 +732,13 @@ NAMES = {
     "abyssal_bloom": ("Abyssal Bloom", "深淵の花"), "soul_coral": ("Soul Coral", "ソウルサンゴ"),
     "black_coral": ("Black Coral", "黒サンゴ"), "hadal_bloom": ("Hadal Bloom", "超深海の花"),
 }
-for _crust, _metal_names in {
-    "manganese_crust": ("Manganese", "マンガン"), "cobalt_crust": ("Cobalt", "コバルト"),
-    "nickel_crust": ("Nickel", "ニッケル"), "iron_crust": ("Iron", "鉄"), "copper_crust": ("Copper", "銅"),
-}.items():
-    NAMES["polished_" + _crust] = ("Polished " + _metal_names[0] + " Crust", "磨かれた" + _metal_names[1] + "クラスト")
-    NAMES["polished_" + _crust + "_stairs"] = ("Polished " + _metal_names[0] + " Crust Stairs", "磨かれた" + _metal_names[1] + "クラストの階段")
-    NAMES["polished_" + _crust + "_slab"] = ("Polished " + _metal_names[0] + " Crust Slab", "磨かれた" + _metal_names[1] + "クラストのハーフブロック")
 ITEM_NAMES = {
     "raw_manganese": ("Raw Manganese", "マンガンの原石"), "raw_cobalt": ("Raw Cobalt", "コバルトの原石"),
     "raw_nickel": ("Raw Nickel", "ニッケルの原石"), "manganese_ingot": ("Manganese Ingot", "マンガンインゴット"),
     "cobalt_ingot": ("Cobalt Ingot", "コバルトインゴット"), "nickel_ingot": ("Nickel Ingot", "ニッケルインゴット"),
     "sulfur": ("Sulfur", "硫黄"), "thermal_crystal_shard": ("Thermal Crystal Shard", "熱結晶の欠片"),
     "abyssal_crystal_shard": ("Abyssal Crystal Shard", "深淵結晶の欠片"),
+    "crust_powder": ("Crust Powder", "クラスト粉末"),
 }
 ITEM_NAMES.update({
     "abyssal_alloy_ingot": ("Abyssal Alloy Ingot", "深海合金インゴット"),
@@ -815,21 +827,6 @@ def reset_dirs():
         os.makedirs(d, exist_ok=True)
 
 
-def _write_crust_shapes(write, bs, bm, im, stem, ref):
-    """Write stairs and slab assets using the polished crust cube texture."""
-    stairs, slab = stem + "_stairs", stem + "_slab"
-    tex = ref(stem)
-    for suffix, parent in (("", "stairs"), ("_inner", "inner_stairs"), ("_outer", "outer_stairs")):
-        write(bm(stairs + suffix), {"parent": "minecraft:block/" + parent,
-              "textures": {"bottom": tex, "top": tex, "side": tex}})
-    write(bs(stairs), building_assets.stairs_blockstate(ref(stairs), ref(stairs + "_inner"), ref(stairs + "_outer")))
-    write(im(stairs), {"parent": ref(stairs)})
-    write(bm(slab), {"parent": "minecraft:block/slab", "textures": {"bottom": tex, "top": tex, "side": tex}})
-    write(bm(slab + "_top"), {"parent": "minecraft:block/slab_top", "textures": {"bottom": tex, "top": tex, "side": tex}})
-    write(bs(slab), building_assets.slab_blockstate(ref(slab), ref(slab + "_top"), ref(stem)))
-    write(im(slab), {"parent": ref(slab)})
-
-
 def main():
     reset_dirs()
     bs = lambda n: os.path.join(ASSETS, "blockstates", n + ".json")
@@ -846,14 +843,10 @@ def main():
         write(bm(name), {"parent": "minecraft:block/cube_all", "textures": {"all": ref(name)}})
         write(im(name), {"parent": ref(name)})
 
-    # Polished metal crust building family. Keep the source texture unchanged and
-    # use it on polished cubes plus matching stairs/slabs.
-    for name in POLISHED_CRUSTS:
+    # Polished metal crusts reuse the crust texture and bricks draw joints on it; their models, blockstates, loot,
+    # recipes, tags and names come from building_assets.py.
+    for name in building_assets.CRUST_POLISHED + building_assets.CRUST_BRICKS:
         t[name].save(tex(name))
-        write(bs(name), {"variants": {"": {"model": ref(name)}}})
-        write(bm(name), {"parent": "minecraft:block/cube_all", "textures": {"all": ref(name)}})
-        write(im(name), {"parent": ref(name)})
-        _write_crust_shapes(write, bs, bm, im, name, ref)
 
     rot = {"down": {"x": 180}, "east": {"x": 90, "y": 90}, "north": {"x": 90}, "south": {"x": 90, "y": 180},
            "up": {}, "west": {"x": 90, "y": 270}}
@@ -994,7 +987,7 @@ def rare_pools(name):
 
 def loot_tables():
     lt = lambda n: os.path.join(DATA, "abyssia", "loot_tables", "blocks", n + ".json")
-    all_blocks = list(NAMES) + POLISHED_CRUSTS
+    all_blocks = list(NAMES)
     for name in all_blocks:
         if name in ORE_DROPS:
             item, lo, hi, formula = ORE_DROPS[name]
@@ -1029,7 +1022,6 @@ def tags():
     crusts = [n for n in CUBES if n.endswith("_crust")]
     speleothems = list(cave_assets.SPELEOTHEM)
     write(os.path.join(blocks, "mineable", "pickaxe.json"), {"replace": False, "values": a(rocks + ores + crusts + list(CLUSTERS)
-                                                                                          + POLISHED_CRUSTS + [n + s for n in POLISHED_CRUSTS for s in ("_stairs", "_slab")]
                                                                                           + cave_assets.CAVE_ROCKS + speleothems + ["crystal_needle"]
                                                                                           + list(cave_assets.CAVERN_CRYSTALS)
                                                                                           + building_assets.pickaxe_blocks())})
@@ -1050,6 +1042,8 @@ def tags():
         "brine_silt", "salt_rock", "lumen_sand", "glow_silt", "lumen_rock", "frost_silt", "icy_sediment", "frozen_rock"]
         # Cave walls: ore veins and spires may cut through them too.
         + [n for n in cave_assets.CAVE_CUBES if n != "cave_mineral_crust"])})
+    write(os.path.join(DATA, "abyssia", "tags", "items", "crusts.json"),
+          {"replace": False, "values": a(list(building_assets.CRUSTS) + ["cave_mineral_crust"])})
     write(os.path.join(DATA, "abyssia", "tags", "items", "underwater_tools.json"),
           {"replace": False, "values": ["abyssia:abyssal_alloy_pickaxe", "abyssia:abyssal_alloy_axe",
            "abyssia:abyssal_alloy_shovel", "abyssia:abyssal_alloy_hoe", "abyssia:abyssal_alloy_sword"]})
@@ -1080,21 +1074,14 @@ def recipes():
                   "ingredient": {"item": "abyssia:" + crust}, "result": result,
                   "count": count, "experience": 0.5, "cookingtime": time})
 
-    for crust in ("manganese_crust", "cobalt_crust", "nickel_crust", "iron_crust", "copper_crust"):
-        polished = "polished_" + crust
-        write(rd(polished), {"type": "minecraft:crafting_shaped", "category": "building",
-              "pattern": ["##", "##"], "key": {"#": {"item": "abyssia:" + crust}},
-              "result": {"item": "abyssia:" + polished, "count": 4}})
-        write(rd(polished + "_from_" + crust + "_stonecutting"), {"type": "minecraft:stonecutting",
-              "ingredient": {"item": "abyssia:" + crust}, "result": "abyssia:" + polished})
-        for shape, count in (("stairs", 1), ("slab", 2)):
-            out = polished + "_" + shape
-            write(rd(out), {"type": "minecraft:crafting_shaped", "category": "building",
-                  "pattern": ["#  ", "## ", "###"] if shape == "stairs" else ["###"],
-                  "key": {"#": {"item": "abyssia:" + polished}},
-                  "result": {"item": "abyssia:" + out, "count": 4 if shape == "stairs" else 6}})
-            write(rd(out + "_from_" + polished + "_stonecutting"), {"type": "minecraft:stonecutting",
-                  "ingredient": {"item": "abyssia:" + polished}, "result": "abyssia:" + out, "count": count})
+    # Crust powder: ground from any crust; a mild pigment / adhesive helper.
+    cp = {"item": "abyssia:crust_powder"}
+    write(rd("crust_powder_from_crusts"), {"type": "minecraft:crafting_shapeless", "category": "misc",
+          "ingredients": [{"tag": "abyssia:crusts"}], "result": {"item": "abyssia:crust_powder", "count": 2}})
+    write(rd("deep_pigment_from_crust_powder"), {"type": "minecraft:crafting_shapeless", "category": "misc",
+          "ingredients": [cp, cp, {"item": "abyssia:organic_matter"}], "result": {"item": "abyssia:deep_pigment"}})
+    write(rd("marine_adhesive_from_crust_powder"), {"type": "minecraft:crafting_shapeless", "category": "misc",
+          "ingredients": [cp, {"item": "abyssia:plant_resin"}], "result": {"item": "abyssia:marine_adhesive", "count": 2}})
 
     write(rd("abyssal_alloy_ingot"), {"type": "minecraft:crafting_shapeless", "category": "misc",
           "ingredients": [{"item": f"abyssia:{m}_ingot"} for m in ("vanadium", "cobalt", "nickel")],
