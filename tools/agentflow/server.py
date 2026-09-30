@@ -3,6 +3,9 @@
 
 Endpoints: state.json, requests.json, approvals.json, textures.json, autorun.json, /tex/(cur|old)/<kind>/<name>.png,
 POST /api/request | /api/approval | /api/reset | /api/autorun | /api/autorun/run | /api/autorun/stop.
+Sheets (画像生成 tab, same functions as the sheets.py CLI): GET sheets.json | /api/sheet/prompt?name= |
+/api/sheet/image?name=; POST /api/sheet/upload?name= (raw image body, max 25MB) | /api/sheet/detect |
+/api/sheet/import | /api/sheet/undo (JSON bodies: name, region [x0,y0,x1,y1], merge, ids, dry_run).
 
 Auto-run: a new request starts the selected headless runner in the project root. Set
 `runner` to `codex` or `claude` in tools/agentflow/autorun.json (or use the UI).
@@ -14,6 +17,8 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 import flow  # noqa: E402  (state file helpers shared with the CLI)
+import sheets  # noqa: E402  (sheet presets / detect / import shared with the CLI)
+from urllib.parse import parse_qs, urlsplit  # noqa: E402
 
 STATE = flow.STATE
 REQ = flow.REQ
@@ -323,12 +328,62 @@ class H(http.server.SimpleHTTPRequestHandler):
         n = int(self.headers.get("Content-Length", 0))
         return json.loads(self.rfile.read(min(n, limit)) or b"{}")
 
+    def _query(self):
+        return {k: v[0] for k, v in parse_qs(urlsplit(self.path).query).items()}
+
+    def _sheet(self, fn, *a, **k):
+        try:
+            return self._json(200, fn(*a, **k))
+        except sheets.SheetError as e:
+            return self._json(400, {"error": str(e)})
+        except ImportError as e:
+            return self._json(500, {"error": f"missing python package: {e.name} (pip install pillow numpy scipy)"})
+        except Exception as e:  # noqa: BLE001 - report to the UI instead of dropping the connection
+            return self._json(500, {"error": f"{type(e).__name__}: {e}"})
+
+    def _sheet_post(self, path):
+        # writes files: only same-machine pages (Host check vs DNS rebinding) and non-simple content types
+        # (image/* or application/json need a CORS preflight, which this server never grants)
+        host = (self.headers.get("Host") or "").rsplit(":", 1)[0]
+        ctype = (self.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+        if host not in ("127.0.0.1", "localhost"):
+            return self._json(403, {"error": "bad host"})
+        if not (ctype.startswith("image/") if path == "/api/sheet/upload" else ctype == "application/json"):
+            return self._json(415, {"error": "Content-Type must be image/* (upload) or application/json"})
+        if path == "/api/sheet/upload":
+            n = int(self.headers.get("Content-Length", 0) or 0)
+            if n <= 0 or n > sheets.MAX_UPLOAD:
+                return self._json(413, {"error": "image missing or larger than 25MB"})
+            data = self.rfile.read(n)
+            return self._sheet(sheets.save_upload, self._query().get("name", ""), data)
+        try:
+            d = self._body(200_000)
+        except (ValueError, json.JSONDecodeError):
+            return self._json(400, {"error": "bad json"})
+        ids = d.get("ids")
+        if ids is not None and not (isinstance(ids, list) and all(isinstance(i, str) for i in ids)):
+            return self._json(400, {"error": "ids must be a list of strings"})
+        args = (str(d.get("name", "")), "auto", d.get("region"), d.get("merge"), ids)
+        if path == "/api/sheet/detect":
+            return self._sheet(sheets.detect, *args)
+        if path == "/api/sheet/import":
+            res = self._sheet(sheets.import_sheet, *args, dry_run=bool(d.get("dry_run")))
+            _tex_cache["t"] = 0
+            return res
+        if path == "/api/sheet/undo":
+            res = self._sheet(sheets.undo, dry_run=bool(d.get("dry_run")))
+            _tex_cache["t"] = 0
+            return res
+        return self._json(404, {"error": "not found"})
+
     def do_POST(self):
+        path = self.path.split("?")[0]
+        if path.startswith("/api/sheet/"):
+            return self._sheet_post(path)
         try:
             d = self._body()
         except (ValueError, json.JSONDecodeError):
             return self._json(400, {"error": "bad json"})
-        path = self.path.split("?")[0]
         if path == "/api/approval":
             try:
                 f = APR / (Path(str(d["id"])).name + ".json")  # name only: no path traversal
@@ -392,6 +447,25 @@ class H(http.server.SimpleHTTPRequestHandler):
             return self._json(200, AUTO.status())
         if path == "/textures.json":
             return self._json(200, textures())
+        if path == "/sheets.json":
+            return self._sheet(sheets.status)
+        if path == "/api/sheet/prompt":
+            name = self._query().get("name", "")
+            return self._sheet(lambda: {"name": name, "prompt": sheets.prompt(name)})
+        if path == "/api/sheet/image":
+            try:
+                img, _src = sheets.image_for(sheets.preset(self._query().get("name", "")))
+            except sheets.SheetError as e:
+                return self._json(400, {"error": str(e)})
+            if not img:
+                return self._json(404, {"error": "no image"})
+            body = img.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", {".png": "image/png", ".webp": "image/webp"}.get(img.suffix, "image/jpeg"))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            return self.wfile.write(body)
         if path.startswith("/tex/"):
             which, _, rel = path[5:].partition("/")
             base = {"cur": TEX, "old": OLD}.get(which)

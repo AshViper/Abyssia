@@ -59,7 +59,11 @@
         }
       }
     },
-    "erosion": 0,
+    "erosion": {
+      "type": "minecraft:add",
+      "argument1": 1.2,
+      "argument2": "abyssia:rift"
+    },
     "depth": 0,
     "ridges": 0,
     "initial_density_without_jaggedness": {
@@ -107,6 +111,38 @@
   "surface_rule": {
     "type": "minecraft:sequence",
     "sequence": [
+      {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:biome",
+          "biome_is": [
+            "abyssia:abyssal_rift"
+          ]
+        },
+        "then_run": {
+          "type": "minecraft:condition",
+          "if_true": {
+            "type": "minecraft:not",
+            "invert": {
+              "type": "minecraft:y_above",
+              "anchor": {
+                "absolute": -56
+              },
+              "surface_depth_multiplier": 0,
+              "add_stone_depth": false
+            }
+          },
+          "then_run": {
+            "type": "minecraft:block",
+            "result_state": {
+              "Name": "minecraft:deepslate",
+              "Properties": {
+                "axis": "y"
+              }
+            }
+          }
+        }
+      },
       {
         "type": "minecraft:condition",
         "if_true": {

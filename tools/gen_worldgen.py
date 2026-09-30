@@ -101,8 +101,23 @@ DEEP = dict(
     trench_province=(0.0, 0.2),    # trench_region noise: no system below 0.0, full system above 0.2 (~40% of lines)
     cleft=64,
     open_y=100,                    # open water above this, apart from the shelves, their banks and a few volcanoes
-    arrival_y=190,                 # under the ocean world's dive holes the seabed stays below this
+    arrival_y=190,                 # under the ocean world's deep seas and rifts the seabed stays below this
     top_y=230,                     # nothing rises above this (players return to the ocean world at Y 240)
+)
+
+# ---------------------------------------------------------------- abyssal rifts (ocean world)
+# The only way down: bedrock covers the ocean world's floor (Y -64..-60) and players move to the deep ocean below
+# Y -61. A rift is a water-filled shaft from the seabed through the bedrock band. abyssia:rift (RiftDensityFunction)
+# places at most one per cell where the seabed at its axis is deep enough and returns 1 on the axis, 0 at its radius,
+# -1 from 2 radii out. The terrain opens where it is > 0 and the biome source puts abyssia:abyssal_rift where it is
+# > -0.2, so the biome (no bedrock, no features) always covers the shaft and its walls.
+RIFT = dict(
+    cell=384, chance=0.6,          # at most one rift per 384 x 384 cell, 60% of cells (deep seas only): ~700 blocks apart
+    radius=(14, 24),
+    max_seabed=0.0,                # seabed_offset at the axis: seabed at or below Y 0
+    carve=16.0,                    # density at the axis; keeps the floor at Y -64 thin inside one 8-block cell
+    funnel=16,                     # blocks the seabed sinks at the shaft's edge, fading out 1.5 radii from the axis
+    biome=-0.2,                    # rift value above which the biome is abyssal_rift
 )
 
 
@@ -120,6 +135,7 @@ def terrain():
     write("noise/canyon", {"firstOctave": -7, "amplitudes": [1.0, 0.4]})
     write("noise/biome_fuzz", {"firstOctave": -7, "amplitudes": [1.0, 0.5]})
     write("noise/cavern", {"firstOctave": -7, "amplitudes": [1.0, 0.5, 0.5]})
+    write("noise/rift", {"firstOctave": -4, "amplitudes": [1.0]})  # only seeds rift placement per world
 
     # ---- ocean world seabed: macro layout + local relief
     write("density_function/base", mul(0.7, snoise("minecraft:continentalness", 0.25 / MACRO_SCALE)))
@@ -132,6 +148,10 @@ def terrain():
     write("density_function/seabed_offset", flat(clamp(A("seabed_raw"), -0.95, 1.9)))
     # What the ocean world's biomes follow: basins and shallows, without ridges, trenches and canyons.
     write("density_function/seabed_macro", flat(A("base")))
+    r = RIFT
+    write("density_function/rift", flat({"type": A("rift"), "noise": A("rift"), "seabed": A("seabed_offset"), "cell_size": r["cell"],
+                                         "chance": r["chance"], "min_radius": r["radius"][0], "max_radius": r["radius"][1],
+                                         "max_seabed": r["max_seabed"]}))
 
     # ---- deep ocean
     write("density_function/region_volcanic", flat(snoise(A("region_volcanic"), 1.0 / REGION_SCALE)))
@@ -173,9 +193,10 @@ def terrain():
                             volcano),                                                # cones with summit craters
                         add(mul(-0.9, ridge(A("canyon"), 0.35, 0.06, 16.0)),          # abyssal canyons: narrow, ~58 blocks deep
                             mul(y(d["cleft"]) / 1.5, A("trenches")))))                # the trench's axial cleft
-    # Where the ocean world opens below its transition depth, divers arrive at Y 200: keep that water open. The limit
-    # only lifts once the ocean floor is ~10 blocks above the transition depth, so hole edges are covered too.
-    arrival = add(y(d["arrival_y"]), mul(8.0, dmax(0, add(A("seabed_offset"), -0.15))))
+    # Divers coming down a rift arrive at Y 200: keep that water open under the ocean world's deep seas. The limit
+    # only lifts once the ocean floor is ~10 blocks above Y 0, and never within 1.5 radii of a rift's axis.
+    near_rift = mul(-4.0, dmax(0, add(A("rift"), 0.5)))
+    arrival = add(y(d["arrival_y"]), mul(8.0, dmax(0, add(add(A("seabed_offset"), near_rift), -0.15))))
     write("density_function/deep_seabed_offset", flat(clamp(dmin(add(A("deep_macro_offset"), landforms), arrival), -1.9, y(d["top_y"]))))
 
     def caves(cheese, cheese_threshold, min_y):
@@ -189,7 +210,14 @@ def terrain():
     write("density_function/deep_caves", caves(noise3(A("cavern"), 1.0, 0.5), 0.5, -128))
 
     # Density is sampled at 4x8 cell corners and interpolated (smooth per block, cheap).
-    write("density_function/final_density", interp(dmin(add(OCEAN_GRAD, A("seabed_offset")), A("ocean_caves"))))
+    # Rifts: min() with -carve * rift opens the shaft (rift > 0) at every height; at the bottom cell corner (Y -64) the
+    # carve is 1, so a one-block floor keeps the void closed. Subtracting the funnel sinks the seabed (and widens
+    # caves) around the edge. Both are exact no-ops where rift <= -0.5.
+    r = RIFT
+    carve = dmax(mul(-r["carve"], A("rift")), grad(-64, -56, 1.0, -r["carve"]))
+    funnel = mul(grad(-64, -56, 0.0, 1.0), mul(y(r["funnel"]), sq(clamp(mul(2.0, add(A("rift"), 0.5)), 0.0, 1.0))))
+    write("density_function/final_density", interp(dmin(add(dmin(add(OCEAN_GRAD, A("seabed_offset")), A("ocean_caves")), mul(-1, funnel)),
+                                                        carve)))
     write("density_function/deep_final_density", interp(dmin(add(DEEP_GRAD, A("deep_seabed_offset")), A("deep_caves"))))
 
 
@@ -1027,6 +1055,20 @@ def biomes():
     reef["carvers"] = {}
     reef["effects"].update({"water_color": 0x2E8FD6, "water_fog_color": 0x0A4D8C})
     write("biome/twilight_reef", reef)
+    write("biome/abyssal_rift", rift_biome())
+
+
+def rift_biome():
+    # Abyssal Rift (ocean world): the shaft down to the deep ocean. No features (nothing grows into or blocks the
+    # shaft) and not in any vanilla biome tag, so ocean structures stay clear of it; its dark water shows from above.
+    effects = {"fog_color": 12638463, "sky_color": 8103167, "water_color": 0x1B2A6B, "water_fog_color": 0x030A1E,
+               "mood_sound": {"block_search_extent": 8, "offset": 2.0, "sound": "minecraft:ambient.cave", "tick_delay": 3000}}
+    return {"carvers": {}, "downfall": 0.5, "has_precipitation": True, "temperature": 0.5, "effects": effects,
+            "features": [[] for _ in range(11)], "spawn_costs": {},
+            "spawners": {"ambient": [], "axolotls": [], "creature": [], "misc": [], "monster": [],
+                         "underground_water_creature": [{"type": "minecraft:glow_squid", "weight": 10, "minCount": 2, "maxCount": 4}],
+                         "water_ambient": [{"type": "minecraft:cod", "weight": 5, "minCount": 2, "maxCount": 4}],
+                         "water_creature": [{"type": "minecraft:squid", "weight": 3, "minCount": 1, "maxCount": 3}]}}
 
 
 def params(biome, temperature=(-1, 1), humidity=(-1, 1), continentalness=(-2, 2), weirdness=(-1, 1), erosion=(-1, 1)):
@@ -1082,6 +1124,9 @@ def biome_sources():
         params(mc("lukewarm_ocean"), T["luke"], continentalness=S), params(mc("deep_lukewarm_ocean"), T["luke"], continentalness=D),
         params(mc("warm_ocean"), T["warm"], continentalness=S), params(mc("deep_lukewarm_ocean"), T["warm"], continentalness=D),
         params(A("twilight_reef"), (0.2, 2), continentalness=M),
+        # erosion = 1.2 + rift (noise_settings): 0.2 away from rifts, where the entries above (erosion -1..1) match
+        # exactly; above 1 (rift > -0.2) only this one does. Parameters are limited to -2..2.
+        params(A("abyssal_rift"), (-2, 2), erosion=(1.0, 2.0)),
     ]
     preset = read("world_preset/ocean_world")
     preset["dimensions"]["minecraft:overworld"]["generator"]["biome_source"]["biomes"] = ocean
@@ -1109,6 +1154,8 @@ def noise_settings():
     o["temperature"] = snoise("minecraft:temperature", 0.25 / CLIMATE_SCALE)
     # Deep / shallow / reef follow the seabed's macro layout, not every ridge, trench and canyon.
     o["continents"] = add(A("seabed_macro"), mul(0.02, snoise(A("biome_fuzz"), 1.0)))
+    # Rifts pick their biome from the same field that opens their shaft (see biome_sources).
+    o["erosion"] = add(1.0 - RIFT["biome"], A("rift"))
 
     def patch_rule(rule):  # the warm-biome sand rule also covers the reef
         if isinstance(rule, dict):
@@ -1120,6 +1167,13 @@ def noise_settings():
             for v in rule:
                 patch_rule(v)
     patch_rule(ocean["surface_rule"])
+    # Rifts: no bedrock, and solid deepslate instead of loose gravel on the floor above the void (before the bedrock rule).
+    below_bedrock_top = {"type": "minecraft:not", "invert": {"type": "minecraft:y_above", "anchor": {"absolute": -56},
+                                                              "surface_depth_multiplier": 0, "add_stone_depth": False}}
+    rift_rule = cond(biome_is("abyssal_rift"), cond(below_bedrock_top, block("minecraft:deepslate", axis="y")))
+    rules = ocean["surface_rule"]["sequence"]
+    if rift_rule not in rules:
+        rules.insert(0, rift_rule)
     write("noise_settings/ocean", ocean)
 
 
@@ -1143,7 +1197,7 @@ def main():
     caves()
     profiled = {b for biomes, _, _ in seabed_structures.PROFILES.values() for b in biomes}
     counts = seabed_structures.write(CAVE_DIR, set(DEEP_BIOMES) - (NO_STRUCTURE_PROFILE - profiled))
-    print(f"{len(CONFIGURED)} configured features, {len(PLACED)} placed features, {len(DEEP_BIOMES) + 1} biomes, "
+    print(f"{len(CONFIGURED)} configured features, {len(PLACED)} placed features, {len(DEEP_BIOMES) + 2} biomes, "
           f"{len(CAVE_ENVIRONMENTS)} cave environments, {len(CAVE_PROFILES)} cave profiles, {len(CAVERN_TEMPLATES)} cavern templates, "
           f"{counts[0]} seabed structures, {counts[1]} structure profiles")
 

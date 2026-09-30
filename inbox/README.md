@@ -13,6 +13,14 @@ ChatGPT の成果物をここに置く。Claude Code/KiroCrew は inbox/ 以外�
 `inbox/textures/<block_id>.png` を生成する。画像の取込後に Codex が texture_studio または
 forge_textures を実行する。rock 系は texture_locks を必ず維持する。
 
+### シート画像の取込 (Agent Flow「画像生成」タブ / `tools/agentflow/sheets.py`)
+プリセットは `inbox/prompts/sheets.json`(シートごとの ids 読み順・kind・dest・skip・lock・derive。プロンプト本文は md から都度抽出)。
+1. タブでシートを選び「プロンプトをコピー」→ ChatGPT で生成 (`sheets.py prompt ORE`)
+2. 画像をドロップ → `inbox/textures/sheets/<name>.*` に保存 (25MB まで)
+3. パネル自動提案 or ドラッグで範囲指定、結合(merge)調整、番号の除外/入替を確認 (`sheets.py detect auto --preset ORE`)
+4. ドライラン → 取り込む: textures 上書き・ロック更新・glow 等を再導出・check_textures。旧ファイルは `inbox/backup/gui-import-<時刻>/`
+5. 失敗したら「最後の取込を元に戻す」(`sheets.py undo`)。skip の ids(植物の壁/カーペット系など)は常に上書きしない
+
 ## 仕様書テンプレ
 ```
 # <id> <title>

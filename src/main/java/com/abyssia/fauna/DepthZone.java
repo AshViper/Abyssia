@@ -16,6 +16,8 @@ import net.minecraft.world.level.Level;
 public final class DepthZone
 {
     public static final int OCEAN_SURFACE_Y = 63;
+    /** Deepest ocean world Y the depth scale follows (the old transition depth the depth bands were tuned to). */
+    private static final int OCEAN_DEPTH_FLOOR_Y = 0;
     private static final double[] BLOCKS = {0, 40, 100, 200, 300, 380};
     private static final double[] METRES = {0, 200, 1000, 4000, 6000, 11000};
 
@@ -41,11 +43,22 @@ public final class DepthZone
 
     private DepthZone() {}
 
-    /** Blocks below the ocean surface, continuous across the ocean world / deep ocean boundary. */
+    /**
+     * Blocks below the ocean surface, continuous across the ocean world / deep ocean boundary. Ocean world water below
+     * {@link #OCEAN_DEPTH_FLOOR_Y} (trench floors, abyssal rifts) reads as that depth and the deep ocean carries on from
+     * it, so the deep ocean's depth bands stay where they were tuned (deep Y 200 = 63 blocks) whatever the transition Y.
+     */
     public static double blocksBelowSurface(Level level, double y)
     {
-        if (level.dimension() == DeepOceanTransition.DEEP_OCEAN) y -= Config.DEEP_OCEAN_COORDINATE_OFFSET_Y.get();
+        if (level.dimension() == DeepOceanTransition.DEEP_OCEAN) y -= deepOceanOffset();
+        else if (level.dimension() == DeepOceanTransition.OCEAN_WORLD) y = Math.max(y, OCEAN_DEPTH_FLOOR_Y);
         return OCEAN_SURFACE_Y - y;
+    }
+
+    /** Deep ocean Y minus this = the ocean world Y of the same depth. */
+    public static int deepOceanOffset()
+    {
+        return Config.DEEP_OCEAN_COORDINATE_OFFSET_Y.get() + Math.min(Config.DEEP_OCEAN_TRANSITION_Y.get(), OCEAN_DEPTH_FLOOR_Y);
     }
 
     public static double metres(Level level, double y)
@@ -56,7 +69,7 @@ public final class DepthZone
     /** Metres at a deep-ocean Y, without a Level (worldgen placement runs only in the deep ocean). */
     public static double deepOceanMetres(double y)
     {
-        return metres(OCEAN_SURFACE_Y - (y - Config.DEEP_OCEAN_COORDINATE_OFFSET_Y.get()));
+        return metres(OCEAN_SURFACE_Y - (y - deepOceanOffset()));
     }
 
     public static double metres(double blocks)

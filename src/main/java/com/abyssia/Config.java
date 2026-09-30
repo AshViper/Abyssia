@@ -16,16 +16,18 @@ public class Config
             .define("enabled", true);
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_TRANSITION_Y = BUILDER
-            .comment("Ocean world Y at or below which players are moved into the deep ocean")
-            .defineInRange("transition_y", 0, -64, 319);
+            .comment("Ocean world Y at or below which players are moved into the deep ocean.",
+                    "Default -61 is inside the bedrock floor (Y -64..-60): only reachable down an abyssal rift")
+            .defineInRange("transition_y", -61, -64, 319);
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_RETURN_Y = BUILDER
             .comment("Deep ocean Y at or above which players are moved back to the ocean world")
             .defineInRange("return_y", 240, -128, 255);
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_COORDINATE_OFFSET_Y = BUILDER
-            .comment("deepY = oceanY + coordinate_offset_y. Deep ocean terrain is generated assuming 200")
-            .defineInRange("coordinate_offset_y", 200, -512, 512);
+            .comment("deepY = oceanY + coordinate_offset_y. Deep ocean terrain is generated assuming divers arrive",
+                    "at deep Y 200, i.e. transition_y + coordinate_offset_y = 200 (default -61 + 261)")
+            .defineInRange("coordinate_offset_y", 261, -512, 512);
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_TRANSITION_COOLDOWN = BUILDER
             .comment("Ticks after a transition during which no further transition happens")
