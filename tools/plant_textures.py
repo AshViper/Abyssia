@@ -5,9 +5,12 @@ sits on what the player harvests (resin beads, oil bladders, glowing polyps, cry
 reads at a glance. Only luminous plants get a glow layer (<name>_ripe_glow.png), and only on their small light
 organs.
 
-    python tools/plant_textures.py                     # write every texture into the assets
+    python tools/plant_textures.py                     # write the missing textures into the assets
+    python tools/plant_textures.py --textures all      # redraw existing ones too (tools/texture_locks.py)
     python tools/plant_textures.py --list              # JSON: texture -> kind
     python tools/plant_textures.py --preview sheet.png # contact sheet (x4), nothing written
+
+Writes follow tools/texture_locks.py: locked PNGs are never replaced, glow overlays come from derive_textures.py.
 """
 from __future__ import annotations
 
@@ -18,6 +21,8 @@ import os
 
 import numpy as np
 from PIL import Image
+
+import texture_locks
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "..", "src", "main", "resources", "assets", "abyssia", "textures")
@@ -546,13 +551,12 @@ def run(quiet: bool = False) -> list[str]:
     os.makedirs(block_dir, exist_ok=True)
     os.makedirs(item_dir, exist_ok=True)
     for name, (img, glow) in plant_textures().items():
-        img.save(os.path.join(block_dir, name + ".png"))
-        if glow is not None:
-            glow.save(os.path.join(block_dir, name + "_glow.png"))
-        written.append(name)
+        if texture_locks.save(img, os.path.join(block_dir, name + ".png")):
+            written.append(name)
+        # glow overlays: derive_textures.py (texture_locks.save skips them)
     for name, img in item_textures().items():
-        img.save(os.path.join(item_dir, name + ".png"))
-        written.append(name)
+        if texture_locks.save(img, os.path.join(item_dir, name + ".png")):
+            written.append(name)
     if not quiet:
         print(f"Plant textures: {len(written)} written")
     return written
@@ -583,7 +587,9 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--preview")
+    ap.add_argument("--textures", choices=texture_locks.MODES, default=texture_locks.MODE)
     a = ap.parse_args()
+    texture_locks.set_mode(a.textures)
     if a.list:
         print(json.dumps({**{n: "block" for n in plant_textures()}, **{n: "item" for n in ICONS}}, indent=1))
     elif a.preview:

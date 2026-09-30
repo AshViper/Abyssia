@@ -1,11 +1,17 @@
 """Generates every Abyssia block/item asset: original pixel-art textures, models, blockstates, loot tables,
 tags, smelting recipes and translations.
 
-Run from anywhere:  python tools/gen_deep_assets.py [--no-forge]
+Run from anywhere:  python tools/gen_deep_assets.py [--no-forge] [--textures missing-only|locked-only|all]
 Textures are first drawn procedurally (tools/pixelart.py), then regenerated with Texture Forge by forge_textures.py
 (vanilla textures as style references; --no-forge skips that pass).  Everything is deterministic per name, so
 re-running only changes what you edit.  Building blocks (stone families, ancient wood) come from building_assets.py.
-Previously generated block/item assets are wiped first, so removed blocks leave nothing behind.
+
+The committed textures are the source of truth: with the default ``--textures missing-only`` only textures whose PNG
+does not exist yet are drawn, ``locked-only`` redraws every unlocked texture, ``all`` is the old redraw-everything
+(see tools/texture_locks.py).  Locked textures are never drawn (except with ``all``, then restored), and derived
+textures (stone family variants, crust bricks / polished crusts, *_glow overlays) always come from
+tools/derive_textures.py, run at the end.  Blockstates, models, block loot tables and recipes are wiped and rewritten
+each run, so removed blocks leave no JSON behind; the textures folders are never wiped.
 """
 import json
 import os
@@ -19,6 +25,7 @@ import cave_assets
 import gen_fauna
 import mineral_textures
 import plant_assets
+import texture_locks
 
 from pixelart import (Canvas, N, blade, branch, darken, disc, facets, flecks, glow_mask, hexrgb, item_outline, lighten,
                       mud, ore, palette, rng_for, rock, sediment, shard, veined)
@@ -29,6 +36,15 @@ DATA = os.path.join(ROOT, "data")
 BLOCK_TEX = os.path.join(ASSETS, "textures", "block")
 ITEM_TEX = os.path.join(ASSETS, "textures", "item")
 PARTICLE_TEX = os.path.join(ASSETS, "textures", "particle")
+
+
+_save = texture_locks.save       # every texture write goes through the lock / --textures policy
+
+
+def _emit(make, path):
+    """Draw and write a texture only when the policy wants it (``make`` is not called otherwise)."""
+    if texture_locks.wants(path):
+        texture_locks.save(make(), path)
 
 
 def write(path, obj):
@@ -230,23 +246,8 @@ def ore_textures(t):
               "iron_crust": "iron", "copper_crust": "copper"}
     for name, mineral in crusts.items():
         t[name] = flecks(t["deep_sediment"], name, MINERAL[mineral][:4], density=0.45, threshold=0.42)
-        # Polished variants deliberately reuse the crust artwork: retain its mineral
-        # pattern while giving the block family a distinct registered model/shape.
-        t["polished_" + name] = t[name]
-        t[name + "_bricks"] = crust_bricks(t[name])
-
-
-def crust_bricks(base):
-    """The crust texture with darker 1px running-bond brick joints (16x16: rows of 4px, bricks 8px wide)."""
-    c = base.copy()
-    for y in range(16):
-        for x in range(16):
-            row = y // 4
-            joint_h = y % 4 == 3
-            joint_v = (x - (4 if row % 2 else 0)) % 8 == 7 and not joint_h
-            if joint_h or joint_v:
-                c.put(x, y, darken(tuple(int(v) for v in c.get(x, y)), 0.45))
-    return c
+    # Polished crusts (the crust art itself) and crust bricks (crust + dark running-bond joints) are derived from the
+    # current crust textures by tools/derive_textures.py.
 
 
 # ---------------------------------------------------------------- cross sprites (clusters, plants)
@@ -820,7 +821,9 @@ def tube_column_model(side, top):
 # ================================================================ main
 
 def reset_dirs():
-    for d in (os.path.join(ASSETS, "blockstates"), os.path.join(ASSETS, "models"), BLOCK_TEX, ITEM_TEX,
+    """Wipe the generated JSON folders.  The textures folders are left alone: committed and locked PNGs are the
+    source of truth, and the texture writers only replace what the --textures mode asks for."""
+    for d in (os.path.join(ASSETS, "blockstates"), os.path.join(ASSETS, "models"),
               os.path.join(DATA, "abyssia", "loot_tables", "blocks"), os.path.join(DATA, "abyssia", "loot_tables", "harvest"),
               os.path.join(DATA, "abyssia", "recipes")):
         shutil.rmtree(d, ignore_errors=True)
@@ -828,6 +831,7 @@ def reset_dirs():
 
 
 def main():
+    texture_locks.mode_from_argv()
     reset_dirs()
     bs = lambda n: os.path.join(ASSETS, "blockstates", n + ".json")
     bm = lambda n: os.path.join(ASSETS, "models", "block", n + ".json")
@@ -835,74 +839,68 @@ def main():
     tex = lambda n: os.path.join(BLOCK_TEX, n + ".png")
     ref = lambda n: "abyssia:block/" + n
 
-    t = terrain_textures()
-    ore_textures(t)
+    t = {}
+    if any(texture_locks.wants(tex(name)) for name in CUBES):
+        t = terrain_textures()
+        ore_textures(t)
     for name in CUBES:
-        t[name].save(tex(name))
+        if name in t:
+            _save(t[name], tex(name))
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         write(bm(name), {"parent": "minecraft:block/cube_all", "textures": {"all": ref(name)}})
         write(im(name), {"parent": ref(name)})
 
-    # Polished metal crusts reuse the crust texture and bricks draw joints on it; their models, blockstates, loot,
-    # recipes, tags and names come from building_assets.py.
-    for name in building_assets.CRUST_POLISHED + building_assets.CRUST_BRICKS:
-        t[name].save(tex(name))
+    # Polished metal crusts reuse the crust texture and bricks draw joints on it (derive_textures.py); their models,
+    # blockstates, loot, recipes, tags and names come from building_assets.py.
 
     rot = {"down": {"x": 180}, "east": {"x": 90, "y": 90}, "north": {"x": 90}, "south": {"x": 90, "y": 180},
            "up": {}, "west": {"x": 90, "y": 270}}
     for name, make in CLUSTERS.items():
-        make().save(tex(name))
-        # special crystals glow at their cores; mineral_textures draws both layers (texture forge redraws them)
+        _emit(make, tex(name))
+        # special crystals glow at their cores; the overlay comes from derive_textures.py
         glow = name in mineral_textures.GLOWING
-        if glow:
-            mineral_textures.render(name)[1].save(tex(name + "_glow"))
         write(bs(name), {"variants": {f"facing={f}": {"model": ref(name), **r} for f, r in rot.items()}})
         write(bm(name), cross_model(ref(name), ref(name + "_glow") if glow else None))
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": ref(name)}})
 
     for name, make in PLANTS.items():
         base, glow = make()
-        base.save(tex(name))
-        if glow:
-            glow.save(tex(name + "_glow"))
+        _save(base, tex(name))                   # the glow overlay (if any) comes from derive_textures.py
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         write(bm(name), cross_model(ref(name), ref(name + "_glow") if glow else None))
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": ref(name)}})
 
     for name, (make_top, make_body) in STACKING.items():
         top, glow = make_top()
-        top.save(tex(name + "_top"))
-        make_body().save(tex(name))
-        if glow:
-            glow.save(tex(name + "_top_glow"))
+        _save(top, tex(name + "_top"))
+        _emit(make_body, tex(name))
         write(bs(name), {"variants": {"top=true": {"model": ref(name + "_top")}, "top=false": {"model": ref(name)}}})
         write(bm(name + "_top"), cross_model(ref(name + "_top"), ref(name + "_top_glow") if glow else None))
         write(bm(name), cross_model(ref(name)))
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": ref(name + "_top")}})
 
     # Giant tube: a real 3D column rather than crossed planes.
-    giant_tube_side("giant_tube", PLANT["giant_tube"]).save(tex("giant_tube"))
-    giant_tube_top("giant_tube_top", PLANT["giant_tube"]).save(tex("giant_tube_top"))
+    _save(giant_tube_side("giant_tube", PLANT["giant_tube"]), tex("giant_tube"))
+    _save(giant_tube_top("giant_tube_top", PLANT["giant_tube"]), tex("giant_tube_top"))
     write(bs("giant_tube"), {"variants": {"top=true": {"model": ref("giant_tube_top")}, "top=false": {"model": ref("giant_tube")}}})
     write(bm("giant_tube_top"), tube_column_model(ref("giant_tube"), ref("giant_tube_top")))
     write(bm("giant_tube"), tube_column_model(ref("giant_tube"), ref("giant_tube")))
     write(im("giant_tube"), {"parent": ref("giant_tube_top")})
 
     for name, make in CARPETS.items():
-        make().save(tex(name))
+        _emit(make, tex(name))
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         write(bm(name), {"parent": "minecraft:block/carpet", "render_type": "minecraft:cutout", "textures": {"wool": ref(name)}})
         write(im(name), {"parent": ref(name)})
 
     bloom, bloom_glow = floating_bloom("floating_bloom")
-    bloom.save(tex("floating_bloom"))
-    bloom_glow.save(tex("floating_bloom_glow"))
+    _save(bloom, tex("floating_bloom"))
     write(bs("floating_bloom"), {"variants": {"": {"model": ref("floating_bloom")}}})
     write(bm("floating_bloom"), cross_model(ref("floating_bloom"), ref("floating_bloom_glow")))
     write(im("floating_bloom"), {"parent": "minecraft:item/generated", "textures": {"layer0": ref("floating_bloom")}})
 
-    kelp("void_kelp", PLANT["void"], True).save(tex("void_kelp"))
-    kelp("void_kelp_plant", PLANT["void"], False).save(tex("void_kelp_plant"))
+    _save(kelp("void_kelp", PLANT["void"], True), tex("void_kelp"))
+    _save(kelp("void_kelp_plant", PLANT["void"], False), tex("void_kelp_plant"))
     for name in ("void_kelp", "void_kelp_plant"):
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         write(bm(name), cross_model(ref(name)))
@@ -915,7 +913,7 @@ def main():
     building_assets.generate(write, bs, bm, im, DATA)
 
     for name, make in ITEMS.items():
-        make().save(os.path.join(ITEM_TEX, name + ".png"))
+        _emit(make, os.path.join(ITEM_TEX, name + ".png"))
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": "abyssia:item/" + name}})
 
     # Fauna spawn eggs (the rest of the fauna assets come from gen_fauna.py)
@@ -923,8 +921,8 @@ def main():
 
     # Plant particles
     os.makedirs(PARTICLE_TEX, exist_ok=True)
-    soft_dot(8, 1.4, hexrgb("#c8d88a"), hexrgb("#f0ffc0")).save(os.path.join(PARTICLE_TEX, "spore.png"))
-    soft_dot(8, 2.0, hexrgb("#7ae8ff"), hexrgb("#e8ffff")).save(os.path.join(PARTICLE_TEX, "glow_dust.png"))
+    _save(soft_dot(8, 1.4, hexrgb("#c8d88a"), hexrgb("#f0ffc0")), os.path.join(PARTICLE_TEX, "spore.png"))
+    _save(soft_dot(8, 2.0, hexrgb("#7ae8ff"), hexrgb("#e8ffff")), os.path.join(PARTICLE_TEX, "glow_dust.png"))
     for p in ("spore", "glow_dust"):
         write(os.path.join(ASSETS, "particles", p + ".json"), {"textures": ["abyssia:" + p]})
 
@@ -940,8 +938,10 @@ def main():
         import forge_textures
         forge_textures.run()
     # Approved textures and models are frozen against regeneration (also applied inside forge_textures.run).
-    import texture_locks
     texture_locks.apply()
+    # Stone family variants, crust bricks and glow overlays follow the current base textures.
+    import derive_textures
+    derive_textures.run()
     # Texture Studio specs (tools/texture_studio) are the user's hand-made textures: they win over every generator.
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'texture_studio'))
     import texture_engine as _studio

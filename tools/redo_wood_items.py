@@ -13,7 +13,8 @@ pixels are re-toned through a short per-texture ramp:
 
 Called at the end of forge_textures.run(): ``run(quiet) -> list of names written``.  Deterministic.
 
-    python tools/redo_wood_items.py                 # write all
+    python tools/redo_wood_items.py                 # write the missing ones (tools/texture_locks.py policy)
+    python tools/redo_wood_items.py --textures all  # redraw existing ones too (locked ones are restored afterwards)
     python tools/redo_wood_items.py --preview x.png # before/after sheet (8x) from inbox/backup/textures-20260930
 """
 from __future__ import annotations
@@ -26,6 +27,8 @@ import zlib
 
 import numpy as np
 from PIL import Image, ImageDraw
+
+import texture_locks
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "..", "src", "main", "resources", "assets", "abyssia", "textures")
@@ -157,10 +160,12 @@ def run(quiet: bool = False) -> list[str]:
         return []
     written = []
     for name, spec in SPECS.items():
+        path = os.path.join(ASSETS, name + ".png")
+        if not texture_locks.wants(path):
+            continue                                   # kept as committed / locked
         src = v.get(spec[0])
         if src is None:
             continue
-        path = os.path.join(ASSETS, name + ".png")
         old = Image.open(path).size if os.path.exists(path) else src.size
         img = render(name, src)
         if img.size != old:
@@ -193,7 +198,9 @@ def preview(out: str, cols: int = 4) -> None:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--preview")
+    ap.add_argument("--textures", choices=texture_locks.MODES, default=texture_locks.MODE)
     a = ap.parse_args()
+    texture_locks.set_mode(a.textures)
     run()
     if a.preview:
         preview(a.preview)

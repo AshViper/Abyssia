@@ -13,9 +13,16 @@ Two kinds of textures come out of here:
 client jar in the Gradle cache (set ABYSSIA_MC_JAR to point somewhere else); without it the generator falls back
 to its built-in style profiles.
 
-    python tools/forge_textures.py                     # write every texture
-    python tools/forge_textures.py --only deep_sea_rock,cobalt_ore
+    python tools/forge_textures.py                     # draw the textures whose PNG is missing
+    python tools/forge_textures.py --textures all      # old behaviour: redraw every texture
+    python tools/forge_textures.py --only deep_sea_rock,cobalt_ore --textures locked-only
     python tools/forge_textures.py --preview sheet.png # also write a contact sheet
+
+``--textures`` (tools/texture_locks.py): ``missing-only`` (default) draws only missing PNGs, ``locked-only`` redraws
+every unlocked one, ``all`` redraws everything (the locks are re-applied afterwards).  Locked textures are not even
+rendered in the first two modes.  The stone family jobs (polished / bricks / cracked / chiseled) are kept for their
+seed slots but never written, and glow overlays are not written either: tools/derive_textures.py rebuilds both from
+the current base textures at the end of ``run``.
 
 gen_deep_assets.py runs this after writing the models, so a full regenerate is still one command.  Textures that
 are not listed here (tube plants, giant tube, ancient cave plant, abyssal mushroom, frond leaves, debris
@@ -46,6 +53,7 @@ from core.palette import lch_to_oklab, luminance, oklab_to_rgb, rgb_to_hex  # no
 from core.settings import TextureSettings  # noqa: E402
 
 import building_assets as ba  # noqa: E402
+import texture_locks  # noqa: E402
 import mineral_textures as mt  # noqa: E402
 import importlib, importlib.util  # noqa: E402
 
@@ -577,18 +585,19 @@ def run(only: set[str] | None = None, preview: str | None = None, quiet: bool = 
     for name, j in JOBS.items():
         if only and name not in only:
             continue
-        img, glow, res = render(gen, vanilla, name, j)
         folder = os.path.join(ASSETS, j.kind)
-        os.makedirs(folder, exist_ok=True)
         path = os.path.join(folder, name + ".png")
+        if not texture_locks.wants(path):
+            continue                                   # locked, derived or kept as committed
+        img, glow, res = render(gen, vanilla, name, j)
+        os.makedirs(folder, exist_ok=True)
         if j.frames:
             save_strip(sway(img, j.frames, j.hang), path)
         else:
             img.save(path)
             if os.path.exists(path + ".mcmeta"):
                 os.remove(path + ".mcmeta")
-        if glow is not None:
-            glow.save(os.path.join(folder, name + "_glow.png"))
+        # glow overlays: derive_textures.py (texture_locks.save skips derived files)
         written.append(name)
         shots.append((name, vanilla.get(j.ref), img, glow))
     if preview:
@@ -601,8 +610,10 @@ def run(only: set[str] | None = None, preview: str | None = None, quiet: bool = 
         if importlib.util.find_spec(mod) is not None:
             written += list(importlib.import_module(mod).run(quiet=quiet) or [])
     # Approved textures are frozen: whatever the jobs produce, the locked files win (tools/texture_locks.py).
-    import texture_locks
     texture_locks.apply(quiet)
+    # Stone family variants, crust bricks and glow overlays follow the current base textures.
+    import derive_textures
+    derive_textures.run(quiet=quiet)
     # Texture Studio specs (tools/texture_studio) are the user's hand-made textures: they win over every generator.
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'texture_studio'))
     import texture_engine as _studio
@@ -631,7 +642,10 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--only", help="comma separated texture names")
     ap.add_argument("--preview", help="write a contact sheet (reference | texture | glow) to this PNG")
+    ap.add_argument("--textures", choices=texture_locks.MODES, default=texture_locks.MODE,
+                    help="which existing PNGs to redraw (tools/texture_locks.py)")
     args = ap.parse_args()
+    texture_locks.set_mode(args.textures)
     only = set(args.only.split(",")) if args.only else None
     run(only, args.preview)
 
