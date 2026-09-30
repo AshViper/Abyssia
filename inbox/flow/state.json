@@ -1,11 +1,26 @@
 {
- "updated": 1790765108.7656329,
+ "updated": 1790765281.8531876,
  "main": {
   "model": "",
   "note": ""
  },
  "tasks": [],
- "log": [],
+ "log": [
+  {
+   "t": 1790765281.782201,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "running — ImageGen待ち: rock系24IDのプロンプト済み、新規画像0/24"
+  },
+  {
+   "t": 1790765281.853184,
+   "who": "T01",
+   "kind": "info",
+   "model": "claude",
+   "msg": "Claudeで確認: inbox/textures の5枚は既存ロックと同一(旧)。新規生成画像0/24。ChatGPT ImageGen待ち"
+  }
+ ],
  "stages": {
   "request": {
    "status": "idle",
@@ -16,8 +31,9 @@
    "note": ""
   },
   "chatgpt": {
-   "status": "idle",
-   "note": ""
+   "status": "running",
+   "note": "ImageGen待ち: rock系24IDのプロンプト済み、新規画像0/24",
+   "t": 1790765281.7821972
   },
   "texture": {
    "status": "idle",
