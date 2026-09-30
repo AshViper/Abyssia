@@ -176,7 +176,7 @@ class AutoRun:
 
     def _start_worker(self, request):
         cfg = load_cfg()
-        runner = cfg.get("runner", "codex")
+        runner = cfg.get("runner", "claude")
         exe = shutil.which(runner)
         rid = request["id"]
         if not exe:
