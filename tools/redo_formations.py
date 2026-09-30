@@ -10,8 +10,10 @@ files they replace are kept; ``*_glow`` companions are the emissive subset (same
 Runs at the end of forge_textures.run() (before texture_locks / texture_studio, so locked or studio-made
 textures still win).  Clusters and buds are NOT here: mineral_textures.py owns them.
 
-    python tools/redo_formations.py            # write everything
+    python tools/redo_formations.py            # write the missing textures (tools/texture_locks.py policy)
+    python tools/redo_formations.py --textures all   # redraw existing (unlocked: see texture_locks) ones too
     python tools/redo_formations.py --list
+Locked textures are skipped; glow companions are written by tools/derive_textures.py, not here.
 """
 from __future__ import annotations
 
@@ -24,6 +26,7 @@ from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import texture_locks  # noqa: E402
 
 BLOCK = os.path.join(HERE, "..", "src", "main", "resources", "assets", "abyssia", "textures", "block")
 LOCKS = os.path.join(HERE, "texture_locks", "assets", "textures", "block")
@@ -91,13 +94,13 @@ def paint(tones: np.ndarray, alpha: np.ndarray, ramp: list[tuple]) -> np.ndarray
 
 
 def save(arr: np.ndarray, name: str) -> None:
-    Image.fromarray(arr, "RGBA").save(os.path.join(BLOCK, name + ".png"))
+    texture_locks.save(arr, os.path.join(BLOCK, name + ".png"))
 
 
 def glow_of(arr: np.ndarray, sel: np.ndarray, name: str) -> None:
     g = np.zeros_like(arr)
     g[sel] = arr[sel]
-    Image.fromarray(g, "RGBA").save(os.path.join(BLOCK, name + "_glow.png"))
+    texture_locks.save(g, os.path.join(BLOCK, name + "_glow.png"))   # derived: skipped (derive_textures.py)
 
 
 # ------------------------------------------------------------------ vanilla
@@ -413,7 +416,7 @@ def brine_surface() -> list[str]:
         for i in range(5):
             m = t == i
             strip[f * 16:(f + 1) * 16][m] = (*ramp[i], alphas[i])
-    Image.fromarray(strip, "RGBA").save(os.path.join(BLOCK, name + ".png"))
+    texture_locks.save(strip, os.path.join(BLOCK, name + ".png"))
     return [name]
 
 
@@ -439,8 +442,8 @@ def _fix_block_glow_name() -> None:
 def run(quiet: bool = False) -> list[str]:
     written: list[str] = []
     for name, fn in targets().items():
-        if os.path.exists(os.path.join(LOCKS, name + ".png")):
-            continue                                   # locked by the user: leave the generator output alone
+        if os.path.exists(os.path.join(LOCKS, name + ".png")) or not texture_locks.wants(os.path.join(BLOCK, name + ".png")):
+            continue                                   # locked / kept as committed: leave it alone
         written += fn()
     if not quiet:
         print(f"redo_formations: {len(written)} textures written")
@@ -448,6 +451,7 @@ def run(quiet: bool = False) -> list[str]:
 
 
 if __name__ == "__main__":
+    texture_locks.mode_from_argv()
     if "--list" in sys.argv:
         print("\n".join(targets()))
     else:

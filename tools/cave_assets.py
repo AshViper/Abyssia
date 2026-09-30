@@ -1,7 +1,9 @@
 """Cave block assets for gen_deep_assets.py: textures (procedural pixel art), models, blockstates and names for the
 deep-sea cave network's rock, speleothems, crystals and flora.
 
-Not run on its own: gen_deep_assets.main() calls generate(), so the usual wipe-and-regenerate flow covers these too.
+Not run on its own: gen_deep_assets.main() calls generate(), so the usual regenerate flow covers these too.  Texture
+writes go through texture_locks.save (the --textures policy: existing / locked PNGs are kept, *_glow overlays come
+from derive_textures.py); the models are always written.
 Plant sway is done with animated textures (a few frames of gentle shear), which costs nothing at runtime.
 """
 import json
@@ -10,6 +12,8 @@ import os
 
 import numpy as np
 from PIL import Image
+
+from texture_locks import save as _save
 
 from pixelart import (Canvas, N, blade, darken, disc, facets, fbm, flecks, glow_mask, hexrgb, lighten, mix, mud, palette, rng_for,
                       rock, sediment, shard, value_noise, veined)
@@ -145,7 +149,8 @@ def sway_frames(c, frames=4, amplitude=1.0, anchor_top=False):
 
 
 def save_animated(frames, path, frametime=12):
-    Image.fromarray(np.concatenate(frames, axis=0), "RGBA").save(path)
+    if not _save(np.concatenate(frames, axis=0), path):
+        return
     with open(path + ".mcmeta", "w", encoding="utf-8") as f:
         json.dump({"animation": {"frametime": frametime, "interpolate": True}}, f, indent=2)
         f.write("\n")
@@ -441,10 +446,10 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
     """Writes every cave block's textures, models and blockstates; returns (cube names, cluster names) for tags."""
     t, glows = rock_textures()
     for name in CAVE_CUBES:
-        t[name].save(tex(name))
+        _save(t[name], tex(name))
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         if name in glows:
-            glows[name].save(tex(name + "_glow"))
+            _save(glows[name], tex(name + "_glow"))
             write(bm(name), cube_with_glow(ref(name), ref(name + "_glow")))
         else:
             write(bm(name), {"parent": "minecraft:block/cube_all", "textures": {"all": ref(name)}})
@@ -457,9 +462,9 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
             for direction in ("down", "up"):
                 key = f"{name}_{direction}_{thickness}"
                 c, g = speleothem_texture(name, thickness, direction == "down", pal, glow)
-                c.save(tex(key))
+                _save(c, tex(key))
                 if g is not None:
-                    g.save(tex(key + "_glow"))
+                    _save(g, tex(key + "_glow"))
                 write(bm(key), cross_model(ref(key), ref(key + "_glow") if g is not None else None))
                 variants[f"thickness={thickness},vertical_direction={direction}"] = {"model": ref(key)}
         write(bs(name), {"variants": variants})
@@ -467,7 +472,7 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
 
     # Crystal needle: a cluster that can face any direction.
     rot = {"down": {"x": 180}, "east": {"x": 90, "y": 90}, "north": {"x": 90}, "south": {"x": 90, "y": 180}, "up": {}, "west": {"x": 90, "y": 270}}
-    needle("crystal_needle", P("#3a6f8a", "#5fa8c8", "#9fe0f4", "#dcfbff")).save(tex("crystal_needle"))
+    _save(needle("crystal_needle", P("#3a6f8a", "#5fa8c8", "#9fe0f4", "#dcfbff")), tex("crystal_needle"))
     write(bs("crystal_needle"), {"variants": {f"facing={f}": {"model": ref("crystal_needle"), **r} for f, r in rot.items()}})
     write(bm("crystal_needle"), cross_model(ref("crystal_needle")))
     write(im("crystal_needle"), {"parent": "minecraft:item/generated", "textures": {"layer0": ref("crystal_needle")}})
@@ -482,9 +487,9 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
         "thermal_plant": tentacle_plant("thermal_plant", CAVE_PLANT["thermal_plant"], GLOW["orange"]),
     }
     for name, (c, g) in singles.items():
-        c.save(tex(name))
+        _save(c, tex(name))
         if g is not None:
-            g.save(tex(name + "_glow"))
+            _save(g, tex(name + "_glow"))
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         write(bm(name), cross_model(ref(name), ref(name + "_glow") if g is not None else None))
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": ref(name)}})
@@ -503,15 +508,15 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
             if sway:
                 save_animated(sway_frames(c, amplitude=sway), tex(key))
             else:
-                c.save(tex(key))
+                _save(c, tex(key))
         write(bs(name), {"variants": {"top=true": {"model": ref(name + "_top")}, "top=false": {"model": ref(name)}}})
         write(bm(name + "_top"), cross_model(ref(name + "_top")))
         write(bm(name), cross_model(ref(name)))
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": ref(name + "_top")}})
 
     # Ancient cave plant: a scaly 3D trunk with a frond crown on top.
-    ancient_trunk("ancient_cave_plant", CAVE_PLANT["ancient"]).save(tex("ancient_cave_plant"))
-    ancient_crown("ancient_cave_plant_top", CAVE_PLANT["ancient"]).save(tex("ancient_cave_plant_top"))
+    _save(ancient_trunk("ancient_cave_plant", CAVE_PLANT["ancient"]), tex("ancient_cave_plant"))
+    _save(ancient_crown("ancient_cave_plant_top", CAVE_PLANT["ancient"]), tex("ancient_cave_plant_top"))
     write(bs("ancient_cave_plant"), {"variants": {"top=true": {"model": ref("ancient_cave_plant_top")}, "top=false": {"model": ref("ancient_cave_plant")}}})
     write(bm("ancient_cave_plant"), tube_column_model(ref("ancient_cave_plant"), ref("ancient_cave_plant")))
     write(bm("ancient_cave_plant_top"), cross_model(ref("ancient_cave_plant_top")))
@@ -538,9 +543,9 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
             if sway:
                 save_animated(sway_frames(c, amplitude=sway, anchor_top=True), tex(key))
             else:
-                c.save(tex(key))
+                _save(c, tex(key))
         if tip_g is not None:
-            tip_g.save(tex(name + "_tip_glow"))
+            _save(tip_g, tex(name + "_tip_glow"))
         write(bs(name), {"variants": {"tip=true": {"model": ref(name + "_tip")}, "tip=false": {"model": ref(name)}}})
         write(bm(name + "_tip"), cross_model(ref(name + "_tip"), ref(name + "_tip_glow") if tip_g is not None else None))
         write(bm(name), cross_model(ref(name)))
@@ -551,14 +556,14 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
     walls = {"wall_fern": fern("wall_fern", CAVE_PLANT["cave_fern"]),
              "wall_mineral_vine": strands("wall_mineral_vine", CAVE_PLANT["mineral_vine"], False, count=3)[0]}
     for name, c in walls.items():
-        c.save(tex(name))
+        _save(c, tex(name))
         write(bm(name), wall_plant_model(ref(name)))
         write(bs(name), {"variants": {f"facing={f}": {"model": ref(name), **({"y": y} if y else {})}
                                       for f, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270))}})
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": ref(name)}})
 
     # Cave moss: a film on any combination of faces.
-    moss_film("cave_moss", CAVE_PLANT["moss"]).save(tex("cave_moss"))
+    _save(moss_film("cave_moss", CAVE_PLANT["moss"]), tex("cave_moss"))
     write(bm("cave_moss"), multiface_model(ref("cave_moss")))
     face_rot = {"north": {}, "east": {"y": 90}, "south": {"y": 180}, "west": {"y": 270}, "up": {"x": 270}, "down": {"x": 90}}
     write(bs("cave_moss"), {"multipart": [{"when": {face: "true"}, "apply": {"model": ref("cave_moss"), **r, "uvlock": True}} for face, r in face_rot.items()]})
@@ -569,10 +574,10 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
     carpets = {"cave_rubble": (rubble("cave_rubble"), None), "crystal_shards": (shards, shards_glow),
                "fallen_kelp": (fallen_kelp("fallen_kelp", CAVE_PLANT["cave_kelp"]), None)}
     for name, (c, g) in carpets.items():
-        c.save(tex(name))
+        _save(c, tex(name))
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         if g is not None:
-            g.save(tex(name + "_glow"))
+            _save(g, tex(name + "_glow"))
             model = {"parent": "minecraft:block/block", "render_type": "minecraft:cutout", "ambientocclusion": False,
                      "textures": {"particle": ref(name), "wool": ref(name), "glow": ref(name + "_glow")},
                      "elements": [{"from": [0, 0, 0], "to": [16, 1, 16], "faces": {"up": {"uv": [0, 0, 16, 16], "texture": "#wool"},
@@ -766,8 +771,8 @@ def generate_cavern(write, bs, bm, im, tex, ref, cross_model):
     # Crystal masses: full cubes with an emissive overlay on their seams and glints.
     for name, colour in CAVERN_CRYSTALS.items():
         c, g = crystal_mass(name, colour)
-        c.save(tex(name))
-        g.save(tex(name + "_glow"))
+        _save(c, tex(name))
+        _save(g, tex(name + "_glow"))
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         write(bm(name), cube_with_glow(ref(name), ref(name + "_glow")))
         write(im(name), {"parent": ref(name)})
@@ -776,31 +781,31 @@ def generate_cavern(write, bs, bm, im, tex, ref, cross_model):
     top, tips = kelp_like("crystal_kelp", CAVERN_PLANT["crystal_kelp"], True, bulb=P("#2aa8c2", "#8ae8f8", "#e0fcff"))
     top_glow = glow_mask(top, tips, GLOW["cyan"])
     body = kelp_like("crystal_kelp", CAVERN_PLANT["crystal_kelp"], False)[0]
-    top.save(tex("crystal_kelp_top"))
-    top_glow.save(tex("crystal_kelp_top_glow"))
-    body.save(tex("crystal_kelp"))
+    _save(top, tex("crystal_kelp_top"))
+    _save(top_glow, tex("crystal_kelp_top_glow"))
+    _save(body, tex("crystal_kelp"))
     write(bs("crystal_kelp"), {"variants": {"top=true": {"model": ref("crystal_kelp_top")}, "top=false": {"model": ref("crystal_kelp")}}})
     write(bm("crystal_kelp_top"), cross_model(ref("crystal_kelp_top"), ref("crystal_kelp_top_glow")))
     write(bm("crystal_kelp"), cross_model(ref("crystal_kelp")))
     write(im("crystal_kelp"), {"parent": "minecraft:item/generated", "textures": {"layer0": ref("crystal_kelp_top")}})
 
     # Ancient deep-sea plant: a bark column with ringed ends, gnarled roots, leafy fronds.
-    ancient_bark("ancient_stem", CAVERN_PLANT["ancient_bark"]).save(tex("ancient_stem"))
-    ancient_rings("ancient_stem_top", CAVERN_PLANT["ancient_bark"], CAVERN_PLANT["ancient_wood"]).save(tex("ancient_stem_top"))
+    _save(ancient_bark("ancient_stem", CAVERN_PLANT["ancient_bark"]), tex("ancient_stem"))
+    _save(ancient_rings("ancient_stem_top", CAVERN_PLANT["ancient_bark"], CAVERN_PLANT["ancient_wood"]), tex("ancient_stem_top"))
     # The stem is a log (it has an axis): building_assets writes its blockstate and models with the rest of its wood set.
-    gnarled_root("ancient_root", CAVE_PLANT["root"]).save(tex("ancient_root"))
+    _save(gnarled_root("ancient_root", CAVE_PLANT["root"]), tex("ancient_root"))
     write(bs("ancient_root"), {"variants": {"": {"model": ref("ancient_root")}}})
     write(bm("ancient_root"), {"parent": "minecraft:block/cube_all", "textures": {"all": ref("ancient_root")}})
     write(im("ancient_root"), {"parent": ref("ancient_root")})
-    frond_leaves("ancient_frond", CAVERN_PLANT["frond"]).save(tex("ancient_frond"))
+    _save(frond_leaves("ancient_frond", CAVERN_PLANT["frond"]), tex("ancient_frond"))
     write(bs("ancient_frond"), {"variants": {"": {"model": ref("ancient_frond")}}})
     write(bm("ancient_frond"), {"parent": "minecraft:block/cube_all", "render_type": "minecraft:cutout", "textures": {"all": ref("ancient_frond")}})
     write(im("ancient_frond"), {"parent": ref("ancient_frond")})
 
     # Luminous moss: laid out like cave moss, with full-bright pinpoints scattered over cavern roofs like stars.
     film, glow = luminous_film("luminous_moss")
-    film.save(tex("luminous_moss"))
-    glow.save(tex("luminous_moss_glow"))
+    _save(film, tex("luminous_moss"))
+    _save(glow, tex("luminous_moss_glow"))
     write(bm("luminous_moss"), glow_film_model(ref("luminous_moss"), ref("luminous_moss_glow")))
     face_rot = {"north": {}, "east": {"y": 90}, "south": {"y": 180}, "west": {"y": 270}, "up": {"x": 270}, "down": {"x": 90}}
     write(bs("luminous_moss"), {"multipart": [{"when": {face: "true"}, "apply": {"model": ref("luminous_moss"), **r, "uvlock": True}}

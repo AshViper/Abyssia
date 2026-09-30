@@ -22,6 +22,10 @@ Texture Forge; drafts of them in this style live in BLOCK_DRAFTS (shown by --pre
     python tools/mineral_textures.py --preview sheet.png    # contact sheet at 16 / 32 / 64
     python tools/mineral_textures.py --size 32 --out DIR    # other sizes go to DIR, never into the assets
     python tools/mineral_textures.py --dry-run              # render, write nothing, print JSON
+    python tools/mineral_textures.py --textures all         # also redraw existing PNGs (default: missing-only)
+
+Writes into the assets follow tools/texture_locks.py (``--textures``): by default only missing PNGs are drawn, locked
+ones never; glow overlays are left to tools/derive_textures.py.
 """
 from __future__ import annotations
 
@@ -33,6 +37,8 @@ from dataclasses import dataclass
 
 import numpy as np
 from PIL import Image, ImageDraw
+
+import texture_locks
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "..", "src", "main", "resources", "assets", "abyssia", "textures")
@@ -762,16 +768,19 @@ def run(only: set[str] | None = None, size: int = 16, out: str | None = None, dr
     for name, t in TEXTURES.items():
         if only and name not in only:
             continue
-        img, glow = render(name, size)
         folder = out or os.path.join(ASSETS, t.kind)
         path = os.path.join(folder, name + ".png")
         glow_path = os.path.join(folder, name + "_glow.png")
+        if not dry_run and not out and not texture_locks.wants(path):
+            continue                                   # kept as committed / locked (texture_locks policy)
+        img, glow = render(name, size)
         if not dry_run:
             os.makedirs(folder, exist_ok=True)
             img.save(path)
             if glow is not None:
-                glow.save(glow_path)
-            elif os.path.exists(glow_path) and not out:
+                texture_locks.save(glow, glow_path)    # into the assets: derive_textures.py owns glow overlays
+            elif os.path.exists(glow_path) and not out and texture_locks.MODE == "all" \
+                    and not texture_locks.is_locked(texture_locks.asset_rel(glow_path)):
                 os.remove(glow_path)
         report.append({"name": name, "category": t.category, "mineral": t.mineral, "kind": t.kind, "size": size,
                        "glow": glow is not None, "path": None if dry_run else os.path.normpath(path)})
@@ -807,7 +816,10 @@ def main() -> None:
     ap.add_argument("--dry-run", action="store_true", help="render only, write nothing")
     ap.add_argument("--list", action="store_true", help="print the texture table as JSON and exit")
     ap.add_argument("--preview", help="contact sheet (16 | 32 | 64 | glow) of the items and block drafts")
+    ap.add_argument("--textures", choices=texture_locks.MODES, default=texture_locks.MODE,
+                    help="which existing PNGs to redraw (tools/texture_locks.py)")
     args = ap.parse_args()
+    texture_locks.set_mode(args.textures)
     only = set(args.only.split(",")) if args.only else None
     if args.list:
         print(json.dumps({n: {"category": t.category, "mineral": t.mineral, "kind": t.kind}

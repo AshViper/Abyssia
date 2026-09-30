@@ -6,7 +6,9 @@ a full wood set (stripped stem, wood, planks, stairs, slab, fence, fence gate, d
 button).
 
 This module is data plus the JSON writers (models, blockstates, loot tables, recipes, tags, names); it is not run
-on its own - gen_deep_assets.main() calls generate().  Textures come from forge_textures.py, the Java side is
+on its own - gen_deep_assets.main() calls generate().  The stone family textures (polished / bricks / cracked
+bricks / chiseled) and the crust bricks / polished crusts are derived from their base texture by
+derive_textures.py; the ancient wood textures come from forge_textures.py.  The Java side is
 com.abyssia.registry.ModBuildingBlocks.
 """
 import os
@@ -42,7 +44,7 @@ class StoneFamily:
         return f"{self.rock}_brick"
 
 
-# Their textures (cut from the deepslate rock family) are set up in forge_textures.py.
+# Their textures are derived from the family's base rock texture by derive_textures.py.
 STONE_FAMILIES = [
     StoneFamily("deep_sea_rock", "Deep Sea Rock", "深海岩"),
     StoneFamily("abyssal_rock", "Abyssal Rock", "深淵岩"),

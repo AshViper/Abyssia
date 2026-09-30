@@ -9,7 +9,9 @@ Glow companions (``<name>_glow.png``) are a subset of the base's own pixels (sam
 Only companions that already exist in the assets are (re)written.  Sizes, animated strips and .mcmeta files match
 the previous files.  Deterministic (fixed seeds).  Runs at the end of forge_textures.run(); CLI:
 
-    python tools/redo_flora.py [--only a,b] [--out DIR]     # default out = the mod assets
+    python tools/redo_flora.py [--only a,b] [--out DIR] [--textures missing-only|locked-only|all]
+Into the mod assets, writes follow tools/texture_locks.py (default: only missing PNGs, never locked ones) and the
+glow companions are left to tools/derive_textures.py; ``--out DIR`` writes everything.
 """
 from __future__ import annotations
 
@@ -23,6 +25,8 @@ from io import BytesIO
 
 import numpy as np
 from PIL import Image
+
+import texture_locks
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BLOCK = os.path.join(HERE, "..", "src", "main", "resources", "assets", "abyssia", "textures", "block")
@@ -672,8 +676,10 @@ def run(quiet: bool = False, only: set | None = None, out: str | None = None) ->
     for name, sp in T.items():
         if only and name not in only:
             continue
-        img, glow = paint(_van(z, sp["src"]), sp["layers"], sp["ops"], sp["seed"], contrast=sp["contrast"])
         path = os.path.join(out, name + ".png")
+        if not texture_locks.wants(path):
+            continue                                   # kept as committed / locked
+        img, glow = paint(_van(z, sp["src"]), sp["layers"], sp["ops"], sp["seed"], contrast=sp["contrast"])
         gpath = os.path.join(out, name + "_glow.png")
         if sp["anim"]:
             n, hang = sp["anim"]
@@ -682,10 +688,8 @@ def run(quiet: bool = False, only: set | None = None, out: str | None = None) ->
             Image.fromarray(img, "RGBA").save(path)
             if os.path.exists(path + ".mcmeta"):
                 os.remove(path + ".mcmeta")
-        if glow is not None and (out != BLOCK or os.path.exists(gpath)):
-            Image.fromarray(glow, "RGBA").save(gpath)
         done.append(name)
-        if glow is not None:
+        if glow is not None and texture_locks.save(glow, gpath):   # skipped inside the assets (derived)
             done.append(name + "_glow")
     if not quiet:
         print(f"redo_flora: {len(done)} plant textures written")
@@ -696,5 +700,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--only")
     ap.add_argument("--out")
+    ap.add_argument("--textures", choices=texture_locks.MODES, default=texture_locks.MODE)
     a = ap.parse_args()
+    texture_locks.set_mode(a.textures)
     run(only=set(a.only.split(",")) if a.only else None, out=a.out)
