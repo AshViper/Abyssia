@@ -1,0 +1,7000 @@
+{
+ "namespace": "abyssia",
+ "generated": "2026-09-30",
+ "notes": [
+  "ids lowercase snake_case; namespace abyssia implied, vanilla with minecraft: prefix; '#' prefix = tag",
+  "damage_item on crafting_shapeless: item must be in ingredients and takes 1 damage per craft (crafting remainder); NOT consumed",
+  "smelting/blasting pairs: smelting 200t, blasting 100t. stonecutting counts are output counts",
+  "phase 1-6 unlock guide; machines are phase2 (implement_now=false)",
+  "tools.attack_damage = value passed to vanilla constructor (added to tier bonus), attack_speed = constructor modifier (e.g. -2.8)"
+ ],
+ "items": [
+  {
+   "id": "crushing_hammer",
+   "ja": "破砕ハンマー",
+   "en": "Crushing Hammer",
+   "category": "tool",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "iron-headed hammer with short wooden handle, heavy square head",
+    "palette": "#3b3b3f #8a8a90 #c9c9cf #7a5a3a",
+    "placeholder_from": "abyssal_alloy_pickaxe",
+    "tint": "#9a9aa2"
+   },
+   "justification": {
+    "why_not_existing": "破砕を作業台で行うための再利用可能な道具。機械(phase2)無しで粉砕工程を表現できる既存アイテムは無い",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "鉄+棒から作成。破砕レシピで耐久が1減る(crafting remainder)",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 13
+    },
+    "why_collect": "全ての金属で必須。耐久250"
+   }
+  },
+  {
+   "id": "iron_powder",
+   "ja": "鉄粉",
+   "en": "Iron Powder",
+   "category": "processed_metal",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "fine iron metal dust pile in a small mound",
+    "palette": "#20202a #b8b8b8 #e8e8e8",
+    "placeholder_from": "crust_powder",
+    "tint": "#b8b8b8"
+   },
+   "justification": {
+    "why_not_existing": "『破砕→精錬』の中間形態。粉のまま合金に混ぜるため(インゴットを消費せず合金量を増やせる)。原石・インゴットでは代替不可",
+    "category": "processed_metal",
+    "becomes_what": "corrosion_alloy_ingot, heat_resistant_alloy_ingot, high_strength_alloy_ingot, minecraft:iron_ingot",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "cobalt_pickaxe",
+     "cobalt_shovel",
+     "crushing_hammer",
+     "dive_tank",
+     "diving_suit_leggings",
+     "manganese_axe",
+     "manganese_sword",
+     "molybdenum_pickaxe",
+     "pressure_diver_helmet",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "ironの原石/精鉱→粉→インゴット。インゴットとは別に合金の混ぜ物になる",
+    "recipe_count": {
+     "produced_by": 2,
+     "consumed_in": 5
+    },
+    "why_collect": "原石を破砕すると2倍(原石1→粉2)。合金の増量材"
+   }
+  },
+  {
+   "id": "cobalt_powder",
+   "ja": "コバルト粉",
+   "en": "Cobalt Powder",
+   "category": "processed_metal",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "fine cobalt metal dust pile in a small mound",
+    "palette": "#20202a #2f5fa8 #e8e8e8",
+    "placeholder_from": "crust_powder",
+    "tint": "#2f5fa8"
+   },
+   "justification": {
+    "why_not_existing": "『破砕→精錬』の中間形態。粉のまま合金に混ぜるため(インゴットを消費せず合金量を増やせる)。原石・インゴットでは代替不可",
+    "category": "processed_metal",
+    "becomes_what": "cobalt_ingot, corrosion_alloy_ingot",
+    "final_products": [
+     "abyssal_alloy_axe",
+     "abyssal_alloy_hoe",
+     "abyssal_alloy_pickaxe",
+     "abyssal_alloy_shovel",
+     "abyssal_alloy_sword",
+     "abyssal_cutter",
+     "abyssal_drill",
+     "abyssal_flippers",
+     "cobalt_pickaxe",
+     "cobalt_shovel",
+     "deep_diver_helmet",
+     "dive_tank",
+     "diving_suit_leggings",
+     "pressure_diver_helmet",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "cobaltの原石/精鉱→粉→インゴット。インゴットとは別に合金の混ぜ物になる",
+    "recipe_count": {
+     "produced_by": 3,
+     "consumed_in": 3
+    },
+    "why_collect": "原石を破砕すると2倍(原石1→粉2)。合金の増量材"
+   }
+  },
+  {
+   "id": "nickel_powder",
+   "ja": "ニッケル粉",
+   "en": "Nickel Powder",
+   "category": "processed_metal",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "fine nickel metal dust pile in a small mound",
+    "palette": "#20202a #b3c2bc #e8e8e8",
+    "placeholder_from": "crust_powder",
+    "tint": "#b3c2bc"
+   },
+   "justification": {
+    "why_not_existing": "『破砕→精錬』の中間形態。粉のまま合金に混ぜるため(インゴットを消費せず合金量を増やせる)。原石・インゴットでは代替不可",
+    "category": "processed_metal",
+    "becomes_what": "heat_resistant_alloy_ingot, nickel_ingot, tungsten_alloy_ingot",
+    "final_products": [
+     "abyssal_alloy_axe",
+     "abyssal_alloy_hoe",
+     "abyssal_alloy_pickaxe",
+     "abyssal_alloy_shovel",
+     "abyssal_alloy_sword",
+     "abyssal_cutter",
+     "abyssal_drill",
+     "abyssal_flippers",
+     "deep_diver_helmet",
+     "dive_tank",
+     "diving_suit_leggings",
+     "molybdenum_pickaxe",
+     "pressure_diver_helmet",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "nickelの原石/精鉱→粉→インゴット。インゴットとは別に合金の混ぜ物になる",
+    "recipe_count": {
+     "produced_by": 3,
+     "consumed_in": 4
+    },
+    "why_collect": "原石を破砕すると2倍(原石1→粉2)。合金の増量材"
+   }
+  },
+  {
+   "id": "manganese_powder",
+   "ja": "マンガン粉",
+   "en": "Manganese Powder",
+   "category": "processed_metal",
+   "rarity": "common",
+   "phase": 2,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "fine manganese metal dust pile in a small mound",
+    "palette": "#20202a #8a5f9a #e8e8e8",
+    "placeholder_from": "crust_powder",
+    "tint": "#8a5f9a"
+   },
+   "justification": {
+    "why_not_existing": "『破砕→精錬』の中間形態。粉のまま合金に混ぜるため(インゴットを消費せず合金量を増やせる)。原石・インゴットでは代替不可",
+    "category": "processed_metal",
+    "becomes_what": "hardened_tip, manganese_ingot",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "cobalt_pickaxe",
+     "cobalt_shovel",
+     "manganese_axe",
+     "manganese_sword",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "manganeseの原石/精鉱→粉→インゴット。インゴットとは別に合金の混ぜ物になる",
+    "recipe_count": {
+     "produced_by": 3,
+     "consumed_in": 3
+    },
+    "why_collect": "原石を破砕すると2倍(原石1→粉2)。合金の増量材"
+   }
+  },
+  {
+   "id": "vanadium_powder",
+   "ja": "バナジウム粉",
+   "en": "Vanadium Powder",
+   "category": "processed_metal",
+   "rarity": "uncommon",
+   "phase": 3,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "fine vanadium metal dust pile in a small mound",
+    "palette": "#20202a #8caf6a #e8e8e8",
+    "placeholder_from": "crust_powder",
+    "tint": "#8caf6a"
+   },
+   "justification": {
+    "why_not_existing": "『破砕→精錬』の中間形態。粉のまま合金に混ぜるため(インゴットを消費せず合金量を増やせる)。原石・インゴットでは代替不可",
+    "category": "processed_metal",
+    "becomes_what": "high_strength_alloy_ingot, vanadium_ingot",
+    "final_products": [
+     "abyssal_alloy_axe",
+     "abyssal_alloy_hoe",
+     "abyssal_alloy_pickaxe",
+     "abyssal_alloy_shovel",
+     "abyssal_alloy_sword",
+     "abyssal_drill",
+     "abyssal_flippers",
+     "deep_diver_helmet",
+     "manganese_axe",
+     "manganese_sword"
+    ],
+    "relation_to_existing": "vanadiumの原石/精鉱→粉→インゴット。インゴットとは別に合金の混ぜ物になる",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "原石を破砕すると2倍(原石1→粉2)。合金の増量材"
+   }
+  },
+  {
+   "id": "tungsten_powder",
+   "ja": "タングステン粉",
+   "en": "Tungsten Powder",
+   "category": "processed_metal",
+   "rarity": "uncommon",
+   "phase": 3,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "fine tungsten metal dust pile in a small mound",
+    "palette": "#20202a #464c58 #e8e8e8",
+    "placeholder_from": "crust_powder",
+    "tint": "#464c58"
+   },
+   "justification": {
+    "why_not_existing": "『破砕→精錬』の中間形態。粉のまま合金に混ぜるため(インゴットを消費せず合金量を増やせる)。原石・インゴットでは代替不可",
+    "category": "processed_metal",
+    "becomes_what": "thermal_alloy_ingot, tungsten_ingot, tungsten_tip",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "abyssal_power_core",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "tungstenの原石/精鉱→粉→インゴット。インゴットとは別に合金の混ぜ物になる",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 4
+    },
+    "why_collect": "原石を破砕すると2倍(原石1→粉2)。合金の増量材"
+   }
+  },
+  {
+   "id": "tellurium_powder",
+   "ja": "テルル粉",
+   "en": "Tellurium Powder",
+   "category": "processed_metal",
+   "rarity": "uncommon",
+   "phase": 4,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "fine tellurium metal dust pile in a small mound",
+    "palette": "#20202a #7f9f9a #e8e8e8",
+    "placeholder_from": "crust_powder",
+    "tint": "#7f9f9a"
+   },
+   "justification": {
+    "why_not_existing": "『破砕→精錬』の中間形態。粉のまま合金に混ぜるため(インゴットを消費せず合金量を増やせる)。原石・インゴットでは代替不可",
+    "category": "processed_metal",
+    "becomes_what": "conductive_alloy_ingot, tellurium_ingot",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "abyssal_power_core"
+    ],
+    "relation_to_existing": "telluriumの原石/精鉱→粉→インゴット。インゴットとは別に合金の混ぜ物になる",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "原石を破砕すると2倍(原石1→粉2)。合金の増量材"
+   }
+  },
+  {
+   "id": "yttrium_powder",
+   "ja": "イットリウム粉",
+   "en": "Yttrium Powder",
+   "category": "processed_metal",
+   "rarity": "uncommon",
+   "phase": 4,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "fine yttrium metal dust pile in a small mound",
+    "palette": "#20202a #d8d59b #e8e8e8",
+    "placeholder_from": "crust_powder",
+    "tint": "#d8d59b"
+   },
+   "justification": {
+    "why_not_existing": "『破砕→精錬』の中間形態。粉のまま合金に混ぜるため(インゴットを消費せず合金量を増やせる)。原石・インゴットでは代替不可",
+    "category": "processed_metal",
+    "becomes_what": "luminous_crystal, yttrium_ingot",
+    "final_products": [
+     "abyssal_power_core",
+     "crystal_pickaxe"
+    ],
+    "relation_to_existing": "yttriumの原石/精鉱→粉→インゴット。インゴットとは別に合金の混ぜ物になる",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "原石を破砕すると2倍(原石1→粉2)。合金の増量材"
+   }
+  },
+  {
+   "id": "cobalt_concentrate",
+   "ja": "コバルト精鉱",
+   "en": "Cobalt Concentrate",
+   "category": "processed_metal",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "coarse gritty cobalt-tinted ore chunks, dull",
+    "palette": "#2a2a2a #2f5fa8 #7a7a72",
+    "placeholder_from": "crust_powder",
+    "tint": "#2f5fa8"
+   },
+   "justification": {
+    "why_not_existing": "クラストを破砕した不純な中間物。クラスト→精鉱→粉→インゴットの段階を表現するため。粉とは純度・工程が異なる",
+    "category": "processed_metal",
+    "becomes_what": "cobalt_powder",
+    "final_products": [
+     "abyssal_alloy_axe",
+     "abyssal_alloy_hoe",
+     "abyssal_alloy_pickaxe",
+     "abyssal_alloy_shovel",
+     "abyssal_alloy_sword",
+     "abyssal_cutter",
+     "abyssal_drill",
+     "abyssal_flippers",
+     "cobalt_pickaxe",
+     "cobalt_shovel",
+     "deep_diver_helmet",
+     "dive_tank",
+     "diving_suit_leggings",
+     "pressure_diver_helmet",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "cobalt_crust→精鉱→cobalt_powder",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "クラスト1個から3個(直接精錬の2個より多いが工程が長い)"
+   }
+  },
+  {
+   "id": "manganese_concentrate",
+   "ja": "マンガン精鉱",
+   "en": "Manganese Concentrate",
+   "category": "processed_metal",
+   "rarity": "common",
+   "phase": 2,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "coarse gritty manganese-tinted ore chunks, dull",
+    "palette": "#2a2a2a #8a5f9a #7a7a72",
+    "placeholder_from": "crust_powder",
+    "tint": "#8a5f9a"
+   },
+   "justification": {
+    "why_not_existing": "クラストを破砕した不純な中間物。クラスト→精鉱→粉→インゴットの段階を表現するため。粉とは純度・工程が異なる",
+    "category": "processed_metal",
+    "becomes_what": "manganese_powder",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "cobalt_pickaxe",
+     "cobalt_shovel",
+     "manganese_axe",
+     "manganese_sword",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "manganese_crust→精鉱→manganese_powder",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "クラスト1個から3個(直接精錬の2個より多いが工程が長い)"
+   }
+  },
+  {
+   "id": "nickel_concentrate",
+   "ja": "ニッケル精鉱",
+   "en": "Nickel Concentrate",
+   "category": "processed_metal",
+   "rarity": "common",
+   "phase": 2,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "coarse gritty nickel-tinted ore chunks, dull",
+    "palette": "#2a2a2a #b3c2bc #7a7a72",
+    "placeholder_from": "crust_powder",
+    "tint": "#b3c2bc"
+   },
+   "justification": {
+    "why_not_existing": "クラストを破砕した不純な中間物。クラスト→精鉱→粉→インゴットの段階を表現するため。粉とは純度・工程が異なる",
+    "category": "processed_metal",
+    "becomes_what": "nickel_powder",
+    "final_products": [
+     "abyssal_alloy_axe",
+     "abyssal_alloy_hoe",
+     "abyssal_alloy_pickaxe",
+     "abyssal_alloy_shovel",
+     "abyssal_alloy_sword",
+     "abyssal_cutter",
+     "abyssal_drill",
+     "abyssal_flippers",
+     "deep_diver_helmet",
+     "dive_tank",
+     "diving_suit_leggings",
+     "molybdenum_pickaxe",
+     "pressure_diver_helmet",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "nickel_crust→精鉱→nickel_powder",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "クラスト1個から3個(直接精錬の2個より多いが工程が長い)"
+   }
+  },
+  {
+   "id": "iron_plate",
+   "ja": "鉄板",
+   "en": "Iron Plate",
+   "category": "intermediate",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "flat rectangular iron plate with bevelled edge",
+    "palette": "#4a4a50 #9a9aa2 #d0d0d6",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#a8a8b0"
+   },
+   "justification": {
+    "why_not_existing": "構造部品の基礎板。石切台加工が既存に無い",
+    "category": "intermediate",
+    "becomes_what": "hardened_tip, iron_gear, machine_frame",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "cobalt_pickaxe",
+     "cobalt_shovel",
+     "dive_tank",
+     "pressure_diver_helmet",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "鉄インゴット→板",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "鉄インゴット1→1板"
+   }
+  },
+  {
+   "id": "iron_rod",
+   "ja": "鉄棒",
+   "en": "Iron Rod",
+   "category": "intermediate",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "thin iron rod, diagonal",
+    "palette": "#4a4a50 #9a9aa2 #d0d0d6",
+    "placeholder_from": "minecraft:stick",
+    "tint": "#8a8a92"
+   },
+   "justification": {
+    "why_not_existing": "歯車・機械枠用の棒材",
+    "category": "intermediate",
+    "becomes_what": "iron_gear, machine_frame",
+    "final_products": [
+     "abyssal_drill",
+     "dive_tank",
+     "pressure_diver_helmet"
+    ],
+    "relation_to_existing": "鉄インゴット→棒x2",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "鉄インゴット1→2棒"
+   }
+  },
+  {
+   "id": "iron_gear",
+   "ja": "鉄歯車",
+   "en": "Iron Gear",
+   "category": "intermediate",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "small iron cog wheel with 8 teeth and center hole",
+    "palette": "#3a3a40 #8a8a92 #c8c8d0",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#9a9aa2"
+   },
+   "justification": {
+    "why_not_existing": "可動部品。既存に歯車が無い",
+    "category": "intermediate",
+    "becomes_what": "drill_head, machine_frame, pressure_valve",
+    "final_products": [
+     "abyssal_drill",
+     "dive_tank",
+     "pressure_diver_helmet"
+    ],
+    "relation_to_existing": "鉄板+鉄棒→歯車",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "棒4+板1で1個"
+   }
+  },
+  {
+   "id": "copper_wire",
+   "ja": "銅線",
+   "en": "Copper Wire",
+   "category": "intermediate",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "coiled copper wire spool, orange",
+    "palette": "#5a2a1a #c8734a #f0a070",
+    "placeholder_from": "minecraft:copper_ingot",
+    "tint": "#c8734a"
+   },
+   "justification": {
+    "why_not_existing": "配線・熱交換。銅の専門用途。既存に無い",
+    "category": "intermediate",
+    "becomes_what": "conductive_component, pressure_valve, reinforced_cable",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "dive_tank",
+     "pressure_diver_helmet"
+    ],
+    "relation_to_existing": "銅インゴットまたは銅クラスト→線",
+    "recipe_count": {
+     "produced_by": 2,
+     "consumed_in": 3
+    },
+    "why_collect": "銅インゴット1→3線、クラスト1→5線"
+   }
+  },
+  {
+   "id": "corrosion_alloy_ingot",
+   "ja": "耐食合金インゴット",
+   "en": "Corrosion Alloy Ingot",
+   "category": "alloy",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "metal ingot, corrosion alloy ingot, distinct hue",
+    "palette": "#36585c #5f8f8a #a9d1c7",
+    "placeholder_from": "abyssal_alloy_ingot",
+    "tint": "#5f8f8a"
+   },
+   "justification": {
+    "why_not_existing": "nickel+cobalt+iron。耐食・耐圧(潜水装備/圧力容器)専用。他合金と性能用途が重ならない",
+    "category": "alloy",
+    "becomes_what": "dive_tank, diving_suit_leggings, pressure_shell, pressure_valve",
+    "final_products": [
+     "dive_tank",
+     "diving_suit_leggings",
+     "pressure_diver_helmet"
+    ],
+    "relation_to_existing": "素材金属の粉+インゴットを混ぜて2個(粉が増量材)",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 4
+    },
+    "why_collect": "専用部品の必須材料"
+   }
+  },
+  {
+   "id": "high_strength_alloy_ingot",
+   "ja": "高強度合金インゴット",
+   "en": "High-Strength Alloy Ingot",
+   "category": "alloy",
+   "rarity": "uncommon",
+   "phase": 3,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "metal ingot, high-strength alloy ingot, distinct hue",
+    "palette": "#3a2f45 #6d5a80 #b5a3c8",
+    "placeholder_from": "abyssal_alloy_ingot",
+    "tint": "#6d5a80"
+   },
+   "justification": {
+    "why_not_existing": "manganese+vanadium+iron。高硬度・耐久(耐久型ツール/掘削ヘッド)専用。他合金と性能用途が重ならない",
+    "category": "alloy",
+    "becomes_what": "drill_head, manganese_axe, manganese_sword",
+    "final_products": [
+     "abyssal_drill",
+     "manganese_axe",
+     "manganese_sword"
+    ],
+    "relation_to_existing": "素材金属の粉+インゴットを混ぜて2個(粉が増量材)",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "専用部品の必須材料"
+   }
+  },
+  {
+   "id": "heat_resistant_alloy_ingot",
+   "ja": "耐熱合金インゴット",
+   "en": "Heat-Resistant Alloy Ingot",
+   "category": "alloy",
+   "rarity": "uncommon",
+   "phase": 3,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "metal ingot, heat-resistant alloy ingot, distinct hue",
+    "palette": "#4a2f24 #8a5a44 #d69a7a",
+    "placeholder_from": "abyssal_alloy_ingot",
+    "tint": "#8a5a44"
+   },
+   "justification": {
+    "why_not_existing": "molybdenum+nickel+iron。高温機器・耐熱ツール専用。他合金と性能用途が重ならない",
+    "category": "alloy",
+    "becomes_what": "molybdenum_pickaxe, thermal_component",
+    "final_products": [
+     "abyssal_drill",
+     "molybdenum_pickaxe"
+    ],
+    "relation_to_existing": "素材金属の粉+インゴットを混ぜて2個(粉が増量材)",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "専用部品の必須材料"
+   }
+  },
+  {
+   "id": "tungsten_alloy_ingot",
+   "ja": "タングステン合金インゴット",
+   "en": "Tungsten Alloy Ingot",
+   "category": "alloy",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "metal ingot, tungsten alloy ingot, distinct hue",
+    "palette": "#25282e #464c58 #8a93a3",
+    "placeholder_from": "abyssal_alloy_ingot",
+    "tint": "#464c58"
+   },
+   "justification": {
+    "why_not_existing": "tungsten+nickel。超硬・重量用(タングステンツール/チップ)。他合金と性能用途が重ならない",
+    "category": "alloy",
+    "becomes_what": "tungsten_axe, tungsten_pickaxe, tungsten_tip",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "素材金属の粉+インゴットを混ぜて2個(粉が増量材)",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "専用部品の必須材料"
+   }
+  },
+  {
+   "id": "conductive_alloy_ingot",
+   "ja": "導電合金インゴット",
+   "en": "Conductive Alloy Ingot",
+   "category": "alloy",
+   "rarity": "rare",
+   "phase": 4,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "metal ingot, conductive alloy ingot, distinct hue",
+    "palette": "#5a3020 #b8703c #f0c090",
+    "placeholder_from": "abyssal_alloy_ingot",
+    "tint": "#b8703c"
+   },
+   "justification": {
+    "why_not_existing": "copper+tellurium。導電部品専用。他合金と性能用途が重ならない",
+    "category": "alloy",
+    "becomes_what": "conductive_component",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill"
+    ],
+    "relation_to_existing": "素材金属の粉+インゴットを混ぜて2個(粉が増量材)",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 1
+    },
+    "why_collect": "専用部品の必須材料"
+   }
+  },
+  {
+   "id": "thermal_alloy_ingot",
+   "ja": "熱合金インゴット",
+   "en": "Thermal Alloy Ingot",
+   "category": "alloy",
+   "rarity": "rare",
+   "phase": 5,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "metal ingot, thermal alloy ingot, distinct hue",
+    "palette": "#4a1f14 #c0502a #ffb060",
+    "placeholder_from": "abyssal_alloy_ingot",
+    "tint": "#c0502a"
+   },
+   "justification": {
+    "why_not_existing": "thermal_reagent+molybdenum+tungsten。終盤高温動力用。他合金と性能用途が重ならない",
+    "category": "alloy",
+    "becomes_what": "abyssal_power_core",
+    "final_products": [
+     "abyssal_power_core"
+    ],
+    "relation_to_existing": "素材金属の粉+インゴットを混ぜて2個(粉が増量材)",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 1
+    },
+    "why_collect": "専用部品の必須材料"
+   }
+  },
+  {
+   "id": "luminous_crystal",
+   "ja": "発光結晶",
+   "en": "Luminous Crystal",
+   "category": "crystal",
+   "rarity": "rare",
+   "phase": 4,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "faceted glowing yellow-green crystal with inner light",
+    "palette": "#5a6a2a #d8d59b #ffffd0",
+    "placeholder_from": "abyssal_crystal_shard",
+    "tint": "#d8d59b"
+   },
+   "justification": {
+    "why_not_existing": "イットリウムの発光特性を結晶に付与した素材。既存の結晶素材に発光/イットリウムの接点が無い",
+    "category": "crystal",
+    "becomes_what": "abyssal_power_core, crystal_pickaxe",
+    "final_products": [
+     "abyssal_power_core",
+     "crystal_pickaxe"
+    ],
+    "relation_to_existing": "yttrium_powder+深淵結晶の欠片+結晶レンズ",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "結晶ツルハシと動力コアの必須材料"
+   }
+  },
+  {
+   "id": "reinforced_fiber",
+   "ja": "強化繊維",
+   "en": "Reinforced Fiber",
+   "category": "bio",
+   "rarity": "common",
+   "phase": 1,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "bundle of dark green fibers bound with amber glue",
+    "palette": "#1f3a2a #4a7a50 #b9a050",
+    "placeholder_from": "deep_fiber",
+    "tint": "#4a7a50"
+   },
+   "justification": {
+    "why_not_existing": "繊維を接着剤で束ねた高強度繊維。ロープ/海布とは別(束+接着)",
+    "category": "bio",
+    "becomes_what": "abyssal_composite, reinforced_cable",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "crystal_pickaxe",
+     "dive_tank",
+     "manganese_sword"
+    ],
+    "relation_to_existing": "deep_fiber+marine_adhesive",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "海藻繊維の中間加工先"
+   }
+  },
+  {
+   "id": "reinforced_cable",
+   "ja": "強化ケーブル",
+   "en": "Reinforced Cable",
+   "category": "bio",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "coiled black-green cable with copper core visible at the end",
+    "palette": "#1a2a22 #3a5a48 #c8734a",
+    "placeholder_from": "fiber_rope",
+    "tint": "#3a5a48"
+   },
+   "justification": {
+    "why_not_existing": "繊維+銅線で作る導線被覆ケーブル。銅線単体は被覆・耐圧が無い",
+    "category": "bio",
+    "becomes_what": "conductive_component, dive_tank",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "dive_tank"
+    ],
+    "relation_to_existing": "reinforced_fiber+fiber_rope+copper_wire",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "植物と銅を機械部品に結ぶ橋渡し"
+   }
+  },
+  {
+   "id": "marine_resin",
+   "ja": "海洋樹脂",
+   "en": "Marine Resin",
+   "category": "bio",
+   "rarity": "uncommon",
+   "phase": 1,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "translucent amber-blue resin lump with salt specks",
+    "palette": "#3a4a5a #b8a060 #dfe8f0",
+    "placeholder_from": "marine_adhesive",
+    "tint": "#a8b0b8"
+   },
+   "justification": {
+    "why_not_existing": "塩で硬化した高粘度樹脂。接着剤の上位で耐圧シール用",
+    "category": "bio",
+    "becomes_what": "abyssal_composite, pressure_shell",
+    "final_products": [
+     "abyssal_cutter",
+     "crystal_pickaxe",
+     "manganese_sword",
+     "pressure_diver_helmet"
+    ],
+    "relation_to_existing": "plant_resin+marine_adhesive+salt_crust",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "塩クラストの用途。複合材/圧力殻のシール"
+   }
+  },
+  {
+   "id": "abyssal_composite",
+   "ja": "深海複合材",
+   "en": "Abyssal Composite",
+   "category": "bio",
+   "rarity": "rare",
+   "phase": 2,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "dark teal woven composite plank with crystal flecks",
+    "palette": "#152a2e #2e5a5a #7fd0c8",
+    "placeholder_from": "sea_cloth",
+    "tint": "#2e5a5a"
+   },
+   "justification": {
+    "why_not_existing": "植物+鉱物(深淵結晶)を結ぶ素材。ツールのグリップ/柄に使える軽量高強度材で、既存に該当なし",
+    "category": "bio",
+    "becomes_what": "abyssal_cutter, crystal_pickaxe, manganese_sword",
+    "final_products": [
+     "abyssal_cutter",
+     "crystal_pickaxe",
+     "manganese_sword"
+    ],
+    "relation_to_existing": "reinforced_fiber+marine_resin+abyssal_crystal_shard",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "植物と結晶を最終品に接続"
+   }
+  },
+  {
+   "id": "crystal_core",
+   "ja": "結晶コア",
+   "en": "Crystal Core",
+   "category": "crystal",
+   "rarity": "rare",
+   "phase": 4,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "cube-like blue crystal core with facets and glowing center",
+    "palette": "#0d2a4a #2f6fb0 #a8e0ff",
+    "placeholder_from": "abyssal_crystal_shard",
+    "tint": "#2f6fb0"
+   },
+   "justification": {
+    "why_not_existing": "深淵結晶の欠片を圧縮した動力/光学部品の芯。欠片は素材、コアは部品",
+    "category": "crystal",
+    "becomes_what": "abyssal_energy_cell, crystal_pickaxe",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "abyssal_power_core",
+     "crystal_pickaxe"
+    ],
+    "relation_to_existing": "abyssal_crystal_shard x3+marine_adhesive",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "エネルギーセル/結晶ツルハシ"
+   }
+  },
+  {
+   "id": "thermal_core",
+   "ja": "熱コア",
+   "en": "Thermal Core",
+   "category": "thermal",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "red-orange crystal core with heat shimmer",
+    "palette": "#4a1208 #c04020 #ffc060",
+    "placeholder_from": "thermal_crystal_shard",
+    "tint": "#c04020"
+   },
+   "justification": {
+    "why_not_existing": "熱結晶の欠片を圧縮した熱部品の芯",
+    "category": "thermal",
+    "becomes_what": "advanced_energy_cell, thermal_component",
+    "final_products": [
+     "abyssal_drill",
+     "abyssal_power_core",
+     "molybdenum_pickaxe"
+    ],
+    "relation_to_existing": "thermal_crystal_shard x3+marine_adhesive",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "熱部品/高度エネルギーセル"
+   }
+  },
+  {
+   "id": "thermal_reagent",
+   "ja": "熱試薬",
+   "en": "Thermal Reagent",
+   "category": "thermal",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "material",
+   "new": true,
+   "texture": {
+    "note": "glass vial-like pouch of glowing orange-yellow powder",
+    "palette": "#5a2a08 #e8901a #fff0a0",
+    "placeholder_from": "sulfur",
+    "tint": "#e8901a"
+   },
+   "justification": {
+    "why_not_existing": "硫黄+熱結晶+溶岩で作る熱合金の反応剤。単純な粉では表現できない",
+    "category": "thermal",
+    "becomes_what": "thermal_alloy_ingot",
+    "final_products": [
+     "abyssal_power_core"
+    ],
+    "relation_to_existing": "sulfur+thermal_crystal_shard+molten_volcanic_rock+salt_crust",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 1
+    },
+    "why_collect": "熱合金の必須材料"
+   }
+  },
+  {
+   "id": "abyssal_energy_cell",
+   "ja": "深海エネルギーセル",
+   "en": "Abyssal Energy Cell",
+   "category": "crystal",
+   "rarity": "rare",
+   "phase": 4,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "cylindrical battery cell with blue glowing band and metal caps",
+    "palette": "#12324a #3f8fbf #b8f0ff",
+    "placeholder_from": "lumen_cell",
+    "tint": "#3f8fbf"
+   },
+   "justification": {
+    "why_not_existing": "発光素子は光のみ。テルルの導電+結晶コアで蓄電できる部品",
+    "category": "crystal",
+    "becomes_what": "abyssal_cutter, advanced_energy_cell",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "abyssal_power_core"
+    ],
+    "relation_to_existing": "lumen_cell+tellurium_ingot+crystal_core",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "切断器/高度エネルギーセル"
+   }
+  },
+  {
+   "id": "advanced_lumen_cell",
+   "ja": "高度発光素子",
+   "en": "Advanced Lumen Cell",
+   "category": "crystal",
+   "rarity": "rare",
+   "phase": 4,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "brighter version of lumen cell, yellow-white glowing orb in metal frame",
+    "palette": "#5a5a2a #f0f090 #ffffff",
+    "placeholder_from": "lumen_cell",
+    "tint": "#f0f090"
+   },
+   "justification": {
+    "why_not_existing": "発光素子+イットリウムで輝度を上げた上位素子",
+    "category": "crystal",
+    "becomes_what": "abyssal_light_core",
+    "final_products": [
+     "abyssal_power_core"
+    ],
+    "relation_to_existing": "lumen_cell+lumen_gel+yttrium_ingot",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 1
+    },
+    "why_collect": "光コアの材料"
+   }
+  },
+  {
+   "id": "abyssal_light_core",
+   "ja": "深海光コア",
+   "en": "Abyssal Light Core",
+   "category": "crystal",
+   "rarity": "epic",
+   "phase": 5,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "ornate lens core, white-blue glowing sphere in platinum ring",
+    "palette": "#20304a #a8d0f0 #ffffff",
+    "placeholder_from": "crystal_lens",
+    "tint": "#a8d0f0"
+   },
+   "justification": {
+    "why_not_existing": "高度発光素子+レンズ+白金触媒で作る光学コア",
+    "category": "crystal",
+    "becomes_what": "abyssal_power_core",
+    "final_products": [
+     "abyssal_power_core"
+    ],
+    "relation_to_existing": "advanced_lumen_cell+crystal_lens+platinum_ingot",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 1
+    },
+    "why_collect": "動力コア"
+   }
+  },
+  {
+   "id": "advanced_energy_cell",
+   "ja": "高度エネルギーセル",
+   "en": "Advanced Energy Cell",
+   "category": "crystal",
+   "rarity": "epic",
+   "phase": 5,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "large battery cell, red and blue glowing halves, platinum caps",
+    "palette": "#402030 #c04a60 #7fd0ff",
+    "placeholder_from": "lumen_cell",
+    "tint": "#c04a60"
+   },
+   "justification": {
+    "why_not_existing": "エネルギーセル+熱コア+白金触媒。高出力機器用",
+    "category": "crystal",
+    "becomes_what": "abyssal_drill, abyssal_power_core",
+    "final_products": [
+     "abyssal_drill",
+     "abyssal_power_core"
+    ],
+    "relation_to_existing": "abyssal_energy_cell+thermal_core+platinum_ingot",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "掘削機/動力コア"
+   }
+  },
+  {
+   "id": "abyssal_power_core",
+   "ja": "深海動力コア",
+   "en": "Abyssal Power Core",
+   "category": "crystal",
+   "rarity": "epic",
+   "phase": 6,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "spherical power core in cage, swirling cyan and orange energy",
+    "palette": "#0a1a2a #20a0c0 #ffb040",
+    "placeholder_from": "abyssal_crystal_shard",
+    "tint": "#20a0c0"
+   },
+   "justification": {
+    "why_not_existing": "最終動力源。循環参照を避け、advanced_energy_cell+abyssal_light_core+thermal_alloy_ingotで構成",
+    "category": "crystal",
+    "becomes_what": "(最終品)",
+    "final_products": [],
+    "relation_to_existing": "advanced_energy_cell+abyssal_light_core+thermal_alloy_ingot",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "フェーズ2以降の機械の心臓部(現状は素材として保管/展示)"
+   }
+  },
+  {
+   "id": "hardened_tip",
+   "ja": "硬化チップ",
+   "en": "Hardened Tip",
+   "category": "component",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "mechanical hardened tip part, industrial look",
+    "palette": "#2a3550 #4a6ab0 #a0c0f0",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#4a6ab0"
+   },
+   "justification": {
+    "why_not_existing": "コバルト+マンガン粉で作る先端部品。工具の刃先として合金インゴットより少量で済む(複数の最終品で共有)",
+    "category": "component",
+    "becomes_what": "cobalt_pickaxe, cobalt_shovel, tungsten_tip",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "cobalt_pickaxe",
+     "cobalt_shovel",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "中間素材を組み立てた部品",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 3
+    },
+    "why_collect": "共有部品:複数の最終品で必須"
+   }
+  },
+  {
+   "id": "tungsten_tip",
+   "ja": "タングステンチップ",
+   "en": "Tungsten Tip",
+   "category": "component",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "mechanical tungsten tip part, industrial look",
+    "palette": "#1e2026 #464c58 #9aa3b3",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#464c58"
+   },
+   "justification": {
+    "why_not_existing": "超硬の刃先。タングステン合金+硬化チップ(複数の最終品で共有)",
+    "category": "component",
+    "becomes_what": "abyssal_cutter, drill_head, tungsten_axe, tungsten_pickaxe",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill",
+     "tungsten_axe",
+     "tungsten_pickaxe"
+    ],
+    "relation_to_existing": "中間素材を組み立てた部品",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 4
+    },
+    "why_collect": "共有部品:複数の最終品で必須"
+   }
+  },
+  {
+   "id": "drill_head",
+   "ja": "ドリルヘッド",
+   "en": "Drill Head",
+   "category": "component",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "mechanical drill head part, industrial look",
+    "palette": "#2a2a30 #5a5a68 #b0b0c0",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#5a5a68"
+   },
+   "justification": {
+    "why_not_existing": "掘削用回転刃。タングステンチップ+高強度合金+歯車(複数の最終品で共有)",
+    "category": "component",
+    "becomes_what": "abyssal_drill",
+    "final_products": [
+     "abyssal_drill"
+    ],
+    "relation_to_existing": "中間素材を組み立てた部品",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 1
+    },
+    "why_collect": "共有部品:複数の最終品で必須"
+   }
+  },
+  {
+   "id": "pressure_valve",
+   "ja": "圧力バルブ",
+   "en": "Pressure Valve",
+   "category": "component",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "mechanical pressure valve part, industrial look",
+    "palette": "#2a4a4a #5a8a8a #c0e0d8",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#5a8a8a"
+   },
+   "justification": {
+    "why_not_existing": "耐食合金と銅線と歯車の封止弁(複数の最終品で共有)",
+    "category": "component",
+    "becomes_what": "dive_tank, pressure_shell",
+    "final_products": [
+     "dive_tank",
+     "pressure_diver_helmet"
+    ],
+    "relation_to_existing": "中間素材を組み立てた部品",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "共有部品:複数の最終品で必須"
+   }
+  },
+  {
+   "id": "pressure_shell",
+   "ja": "耐圧殻",
+   "en": "Pressure Shell",
+   "category": "component",
+   "rarity": "epic",
+   "phase": 6,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "mechanical pressure shell part, industrial look",
+    "palette": "#1a2a3a #3a5a7a #80b0d0",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#3a5a7a"
+   },
+   "justification": {
+    "why_not_existing": "超深海殻板+耐食合金+バルブの耐圧容器(複数の最終品で共有)",
+    "category": "component",
+    "becomes_what": "pressure_diver_helmet",
+    "final_products": [
+     "pressure_diver_helmet"
+    ],
+    "relation_to_existing": "中間素材を組み立てた部品",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 1
+    },
+    "why_collect": "共有部品:複数の最終品で必須"
+   }
+  },
+  {
+   "id": "thermal_component",
+   "ja": "熱部品",
+   "en": "Thermal Component",
+   "category": "component",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "mechanical thermal component part, industrial look",
+    "palette": "#4a2a20 #a05a3a #f0b080",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#a05a3a"
+   },
+   "justification": {
+    "why_not_existing": "耐熱合金+耐熱フェルト+熱コアの断熱/放熱部品(複数の最終品で共有)",
+    "category": "component",
+    "becomes_what": "abyssal_drill, molybdenum_pickaxe",
+    "final_products": [
+     "abyssal_drill",
+     "molybdenum_pickaxe"
+    ],
+    "relation_to_existing": "中間素材を組み立てた部品",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "共有部品:複数の最終品で必須"
+   }
+  },
+  {
+   "id": "conductive_component",
+   "ja": "導電部品",
+   "en": "Conductive Component",
+   "category": "component",
+   "rarity": "rare",
+   "phase": 4,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "mechanical conductive component part, industrial look",
+    "palette": "#4a3020 #b0703c #f0c890",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#b0703c"
+   },
+   "justification": {
+    "why_not_existing": "導電合金+ケーブルの配線モジュール(複数の最終品で共有)",
+    "category": "component",
+    "becomes_what": "abyssal_cutter, abyssal_drill",
+    "final_products": [
+     "abyssal_cutter",
+     "abyssal_drill"
+    ],
+    "relation_to_existing": "中間素材を組み立てた部品",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 2
+    },
+    "why_collect": "共有部品:複数の最終品で必須"
+   }
+  },
+  {
+   "id": "machine_frame",
+   "ja": "機械枠",
+   "en": "Machine Frame",
+   "category": "component",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "component",
+   "new": true,
+   "texture": {
+    "note": "mechanical machine frame part, industrial look",
+    "palette": "#303038 #6a6a78 #b8b8c8",
+    "placeholder_from": "minecraft:iron_ingot",
+    "tint": "#6a6a78"
+   },
+   "justification": {
+    "why_not_existing": "鉄板/棒/歯車の骨組み。機械(phase2)とドリル共通(複数の最終品で共有)",
+    "category": "component",
+    "becomes_what": "abyssal_drill",
+    "final_products": [
+     "abyssal_drill"
+    ],
+    "relation_to_existing": "中間素材を組み立てた部品",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 1
+    },
+    "why_collect": "共有部品:複数の最終品で必須"
+   }
+  },
+  {
+   "id": "cobalt_pickaxe",
+   "ja": "コバルトのツルハシ",
+   "en": "Cobalt Pickaxe",
+   "category": "tool",
+   "rarity": "uncommon",
+   "phase": 1,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "pickaxe with blue cobalt head, sharp",
+    "palette": "#202028 #2f5fa8 #e8e8f0",
+    "placeholder_from": "abyssal_alloy_pickaxe",
+    "tint": "#2f5fa8"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "cobalt_shovel",
+   "ja": "コバルトのシャベル",
+   "en": "Cobalt Shovel",
+   "category": "tool",
+   "rarity": "uncommon",
+   "phase": 1,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "shovel with blue cobalt head",
+    "palette": "#202028 #2f5fa8 #e8e8f0",
+    "placeholder_from": "abyssal_alloy_shovel",
+    "tint": "#2f5fa8"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "manganese_axe",
+   "ja": "マンガンの斧",
+   "en": "Manganese Axe",
+   "category": "tool",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "axe with heavy violet-grey manganese head",
+    "palette": "#202028 #8a5f9a #e8e8f0",
+    "placeholder_from": "abyssal_alloy_axe",
+    "tint": "#8a5f9a"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "manganese_sword",
+   "ja": "マンガンの剣",
+   "en": "Manganese Sword",
+   "category": "tool",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "sword with violet-grey blade and composite grip",
+    "palette": "#202028 #8a5f9a #e8e8f0",
+    "placeholder_from": "abyssal_alloy_sword",
+    "tint": "#8a5f9a"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "molybdenum_pickaxe",
+   "ja": "モリブデンのツルハシ",
+   "en": "Molybdenum Pickaxe",
+   "category": "tool",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "pickaxe steel-grey head with orange heat-vent fins",
+    "palette": "#202028 #8e97a3 #e8e8f0",
+    "placeholder_from": "abyssal_alloy_pickaxe",
+    "tint": "#8e97a3"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "tungsten_pickaxe",
+   "ja": "タングステンのツルハシ",
+   "en": "Tungsten Pickaxe",
+   "category": "tool",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "blocky dark tungsten-headed pickaxe, heavy",
+    "palette": "#202028 #464c58 #e8e8f0",
+    "placeholder_from": "abyssal_alloy_pickaxe",
+    "tint": "#464c58"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "tungsten_axe",
+   "ja": "タングステンの斧",
+   "en": "Tungsten Axe",
+   "category": "tool",
+   "rarity": "rare",
+   "phase": 3,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "broad dark tungsten axe, heavy",
+    "palette": "#202028 #464c58 #e8e8f0",
+    "placeholder_from": "abyssal_alloy_axe",
+    "tint": "#464c58"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "abyssal_drill",
+   "ja": "深海ドリル",
+   "en": "Abyssal Drill",
+   "category": "tool",
+   "rarity": "epic",
+   "phase": 5,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "handheld drill with spiral bit, cyan energy cell",
+    "palette": "#202028 #5a5a68 #e8e8f0",
+    "placeholder_from": "abyssal_alloy_pickaxe",
+    "tint": "#5a5a68"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "abyssal_cutter",
+   "ja": "深海カッター",
+   "en": "Abyssal Cutter",
+   "category": "tool",
+   "rarity": "epic",
+   "phase": 5,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "slim cutter blade with teal glow line and composite grip",
+    "palette": "#202028 #7fd0c8 #e8e8f0",
+    "placeholder_from": "abyssal_alloy_sword",
+    "tint": "#7fd0c8"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "crystal_pickaxe",
+   "ja": "結晶ツルハシ",
+   "en": "Crystal Pickaxe",
+   "category": "tool",
+   "rarity": "rare",
+   "phase": 4,
+   "kind": "tool",
+   "new": true,
+   "texture": {
+    "note": "pickaxe with two blue crystal core prongs and glowing crystal",
+    "palette": "#202028 #2f6fb0 #e8e8f0",
+    "placeholder_from": "abyssal_alloy_pickaxe",
+    "tint": "#2f6fb0"
+   },
+   "justification": {
+    "why_not_existing": "専用ステータス/特殊効果を持つ差別化ツール",
+    "category": "tool",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "素材金属+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品(消費先なし)"
+   }
+  },
+  {
+   "id": "dive_tank",
+   "ja": "潜水タンク",
+   "en": "Dive Tank",
+   "category": "armor",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "armor",
+   "new": true,
+   "texture": {
+    "note": "back-mounted oxygen tank chestpiece, teal metal with valve",
+    "palette": "#182a3a #3a7a8a #d0e8f0",
+    "placeholder_from": "abyssal_alloy_ingot",
+    "tint": "#3a7a8a"
+   },
+   "justification": {
+    "why_not_existing": "潜水装備。専用の防御/酸素・水中特性",
+    "category": "armor",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "耐食合金+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品"
+   }
+  },
+  {
+   "id": "diving_suit_leggings",
+   "ja": "潜水スーツのレギンス",
+   "en": "Diving Suit Leggings",
+   "category": "armor",
+   "rarity": "uncommon",
+   "phase": 2,
+   "kind": "armor",
+   "new": true,
+   "texture": {
+    "note": "teal sealed diving leggings with cloth panels",
+    "palette": "#182a3a #3a7a8a #d0e8f0",
+    "placeholder_from": "abyssal_alloy_ingot",
+    "tint": "#3a7a8a"
+   },
+   "justification": {
+    "why_not_existing": "潜水装備。専用の防御/酸素・水中特性",
+    "category": "armor",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "耐食合金+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品"
+   }
+  },
+  {
+   "id": "pressure_diver_helmet",
+   "ja": "耐圧潜水ヘルム",
+   "en": "Pressure Diver Helmet",
+   "category": "armor",
+   "rarity": "epic",
+   "phase": 6,
+   "kind": "armor",
+   "new": true,
+   "texture": {
+    "note": "reinforced diving helmet with thick porthole and hadal plating",
+    "palette": "#182a3a #5a7aa0 #d0e8f0",
+    "placeholder_from": "deep_diver_helmet",
+    "tint": "#5a7aa0"
+   },
+   "justification": {
+    "why_not_existing": "潜水装備。専用の防御/酸素・水中特性",
+    "category": "armor",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "耐食合金+部品から作成",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品"
+   }
+  }
+ ],
+ "recipes": [
+  {
+   "id": "crushing_hammer",
+   "type": "crafting_shaped",
+   "pattern": [
+    " I ",
+    "ISI",
+    " S "
+   ],
+   "key": {
+    "I": "minecraft:iron_ingot",
+    "S": "minecraft:stick"
+   },
+   "result": "crushing_hammer",
+   "count": 1,
+   "phase": 1,
+   "station": "crafting_table"
+  },
+  {
+   "id": "iron_powder_from_raw",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "minecraft:raw_iron"
+   ],
+   "result": "iron_powder",
+   "count": 2,
+   "phase": 1,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "iron_ingot_from_powder_smelting",
+   "type": "smelting",
+   "ingredient": "iron_powder",
+   "result": "minecraft:iron_ingot",
+   "count": 1,
+   "time": 200,
+   "xp": 0.7,
+   "phase": 1,
+   "station": "furnace"
+  },
+  {
+   "id": "iron_ingot_from_powder_blasting",
+   "type": "blasting",
+   "ingredient": "iron_powder",
+   "result": "minecraft:iron_ingot",
+   "count": 1,
+   "time": 100,
+   "xp": 0.7,
+   "phase": 1,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "cobalt_powder_from_raw",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "raw_cobalt"
+   ],
+   "result": "cobalt_powder",
+   "count": 2,
+   "phase": 1,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "cobalt_ingot_from_powder_smelting",
+   "type": "smelting",
+   "ingredient": "cobalt_powder",
+   "result": "cobalt_ingot",
+   "count": 1,
+   "time": 200,
+   "xp": 0.7,
+   "phase": 1,
+   "station": "furnace"
+  },
+  {
+   "id": "cobalt_ingot_from_powder_blasting",
+   "type": "blasting",
+   "ingredient": "cobalt_powder",
+   "result": "cobalt_ingot",
+   "count": 1,
+   "time": 100,
+   "xp": 0.7,
+   "phase": 1,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "nickel_powder_from_raw",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "raw_nickel"
+   ],
+   "result": "nickel_powder",
+   "count": 2,
+   "phase": 1,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "nickel_ingot_from_powder_smelting",
+   "type": "smelting",
+   "ingredient": "nickel_powder",
+   "result": "nickel_ingot",
+   "count": 1,
+   "time": 200,
+   "xp": 0.7,
+   "phase": 1,
+   "station": "furnace"
+  },
+  {
+   "id": "nickel_ingot_from_powder_blasting",
+   "type": "blasting",
+   "ingredient": "nickel_powder",
+   "result": "nickel_ingot",
+   "count": 1,
+   "time": 100,
+   "xp": 0.7,
+   "phase": 1,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "manganese_powder_from_raw",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "raw_manganese"
+   ],
+   "result": "manganese_powder",
+   "count": 2,
+   "phase": 2,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "manganese_ingot_from_powder_smelting",
+   "type": "smelting",
+   "ingredient": "manganese_powder",
+   "result": "manganese_ingot",
+   "count": 1,
+   "time": 200,
+   "xp": 0.7,
+   "phase": 2,
+   "station": "furnace"
+  },
+  {
+   "id": "manganese_ingot_from_powder_blasting",
+   "type": "blasting",
+   "ingredient": "manganese_powder",
+   "result": "manganese_ingot",
+   "count": 1,
+   "time": 100,
+   "xp": 0.7,
+   "phase": 2,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "vanadium_powder_from_raw",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "raw_vanadium"
+   ],
+   "result": "vanadium_powder",
+   "count": 2,
+   "phase": 3,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "vanadium_ingot_from_powder_smelting",
+   "type": "smelting",
+   "ingredient": "vanadium_powder",
+   "result": "vanadium_ingot",
+   "count": 1,
+   "time": 200,
+   "xp": 0.7,
+   "phase": 3,
+   "station": "furnace"
+  },
+  {
+   "id": "vanadium_ingot_from_powder_blasting",
+   "type": "blasting",
+   "ingredient": "vanadium_powder",
+   "result": "vanadium_ingot",
+   "count": 1,
+   "time": 100,
+   "xp": 0.7,
+   "phase": 3,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "tungsten_powder_from_raw",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "raw_tungsten"
+   ],
+   "result": "tungsten_powder",
+   "count": 2,
+   "phase": 3,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "tungsten_ingot_from_powder_smelting",
+   "type": "smelting",
+   "ingredient": "tungsten_powder",
+   "result": "tungsten_ingot",
+   "count": 1,
+   "time": 200,
+   "xp": 0.7,
+   "phase": 3,
+   "station": "furnace"
+  },
+  {
+   "id": "tungsten_ingot_from_powder_blasting",
+   "type": "blasting",
+   "ingredient": "tungsten_powder",
+   "result": "tungsten_ingot",
+   "count": 1,
+   "time": 100,
+   "xp": 0.7,
+   "phase": 3,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "tellurium_powder_from_raw",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "raw_tellurium"
+   ],
+   "result": "tellurium_powder",
+   "count": 2,
+   "phase": 4,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "tellurium_ingot_from_powder_smelting",
+   "type": "smelting",
+   "ingredient": "tellurium_powder",
+   "result": "tellurium_ingot",
+   "count": 1,
+   "time": 200,
+   "xp": 0.7,
+   "phase": 4,
+   "station": "furnace"
+  },
+  {
+   "id": "tellurium_ingot_from_powder_blasting",
+   "type": "blasting",
+   "ingredient": "tellurium_powder",
+   "result": "tellurium_ingot",
+   "count": 1,
+   "time": 100,
+   "xp": 0.7,
+   "phase": 4,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "yttrium_powder_from_raw",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "raw_yttrium"
+   ],
+   "result": "yttrium_powder",
+   "count": 2,
+   "phase": 4,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "yttrium_ingot_from_powder_smelting",
+   "type": "smelting",
+   "ingredient": "yttrium_powder",
+   "result": "yttrium_ingot",
+   "count": 1,
+   "time": 200,
+   "xp": 0.7,
+   "phase": 4,
+   "station": "furnace"
+  },
+  {
+   "id": "yttrium_ingot_from_powder_blasting",
+   "type": "blasting",
+   "ingredient": "yttrium_powder",
+   "result": "yttrium_ingot",
+   "count": 1,
+   "time": 100,
+   "xp": 0.7,
+   "phase": 4,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "cobalt_concentrate_from_crust",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "cobalt_crust"
+   ],
+   "result": "cobalt_concentrate",
+   "count": 3,
+   "phase": 1,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "cobalt_powder_from_concentrate_smelting",
+   "type": "smelting",
+   "ingredient": "cobalt_concentrate",
+   "result": "cobalt_powder",
+   "count": 1,
+   "time": 200,
+   "xp": 0.3,
+   "phase": 1,
+   "station": "furnace"
+  },
+  {
+   "id": "cobalt_powder_from_concentrate_blasting",
+   "type": "blasting",
+   "ingredient": "cobalt_concentrate",
+   "result": "cobalt_powder",
+   "count": 1,
+   "time": 100,
+   "xp": 0.3,
+   "phase": 1,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "manganese_concentrate_from_crust",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "manganese_crust"
+   ],
+   "result": "manganese_concentrate",
+   "count": 3,
+   "phase": 2,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "manganese_powder_from_concentrate_smelting",
+   "type": "smelting",
+   "ingredient": "manganese_concentrate",
+   "result": "manganese_powder",
+   "count": 1,
+   "time": 200,
+   "xp": 0.3,
+   "phase": 2,
+   "station": "furnace"
+  },
+  {
+   "id": "manganese_powder_from_concentrate_blasting",
+   "type": "blasting",
+   "ingredient": "manganese_concentrate",
+   "result": "manganese_powder",
+   "count": 1,
+   "time": 100,
+   "xp": 0.3,
+   "phase": 2,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "nickel_concentrate_from_crust",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "nickel_crust"
+   ],
+   "result": "nickel_concentrate",
+   "count": 3,
+   "phase": 1,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "nickel_powder_from_concentrate_smelting",
+   "type": "smelting",
+   "ingredient": "nickel_concentrate",
+   "result": "nickel_powder",
+   "count": 1,
+   "time": 200,
+   "xp": 0.3,
+   "phase": 1,
+   "station": "furnace"
+  },
+  {
+   "id": "nickel_powder_from_concentrate_blasting",
+   "type": "blasting",
+   "ingredient": "nickel_concentrate",
+   "result": "nickel_powder",
+   "count": 1,
+   "time": 100,
+   "xp": 0.3,
+   "phase": 1,
+   "station": "blast_furnace"
+  },
+  {
+   "id": "iron_powder_from_iron_crust",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "iron_crust"
+   ],
+   "result": "iron_powder",
+   "count": 3,
+   "phase": 1,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "sulfur_from_cave_mineral_crust",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "crushing_hammer",
+    "cave_mineral_crust"
+   ],
+   "result": "sulfur",
+   "count": 3,
+   "phase": 1,
+   "station": "crafting_table",
+   "damage_item": "crushing_hammer"
+  },
+  {
+   "id": "iron_plate_from_iron_ingot",
+   "type": "stonecutting",
+   "ingredient": "minecraft:iron_ingot",
+   "result": "iron_plate",
+   "count": 1,
+   "phase": 1,
+   "station": "stonecutter"
+  },
+  {
+   "id": "iron_rod_from_iron_ingot",
+   "type": "stonecutting",
+   "ingredient": "minecraft:iron_ingot",
+   "result": "iron_rod",
+   "count": 2,
+   "phase": 1,
+   "station": "stonecutter"
+  },
+  {
+   "id": "copper_wire_from_copper_ingot",
+   "type": "stonecutting",
+   "ingredient": "minecraft:copper_ingot",
+   "result": "copper_wire",
+   "count": 3,
+   "phase": 1,
+   "station": "stonecutter"
+  },
+  {
+   "id": "copper_wire_from_copper_crust",
+   "type": "stonecutting",
+   "ingredient": "copper_crust",
+   "result": "copper_wire",
+   "count": 5,
+   "phase": 1,
+   "station": "stonecutter"
+  },
+  {
+   "id": "iron_gear",
+   "type": "crafting_shaped",
+   "pattern": [
+    " R ",
+    "RPR",
+    " R "
+   ],
+   "key": {
+    "R": "iron_rod",
+    "P": "iron_plate"
+   },
+   "result": "iron_gear",
+   "count": 1,
+   "phase": 1,
+   "station": "crafting_table"
+  },
+  {
+   "id": "machine_frame",
+   "type": "crafting_shaped",
+   "pattern": [
+    "PRP",
+    "RGR",
+    "PRP"
+   ],
+   "key": {
+    "P": "iron_plate",
+    "R": "iron_rod",
+    "G": "iron_gear"
+   },
+   "result": "machine_frame",
+   "count": 1,
+   "phase": 2,
+   "station": "crafting_table"
+  },
+  {
+   "id": "corrosion_alloy_ingot",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "nickel_ingot",
+    "cobalt_powder",
+    "iron_powder"
+   ],
+   "result": "corrosion_alloy_ingot",
+   "count": 2,
+   "phase": 2,
+   "station": "crafting_table"
+  },
+  {
+   "id": "high_strength_alloy_ingot",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "manganese_ingot",
+    "vanadium_powder",
+    "iron_powder"
+   ],
+   "result": "high_strength_alloy_ingot",
+   "count": 2,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "heat_resistant_alloy_ingot",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "molybdenum_ingot",
+    "nickel_powder",
+    "iron_powder"
+   ],
+   "result": "heat_resistant_alloy_ingot",
+   "count": 2,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "tungsten_alloy_ingot",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "tungsten_ingot",
+    "nickel_powder"
+   ],
+   "result": "tungsten_alloy_ingot",
+   "count": 2,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "conductive_alloy_ingot",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "minecraft:copper_ingot",
+    "tellurium_powder"
+   ],
+   "result": "conductive_alloy_ingot",
+   "count": 2,
+   "phase": 4,
+   "station": "crafting_table"
+  },
+  {
+   "id": "thermal_alloy_ingot",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "thermal_reagent",
+    "molybdenum_ingot",
+    "tungsten_powder"
+   ],
+   "result": "thermal_alloy_ingot",
+   "count": 2,
+   "phase": 5,
+   "station": "crafting_table"
+  },
+  {
+   "id": "luminous_crystal",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "yttrium_powder",
+    "abyssal_crystal_shard",
+    "crystal_lens"
+   ],
+   "result": "luminous_crystal",
+   "count": 1,
+   "phase": 4,
+   "station": "crafting_table"
+  },
+  {
+   "id": "reinforced_fiber",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "deep_fiber",
+    "deep_fiber",
+    "deep_fiber",
+    "marine_adhesive"
+   ],
+   "result": "reinforced_fiber",
+   "count": 2,
+   "phase": 1,
+   "station": "crafting_table"
+  },
+  {
+   "id": "reinforced_cable",
+   "type": "crafting_shaped",
+   "pattern": [
+    "W",
+    "F",
+    "R"
+   ],
+   "key": {
+    "W": "copper_wire",
+    "F": "reinforced_fiber",
+    "R": "fiber_rope"
+   },
+   "result": "reinforced_cable",
+   "count": 2,
+   "phase": 2,
+   "station": "crafting_table"
+  },
+  {
+   "id": "marine_resin",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "plant_resin",
+    "marine_adhesive",
+    "salt_crust"
+   ],
+   "result": "marine_resin",
+   "count": 2,
+   "phase": 1,
+   "station": "crafting_table"
+  },
+  {
+   "id": "abyssal_composite",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "reinforced_fiber",
+    "marine_resin",
+    "abyssal_crystal_shard"
+   ],
+   "result": "abyssal_composite",
+   "count": 2,
+   "phase": 2,
+   "station": "crafting_table"
+  },
+  {
+   "id": "crystal_core",
+   "type": "crafting_shaped",
+   "pattern": [
+    "SS",
+    "SA"
+   ],
+   "key": {
+    "S": "abyssal_crystal_shard",
+    "A": "marine_adhesive"
+   },
+   "result": "crystal_core",
+   "count": 1,
+   "phase": 4,
+   "station": "crafting_table"
+  },
+  {
+   "id": "thermal_core",
+   "type": "crafting_shaped",
+   "pattern": [
+    "SS",
+    "SA"
+   ],
+   "key": {
+    "S": "thermal_crystal_shard",
+    "A": "marine_adhesive"
+   },
+   "result": "thermal_core",
+   "count": 1,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "thermal_reagent",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "sulfur",
+    "thermal_crystal_shard",
+    "molten_volcanic_rock",
+    "salt_crust"
+   ],
+   "result": "thermal_reagent",
+   "count": 2,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "abyssal_energy_cell",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "lumen_cell",
+    "tellurium_ingot",
+    "crystal_core"
+   ],
+   "result": "abyssal_energy_cell",
+   "count": 1,
+   "phase": 4,
+   "station": "crafting_table"
+  },
+  {
+   "id": "advanced_lumen_cell",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "lumen_cell",
+    "lumen_gel",
+    "yttrium_ingot"
+   ],
+   "result": "advanced_lumen_cell",
+   "count": 1,
+   "phase": 4,
+   "station": "crafting_table"
+  },
+  {
+   "id": "abyssal_light_core",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "advanced_lumen_cell",
+    "crystal_lens",
+    "platinum_ingot"
+   ],
+   "result": "abyssal_light_core",
+   "count": 1,
+   "phase": 5,
+   "station": "crafting_table"
+  },
+  {
+   "id": "advanced_energy_cell",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "abyssal_energy_cell",
+    "thermal_core",
+    "platinum_ingot"
+   ],
+   "result": "advanced_energy_cell",
+   "count": 1,
+   "phase": 5,
+   "station": "crafting_table"
+  },
+  {
+   "id": "abyssal_power_core",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "advanced_energy_cell",
+    "abyssal_light_core",
+    "thermal_alloy_ingot",
+    "luminous_crystal"
+   ],
+   "result": "abyssal_power_core",
+   "count": 1,
+   "phase": 6,
+   "station": "crafting_table"
+  },
+  {
+   "id": "hardened_tip",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "cobalt_ingot",
+    "manganese_powder",
+    "iron_plate"
+   ],
+   "result": "hardened_tip",
+   "count": 2,
+   "phase": 2,
+   "station": "crafting_table"
+  },
+  {
+   "id": "tungsten_tip",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "tungsten_alloy_ingot",
+    "tungsten_powder",
+    "hardened_tip"
+   ],
+   "result": "tungsten_tip",
+   "count": 2,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "drill_head",
+   "type": "crafting_shaped",
+   "pattern": [
+    "TTT",
+    "HGH"
+   ],
+   "key": {
+    "T": "tungsten_tip",
+    "H": "high_strength_alloy_ingot",
+    "G": "iron_gear"
+   },
+   "result": "drill_head",
+   "count": 1,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "pressure_valve",
+   "type": "crafting_shaped",
+   "pattern": [
+    " G ",
+    "NWN",
+    " O "
+   ],
+   "key": {
+    "G": "iron_gear",
+    "N": "corrosion_alloy_ingot",
+    "W": "copper_wire",
+    "O": "refined_oil"
+   },
+   "result": "pressure_valve",
+   "count": 1,
+   "phase": 2,
+   "station": "crafting_table"
+  },
+  {
+   "id": "pressure_shell",
+   "type": "crafting_shaped",
+   "pattern": [
+    "NH",
+    "RV"
+   ],
+   "key": {
+    "N": "corrosion_alloy_ingot",
+    "H": "hadal_plating",
+    "R": "marine_resin",
+    "V": "pressure_valve"
+   },
+   "result": "pressure_shell",
+   "count": 1,
+   "phase": 6,
+   "station": "crafting_table"
+  },
+  {
+   "id": "thermal_component",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "heat_resistant_alloy_ingot",
+    "thermal_felt",
+    "thermal_core"
+   ],
+   "result": "thermal_component",
+   "count": 1,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "conductive_component",
+   "type": "crafting_shapeless",
+   "ingredients": [
+    "conductive_alloy_ingot",
+    "reinforced_cable",
+    "copper_wire"
+   ],
+   "result": "conductive_component",
+   "count": 1,
+   "phase": 4,
+   "station": "crafting_table"
+  },
+  {
+   "id": "cobalt_pickaxe",
+   "type": "crafting_shaped",
+   "pattern": [
+    "CTC",
+    " S ",
+    " S "
+   ],
+   "key": {
+    "C": "cobalt_ingot",
+    "T": "hardened_tip",
+    "S": "minecraft:stick"
+   },
+   "result": "cobalt_pickaxe",
+   "count": 1,
+   "phase": 1,
+   "station": "crafting_table"
+  },
+  {
+   "id": "cobalt_shovel",
+   "type": "crafting_shaped",
+   "pattern": [
+    "T",
+    "C",
+    "S"
+   ],
+   "key": {
+    "C": "cobalt_ingot",
+    "T": "hardened_tip",
+    "S": "minecraft:stick"
+   },
+   "result": "cobalt_shovel",
+   "count": 1,
+   "phase": 1,
+   "station": "crafting_table"
+  },
+  {
+   "id": "manganese_axe",
+   "type": "crafting_shaped",
+   "pattern": [
+    "HM",
+    "MS",
+    " S"
+   ],
+   "key": {
+    "H": "high_strength_alloy_ingot",
+    "M": "manganese_ingot",
+    "S": "minecraft:stick"
+   },
+   "result": "manganese_axe",
+   "count": 1,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "manganese_sword",
+   "type": "crafting_shaped",
+   "pattern": [
+    "H",
+    "M",
+    "A"
+   ],
+   "key": {
+    "H": "high_strength_alloy_ingot",
+    "M": "manganese_ingot",
+    "A": "abyssal_composite"
+   },
+   "result": "manganese_sword",
+   "count": 1,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "molybdenum_pickaxe",
+   "type": "crafting_shaped",
+   "pattern": [
+    "HTH",
+    " S ",
+    " S "
+   ],
+   "key": {
+    "H": "heat_resistant_alloy_ingot",
+    "T": "thermal_component",
+    "S": "minecraft:stick"
+   },
+   "result": "molybdenum_pickaxe",
+   "count": 1,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "tungsten_pickaxe",
+   "type": "crafting_shaped",
+   "pattern": [
+    "ATA",
+    " S ",
+    " S "
+   ],
+   "key": {
+    "A": "tungsten_alloy_ingot",
+    "T": "tungsten_tip",
+    "S": "minecraft:stick"
+   },
+   "result": "tungsten_pickaxe",
+   "count": 1,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "tungsten_axe",
+   "type": "crafting_shaped",
+   "pattern": [
+    "AT",
+    "AS",
+    " S"
+   ],
+   "key": {
+    "A": "tungsten_alloy_ingot",
+    "T": "tungsten_tip",
+    "S": "minecraft:stick"
+   },
+   "result": "tungsten_axe",
+   "count": 1,
+   "phase": 3,
+   "station": "crafting_table"
+  },
+  {
+   "id": "crystal_pickaxe",
+   "type": "crafting_shaped",
+   "pattern": [
+    "CLC",
+    " A ",
+    " S "
+   ],
+   "key": {
+    "C": "crystal_core",
+    "L": "luminous_crystal",
+    "A": "abyssal_composite",
+    "S": "minecraft:stick"
+   },
+   "result": "crystal_pickaxe",
+   "count": 1,
+   "phase": 4,
+   "station": "crafting_table"
+  },
+  {
+   "id": "abyssal_cutter",
+   "type": "crafting_shaped",
+   "pattern": [
+    "TE",
+    "TC",
+    "A "
+   ],
+   "key": {
+    "T": "tungsten_tip",
+    "E": "abyssal_energy_cell",
+    "C": "conductive_component",
+    "A": "abyssal_composite"
+   },
+   "result": "abyssal_cutter",
+   "count": 1,
+   "phase": 5,
+   "station": "crafting_table"
+  },
+  {
+   "id": "abyssal_drill",
+   "type": "crafting_shaped",
+   "pattern": [
+    "DTC",
+    "FE "
+   ],
+   "key": {
+    "D": "drill_head",
+    "T": "thermal_component",
+    "C": "conductive_component",
+    "F": "machine_frame",
+    "E": "advanced_energy_cell"
+   },
+   "result": "abyssal_drill",
+   "count": 1,
+   "phase": 5,
+   "station": "crafting_table"
+  },
+  {
+   "id": "dive_tank",
+   "type": "crafting_shaped",
+   "pattern": [
+    "N N",
+    "NVN",
+    "NRN"
+   ],
+   "key": {
+    "N": "corrosion_alloy_ingot",
+    "V": "pressure_valve",
+    "R": "reinforced_cable"
+   },
+   "result": "dive_tank",
+   "count": 1,
+   "phase": 2,
+   "station": "crafting_table"
+  },
+  {
+   "id": "diving_suit_leggings",
+   "type": "crafting_shaped",
+   "pattern": [
+    "NNN",
+    "C C",
+    "C C"
+   ],
+   "key": {
+    "N": "corrosion_alloy_ingot",
+    "C": "sea_cloth"
+   },
+   "result": "diving_suit_leggings",
+   "count": 1,
+   "phase": 2,
+   "station": "crafting_table"
+  },
+  {
+   "id": "pressure_diver_helmet_upgrade",
+   "type": "smithing_transform",
+   "template": "hadal_plating",
+   "base": "deep_diver_helmet",
+   "addition": "pressure_shell",
+   "result": "pressure_diver_helmet",
+   "count": 1,
+   "phase": 6,
+   "station": "smithing_table"
+  }
+ ],
+ "tools": [
+  {
+   "id": "crushing_hammer",
+   "kind": "hammer",
+   "material": "iron",
+   "tier": {
+    "uses": 250,
+    "speed": 1.0,
+    "attack_bonus": 0.0,
+    "enchant_value": 5,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 2,
+   "attack_speed": -3.0,
+   "special": "crafting_remainder: 破砕クラフトで耐久-1(破損で消滅)。通常のブロック破壊は不可",
+   "recipe_ref": "crushing_hammer"
+  },
+  {
+   "id": "cobalt_pickaxe",
+   "kind": "pickaxe",
+   "material": "cobalt",
+   "tier": {
+    "uses": 420,
+    "speed": 11.0,
+    "attack_bonus": 2.0,
+    "enchant_value": 16,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 1,
+   "attack_speed": -2.6,
+   "special": "fast_dig",
+   "recipe_ref": "cobalt_pickaxe"
+  },
+  {
+   "id": "cobalt_shovel",
+   "kind": "shovel",
+   "material": "cobalt",
+   "tier": {
+    "uses": 420,
+    "speed": 11.0,
+    "attack_bonus": 2.0,
+    "enchant_value": 16,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 1.5,
+   "attack_speed": -3.0,
+   "special": "fast_dig",
+   "recipe_ref": "cobalt_shovel"
+  },
+  {
+   "id": "manganese_axe",
+   "kind": "axe",
+   "material": "manganese",
+   "tier": {
+    "uses": 2600,
+    "speed": 6.0,
+    "attack_bonus": 3.0,
+    "enchant_value": 8,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 5.5,
+   "attack_speed": -3.0,
+   "special": "none",
+   "recipe_ref": "manganese_axe"
+  },
+  {
+   "id": "manganese_sword",
+   "kind": "sword",
+   "material": "manganese",
+   "tier": {
+    "uses": 2600,
+    "speed": 6.0,
+    "attack_bonus": 3.0,
+    "enchant_value": 8,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 3,
+   "attack_speed": -2.4,
+   "special": "none",
+   "recipe_ref": "manganese_sword"
+  },
+  {
+   "id": "molybdenum_pickaxe",
+   "kind": "pickaxe",
+   "material": "molybdenum",
+   "tier": {
+    "uses": 1300,
+    "speed": 7.5,
+    "attack_bonus": 2.5,
+    "enchant_value": 12,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 1,
+   "attack_speed": -2.8,
+   "special": "heat_guard: 手持ち中は炎上/溶岩/マグマブロック/熱噴出孔の被ダメージ50%減、アイテム自体が溶岩で燃えない(fireResistant)",
+   "recipe_ref": "molybdenum_pickaxe"
+  },
+  {
+   "id": "tungsten_pickaxe",
+   "kind": "pickaxe",
+   "material": "tungsten",
+   "tier": {
+    "uses": 3200,
+    "speed": 7.0,
+    "attack_bonus": 3.5,
+    "enchant_value": 10,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 1,
+   "attack_speed": -3.1,
+   "special": "hard_block_bonus: destroy hardness>=3(黒曜石/深層岩/鉱石)の採掘速度x1.5 (BreakSpeedイベント)",
+   "recipe_ref": "tungsten_pickaxe"
+  },
+  {
+   "id": "tungsten_axe",
+   "kind": "axe",
+   "material": "tungsten",
+   "tier": {
+    "uses": 3200,
+    "speed": 7.0,
+    "attack_bonus": 3.5,
+    "enchant_value": 10,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 6.5,
+   "attack_speed": -3.3,
+   "special": "heavy: 攻撃速度低下(-3.3)、クールダウン中断で追加ノックバック無し。hard_block_bonusは持たない",
+   "recipe_ref": "tungsten_axe"
+  },
+  {
+   "id": "crystal_pickaxe",
+   "kind": "pickaxe",
+   "material": "crystal",
+   "tier": {
+    "uses": 900,
+    "speed": 8.0,
+    "attack_bonus": 2.0,
+    "enchant_value": 22,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 1,
+   "attack_speed": -2.8,
+   "special": "crystal_harvest: タグabyssia:crystal_blocksのブロックをシルクタッチ相当で回収、クラスターは破壊速度x2 (loot modifier + BreakSpeed)",
+   "recipe_ref": "crystal_pickaxe"
+  },
+  {
+   "id": "abyssal_drill",
+   "kind": "pickaxe",
+   "material": "drill",
+   "tier": {
+    "uses": 2200,
+    "speed": 12.0,
+    "attack_bonus": 2.0,
+    "enchant_value": 14,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 1,
+   "attack_speed": -3.0,
+   "special": "drill: 石/岩/鉱石系で縦2ブロック同時破壊(+1下)。underwater_toolsタグ。耐久消費x1.5。エネルギー消費はphase2",
+   "recipe_ref": "abyssal_drill"
+  },
+  {
+   "id": "abyssal_cutter",
+   "kind": "sword",
+   "material": "cutter",
+   "tier": {
+    "uses": 1500,
+    "speed": 7.0,
+    "attack_bonus": 1.5,
+    "enchant_value": 20,
+    "harvest_level_tag": "minecraft:needs_diamond_tool"
+   },
+   "attack_damage": 2,
+   "attack_speed": -1.8,
+   "special": "plant_cut: ハサミ相当(植物/コンブ/ロープ系を即時カット・ハサミ判定)、深海繊維ドロップ+1、underwater_toolsタグ",
+   "recipe_ref": "abyssal_cutter"
+  }
+ ],
+ "armor": [
+  {
+   "id": "dive_tank",
+   "slot": "chest",
+   "material": {
+    "name": "abyssia:diving_alloy",
+    "defense": 6,
+    "toughness": 1.5,
+    "durability": 448,
+    "enchant": 12,
+    "knockback_resistance": 0.0,
+    "repair": "corrosion_alloy_ingot"
+   },
+   "special": "tank_breathing: 水中で水中呼吸(220t更新、暗視なし)。ヘルム+レギンス+フィン+タンクの4点で泳ぎ速度+10%"
+  },
+  {
+   "id": "diving_suit_leggings",
+   "slot": "legs",
+   "material": {
+    "name": "abyssia:diving_alloy",
+    "defense": 5,
+    "toughness": 1.5,
+    "durability": 420,
+    "enchant": 12,
+    "knockback_resistance": 0.0,
+    "repair": "corrosion_alloy_ingot"
+   },
+   "special": "suit_swim: 泳ぎ速度+5%(ForgeMod.SWIM_SPEED MULTIPLY_TOTAL 0.05)"
+  },
+  {
+   "id": "pressure_diver_helmet",
+   "slot": "head",
+   "material": {
+    "name": "abyssia:pressure_alloy",
+    "defense": 4,
+    "toughness": 3.0,
+    "durability": 462,
+    "enchant": 15,
+    "knockback_resistance": 0.1,
+    "repair": "pressure_shell"
+   },
+   "special": "deep_diver_helmet継承(水中呼吸+暗視Config)+hadal_pressure:将来の超深海圧力ダメージ免除フラグ(現状は装備タグabyssia:pressure_proof)"
+  }
+ ],
+ "machines_phase2": [
+  {
+   "id": "crusher",
+   "ja": "粉砕機",
+   "purpose": "原石/クラスト→粉/精鉱を自動化(x2.5得率)",
+   "inputs": [
+    "raw_*",
+    "*_crust"
+   ],
+   "replaces": "crushing_hammer",
+   "frame_cost": "machine_frame+drill_head",
+   "phase": "phase2",
+   "implement_now": false
+  },
+  {
+   "id": "refinery_furnace",
+   "ja": "精錬炉",
+   "purpose": "精鉱→粉→インゴットを一括、燃料効率向上",
+   "inputs": [
+    "*_concentrate",
+    "*_powder"
+   ],
+   "replaces": "furnace/blast_furnace",
+   "frame_cost": "machine_frame+thermal_component",
+   "phase": "phase2",
+   "implement_now": false
+  },
+  {
+   "id": "alloy_furnace",
+   "ja": "合金炉",
+   "purpose": "合金をインゴット+粉2種から自動生成、歩留まり+50%",
+   "inputs": [
+    "*_ingot",
+    "*_powder"
+   ],
+   "replaces": "alloy crafting",
+   "frame_cost": "machine_frame+heat_resistant_alloy_ingot",
+   "phase": "phase2",
+   "implement_now": false
+  },
+  {
+   "id": "crystal_processor",
+   "ja": "結晶加工機",
+   "purpose": "結晶コア/発光結晶/レンズの加工",
+   "inputs": [
+    "abyssal_crystal_shard",
+    "crystal_sap",
+    "luminous_crystal"
+   ],
+   "replaces": "crystal crafting",
+   "frame_cost": "machine_frame+crystal_core",
+   "phase": "phase2",
+   "implement_now": false
+  },
+  {
+   "id": "high_temp_furnace",
+   "ja": "高温炉",
+   "purpose": "熱試薬/熱合金/タングステン系",
+   "inputs": [
+    "thermal_reagent",
+    "tungsten_powder",
+    "molybdenum_ingot"
+   ],
+   "replaces": "blast furnace",
+   "frame_cost": "machine_frame+thermal_alloy_ingot",
+   "phase": "phase2",
+   "implement_now": false
+  },
+  {
+   "id": "energy_device",
+   "ja": "エネルギー装置",
+   "purpose": "エネルギーセル充填/動力供給(ツールへの給電)",
+   "inputs": [
+    "abyssal_energy_cell",
+    "advanced_energy_cell",
+    "abyssal_power_core"
+   ],
+   "replaces": "none",
+   "frame_cost": "machine_frame+conductive_component",
+   "phase": "phase2",
+   "implement_now": false
+  },
+  {
+   "id": "mining_machine",
+   "ja": "採掘機",
+   "purpose": "設置型自動採掘。ドリルヘッドで岩盤外を掘削",
+   "inputs": [
+    "drill_head",
+    "abyssal_power_core"
+   ],
+   "replaces": "none",
+   "frame_cost": "machine_frame+abyssal_drill",
+   "phase": "phase2",
+   "implement_now": false
+  }
+ ],
+ "usage_check": [
+  {
+   "material": "iron",
+   "category": "metal",
+   "uses": 13,
+   "finals": [
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "iron_plate",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "minecraft:iron_ingot"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "iron_plate",
+      "machine_frame"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "minecraft:iron_ingot"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "iron_plate",
+      "hardened_tip"
+     ],
+     "final": "cobalt_pickaxe",
+     "count": 1,
+     "via_input": "minecraft:iron_ingot"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "iron_plate",
+      "hardened_tip"
+     ],
+     "final": "cobalt_shovel",
+     "count": 1,
+     "via_input": "minecraft:iron_ingot"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [],
+     "final": "crushing_hammer",
+     "count": 3,
+     "via_input": "minecraft:iron_ingot"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "iron_powder"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot"
+     ],
+     "final": "diving_suit_leggings",
+     "count": 1,
+     "via_input": "iron_powder"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "high_strength_alloy_ingot"
+     ],
+     "final": "manganese_axe",
+     "count": 1,
+     "via_input": "iron_powder"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "high_strength_alloy_ingot"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "iron_powder"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "heat_resistant_alloy_ingot"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "iron_powder"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "iron_powder"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "iron_plate",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "minecraft:iron_ingot"
+    },
+    {
+     "material": "iron",
+     "category": "metal",
+     "intermediate": [
+      "iron_plate",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "minecraft:iron_ingot"
+    }
+   ],
+   "min_required": 3,
+   "ok": true
+  },
+  {
+   "material": "copper",
+   "category": "metal",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "copper",
+     "category": "metal",
+     "intermediate": [
+      "copper_wire",
+      "conductive_component"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "minecraft:copper_ingot"
+    },
+    {
+     "material": "copper",
+     "category": "metal",
+     "intermediate": [
+      "copper_wire",
+      "conductive_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "minecraft:copper_ingot"
+    },
+    {
+     "material": "copper",
+     "category": "metal",
+     "intermediate": [
+      "copper_wire",
+      "reinforced_cable"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "minecraft:copper_ingot"
+    },
+    {
+     "material": "copper",
+     "category": "metal",
+     "intermediate": [
+      "copper_wire",
+      "pressure_valve",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "minecraft:copper_ingot"
+    }
+   ],
+   "min_required": 3,
+   "ok": true
+  },
+  {
+   "material": "cobalt",
+   "category": "metal",
+   "uses": 17,
+   "finals": [
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_axe",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_hoe",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_pickaxe",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_shovel",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_sword",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip",
+      "tungsten_tip",
+      "drill_head"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_flippers",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [],
+     "final": "cobalt_pickaxe",
+     "count": 2,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [],
+     "final": "cobalt_shovel",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "deep_diver_helmet",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "cobalt_powder"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot"
+     ],
+     "final": "diving_suit_leggings",
+     "count": 1,
+     "via_input": "cobalt_powder"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [],
+     "final": "minecraft:blue_dye",
+     "count": 1,
+     "via_input": "raw_cobalt"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "cobalt_powder"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    },
+    {
+     "material": "cobalt",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "cobalt_ingot"
+    }
+   ],
+   "min_required": 3,
+   "ok": true
+  },
+  {
+   "material": "manganese",
+   "category": "metal",
+   "uses": 9,
+   "finals": [
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "manganese_powder"
+    },
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [
+      "high_strength_alloy_ingot",
+      "drill_head"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "manganese_ingot"
+    },
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip"
+     ],
+     "final": "cobalt_pickaxe",
+     "count": 1,
+     "via_input": "manganese_powder"
+    },
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip"
+     ],
+     "final": "cobalt_shovel",
+     "count": 1,
+     "via_input": "manganese_powder"
+    },
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [],
+     "final": "manganese_axe",
+     "count": 2,
+     "via_input": "manganese_ingot"
+    },
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "manganese_ingot"
+    },
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [],
+     "final": "minecraft:black_dye",
+     "count": 1,
+     "via_input": "raw_manganese"
+    },
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "manganese_powder"
+    },
+    {
+     "material": "manganese",
+     "category": "metal",
+     "intermediate": [
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "manganese_powder"
+    }
+   ],
+   "min_required": 3,
+   "ok": true
+  },
+  {
+   "material": "molybdenum",
+   "category": "metal",
+   "uses": 3,
+   "finals": [
+    {
+     "material": "molybdenum",
+     "category": "metal",
+     "intermediate": [
+      "heat_resistant_alloy_ingot",
+      "thermal_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "molybdenum_ingot"
+    },
+    {
+     "material": "molybdenum",
+     "category": "metal",
+     "intermediate": [
+      "thermal_alloy_ingot"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "molybdenum_ingot"
+    },
+    {
+     "material": "molybdenum",
+     "category": "metal",
+     "intermediate": [
+      "heat_resistant_alloy_ingot"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "molybdenum_ingot"
+    }
+   ],
+   "min_required": 3,
+   "ok": true
+  },
+  {
+   "material": "nickel",
+   "category": "metal",
+   "uses": 15,
+   "finals": [
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_axe",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_hoe",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_pickaxe",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_shovel",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_sword",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "tungsten_alloy_ingot",
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "nickel_powder"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "heat_resistant_alloy_ingot",
+      "thermal_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "nickel_powder"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_flippers",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "deep_diver_helmet",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot"
+     ],
+     "final": "diving_suit_leggings",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "heat_resistant_alloy_ingot"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "nickel_powder"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "corrosion_alloy_ingot",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "nickel_ingot"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "tungsten_alloy_ingot"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "nickel_powder"
+    },
+    {
+     "material": "nickel",
+     "category": "metal",
+     "intermediate": [
+      "tungsten_alloy_ingot"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "nickel_powder"
+    }
+   ],
+   "min_required": 3,
+   "ok": true
+  },
+  {
+   "material": "platinum",
+   "category": "metal",
+   "uses": 2,
+   "finals": [
+    {
+     "material": "platinum",
+     "category": "metal",
+     "intermediate": [
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "platinum_ingot"
+    },
+    {
+     "material": "platinum",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_light_core"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "platinum_ingot"
+    }
+   ],
+   "min_required": 2,
+   "ok": true
+  },
+  {
+   "material": "tellurium",
+   "category": "metal",
+   "uses": 3,
+   "finals": [
+    {
+     "material": "tellurium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_energy_cell"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "tellurium_ingot"
+    },
+    {
+     "material": "tellurium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_energy_cell",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "tellurium_ingot"
+    },
+    {
+     "material": "tellurium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_energy_cell",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "tellurium_ingot"
+    }
+   ],
+   "min_required": 2,
+   "ok": true
+  },
+  {
+   "material": "tungsten",
+   "category": "metal",
+   "uses": 5,
+   "finals": [
+    {
+     "material": "tungsten",
+     "category": "metal",
+     "intermediate": [
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "tungsten_powder"
+    },
+    {
+     "material": "tungsten",
+     "category": "metal",
+     "intermediate": [
+      "tungsten_tip",
+      "drill_head"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "tungsten_powder"
+    },
+    {
+     "material": "tungsten",
+     "category": "metal",
+     "intermediate": [
+      "thermal_alloy_ingot"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "tungsten_powder"
+    },
+    {
+     "material": "tungsten",
+     "category": "metal",
+     "intermediate": [
+      "tungsten_alloy_ingot"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "tungsten_ingot"
+    },
+    {
+     "material": "tungsten",
+     "category": "metal",
+     "intermediate": [
+      "tungsten_alloy_ingot"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "tungsten_ingot"
+    }
+   ],
+   "min_required": 3,
+   "ok": true
+  },
+  {
+   "material": "vanadium",
+   "category": "metal",
+   "uses": 10,
+   "finals": [
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_axe",
+     "count": 1,
+     "via_input": "vanadium_ingot"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_hoe",
+     "count": 1,
+     "via_input": "vanadium_ingot"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_pickaxe",
+     "count": 1,
+     "via_input": "vanadium_ingot"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_shovel",
+     "count": 1,
+     "via_input": "vanadium_ingot"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_sword",
+     "count": 1,
+     "via_input": "vanadium_ingot"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "high_strength_alloy_ingot",
+      "drill_head"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "vanadium_powder"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_flippers",
+     "count": 1,
+     "via_input": "vanadium_ingot"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "abyssal_alloy_ingot"
+     ],
+     "final": "deep_diver_helmet",
+     "count": 1,
+     "via_input": "vanadium_ingot"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "high_strength_alloy_ingot"
+     ],
+     "final": "manganese_axe",
+     "count": 1,
+     "via_input": "vanadium_powder"
+    },
+    {
+     "material": "vanadium",
+     "category": "metal",
+     "intermediate": [
+      "high_strength_alloy_ingot"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "vanadium_powder"
+    }
+   ],
+   "min_required": 2,
+   "ok": true
+  },
+  {
+   "material": "yttrium",
+   "category": "metal",
+   "uses": 2,
+   "finals": [
+    {
+     "material": "yttrium",
+     "category": "metal",
+     "intermediate": [
+      "luminous_crystal"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "yttrium_powder"
+    },
+    {
+     "material": "yttrium",
+     "category": "metal",
+     "intermediate": [
+      "luminous_crystal"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "yttrium_powder"
+    }
+   ],
+   "min_required": 2,
+   "ok": true
+  },
+  {
+   "material": "deep_fiber",
+   "category": "plant",
+   "uses": 11,
+   "finals": [
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_fiber",
+      "abyssal_composite"
+     ],
+     "final": "abyssal_cutter",
+     "count": 3,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_fiber",
+      "reinforced_cable",
+      "conductive_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 3,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "sea_cloth"
+     ],
+     "final": "abyssal_flippers",
+     "count": 1,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_fiber",
+      "abyssal_composite"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 3,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_fiber",
+      "reinforced_cable"
+     ],
+     "final": "dive_tank",
+     "count": 3,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "sea_cloth"
+     ],
+     "final": "diving_suit_leggings",
+     "count": 1,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_fiber",
+      "abyssal_composite"
+     ],
+     "final": "manganese_sword",
+     "count": 3,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "fiber_rope"
+     ],
+     "final": "minecraft:lead",
+     "count": 1,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "sea_cloth"
+     ],
+     "final": "minecraft:leather",
+     "count": 1,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "fiber_rope"
+     ],
+     "final": "minecraft:scaffolding",
+     "count": 1,
+     "via_input": "deep_fiber"
+    },
+    {
+     "material": "deep_fiber",
+     "category": "plant",
+     "intermediate": [
+      "sea_cloth"
+     ],
+     "final": "minecraft:white_wool",
+     "count": 1,
+     "via_input": "deep_fiber"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "plant_resin",
+   "category": "plant",
+   "uses": 13,
+   "finals": [
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_resin",
+      "abyssal_composite"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive",
+      "thermal_core",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive",
+      "thermal_core",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_resin",
+      "abyssal_composite"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive",
+      "reinforced_fiber",
+      "reinforced_cable"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_resin",
+      "abyssal_composite"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive",
+      "hadal_plating"
+     ],
+     "final": "minecraft:conduit",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive",
+      "lumen_cell"
+     ],
+     "final": "minecraft:redstone_lamp",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive",
+      "lumen_cell"
+     ],
+     "final": "minecraft:sea_lantern",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive"
+     ],
+     "final": "minecraft:sticky_piston",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive",
+      "hadal_plating"
+     ],
+     "final": "minecraft:turtle_helmet",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_adhesive",
+      "thermal_core",
+      "thermal_component"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "plant_resin"
+    },
+    {
+     "material": "plant_resin",
+     "category": "plant",
+     "intermediate": [
+      "marine_resin",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "plant_resin"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "marine_adhesive",
+   "category": "plant",
+   "uses": 13,
+   "finals": [
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_fiber",
+      "abyssal_composite"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "thermal_core",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "thermal_core",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "crystal_core"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_fiber",
+      "reinforced_cable"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_fiber",
+      "abyssal_composite"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "hadal_plating"
+     ],
+     "final": "minecraft:conduit",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "lumen_cell"
+     ],
+     "final": "minecraft:redstone_lamp",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "lumen_cell"
+     ],
+     "final": "minecraft:sea_lantern",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:sticky_piston",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "hadal_plating"
+     ],
+     "final": "minecraft:turtle_helmet",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "thermal_core",
+      "thermal_component"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    },
+    {
+     "material": "marine_adhesive",
+     "category": "plant",
+     "intermediate": [
+      "hadal_plating"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "marine_adhesive"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "sea_cloth",
+   "category": "plant",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "sea_cloth",
+     "category": "plant",
+     "intermediate": [],
+     "final": "abyssal_flippers",
+     "count": 1,
+     "via_input": "sea_cloth"
+    },
+    {
+     "material": "sea_cloth",
+     "category": "plant",
+     "intermediate": [],
+     "final": "diving_suit_leggings",
+     "count": 4,
+     "via_input": "sea_cloth"
+    },
+    {
+     "material": "sea_cloth",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:leather",
+     "count": 1,
+     "via_input": "sea_cloth"
+    },
+    {
+     "material": "sea_cloth",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:white_wool",
+     "count": 1,
+     "via_input": "sea_cloth"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "fiber_rope",
+   "category": "plant",
+   "uses": 5,
+   "finals": [
+    {
+     "material": "fiber_rope",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_cable",
+      "conductive_component"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "fiber_rope"
+    },
+    {
+     "material": "fiber_rope",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_cable",
+      "conductive_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "fiber_rope"
+    },
+    {
+     "material": "fiber_rope",
+     "category": "plant",
+     "intermediate": [
+      "reinforced_cable"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "fiber_rope"
+    },
+    {
+     "material": "fiber_rope",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:lead",
+     "count": 1,
+     "via_input": "fiber_rope"
+    },
+    {
+     "material": "fiber_rope",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:scaffolding",
+     "count": 1,
+     "via_input": "fiber_rope"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "bio_oil",
+   "category": "plant",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "bio_oil",
+     "category": "plant",
+     "intermediate": [
+      "refined_oil",
+      "pressure_valve"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "bio_oil"
+    },
+    {
+     "material": "bio_oil",
+     "category": "plant",
+     "intermediate": [
+      "refined_oil"
+     ],
+     "final": "minecraft:fire_charge",
+     "count": 1,
+     "via_input": "bio_oil"
+    },
+    {
+     "material": "bio_oil",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:torch",
+     "count": 1,
+     "via_input": "bio_oil"
+    },
+    {
+     "material": "bio_oil",
+     "category": "plant",
+     "intermediate": [
+      "refined_oil",
+      "pressure_valve",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "bio_oil"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "refined_oil",
+   "category": "plant",
+   "uses": 3,
+   "finals": [
+    {
+     "material": "refined_oil",
+     "category": "plant",
+     "intermediate": [
+      "pressure_valve"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "refined_oil"
+    },
+    {
+     "material": "refined_oil",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:fire_charge",
+     "count": 1,
+     "via_input": "refined_oil"
+    },
+    {
+     "material": "refined_oil",
+     "category": "plant",
+     "intermediate": [
+      "pressure_valve",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "refined_oil"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "hard_stalk",
+   "category": "plant",
+   "uses": 11,
+   "finals": [
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [
+      "minecraft:stick"
+     ],
+     "final": "cobalt_pickaxe",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [
+      "minecraft:stick"
+     ],
+     "final": "cobalt_shovel",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [
+      "minecraft:stick"
+     ],
+     "final": "crushing_hammer",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [
+      "minecraft:stick"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [
+      "minecraft:stick"
+     ],
+     "final": "manganese_axe",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:campfire",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:scaffolding",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:torch",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [
+      "minecraft:stick"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [
+      "minecraft:stick"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "hard_stalk"
+    },
+    {
+     "material": "hard_stalk",
+     "category": "plant",
+     "intermediate": [
+      "minecraft:stick"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "hard_stalk"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "organic_matter",
+   "category": "plant",
+   "uses": 6,
+   "finals": [
+    {
+     "material": "organic_matter",
+     "category": "plant",
+     "intermediate": [
+      "deep_pigment"
+     ],
+     "final": "minecraft:black_dye",
+     "count": 1,
+     "via_input": "organic_matter"
+    },
+    {
+     "material": "organic_matter",
+     "category": "plant",
+     "intermediate": [
+      "deep_pigment"
+     ],
+     "final": "minecraft:blue_dye",
+     "count": 1,
+     "via_input": "organic_matter"
+    },
+    {
+     "material": "organic_matter",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:bone_meal",
+     "count": 1,
+     "via_input": "organic_matter"
+    },
+    {
+     "material": "organic_matter",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:gunpowder",
+     "count": 1,
+     "via_input": "organic_matter"
+    },
+    {
+     "material": "organic_matter",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:packed_mud",
+     "count": 1,
+     "via_input": "organic_matter"
+    },
+    {
+     "material": "organic_matter",
+     "category": "plant",
+     "intermediate": [
+      "deep_pigment"
+     ],
+     "final": "minecraft:yellow_dye",
+     "count": 1,
+     "via_input": "organic_matter"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "deep_pigment",
+   "category": "plant",
+   "uses": 3,
+   "finals": [
+    {
+     "material": "deep_pigment",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:black_dye",
+     "count": 1,
+     "via_input": "deep_pigment"
+    },
+    {
+     "material": "deep_pigment",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:blue_dye",
+     "count": 1,
+     "via_input": "deep_pigment"
+    },
+    {
+     "material": "deep_pigment",
+     "category": "plant",
+     "intermediate": [],
+     "final": "minecraft:yellow_dye",
+     "count": 1,
+     "via_input": "deep_pigment"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "abyssal_crystal_shard",
+   "category": "crystal",
+   "uses": 5,
+   "finals": [
+    {
+     "material": "abyssal_crystal_shard",
+     "category": "crystal",
+     "intermediate": [
+      "abyssal_composite"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "abyssal_crystal_shard"
+    },
+    {
+     "material": "abyssal_crystal_shard",
+     "category": "crystal",
+     "intermediate": [
+      "crystal_core",
+      "abyssal_energy_cell",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 3,
+     "via_input": "abyssal_crystal_shard"
+    },
+    {
+     "material": "abyssal_crystal_shard",
+     "category": "crystal",
+     "intermediate": [
+      "luminous_crystal"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "abyssal_crystal_shard"
+    },
+    {
+     "material": "abyssal_crystal_shard",
+     "category": "crystal",
+     "intermediate": [
+      "luminous_crystal"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "abyssal_crystal_shard"
+    },
+    {
+     "material": "abyssal_crystal_shard",
+     "category": "crystal",
+     "intermediate": [
+      "abyssal_composite"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "abyssal_crystal_shard"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "thermal_crystal_shard",
+   "category": "thermal",
+   "uses": 3,
+   "finals": [
+    {
+     "material": "thermal_crystal_shard",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_core",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 3,
+     "via_input": "thermal_crystal_shard"
+    },
+    {
+     "material": "thermal_crystal_shard",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_core",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_power_core",
+     "count": 3,
+     "via_input": "thermal_crystal_shard"
+    },
+    {
+     "material": "thermal_crystal_shard",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_core",
+      "thermal_component"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 3,
+     "via_input": "thermal_crystal_shard"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "crystal_sap",
+   "category": "crystal",
+   "uses": 5,
+   "finals": [
+    {
+     "material": "crystal_sap",
+     "category": "crystal",
+     "intermediate": [
+      "crystal_lens",
+      "luminous_crystal"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "crystal_sap"
+    },
+    {
+     "material": "crystal_sap",
+     "category": "crystal",
+     "intermediate": [
+      "crystal_lens",
+      "luminous_crystal"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "crystal_sap"
+    },
+    {
+     "material": "crystal_sap",
+     "category": "crystal",
+     "intermediate": [
+      "crystal_lens"
+     ],
+     "final": "minecraft:daylight_detector",
+     "count": 1,
+     "via_input": "crystal_sap"
+    },
+    {
+     "material": "crystal_sap",
+     "category": "crystal",
+     "intermediate": [
+      "crystal_lens"
+     ],
+     "final": "minecraft:spyglass",
+     "count": 1,
+     "via_input": "crystal_sap"
+    },
+    {
+     "material": "crystal_sap",
+     "category": "crystal",
+     "intermediate": [],
+     "final": "minecraft:tinted_glass",
+     "count": 1,
+     "via_input": "crystal_sap"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "crystal_lens",
+   "category": "crystal",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "crystal_lens",
+     "category": "crystal",
+     "intermediate": [
+      "luminous_crystal"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "crystal_lens"
+    },
+    {
+     "material": "crystal_lens",
+     "category": "crystal",
+     "intermediate": [
+      "luminous_crystal"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "crystal_lens"
+    },
+    {
+     "material": "crystal_lens",
+     "category": "crystal",
+     "intermediate": [],
+     "final": "minecraft:daylight_detector",
+     "count": 1,
+     "via_input": "crystal_lens"
+    },
+    {
+     "material": "crystal_lens",
+     "category": "crystal",
+     "intermediate": [],
+     "final": "minecraft:spyglass",
+     "count": 1,
+     "via_input": "crystal_lens"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "lumen_gel",
+   "category": "crystal",
+   "uses": 7,
+   "finals": [
+    {
+     "material": "lumen_gel",
+     "category": "crystal",
+     "intermediate": [
+      "lumen_cell",
+      "abyssal_energy_cell"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "lumen_gel"
+    },
+    {
+     "material": "lumen_gel",
+     "category": "crystal",
+     "intermediate": [
+      "lumen_cell",
+      "abyssal_energy_cell",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "lumen_gel"
+    },
+    {
+     "material": "lumen_gel",
+     "category": "crystal",
+     "intermediate": [
+      "advanced_lumen_cell",
+      "abyssal_light_core"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "lumen_gel"
+    },
+    {
+     "material": "lumen_gel",
+     "category": "crystal",
+     "intermediate": [],
+     "final": "minecraft:glow_item_frame",
+     "count": 1,
+     "via_input": "lumen_gel"
+    },
+    {
+     "material": "lumen_gel",
+     "category": "crystal",
+     "intermediate": [],
+     "final": "minecraft:glowstone_dust",
+     "count": 1,
+     "via_input": "lumen_gel"
+    },
+    {
+     "material": "lumen_gel",
+     "category": "crystal",
+     "intermediate": [
+      "lumen_cell"
+     ],
+     "final": "minecraft:redstone_lamp",
+     "count": 1,
+     "via_input": "lumen_gel"
+    },
+    {
+     "material": "lumen_gel",
+     "category": "crystal",
+     "intermediate": [
+      "lumen_cell"
+     ],
+     "final": "minecraft:sea_lantern",
+     "count": 1,
+     "via_input": "lumen_gel"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "lumen_cell",
+   "category": "crystal",
+   "uses": 5,
+   "finals": [
+    {
+     "material": "lumen_cell",
+     "category": "crystal",
+     "intermediate": [
+      "abyssal_energy_cell"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "lumen_cell"
+    },
+    {
+     "material": "lumen_cell",
+     "category": "crystal",
+     "intermediate": [
+      "abyssal_energy_cell",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "lumen_cell"
+    },
+    {
+     "material": "lumen_cell",
+     "category": "crystal",
+     "intermediate": [
+      "abyssal_energy_cell",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "lumen_cell"
+    },
+    {
+     "material": "lumen_cell",
+     "category": "crystal",
+     "intermediate": [],
+     "final": "minecraft:redstone_lamp",
+     "count": 1,
+     "via_input": "lumen_cell"
+    },
+    {
+     "material": "lumen_cell",
+     "category": "crystal",
+     "intermediate": [],
+     "final": "minecraft:sea_lantern",
+     "count": 1,
+     "via_input": "lumen_cell"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "thermal_fiber",
+   "category": "thermal",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "thermal_fiber",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_felt",
+      "thermal_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "thermal_fiber"
+    },
+    {
+     "material": "thermal_fiber",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_felt"
+     ],
+     "final": "minecraft:blast_furnace",
+     "count": 1,
+     "via_input": "thermal_fiber"
+    },
+    {
+     "material": "thermal_fiber",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_felt"
+     ],
+     "final": "minecraft:campfire",
+     "count": 1,
+     "via_input": "thermal_fiber"
+    },
+    {
+     "material": "thermal_fiber",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_felt",
+      "thermal_component"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "thermal_fiber"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "thermal_felt",
+   "category": "thermal",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "thermal_felt",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "thermal_felt"
+    },
+    {
+     "material": "thermal_felt",
+     "category": "thermal",
+     "intermediate": [],
+     "final": "minecraft:blast_furnace",
+     "count": 1,
+     "via_input": "thermal_felt"
+    },
+    {
+     "material": "thermal_felt",
+     "category": "thermal",
+     "intermediate": [],
+     "final": "minecraft:campfire",
+     "count": 1,
+     "via_input": "thermal_felt"
+    },
+    {
+     "material": "thermal_felt",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_component"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "thermal_felt"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "hadal_husk",
+   "category": "other",
+   "uses": 3,
+   "finals": [
+    {
+     "material": "hadal_husk",
+     "category": "other",
+     "intermediate": [
+      "hadal_plating"
+     ],
+     "final": "minecraft:conduit",
+     "count": 1,
+     "via_input": "hadal_husk"
+    },
+    {
+     "material": "hadal_husk",
+     "category": "other",
+     "intermediate": [
+      "hadal_plating"
+     ],
+     "final": "minecraft:turtle_helmet",
+     "count": 1,
+     "via_input": "hadal_husk"
+    },
+    {
+     "material": "hadal_husk",
+     "category": "other",
+     "intermediate": [
+      "hadal_plating"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "hadal_husk"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "sulfur",
+   "category": "thermal",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "sulfur",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_reagent",
+      "thermal_alloy_ingot"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "sulfur"
+    },
+    {
+     "material": "sulfur",
+     "category": "thermal",
+     "intermediate": [],
+     "final": "minecraft:fire_charge",
+     "count": 1,
+     "via_input": "sulfur"
+    },
+    {
+     "material": "sulfur",
+     "category": "thermal",
+     "intermediate": [],
+     "final": "minecraft:gunpowder",
+     "count": 1,
+     "via_input": "sulfur"
+    },
+    {
+     "material": "sulfur",
+     "category": "thermal",
+     "intermediate": [],
+     "final": "minecraft:yellow_dye",
+     "count": 1,
+     "via_input": "sulfur"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "molten_volcanic_rock",
+   "category": "thermal",
+   "uses": 1,
+   "finals": [
+    {
+     "material": "molten_volcanic_rock",
+     "category": "thermal",
+     "intermediate": [
+      "thermal_reagent",
+      "thermal_alloy_ingot"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "molten_volcanic_rock"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "salt_crust",
+   "category": "crust",
+   "uses": 5,
+   "finals": [
+    {
+     "material": "salt_crust",
+     "category": "crust",
+     "intermediate": [
+      "marine_resin",
+      "abyssal_composite"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "salt_crust"
+    },
+    {
+     "material": "salt_crust",
+     "category": "crust",
+     "intermediate": [
+      "thermal_reagent",
+      "thermal_alloy_ingot"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "salt_crust"
+    },
+    {
+     "material": "salt_crust",
+     "category": "crust",
+     "intermediate": [
+      "marine_resin",
+      "abyssal_composite"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "salt_crust"
+    },
+    {
+     "material": "salt_crust",
+     "category": "crust",
+     "intermediate": [
+      "marine_resin",
+      "abyssal_composite"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "salt_crust"
+    },
+    {
+     "material": "salt_crust",
+     "category": "crust",
+     "intermediate": [
+      "marine_resin",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "salt_crust"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "cave_mineral_crust",
+   "category": "crust",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "cave_mineral_crust",
+     "category": "crust",
+     "intermediate": [
+      "sulfur",
+      "thermal_reagent",
+      "thermal_alloy_ingot"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "cave_mineral_crust"
+    },
+    {
+     "material": "cave_mineral_crust",
+     "category": "crust",
+     "intermediate": [
+      "sulfur"
+     ],
+     "final": "minecraft:fire_charge",
+     "count": 1,
+     "via_input": "cave_mineral_crust"
+    },
+    {
+     "material": "cave_mineral_crust",
+     "category": "crust",
+     "intermediate": [
+      "sulfur"
+     ],
+     "final": "minecraft:gunpowder",
+     "count": 1,
+     "via_input": "cave_mineral_crust"
+    },
+    {
+     "material": "cave_mineral_crust",
+     "category": "crust",
+     "intermediate": [
+      "sulfur"
+     ],
+     "final": "minecraft:yellow_dye",
+     "count": 1,
+     "via_input": "cave_mineral_crust"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "iron_crust",
+   "category": "crust",
+   "uses": 13,
+   "finals": [
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "minecraft:iron_ingot",
+      "iron_plate",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "iron_powder",
+      "high_strength_alloy_ingot",
+      "drill_head"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "minecraft:iron_ingot",
+      "iron_plate",
+      "hardened_tip"
+     ],
+     "final": "cobalt_pickaxe",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "minecraft:iron_ingot",
+      "iron_plate",
+      "hardened_tip"
+     ],
+     "final": "cobalt_shovel",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "minecraft:iron_ingot"
+     ],
+     "final": "crushing_hammer",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "iron_powder",
+      "corrosion_alloy_ingot"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "iron_powder",
+      "corrosion_alloy_ingot"
+     ],
+     "final": "diving_suit_leggings",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "iron_powder",
+      "high_strength_alloy_ingot"
+     ],
+     "final": "manganese_axe",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "iron_powder",
+      "high_strength_alloy_ingot"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "iron_powder",
+      "heat_resistant_alloy_ingot"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "iron_powder",
+      "corrosion_alloy_ingot",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "minecraft:iron_ingot",
+      "iron_plate",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "iron_crust"
+    },
+    {
+     "material": "iron_crust",
+     "category": "crust",
+     "intermediate": [
+      "minecraft:iron_ingot",
+      "iron_plate",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "iron_crust"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "copper_crust",
+   "category": "crust",
+   "uses": 4,
+   "finals": [
+    {
+     "material": "copper_crust",
+     "category": "crust",
+     "intermediate": [
+      "copper_wire",
+      "conductive_component"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "copper_crust"
+    },
+    {
+     "material": "copper_crust",
+     "category": "crust",
+     "intermediate": [
+      "copper_wire",
+      "conductive_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "copper_crust"
+    },
+    {
+     "material": "copper_crust",
+     "category": "crust",
+     "intermediate": [
+      "copper_wire",
+      "reinforced_cable"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "copper_crust"
+    },
+    {
+     "material": "copper_crust",
+     "category": "crust",
+     "intermediate": [
+      "copper_wire",
+      "pressure_valve",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "copper_crust"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "cobalt_crust",
+   "category": "crust",
+   "uses": 16,
+   "finals": [
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_axe",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_hoe",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_pickaxe",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_shovel",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_sword",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "hardened_tip",
+      "tungsten_tip",
+      "drill_head"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_flippers",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot"
+     ],
+     "final": "cobalt_pickaxe",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot"
+     ],
+     "final": "cobalt_shovel",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "deep_diver_helmet",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_concentrate",
+      "cobalt_powder",
+      "corrosion_alloy_ingot"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_concentrate",
+      "cobalt_powder",
+      "corrosion_alloy_ingot"
+     ],
+     "final": "diving_suit_leggings",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_concentrate",
+      "cobalt_powder",
+      "corrosion_alloy_ingot",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    },
+    {
+     "material": "cobalt_crust",
+     "category": "crust",
+     "intermediate": [
+      "cobalt_ingot",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "cobalt_crust"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "manganese_crust",
+   "category": "crust",
+   "uses": 8,
+   "finals": [
+    {
+     "material": "manganese_crust",
+     "category": "crust",
+     "intermediate": [
+      "manganese_concentrate",
+      "manganese_powder",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "manganese_crust"
+    },
+    {
+     "material": "manganese_crust",
+     "category": "crust",
+     "intermediate": [
+      "manganese_ingot",
+      "high_strength_alloy_ingot",
+      "drill_head"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "manganese_crust"
+    },
+    {
+     "material": "manganese_crust",
+     "category": "crust",
+     "intermediate": [
+      "manganese_concentrate",
+      "manganese_powder",
+      "hardened_tip"
+     ],
+     "final": "cobalt_pickaxe",
+     "count": 1,
+     "via_input": "manganese_crust"
+    },
+    {
+     "material": "manganese_crust",
+     "category": "crust",
+     "intermediate": [
+      "manganese_concentrate",
+      "manganese_powder",
+      "hardened_tip"
+     ],
+     "final": "cobalt_shovel",
+     "count": 1,
+     "via_input": "manganese_crust"
+    },
+    {
+     "material": "manganese_crust",
+     "category": "crust",
+     "intermediate": [
+      "manganese_ingot"
+     ],
+     "final": "manganese_axe",
+     "count": 1,
+     "via_input": "manganese_crust"
+    },
+    {
+     "material": "manganese_crust",
+     "category": "crust",
+     "intermediate": [
+      "manganese_ingot"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "manganese_crust"
+    },
+    {
+     "material": "manganese_crust",
+     "category": "crust",
+     "intermediate": [
+      "manganese_concentrate",
+      "manganese_powder",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "manganese_crust"
+    },
+    {
+     "material": "manganese_crust",
+     "category": "crust",
+     "intermediate": [
+      "manganese_concentrate",
+      "manganese_powder",
+      "hardened_tip",
+      "tungsten_tip"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "manganese_crust"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "nickel_crust",
+   "category": "crust",
+   "uses": 15,
+   "finals": [
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_axe",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_hoe",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_pickaxe",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_shovel",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_alloy_sword",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_concentrate",
+      "nickel_powder",
+      "tungsten_alloy_ingot",
+      "tungsten_tip"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_concentrate",
+      "nickel_powder",
+      "heat_resistant_alloy_ingot",
+      "thermal_component"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "abyssal_flippers",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "abyssal_alloy_ingot"
+     ],
+     "final": "deep_diver_helmet",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "corrosion_alloy_ingot"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "corrosion_alloy_ingot"
+     ],
+     "final": "diving_suit_leggings",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_concentrate",
+      "nickel_powder",
+      "heat_resistant_alloy_ingot"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_ingot",
+      "corrosion_alloy_ingot",
+      "pressure_shell"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_concentrate",
+      "nickel_powder",
+      "tungsten_alloy_ingot"
+     ],
+     "final": "tungsten_axe",
+     "count": 1,
+     "via_input": "nickel_crust"
+    },
+    {
+     "material": "nickel_crust",
+     "category": "crust",
+     "intermediate": [
+      "nickel_concentrate",
+      "nickel_powder",
+      "tungsten_alloy_ingot"
+     ],
+     "final": "tungsten_pickaxe",
+     "count": 1,
+     "via_input": "nickel_crust"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  },
+  {
+   "material": "crust_powder",
+   "category": "other",
+   "uses": 16,
+   "finals": [
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "reinforced_fiber",
+      "abyssal_composite"
+     ],
+     "final": "abyssal_cutter",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "thermal_core",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_drill",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "thermal_core",
+      "advanced_energy_cell"
+     ],
+     "final": "abyssal_power_core",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "crystal_core"
+     ],
+     "final": "crystal_pickaxe",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "reinforced_fiber",
+      "reinforced_cable"
+     ],
+     "final": "dive_tank",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "reinforced_fiber",
+      "abyssal_composite"
+     ],
+     "final": "manganese_sword",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "deep_pigment"
+     ],
+     "final": "minecraft:black_dye",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "deep_pigment"
+     ],
+     "final": "minecraft:blue_dye",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "hadal_plating"
+     ],
+     "final": "minecraft:conduit",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "lumen_cell"
+     ],
+     "final": "minecraft:redstone_lamp",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "lumen_cell"
+     ],
+     "final": "minecraft:sea_lantern",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive"
+     ],
+     "final": "minecraft:sticky_piston",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "hadal_plating"
+     ],
+     "final": "minecraft:turtle_helmet",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "deep_pigment"
+     ],
+     "final": "minecraft:yellow_dye",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "thermal_core",
+      "thermal_component"
+     ],
+     "final": "molybdenum_pickaxe",
+     "count": 1,
+     "via_input": "crust_powder"
+    },
+    {
+     "material": "crust_powder",
+     "category": "other",
+     "intermediate": [
+      "marine_adhesive",
+      "hadal_plating"
+     ],
+     "final": "pressure_diver_helmet",
+     "count": 1,
+     "via_input": "crust_powder"
+    }
+   ],
+   "min_required": 1,
+   "ok": true
+  }
+ ],
+ "existing_edges_used": [
+  {
+   "inputs": [
+    "cobalt_ingot",
+    "nickel_ingot",
+    "vanadium_ingot"
+   ],
+   "result": "abyssal_alloy_ingot"
+  },
+  {
+   "inputs": [
+    "abyssal_alloy_ingot"
+   ],
+   "result": "abyssal_alloy_pickaxe"
+  },
+  {
+   "inputs": [
+    "abyssal_alloy_ingot"
+   ],
+   "result": "abyssal_alloy_axe"
+  },
+  {
+   "inputs": [
+    "abyssal_alloy_ingot"
+   ],
+   "result": "abyssal_alloy_shovel"
+  },
+  {
+   "inputs": [
+    "abyssal_alloy_ingot"
+   ],
+   "result": "abyssal_alloy_hoe"
+  },
+  {
+   "inputs": [
+    "abyssal_alloy_ingot"
+   ],
+   "result": "abyssal_alloy_sword"
+  },
+  {
+   "inputs": [
+    "abyssal_alloy_ingot"
+   ],
+   "result": "deep_diver_helmet"
+  },
+  {
+   "inputs": [
+    "abyssal_alloy_ingot",
+    "sea_cloth"
+   ],
+   "result": "abyssal_flippers"
+  },
+  {
+   "inputs": [
+    "deep_fiber"
+   ],
+   "result": "fiber_rope"
+  },
+  {
+   "inputs": [
+    "deep_fiber"
+   ],
+   "result": "sea_cloth"
+  },
+  {
+   "inputs": [
+    "fiber_rope"
+   ],
+   "result": "minecraft:scaffolding"
+  },
+  {
+   "inputs": [
+    "fiber_rope"
+   ],
+   "result": "minecraft:string"
+  },
+  {
+   "inputs": [
+    "fiber_rope"
+   ],
+   "result": "minecraft:lead"
+  },
+  {
+   "inputs": [
+    "sea_cloth"
+   ],
+   "result": "minecraft:leather"
+  },
+  {
+   "inputs": [
+    "sea_cloth"
+   ],
+   "result": "minecraft:white_wool"
+  },
+  {
+   "inputs": [
+    "plant_resin"
+   ],
+   "result": "marine_adhesive"
+  },
+  {
+   "inputs": [
+    "marine_adhesive"
+   ],
+   "result": "lumen_cell"
+  },
+  {
+   "inputs": [
+    "marine_adhesive"
+   ],
+   "result": "hadal_plating"
+  },
+  {
+   "inputs": [
+    "marine_adhesive"
+   ],
+   "result": "minecraft:sticky_piston"
+  },
+  {
+   "inputs": [
+    "crust_powder"
+   ],
+   "result": "marine_adhesive"
+  },
+  {
+   "inputs": [
+    "crust_powder"
+   ],
+   "result": "deep_pigment"
+  },
+  {
+   "inputs": [
+    "hard_stalk"
+   ],
+   "result": "minecraft:stick"
+  },
+  {
+   "inputs": [
+    "hard_stalk"
+   ],
+   "result": "minecraft:campfire"
+  },
+  {
+   "inputs": [
+    "hard_stalk"
+   ],
+   "result": "minecraft:torch"
+  },
+  {
+   "inputs": [
+    "hard_stalk"
+   ],
+   "result": "minecraft:scaffolding"
+  },
+  {
+   "inputs": [
+    "organic_matter"
+   ],
+   "result": "minecraft:bone_meal"
+  },
+  {
+   "inputs": [
+    "organic_matter"
+   ],
+   "result": "minecraft:gunpowder"
+  },
+  {
+   "inputs": [
+    "organic_matter"
+   ],
+   "result": "minecraft:packed_mud"
+  },
+  {
+   "inputs": [
+    "organic_matter"
+   ],
+   "result": "deep_pigment"
+  },
+  {
+   "inputs": [
+    "bio_oil"
+   ],
+   "result": "minecraft:torch"
+  },
+  {
+   "inputs": [
+    "bio_oil"
+   ],
+   "result": "refined_oil"
+  },
+  {
+   "inputs": [
+    "refined_oil"
+   ],
+   "result": "minecraft:fire_charge"
+  },
+  {
+   "inputs": [
+    "lumen_gel"
+   ],
+   "result": "lumen_cell"
+  },
+  {
+   "inputs": [
+    "lumen_gel"
+   ],
+   "result": "minecraft:glow_item_frame"
+  },
+  {
+   "inputs": [
+    "lumen_gel"
+   ],
+   "result": "minecraft:glowstone_dust"
+  },
+  {
+   "inputs": [
+    "lumen_cell"
+   ],
+   "result": "minecraft:sea_lantern"
+  },
+  {
+   "inputs": [
+    "lumen_cell"
+   ],
+   "result": "minecraft:redstone_lamp"
+  },
+  {
+   "inputs": [
+    "deep_pigment"
+   ],
+   "result": "minecraft:blue_dye"
+  },
+  {
+   "inputs": [
+    "deep_pigment"
+   ],
+   "result": "minecraft:black_dye"
+  },
+  {
+   "inputs": [
+    "deep_pigment"
+   ],
+   "result": "minecraft:yellow_dye"
+  },
+  {
+   "inputs": [
+    "thermal_fiber"
+   ],
+   "result": "thermal_felt"
+  },
+  {
+   "inputs": [
+    "thermal_felt"
+   ],
+   "result": "minecraft:blast_furnace"
+  },
+  {
+   "inputs": [
+    "thermal_felt"
+   ],
+   "result": "minecraft:campfire"
+  },
+  {
+   "inputs": [
+    "crystal_sap"
+   ],
+   "result": "minecraft:tinted_glass"
+  },
+  {
+   "inputs": [
+    "crystal_sap"
+   ],
+   "result": "crystal_lens"
+  },
+  {
+   "inputs": [
+    "crystal_lens"
+   ],
+   "result": "minecraft:spyglass"
+  },
+  {
+   "inputs": [
+    "crystal_lens"
+   ],
+   "result": "minecraft:daylight_detector"
+  },
+  {
+   "inputs": [
+    "hadal_husk"
+   ],
+   "result": "hadal_plating"
+  },
+  {
+   "inputs": [
+    "hadal_plating"
+   ],
+   "result": "minecraft:turtle_helmet"
+  },
+  {
+   "inputs": [
+    "hadal_plating"
+   ],
+   "result": "minecraft:conduit"
+  },
+  {
+   "inputs": [
+    "sulfur"
+   ],
+   "result": "minecraft:gunpowder"
+  },
+  {
+   "inputs": [
+    "sulfur"
+   ],
+   "result": "minecraft:fire_charge"
+  },
+  {
+   "inputs": [
+    "sulfur"
+   ],
+   "result": "minecraft:yellow_dye"
+  },
+  {
+   "inputs": [
+    "raw_cobalt"
+   ],
+   "result": "minecraft:blue_dye"
+  },
+  {
+   "inputs": [
+    "raw_manganese"
+   ],
+   "result": "minecraft:black_dye"
+  },
+  {
+   "inputs": [
+    "raw_cobalt"
+   ],
+   "result": "cobalt_ingot"
+  },
+  {
+   "inputs": [
+    "raw_manganese"
+   ],
+   "result": "manganese_ingot"
+  },
+  {
+   "inputs": [
+    "raw_nickel"
+   ],
+   "result": "nickel_ingot"
+  },
+  {
+   "inputs": [
+    "raw_molybdenum"
+   ],
+   "result": "molybdenum_ingot"
+  },
+  {
+   "inputs": [
+    "raw_platinum"
+   ],
+   "result": "platinum_ingot"
+  },
+  {
+   "inputs": [
+    "raw_tellurium"
+   ],
+   "result": "tellurium_ingot"
+  },
+  {
+   "inputs": [
+    "raw_tungsten"
+   ],
+   "result": "tungsten_ingot"
+  },
+  {
+   "inputs": [
+    "raw_vanadium"
+   ],
+   "result": "vanadium_ingot"
+  },
+  {
+   "inputs": [
+    "raw_yttrium"
+   ],
+   "result": "yttrium_ingot"
+  },
+  {
+   "inputs": [
+    "cobalt_crust"
+   ],
+   "result": "cobalt_ingot"
+  },
+  {
+   "inputs": [
+    "manganese_crust"
+   ],
+   "result": "manganese_ingot"
+  },
+  {
+   "inputs": [
+    "nickel_crust"
+   ],
+   "result": "nickel_ingot"
+  },
+  {
+   "inputs": [
+    "iron_crust"
+   ],
+   "result": "minecraft:iron_ingot"
+  },
+  {
+   "inputs": [
+    "copper_crust"
+   ],
+   "result": "minecraft:copper_ingot"
+  },
+  {
+   "inputs": [
+    "cave_mineral_crust"
+   ],
+   "result": "sulfur"
+  },
+  {
+   "inputs": [
+    "minecraft:raw_copper"
+   ],
+   "result": "minecraft:copper_ingot"
+  },
+  {
+   "inputs": [
+    "minecraft:raw_iron"
+   ],
+   "result": "minecraft:iron_ingot"
+  }
+ ]
+}
