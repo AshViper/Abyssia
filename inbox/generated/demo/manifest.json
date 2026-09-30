@@ -1,0 +1,463 @@
+{
+ "batch": "demo",
+ "created": 1790775120.5269477,
+ "candidates": {
+  "deep_sea_rock_thermal": {
+   "gen": "recolor",
+   "seed": 0,
+   "params": {
+    "base": "block/deep_sea_rock",
+    "palette": "block/thermal_rock",
+    "id": "deep_sea_rock_thermal"
+   },
+   "id": "deep_sea_rock_thermal",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/deep_sea_rock",
+    "block/thermal_rock"
+   ],
+   "colours": 16,
+   "seam": 0.86,
+   "t": 1790775120.5273497
+  },
+  "deep_sea_rock_volcanic": {
+   "gen": "recolor",
+   "seed": 0,
+   "params": {
+    "base": "block/deep_sea_rock",
+    "palette": "block/volcanic_rock",
+    "id": "deep_sea_rock_volcanic"
+   },
+   "id": "deep_sea_rock_volcanic",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/deep_sea_rock",
+    "block/volcanic_rock"
+   ],
+   "colours": 16,
+   "seam": 0.79,
+   "t": 1790775120.5368156
+  },
+  "deep_sea_rock_crystal": {
+   "gen": "recolor",
+   "seed": 0,
+   "params": {
+    "base": "block/deep_sea_rock",
+    "palette": "block/crystal_rock",
+    "id": "deep_sea_rock_crystal"
+   },
+   "id": "deep_sea_rock_crystal",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/deep_sea_rock",
+    "block/crystal_rock"
+   ],
+   "colours": 16,
+   "seam": 0.86,
+   "t": 1790775120.5491943
+  },
+  "deep_sea_rock_violet": {
+   "gen": "recolor",
+   "seed": 0,
+   "params": {
+    "base": "block/deep_sea_rock",
+    "hue": 60,
+    "sat": 0.9,
+    "id": "deep_sea_rock_violet"
+   },
+   "id": "deep_sea_rock_violet",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/deep_sea_rock"
+   ],
+   "colours": 16,
+   "seam": 0.84,
+   "t": 1790775120.5605814
+  },
+  "silver_ore": {
+   "gen": "ore",
+   "seed": 1,
+   "params": {
+    "palette": "metal:silver",
+    "pattern": "nuggets",
+    "id": "silver_ore"
+   },
+   "id": "silver_ore",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/tungsten_ore"
+   ],
+   "colours": 16,
+   "seam": 1.01,
+   "t": 1790775120.5859118
+  },
+  "deep_gold_ore": {
+   "gen": "ore",
+   "seed": 3,
+   "params": {
+    "palette": "metal:gold",
+    "pattern": "nuggets",
+    "host": "block/trench_rock",
+    "id": "deep_gold_ore"
+   },
+   "id": "deep_gold_ore",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/trench_rock"
+   ],
+   "colours": 16,
+   "seam": 1.23,
+   "t": 1790775120.60769
+  },
+  "orichalcum_ore": {
+   "gen": "ore",
+   "seed": 2,
+   "params": {
+    "palette": "metal:orichalcum",
+    "pattern": "crystals",
+    "id": "orichalcum_ore"
+   },
+   "id": "orichalcum_ore",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/tungsten_ore"
+   ],
+   "colours": 16,
+   "seam": 0.98,
+   "t": 1790775120.630563
+  },
+  "lithium_ore": {
+   "gen": "ore",
+   "seed": 3,
+   "params": {
+    "palette": "metal:lithium",
+    "pattern": "veins",
+    "host": "orehost:platinum_ore",
+    "id": "lithium_ore"
+   },
+   "id": "lithium_ore",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/platinum_ore"
+   ],
+   "colours": 16,
+   "seam": 1.29,
+   "t": 1790775120.6536388
+  },
+  "chromium_ore": {
+   "gen": "ore",
+   "seed": 4,
+   "params": {
+    "palette": "metal:chromium",
+    "pattern": "mask:tungsten_ore",
+    "id": "chromium_ore"
+   },
+   "id": "chromium_ore",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/tungsten_ore",
+    "block/tungsten_ore"
+   ],
+   "colours": 16,
+   "seam": 0.98,
+   "t": 1790775120.6762974
+  },
+  "abyssium_ore": {
+   "gen": "ore",
+   "seed": 5,
+   "params": {
+    "palette": "metal:abyssium",
+    "pattern": "crystals",
+    "host": "block/deep_sea_rock",
+    "id": "abyssium_ore"
+   },
+   "id": "abyssium_ore",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/deep_sea_rock"
+   ],
+   "colours": 16,
+   "seam": 0.68,
+   "t": 1790775120.7072165
+  },
+  "rift_rock": {
+   "gen": "synth",
+   "seed": 1,
+   "params": {
+    "profile": "rocks",
+    "palette": "block/trench_rock",
+    "id": "rift_rock"
+   },
+   "id": "rift_rock",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "profile:rocks",
+    "block/trench_rock"
+   ],
+   "colours": 9,
+   "seam": 0.92,
+   "t": 1790775120.740846
+  },
+  "cinder_rock": {
+   "gen": "synth",
+   "seed": 2,
+   "params": {
+    "profile": "rocks",
+    "palette": "block/volcanic_rock",
+    "cracks": 1,
+    "id": "cinder_rock"
+   },
+   "id": "cinder_rock",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "profile:rocks",
+    "block/volcanic_rock"
+   ],
+   "colours": 13,
+   "seam": 1.36,
+   "t": 1790775120.7869942
+  },
+  "brine_shale": {
+   "gen": "synth",
+   "seed": 3,
+   "params": {
+    "profile": "rocks",
+    "palette": "block/salt_rock",
+    "layers": 0.8,
+    "id": "brine_shale"
+   },
+   "id": "brine_shale",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "profile:rocks",
+    "block/salt_rock"
+   ],
+   "colours": 9,
+   "seam": 0.94,
+   "t": 1790775120.8214507
+  },
+  "ember_rock": {
+   "gen": "synth",
+   "seed": 4,
+   "params": {
+    "profile": "rocks",
+    "palette": "block/thermal_rock",
+    "veins": 2,
+    "vein_palette": "block/molten_volcanic_rock",
+    "id": "ember_rock"
+   },
+   "id": "ember_rock",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "profile:rocks",
+    "block/thermal_rock"
+   ],
+   "colours": 12,
+   "seam": 0.97,
+   "t": 1790775120.8654058
+  },
+  "platinum_pickaxe": {
+   "gen": "tier",
+   "seed": 0,
+   "params": {
+    "base": "item/abyssal_alloy_pickaxe",
+    "palette": "ingot:platinum"
+   },
+   "id": "platinum_pickaxe",
+   "dest": "item",
+   "kind": "sprite",
+   "sources": [
+    "item/abyssal_alloy_pickaxe",
+    "item/platinum_ingot"
+   ],
+   "material_px": 49,
+   "colours": 16,
+   "t": 1790775120.908752
+  },
+  "orichalcum_pickaxe": {
+   "gen": "tier",
+   "seed": 0,
+   "params": {
+    "base": "item/abyssal_alloy_pickaxe",
+    "palette": "metal:orichalcum"
+   },
+   "id": "orichalcum_pickaxe",
+   "dest": "item",
+   "kind": "sprite",
+   "sources": [
+    "item/abyssal_alloy_pickaxe"
+   ],
+   "material_px": 49,
+   "colours": 16,
+   "t": 1790775120.945211
+  },
+  "silver_pickaxe": {
+   "gen": "tier",
+   "seed": 0,
+   "params": {
+    "base": "item/abyssal_alloy_pickaxe",
+    "palette": "metal:silver"
+   },
+   "id": "silver_pickaxe",
+   "dest": "item",
+   "kind": "sprite",
+   "sources": [
+    "item/abyssal_alloy_pickaxe"
+   ],
+   "material_px": 49,
+   "colours": 16,
+   "t": 1790775120.983252
+  },
+  "amber_fern": {
+   "gen": "sprite",
+   "seed": 0,
+   "params": {
+    "base": "block/cave_fern",
+    "palette": "block/amber_crystal_block",
+    "id": "amber_fern",
+    "sway": 1
+   },
+   "id": "amber_fern",
+   "dest": "block",
+   "kind": "sprite",
+   "sources": [
+    "block/cave_fern",
+    "block/amber_crystal_block"
+   ],
+   "warp": {
+    "mirror": false,
+    "height": 1.0,
+    "sway": 1,
+    "shift": 0
+   },
+   "colours": 16,
+   "t": 1790775121.0272913
+  },
+  "pale_green_fern": {
+   "gen": "sprite",
+   "seed": 0,
+   "params": {
+    "base": "block/cave_fern",
+    "palette": "#1b2a1a,#2f5a2b,#4f8f3a,#8fcf5a,#c8f08a",
+    "id": "pale_green_fern",
+    "mirror": true
+   },
+   "id": "pale_green_fern",
+   "dest": "block",
+   "kind": "sprite",
+   "sources": [
+    "block/cave_fern"
+   ],
+   "warp": {
+    "mirror": true,
+    "height": 1.0,
+    "sway": 0,
+    "shift": 0
+   },
+   "colours": 16,
+   "t": 1790775121.0693953
+  },
+  "amber_crystal_cluster": {
+   "gen": "sprite",
+   "seed": 0,
+   "params": {
+    "base": "block/abyssal_crystal_cluster",
+    "palette": "block/amber_crystal_block",
+    "id": "amber_crystal_cluster"
+   },
+   "id": "amber_crystal_cluster",
+   "dest": "block",
+   "kind": "sprite",
+   "sources": [
+    "block/abyssal_crystal_cluster",
+    "block/amber_crystal_block"
+   ],
+   "warp": {
+    "mirror": false,
+    "height": 1.0,
+    "sway": 0,
+    "shift": 0
+   },
+   "colours": 16,
+   "t": 1790775121.1147847
+  },
+  "violet_sea_fern": {
+   "gen": "sprite",
+   "seed": 0,
+   "params": {
+    "base": "block/sea_fern",
+    "hue": 100,
+    "id": "violet_sea_fern",
+    "height": 0.85
+   },
+   "id": "violet_sea_fern",
+   "dest": "block",
+   "kind": "sprite",
+   "sources": [
+    "block/sea_fern"
+   ],
+   "warp": {
+    "mirror": false,
+    "height": 0.85,
+    "sway": 0,
+    "shift": 0
+   },
+   "colours": 16,
+   "t": 1790775121.1652155
+  },
+  "mossy_trench_rock_bricks": {
+   "gen": "variants",
+   "seed": 1,
+   "params": {
+    "base": "block/trench_rock",
+    "type": "bricks+mossy"
+   },
+   "id": "mossy_trench_rock_bricks",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/trench_rock",
+    "block/abyssal_moss"
+   ],
+   "colours": 16,
+   "seam": 1.7,
+   "t": 1790775121.250779
+  },
+  "mossy_deep_sea_rock_top": {
+   "gen": "blend",
+   "seed": 0,
+   "params": {
+    "a": "block/deep_sea_rock",
+    "b": "block/abyssal_moss",
+    "mask": "vertical",
+    "amount": 0.35,
+    "id": "mossy_deep_sea_rock_top"
+   },
+   "id": "mossy_deep_sea_rock_top",
+   "dest": "block",
+   "kind": "block",
+   "sources": [
+    "block/deep_sea_rock",
+    "block/abyssal_moss"
+   ],
+   "colours": 16,
+   "seam": 0.96,
+   "t": 1790775121.3036673
+  }
+ },
+ "updated": 1790775121.3036695
+}

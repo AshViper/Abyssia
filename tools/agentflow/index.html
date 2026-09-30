@@ -101,6 +101,31 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
 .warn{color:var(--escalated);font-weight:600}.err{color:var(--failed);font-weight:600}
 #gres .ba{display:inline-flex;gap:2px;align-items:center;margin:3px 8px 3px 0;font-size:11px;color:var(--mut)}
 #gres img{width:40px;height:40px;image-rendering:pixelated}
+/* テクスチャ生成 */
+#tg{padding:12px 16px;display:grid;grid-template-columns:340px minmax(0,1fr);gap:12px}
+@media(max-width:900px){#tg{grid-template-columns:minmax(0,1fr)}}
+#tg>*{min-width:0}
+#tgform label{margin-top:4px}
+.tgrow{display:flex;gap:4px;align-items:center}
+.tgrow input{flex:1}
+.tgrow button.pick{font-size:11px;padding:3px 6px}
+.tgrow button.pick.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+#tgsrc{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:4px;max-height:300px;overflow:auto;margin-top:6px}
+#tgsrc div{cursor:pointer;text-align:center;font-size:9px;color:var(--mut);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-radius:4px;padding:2px}
+#tgsrc div:hover{background:color-mix(in srgb,var(--acc) 18%,transparent)}
+#tgsrc img{width:40px;height:40px;image-rendering:pixelated;display:block;margin:0 auto}
+#tgprev{display:flex;flex-wrap:wrap;gap:10px}
+.pv{border:1px solid var(--bd);border-radius:8px;padding:6px;background:var(--panel);font-size:11px;color:var(--mut)}
+.pv .ims{display:flex;gap:6px}
+.pv img{width:96px;height:96px;image-rendering:pixelated;display:block}
+.pv .tile{width:96px;height:96px;background-size:32px 32px!important;background-repeat:repeat!important;image-rendering:pixelated}
+.pv .ch{background:repeating-conic-gradient(#0000 0 25%,#8883 0 50%) 0 0/8px 8px}
+#tgcand{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin-top:6px}
+.cd{border:1px solid var(--bd);border-radius:8px;padding:6px;display:flex;gap:6px;align-items:center;font-size:11px}
+.cd img{width:48px;height:48px;image-rendering:pixelated}
+.cd input[type=text]{font-size:11px;padding:2px 4px}
+#tgres .ba{display:inline-flex;gap:3px;align-items:center;margin:3px 10px 3px 0;font-size:11px;color:var(--mut)}
+#tgres img{width:48px;height:48px;image-rendering:pixelated}
 </style>
 </head>
 <body>
@@ -118,7 +143,7 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
     <button class="b sub" id="resetBtn">リセット</button>
   </span>
 </header>
-<div class="tabs"><button class="tab on" data-t="flow">フロー</button><button class="tab" data-t="tex">テクスチャ</button><button class="tab" data-t="gen">画像生成</button></div>
+<div class="tabs"><button class="tab on" data-t="flow">フロー</button><button class="tab" data-t="tex">テクスチャ</button><button class="tab" data-t="gen">画像生成</button><button class="tab" data-t="tg">テクスチャ生成</button></div>
 
 <main id="flow">
   <div>
@@ -200,6 +225,41 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
         <span class="chip" id="gmsg"></span>
       </div>
       <div id="gres"></div>
+    </div>
+  </div>
+</section>
+
+<section id="tg" hidden>
+  <div class="card">
+    <h2 class="h2">テクスチャ生成 (tools/texture_gen.py)</h2>
+    <div class="chip" style="font-size:12px">既存テクスチャのスタイルから候補を生成 → inbox/generated/&lt;batch&gt;/ → 確認して適用</div>
+    <label>生成器<select id="tggen"></select></label>
+    <div id="tgform"></div>
+    <div class="bar" style="margin-top:8px">
+      <label style="flex-direction:row;align-items:center;gap:4px">seed <input id="tgseed" type="number" value="0" min="0" style="width:80px"></label>
+      <label style="flex-direction:row;align-items:center;gap:4px">枚数 <input id="tgn" type="number" value="6" min="1" max="12" style="width:60px"></label>
+      <button class="b" id="tgrun">プレビュー</button>
+    </div>
+    <div class="chip" id="tgmsg"></div>
+    <h2 class="h2" style="margin-top:10px">素材 (クリックで選択中の欄に入力)</h2>
+    <div class="bar" style="margin:0"><select id="tgk"><option value="block">block</option><option value="item">item</option><option value="models/armor">armor</option></select><input id="tgq" placeholder="名前で検索"></div>
+    <div id="tgsrc"></div>
+  </div>
+  <div>
+    <div class="card"><h2 class="h2">プレビュー (seed ごと / 右は 3x3 タイル)</h2><div id="tgprev" style="color:var(--mut)">左で設定して「プレビュー」</div></div>
+    <div class="card" style="margin-top:12px">
+      <div class="bar"><h2 class="h2" style="margin:0">候補</h2>
+        <label style="flex-direction:row;align-items:center;gap:4px">batch <input id="tgbatch" value="gui" style="width:120px"></label>
+        <button class="b sub" id="tgreload">再読込</button>
+        <a class="chip" id="tgcontact" target="_blank">コンタクトシート</a></div>
+      <div id="tgcand"></div>
+      <div class="bar" style="margin-top:8px">
+        <label style="flex-direction:row;align-items:center;gap:4px"><input type="checkbox" id="tglock" style="width:auto"> ロックも更新</label>
+        <label style="flex-direction:row;align-items:center;gap:4px"><input type="checkbox" id="tgforce" style="width:auto"> ロック済みも上書き</label>
+        <button class="b sub" id="tgdry">ドライラン</button><button class="b" id="tgapply">選択を適用</button><button class="b sub" id="tgundo">最後の適用を元に戻す</button>
+        <span class="chip" id="tgamsg"></span>
+      </div>
+      <div id="tgres"></div>
     </div>
   </div>
 </section>
@@ -428,8 +488,9 @@ function tgrid(){
 ["tk","tv","tq","tz"].forEach(i=>$(i).addEventListener("input",tgrid));
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));
-  for(const t of ["flow","tex","gen"])$(t).hidden=b.dataset.t!==t;
+  for(const t of ["flow","tex","gen","tg"])$(t).hidden=b.dataset.t!==t;
   if(b.dataset.t==="tex")texLoad();
+  if(b.dataset.t==="tg")tgLoad();
   if(b.dataset.t==="gen")genLoad();});
 tpills();
 setInterval(()=>{if(!$("tex").hidden)texLoad()},15000);
@@ -588,6 +649,99 @@ $("gundo").onclick=async()=>{
     const r=await jpost("/api/sheet/undo",{});alert(`元に戻しました: ${r.files.length} ファイル`);genLoad();if(gcur)gicons();
   }catch(e){alert("元に戻せません: "+e.message)}};
 window.addEventListener("resize",()=>{if(!$("gen").hidden)gdraw()});
+
+// ---- テクスチャ生成: same functions as tools/texture_gen.py (/api/texgen/*)
+const TGF={ // [key,label,type,default,options]
+  recolor:[["base","ベース","ref","block/deep_sea_rock"],["palette","パレット (テクスチャ / metal:x / ingot:x / #hex,...)","pal","block/thermal_rock"],["hue","色相 (パレット無し時)","num",""],["sat","彩度倍率","num",""],["light","明度 ±","num",""],["detail","元の色味を残す 0..1","num",""]],
+  variants:[["base","ベース","ref","block/deep_sea_rock"],["type","種類 (+で重ねる)","sel","mossy",["polished","bricks","cracked","chiseled","crust_bricks","mossy","frosted","scorched","bricks+mossy","bricks+frosted","cracked+scorched"]],["amount","被覆率","num",""]],
+  ore:[["host","母岩 (block / orehost:<ore>)","ref","orehost:tungsten_ore"],["palette","鉱石パレット","pal","metal:silver"],["pattern","パターン","sel","nuggets",["nuggets","veins","crystals","mask:platinum_ore","mask:sulfur_ore","mask:cobalt_ore","mask:thermal_crystal_ore"]],["density","密度","num","1"],["size","粒サイズ","num","1"]],
+  synth:[["profile","プロファイル","sel","rocks",["rocks","sediments","crusts","crystals","ores"]],["like","構造を真似る (任意)","ref",""],["palette","パレット (空=プロファイルから)","pal",""],["cracks","ひび","num","0"],["veins","鉱脈","num","0"],["layers","層","num","0"],["bands","明度帯","num","4"],["cut","形の大きさ 1.5..8","num","4"],["speckle","粒 0..0.5","num","0.14"]],
+  sprite:[["base","ベース (植物/結晶)","ref","block/cave_fern"],["palette","パレット","pal","block/amber_crystal_block"],["hue","色相","num",""],["mirror","反転","sel","auto",["auto","true","false"]],["sway","傾き -2..2","sel","auto",["auto","-2","-1","0","1","2"]],["shift","横ずれ","sel","0",["0","auto","-2","-1","1","2"]],["height","高さ 0.6..1","sel","1.0",["1.0","auto","0.9","0.8","0.7"]]],
+  tier:[["base","ベース (道具/インゴット)","ref","item/abyssal_alloy_pickaxe"],["palette","金属パレット","pal","ingot:platinum"],["mask","対象","sel","auto",["auto","all"]]],
+  blend:[["a","A","ref","block/deep_sea_rock"],["b","B","ref","block/abyssal_moss"],["mask","マスク","sel","noise",["noise","vertical","horizontal","diagonal","radial"]],["amount","B の割合","num","0.4"],["rough","境界の荒さ","num","0.6"]],
+};
+let TGM=null,TGS=[],tgPick=null,tgCands=[];
+async function tgLoad(){
+  if(!TGM){try{TGM=await (await fetch("/api/texgen/meta")).json();if(TGM.error)throw new Error(TGM.error)}catch(e){$("tgmsg").textContent="読み込み失敗: "+e.message;TGM=null;return}
+    const g=$("tggen");g.innerHTML="";for(const k of TGM.generators){const o=mk("option",null,k);o.value=k;g.appendChild(o)}
+    const dl=mk("datalist");dl.id="tgpals";for(const m of Object.keys(TGM.metals)){const o=mk("option");o.value="metal:"+m;dl.appendChild(o)}document.body.appendChild(dl);
+    tgForm();}
+  try{TGS=await (await fetch("/api/texgen/sources")).json()}catch(_){TGS=[]}
+  tgSrc();tgList();
+}
+function tgForm(){
+  const f=$("tgform");f.innerHTML="";tgPick=null;
+  for(const [k,l,t,d,opts] of TGF[$("tggen").value]){
+    const lab=mk("label",null,l);let inp;
+    if(t==="sel"){inp=mk("select");for(const o of opts){const e=mk("option",null,o);e.value=o;inp.appendChild(e)}inp.value=d}
+    else{inp=mk("input");inp.value=d;if(t==="pal")inp.setAttribute("list","tgpals");if(t==="num")inp.inputMode="decimal"}
+    inp.dataset.k=k;inp.dataset.t=t;
+    if(t==="ref"||t==="pal"){const row=mk("div","tgrow");const b=mk("button","pill pick","選択");b.type="button";
+      b.onclick=()=>{tgPick=tgPick===inp?null:inp;document.querySelectorAll("#tgform .pick").forEach(x=>x.classList.toggle("on",tgPick&&x===b))};
+      row.append(inp,b);lab.appendChild(row);if(!tgPick){tgPick=inp;b.classList.add("on")}}
+    else lab.appendChild(inp);
+    f.appendChild(lab);
+  }
+  const lab=mk("label",null,"テクスチャID (空=自動)");const id=mk("input");id.dataset.k="id";id.placeholder="例: silver_ore";lab.appendChild(id);f.appendChild(lab);
+}
+function tgParams(){const p={};document.querySelectorAll("#tgform [data-k]").forEach(e=>{const v=e.value.trim();if(v!=="")p[e.dataset.k]=e.dataset.t==="num"?Number(v):v});return p}
+function tgSrc(){
+  const box=$("tgsrc"),k=$("tgk").value,q=$("tgq").value.trim().toLowerCase();box.innerHTML="";let n=0;
+  for(const s of TGS){if(s.dir!==k||(q&&!s.name.includes(q)))continue;if(n++>400)break;
+    const d=mk("div");d.title=s.ref+(s.locked?" (ロック)":"");const i=mk("img");i.loading="lazy";i.src=`/tex/cur/${s.dir}/${s.name}.png`;
+    d.append(i,s.name);d.onclick=()=>{if(tgPick){tgPick.value=s.ref}};box.appendChild(d)}
+}
+$("tggen").onchange=tgForm;$("tgk").onchange=tgSrc;$("tgq").oninput=tgSrc;
+$("tgrun").onclick=async()=>{
+  const n=Math.max(1,Math.min(12,+$("tgn").value||1)),s0=Math.max(0,+$("tgseed").value||0);
+  const seeds=[...Array(n)].map((_,i)=>s0+i),gen=$("tggen").value,params=tgParams();
+  $("tgmsg").textContent="生成中…";
+  try{const r=await jpost("/api/texgen/preview",{gen,params,seeds});$("tgmsg").textContent=`${r.length} 枚 (${r[0].id} / ${r[0].kind})`;
+    const box=$("tgprev");box.innerHTML="";
+    for(const c of r){const d=mk("div","pv");const ims=mk("div","ims");const src="data:image/png;base64,"+c.png;
+      const i=mk("img","ch");i.src=src;ims.appendChild(i);
+      const t=mk("div","tile");t.style.backgroundImage=`url(${src})`;ims.appendChild(t);
+      const add=mk("button","pill","候補に追加");add.onclick=async()=>{add.disabled=true;
+        try{await jpost("/api/texgen/add",{gen,params,seeds:[c.seed],batch:$("tgbatch").value.trim()||"gui",suffix_seed:n>1});add.textContent="追加済";tgList()}catch(e){add.textContent="失敗: "+e.message}};
+      d.append(ims,mk("div",null,`seed ${c.seed} · ${c.colours}色${c.seam!=null?" · seam "+c.seam:""}`),mk("div",null,`→ ${c.dest}/${c.id}`),add);box.appendChild(d)}
+  }catch(e){$("tgmsg").textContent="失敗: "+e.message}
+};
+async function tgList(){
+  const b=$("tgbatch").value.trim()||"gui";$("tgcontact").href="/api/texgen/contact?batch="+encodeURIComponent(b);
+  try{tgCands=await (await fetch("/api/texgen/candidates?batch="+encodeURIComponent(b),{cache:"no-store"})).json();if(tgCands.error)throw new Error(tgCands.error)}catch(e){$("tgcand").textContent="候補なし";tgCands=[];return}
+  const box=$("tgcand");box.innerHTML="";if(!tgCands.length){box.textContent="候補なし";return}
+  for(const c of tgCands){const d=mk("div","cd");const cb=mk("input");cb.type="checkbox";cb.style.width="auto";cb.dataset.name=c.name;
+    const i=mk("img");i.src=`/api/texgen/image?batch=${encodeURIComponent(c.batch)}&name=${encodeURIComponent(c.name)}&t=${c.t}`;
+    const w=mk("div");w.style.minWidth="0";const as=mk("input");as.type="text";as.value=c.target;as.dataset.as=c.name;as.title="適用先";
+    w.append(mk("div",null,c.name+(c.locked?" [ロック]":c.exists?" [上書き]":" [新規]")),as);d.append(cb,i,w);box.appendChild(d)}
+}
+$("tgreload").onclick=tgList;$("tgbatch").onchange=tgList;
+async function tgApply(dry){
+  const b=$("tgbatch").value.trim()||"gui";
+  const items=[...document.querySelectorAll("#tgcand input[type=checkbox]:checked")].map(cb=>({batch:b,name:cb.dataset.name,as:document.querySelector(`#tgcand input[data-as="${cb.dataset.name}"]`).value.trim()}));
+  if(!items.length){$("tgamsg").textContent="候補を選択してください";return}
+  const lock=$("tglock").checked,force=$("tgforce").checked;
+  if(!dry&&!confirm(`${items.length} 枚を textures に書き込みます${lock?" (ロックも更新)":""}${force?" (ロック済みも上書き)":""}。上書き前のファイルは inbox/backup/texgen-* に退避されます。続けますか?`))return;
+  $("tgamsg").textContent=dry?"ドライラン中…":"適用中…";$("tgres").innerHTML="";
+  try{const r=await jpost("/api/texgen/apply",{items,lock,force_locked:force,dry_run:dry});
+    const c=a=>r.plan.filter(e=>e.action===a).length;
+    $("tgamsg").textContent=`${dry?"ドライラン: ":"適用: "}書込 ${c("write")} / 変化なし ${c("unchanged")} / 拒否 ${c("refused")}`;
+    const res=$("tgres");if(r.error)res.appendChild(mk("div","err",r.error));
+    if(r.derived_candidates.length)res.appendChild(mk("div","chip","再導出"+(dry?"予定":"")+": "+(r.derived?r.derived.written.join(", ")||"変化なし":r.derived_candidates.map(x=>x.split("/").pop()).join(", "))));
+    if(r.backup)res.appendChild(mk("div","chip","退避先: "+r.backup));
+    if(r.check)res.appendChild(mk("div","chip",r.check.missing?`check_textures: 欠落 ${r.check.missing}`:"check_textures: 欠落なし"));
+    const g=mk("div");for(const e of r.plan){const ba=mk("span","ba");
+      if(e.before){const im=mk("img");im.src="data:image/png;base64,"+e.before;ba.append(im)}else ba.append(mk("span",null,"新規"));
+      const a=mk("img");a.src="data:image/png;base64,"+e.after;ba.append("→",a,` ${e.target} (${e.action})`);g.appendChild(ba)}
+    res.appendChild(g);if(!dry)tgList();
+  }catch(e){$("tgamsg").textContent="失敗: "+e.message}
+}
+$("tgdry").onclick=()=>tgApply(true);$("tgapply").onclick=()=>tgApply(false);
+$("tgundo").onclick=async()=>{
+  try{const p=await jpost("/api/texgen/undo",{dry_run:true});
+    if(!confirm(`最後の適用 (${p.backup}) を元に戻します: ${p.files.length} ファイル。続けますか?`))return;
+    const r=await jpost("/api/texgen/undo",{});$("tgamsg").textContent=`元に戻しました: ${r.files.length} ファイル`;tgList();
+  }catch(e){$("tgamsg").textContent="元に戻せません: "+e.message}};
 
 render();poll();reqs();aprs();autoPoll();
 setInterval(poll,1200);setInterval(reqs,4000);setInterval(aprs,2000);setInterval(autoPoll,2500);

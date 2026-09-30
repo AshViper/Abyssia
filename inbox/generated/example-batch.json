@@ -1,0 +1,31 @@
+{
+ "batch": "demo",
+ "jobs": [
+  {"gen": "recolor", "base": "block/deep_sea_rock", "palette": "block/thermal_rock", "id": "deep_sea_rock_thermal"},
+  {"gen": "recolor", "base": "block/deep_sea_rock", "palette": "block/volcanic_rock", "id": "deep_sea_rock_volcanic"},
+  {"gen": "recolor", "base": "block/deep_sea_rock", "palette": "block/crystal_rock", "id": "deep_sea_rock_crystal"},
+  {"gen": "recolor", "base": "block/deep_sea_rock", "hue": 60, "sat": 0.9, "id": "deep_sea_rock_violet"},
+
+  {"gen": "ore", "palette": "metal:silver", "pattern": "nuggets", "id": "silver_ore", "seed": 1},
+  {"gen": "ore", "palette": "metal:gold", "pattern": "nuggets", "host": "block/trench_rock", "id": "deep_gold_ore", "seed": 3},
+  {"gen": "ore", "palette": "metal:orichalcum", "pattern": "crystals", "id": "orichalcum_ore", "seed": 2},
+  {"gen": "ore", "palette": "metal:lithium", "pattern": "veins", "host": "orehost:platinum_ore", "id": "lithium_ore", "seed": 3},
+  {"gen": "ore", "palette": "metal:chromium", "pattern": "mask:tungsten_ore", "id": "chromium_ore", "seed": 4},
+  {"gen": "ore", "palette": "metal:abyssium", "pattern": "crystals", "host": "block/deep_sea_rock", "id": "abyssium_ore", "seed": 5},
+
+  {"gen": "synth", "profile": "rocks", "palette": "block/trench_rock", "id": "rift_rock", "seed": 1},
+  {"gen": "synth", "profile": "rocks", "palette": "block/volcanic_rock", "cracks": 1, "id": "cinder_rock", "seed": 2},
+  {"gen": "synth", "profile": "rocks", "palette": "block/salt_rock", "layers": 0.8, "id": "brine_shale", "seed": 3},
+  {"gen": "synth", "profile": "rocks", "palette": "block/thermal_rock", "veins": 2, "vein_palette": "block/molten_volcanic_rock", "id": "ember_rock", "seed": 4},
+
+  {"gen": "tier", "base": "item/abyssal_alloy_pickaxe", "palettes": ["ingot:platinum", "metal:orichalcum", "metal:silver"]},
+
+  {"gen": "sprite", "base": "block/cave_fern", "palette": "block/amber_crystal_block", "id": "amber_fern", "sway": 1},
+  {"gen": "sprite", "base": "block/cave_fern", "palette": "#1b2a1a,#2f5a2b,#4f8f3a,#8fcf5a,#c8f08a", "id": "pale_green_fern", "mirror": true},
+  {"gen": "sprite", "base": "block/abyssal_crystal_cluster", "palette": "block/amber_crystal_block", "id": "amber_crystal_cluster"},
+  {"gen": "sprite", "base": "block/sea_fern", "hue": 100, "id": "violet_sea_fern", "height": 0.85},
+
+  {"gen": "variants", "base": "block/trench_rock", "type": "bricks+mossy", "seed": 1},
+  {"gen": "blend", "a": "block/deep_sea_rock", "b": "block/abyssal_moss", "mask": "vertical", "amount": 0.35, "id": "mossy_deep_sea_rock_top"}
+ ]
+}

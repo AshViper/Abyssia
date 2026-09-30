@@ -13,16 +13,16 @@ public class Config
     }
 
     public static final ForgeConfigSpec.BooleanValue DEEP_OCEAN_ENABLED = BUILDER
-            .comment("Whether diving below transition_y moves players into the deep ocean dimension")
+            .comment("Whether diving below transition_y (in water) moves players into the deep ocean dimension")
             .define("enabled", true);
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_TRANSITION_Y = BUILDER
-            .comment("Ocean world Y at or below which players are moved into the deep ocean.",
-                    "Default -61 is inside the bedrock floor (Y -64..-60): only reachable down an abyssal rift")
-            .defineInRange("transition_y", -61, -64, 319);
+            .comment("Ocean world Y at or below which players in water are moved into the deep ocean.",
+                    "Default -40: deep trenches and basins (seabed down to Y -50) and abyssal rifts reach it")
+            .defineInRange("transition_y", -40, -64, 319);
 
     public static final ForgeConfigSpec.IntValue CONFIG_VERSION = BUILDER
-            .comment("Internal: used to upgrade old defaults (transition_y 0 / coordinate_offset_y 200 -> -61 / 261). Do not edit.")
+            .comment("Internal: used to upgrade old defaults (transition_y / coordinate_offset_y 0 / 200 or -61 / 261 -> -40 / 240). Do not edit.")
             .defineInRange("config_version", 1, 1, 100);
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_RETURN_Y = BUILDER
@@ -31,8 +31,8 @@ public class Config
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_COORDINATE_OFFSET_Y = BUILDER
             .comment("deepY = oceanY + coordinate_offset_y. Deep ocean terrain is generated assuming divers arrive",
-                    "at deep Y 200, i.e. transition_y + coordinate_offset_y = 200 (default -61 + 261)")
-            .defineInRange("coordinate_offset_y", 261, -512, 512);
+                    "at deep Y 200, i.e. transition_y + coordinate_offset_y = 200 (default -40 + 240)")
+            .defineInRange("coordinate_offset_y", 240, -512, 512);
 
     public static final ForgeConfigSpec.IntValue DEEP_OCEAN_TRANSITION_COOLDOWN = BUILDER
             .comment("Ticks after a transition during which no further transition happens")
@@ -321,20 +321,27 @@ public class Config
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
+    private static final int CURRENT_CONFIG_VERSION = 3;
+    /** Earlier default (transition_y, coordinate_offset_y) pairs: Y 0 / 200 (version 1) and below the bedrock, -61 / 261 (version 2). */
+    private static final int[][] OLD_TRANSITION_DEFAULTS = {{0, 200}, {-61, 261}};
+
     /**
-     * Config files written by older versions keep the old defaults (transition at Y 0), so the move below the
-     * bedrock would never take effect. Files that still hold exactly the old defaults are upgraded once;
-     * customised values are left alone.
+     * Config files written by older versions keep their old defaults, so a new transition depth would never take
+     * effect. Files that still hold exactly an old default pair are upgraded once; customised values are left alone.
      */
     static void migrate(ModConfigEvent event)
     {
-        if (event.getConfig().getSpec() != SPEC || CONFIG_VERSION.get() >= 2) return;
-        if (DEEP_OCEAN_TRANSITION_Y.get() == 0 && DEEP_OCEAN_COORDINATE_OFFSET_Y.get() == 200)
+        if (event.getConfig().getSpec() != SPEC || CONFIG_VERSION.get() >= CURRENT_CONFIG_VERSION) return;
+        for (int[] old : OLD_TRANSITION_DEFAULTS)
         {
-            DEEP_OCEAN_TRANSITION_Y.set(-61);
-            DEEP_OCEAN_COORDINATE_OFFSET_Y.set(261);
+            if (DEEP_OCEAN_TRANSITION_Y.get() == old[0] && DEEP_OCEAN_COORDINATE_OFFSET_Y.get() == old[1])
+            {
+                DEEP_OCEAN_TRANSITION_Y.set(-40);
+                DEEP_OCEAN_COORDINATE_OFFSET_Y.set(240);
+                break;
+            }
         }
-        CONFIG_VERSION.set(2);
+        CONFIG_VERSION.set(CURRENT_CONFIG_VERSION);
         SPEC.save();
     }
 

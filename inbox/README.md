@@ -21,6 +21,16 @@ forge_textures を実行する。rock 系は texture_locks を必ず維持する
 4. ドライラン → 取り込む: textures 上書き・ロック更新・glow 等を再導出・check_textures。旧ファイルは `inbox/backup/gui-import-<時刻>/`
 5. 失敗したら「最後の取込を元に戻す」(`sheets.py undo`)。skip の ids(植物の壁/カーペット系など)は常に上書きしない
 
+### スタイル一致の手続き生成 (Agent Flow「テクスチャ生成」タブ / `tools/texture_gen.py`)
+ChatGPT 画像が無いとき (新ブロック/アイテム、色替え、ティア違い、欠落) 用。承認済みテクスチャからパレット・明度分布・
+ノイズ尺度・鉱石粒の統計を学習し (`profile --category rocks|ores|crusts|plants|tools|...`、キャッシュ `inbox/generated/profiles/`)、
+recolor / variants (polished・bricks・cracked・chiseled・mossy・frosted・scorched、`+` で重ね) / ore / synth / sprite / tier / blend で候補を作る。
+1. 候補は `inbox/generated/<batch>/<name>.png` + `contact.png` + `manifest.json` にだけ書く (`--dry-run` で書かない)。seed 固定で再現可能
+2. まとめて作るなら JSON 仕様: `python tools/texture_gen.py batch inbox/generated/example-batch.json` (見本 = demo バッチ)
+3. 確認して `apply <batch>/<name> [--as block/<id>] [--lock]`。ロック済みは `--force-locked` 無しでは拒否、派生物 (glow/bricks/polished) は `--lock` 必須。
+   旧ファイルは `inbox/backup/texgen-<時刻>/`、派生物を再導出して check_textures を実行。失敗したら `undo`
+4. テスト: `python tools/test_texture_gen.py` (apply/undo は一時コピーでのみ実行)
+
 ## 仕様書テンプレ
 ```
 # <id> <title>

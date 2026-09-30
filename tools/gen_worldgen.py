@@ -105,9 +105,14 @@ DEEP = dict(
     top_y=230,                     # nothing rises above this (players return to the ocean world at Y 240)
 )
 
+# ---------------------------------------------------------------- ocean world floor
+# Lowest seabed (Y): players in water at or below Y -40 (Config transition_y) move to the deep ocean, so trench
+# and basin floors between -40 and -50 are the usual way down.
+OCEAN_FLOOR = dict(knee_y=-32, slope=0.4, floor_y=-50)
+
 # ---------------------------------------------------------------- abyssal rifts (ocean world)
-# The only way down: bedrock covers the ocean world's floor (Y -64..-60) and players move to the deep ocean below
-# Y -61. A rift is a water-filled shaft from the seabed through the bedrock band. abyssia:rift (RiftDensityFunction)
+# A second way down: a water-filled shaft from the seabed through the bedrock band (Y -64..-60), so seas that are
+# too shallow to reach the transition depth still lead down. abyssia:rift (RiftDensityFunction)
 # places at most one per cell where the seabed at its axis is deep enough and returns 1 on the axis, 0 at its radius,
 # -1 from 2 radii out. The terrain opens where it is > 0 and the biome source puts abyssia:abyssal_rift where it is
 # > -0.2, so the biome (no bedrock, no features) always covers the shaft and its walls.
@@ -145,7 +150,12 @@ def terrain():
     write("density_function/canyons", mul(-0.3, ridge("minecraft:ridge", 1.0, 0.08, 12.5)))
     write("density_function/detail", mul(0.08, snoise("minecraft:surface", 1.0)))
     write("density_function/seabed_raw", flat(add(add(add(add(A("base"), A("mountains")), A("trenches")), A("canyons")), A("detail"))))
-    write("density_function/seabed_offset", flat(clamp(A("seabed_raw"), -0.95, 1.9)))
+    # Deep seas bottom out at Y -50: below the knee the relief is compressed (trench walls keep sloping instead of
+    # being cut flat), then clamped at the floor, leaving rock and the bedrock band below. Unchanged above the knee.
+    f = OCEAN_FLOOR
+    knee, floor = f["knee_y"] / 64.0, f["floor_y"] / 64.0
+    soft = add(dmax(A("seabed_raw"), knee), mul(f["slope"], dmin(add(A("seabed_raw"), -knee), 0)))
+    write("density_function/seabed_offset", flat(clamp(soft, floor, 1.9)))
     # What the ocean world's biomes follow: basins and shallows, without ridges, trenches and canyons.
     write("density_function/seabed_macro", flat(A("base")))
     r = RIFT
@@ -193,7 +203,7 @@ def terrain():
                             volcano),                                                # cones with summit craters
                         add(mul(-0.9, ridge(A("canyon"), 0.35, 0.06, 16.0)),          # abyssal canyons: narrow, ~58 blocks deep
                             mul(y(d["cleft"]) / 1.5, A("trenches")))))                # the trench's axial cleft
-    # Divers coming down a rift arrive at Y 200: keep that water open under the ocean world's deep seas. The limit
+    # Divers coming down a trench or rift arrive at Y 200: keep that water open under the ocean world's deep seas. The limit
     # only lifts once the ocean floor is ~10 blocks above Y 0, and never within 1.5 radii of a rift's axis.
     near_rift = mul(-4.0, dmax(0, add(A("rift"), 0.5)))
     arrival = add(y(d["arrival_y"]), mul(8.0, dmax(0, add(add(A("seabed_offset"), near_rift), -0.15))))

@@ -8,9 +8,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 /**
- * Abyssal rift field ({@code {"type": "abyssia:rift", ...}}, 2D, ignores Y): the ocean world's only way down to the
- * deep ocean. At most one rift per {@code cell_size} square cell, present with probability {@code chance} if the
- * {@code seabed} function at its axis is at or below {@code max_seabed}; radius between {@code min_radius} and
+ * Abyssal rift field ({@code {"type": "abyssia:rift", ...}}, 2D, ignores Y): a shaft down to the transition depth
+ * from seas too shallow to reach it. At most one rift per {@code cell_size} square cell, present with probability
+ * {@code chance} if the {@code seabed} function at its axis is at or below {@code max_seabed}; radius between {@code min_radius} and
  * {@code max_radius}. Returns 1 on the axis, 0 at the radius, falling linearly outside and clamped to [-1, 1], so
  * -1 from two radii out and everywhere away from rifts.
  * <p>

@@ -4,10 +4,26 @@
     "type": "minecraft:clamp",
     "input": {
       "type": "minecraft:add",
-      "argument1": "abyssia:seabed_raw",
-      "argument2": 0.0
+      "argument1": {
+        "type": "minecraft:max",
+        "argument1": "abyssia:seabed_raw",
+        "argument2": -0.5
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 0.4,
+        "argument2": {
+          "type": "minecraft:min",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": "abyssia:seabed_raw",
+            "argument2": 0.5
+          },
+          "argument2": 0
+        }
+      }
     },
-    "min": -0.95,
+    "min": -0.78125,
     "max": 1.9
   }
 }
