@@ -779,7 +779,7 @@ BIOME_NAMES = {
     "deep_crystal_fields": ("Deep Crystal Fields", "深海結晶原"), "deep_forest": ("Deep Forest", "深海の森"),
     "sunken_ruins": ("Sunken Ruins", "沈没遺跡帯"), "bone_graveyard": ("Bone Graveyard", "巨骨の墓場"),
     "brine_lakes": ("Brine Lakes", "塩水湖帯"), "glow_gardens": ("Glow Gardens", "発光花園"),
-    "frost_abyss": ("Frost Abyss", "氷晶の深淵"),
+    "frost_abyss": ("Frost Abyss", "氷晶の深淵"), "abyssal_rift": ("Abyssal Rift", "深淵の裂け目"),
 }
 
 # ================================================================ models

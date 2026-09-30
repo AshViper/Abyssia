@@ -42,6 +42,8 @@ public final class DeepOceanClientEffects
 {
     private static final int SEA_LEVEL = 63;
     private static final int DEEP_MIN_Y = -128;
+    /** Lowest ocean world Y without bedrock (the bedrock floor fills Y -64..-60). */
+    private static final int OCEAN_BEDROCK_TOP_Y = -59;
     /** Blocks before a boundary over which the screen fades out. */
     private static final float FADE_BLOCKS = 24f;
     private static final float MAX_PRE_FADE = 0.6f;
@@ -173,7 +175,12 @@ public final class DeepOceanClientEffects
     {
         double y = player.getY();
         float remaining;
-        if (dim == DeepOceanTransition.OCEAN_WORLD) remaining = (float) (y - transitionY);
+        if (dim == DeepOceanTransition.OCEAN_WORLD)
+        {
+            // A transition depth inside the bedrock floor is only reached down a rift: no fade over other deep floors.
+            if (transitionY < OCEAN_BEDROCK_TOP_Y && !player.level().getBiome(player.blockPosition()).is(DeepOceanTransition.ABYSSAL_RIFT)) return 0f;
+            remaining = (float) (y - transitionY);
+        }
         else if (dim == DeepOceanTransition.DEEP_OCEAN) remaining = (float) (returnY - y);
         else return 0f;
         float t = Mth.clamp(1f - remaining / FADE_BLOCKS, 0f, 1f);

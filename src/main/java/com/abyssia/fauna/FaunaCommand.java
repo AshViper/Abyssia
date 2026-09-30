@@ -179,7 +179,7 @@ public final class FaunaCommand
     {
         double blocks = DepthZone.blocks(metres);
         int oceanY = (int) Math.round(DepthZone.OCEAN_SURFACE_Y - blocks);
-        int deepY = oceanY + Config.DEEP_OCEAN_COORDINATE_OFFSET_Y.get();
+        int deepY = oceanY + DepthZone.deepOceanOffset();
         say(ctx, String.format("%d m = %.0f blocks below the surface (%s): ocean world y %d, deep ocean y %d", metres, blocks,
                 DepthZone.Zone.of(metres).name().toLowerCase(), oceanY, deepY));
         return 1;

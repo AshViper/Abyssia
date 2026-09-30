@@ -13,6 +13,8 @@ import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.network.DepthSettingsPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -29,12 +31,17 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Moves players between the ocean world (overworld) and the deep ocean dimension based on depth,
  * keeping X/Z, rotation and velocity so the switch feels like continuing the dive.
+ * <p>
+ * The default transition depth lies inside the ocean world's bedrock floor, so the way down is an abyssal rift
+ * (abyssia:abyssal_rift, a shaft through the bedrock); the way back up works anywhere.
  */
 @Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class DeepOceanTransition
 {
     public static final ResourceKey<Level> OCEAN_WORLD = Level.OVERWORLD;
     public static final ResourceKey<Level> DEEP_OCEAN = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "deep_ocean"));
+    /** Ocean world biome of the shafts through the bedrock floor: the only place the default transition depth is reachable. */
+    public static final ResourceKey<Biome> ABYSSAL_RIFT = ResourceKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "abyssal_rift"));
 
     // Server tick until which a player may not transition again. Transient on purpose: losing it on restart is harmless.
     private static final Map<UUID, Integer> COOLDOWN_UNTIL = new ConcurrentHashMap<>();
@@ -90,6 +97,9 @@ public final class DeepOceanTransition
         double x = player.getX();
         double z = player.getZ();
         Vec3 motion = player.getDeltaMovement();
+        // Coming up, the target Y usually lies inside the ocean world's rock (it is below most of the seabed): surface
+        // on top of the seabed instead of in the nearest, possibly sealed, cave.
+        if (!searchDown) targetY = Math.max(targetY, target.getHeight(Heightmap.Types.OCEAN_FLOOR, Mth.floor(x), Mth.floor(z)));
         double y = findSafeY(target, x, targetY, z, searchDown);
 
         COOLDOWN_UNTIL.put(player.getUUID(), player.server.getTickCount() + Config.DEEP_OCEAN_TRANSITION_COOLDOWN.get());

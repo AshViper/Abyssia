@@ -6,6 +6,7 @@ import com.abyssia.worldgen.structure.SeabedStructureFeature;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
@@ -19,8 +20,10 @@ public final class ModWorldgen
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, Abyssia.MODID);
     public static final DeferredRegister<Codec<? extends ChunkGenerator>> CHUNK_GENERATORS = DeferredRegister.create(Registries.CHUNK_GENERATOR, Abyssia.MODID);
     public static final DeferredRegister<PlacementModifierType<?>> PLACEMENTS = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, Abyssia.MODID);
+    public static final DeferredRegister<Codec<? extends DensityFunction>> DENSITY_FUNCTIONS = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Abyssia.MODID);
 
     public static final RegistryObject<Codec<OceanChunkGenerator>> OCEAN_NOISE = CHUNK_GENERATORS.register("ocean_noise", () -> OceanChunkGenerator.CODEC);
+    public static final RegistryObject<Codec<RiftDensityFunction>> RIFT = DENSITY_FUNCTIONS.register("rift", RiftDensityFunction.CODEC::codec);
 
     public static final RegistryObject<Feature<ColumnPlantFeature.Config>> COLUMN_PLANT = FEATURES.register("column_plant", ColumnPlantFeature::new);
     public static final RegistryObject<Feature<OreVeinFeature.VeinConfig>> ORE_VEIN = FEATURES.register("ore_vein", OreVeinFeature::new);
@@ -41,5 +44,6 @@ public final class ModWorldgen
         FEATURES.register(modBus);
         PLACEMENTS.register(modBus);
         CHUNK_GENERATORS.register(modBus);
+        DENSITY_FUNCTIONS.register(modBus);
     }
 }
