@@ -1,0 +1,14 @@
+{
+	"id": "high_detail",
+	"name": "High Detail",
+	"description": "LOD High with HD textures (32 px per block: 2 texels per model pixel) for close-up or boss creatures.",
+	"settings": { "detail": "high", "pixelScale": 32, "textureSize": "auto", "uvMode": "box" },
+	"geometry": { "exaggeration": { "head": 1, "eye": 1, "teeth": 1, "fin": 1, "glow": 1, "limb": 1 }, "finThickness": 0 },
+	"texture": {
+		"saturation": 0.82, "brightness": 0.94, "contrast": 1, "rampSteps": 9, "hueShift": 1,
+		"shadowHue": 265, "highlightHue": 195, "noise": 0.34, "pixelNoise": 0.18, "speckle": 0.32,
+		"countershade": 0.45, "faceShade": 0.5, "edge": 0.12, "pattern": 1.1,
+		"glowStrength": 1, "glowBleed": 0.3, "finAlpha": 255
+	},
+	"animation": { "amplitude": 1, "speed": 1 }
+}

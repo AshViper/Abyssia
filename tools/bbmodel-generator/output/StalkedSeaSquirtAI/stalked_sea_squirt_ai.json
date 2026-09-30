@@ -1,0 +1,358 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "stalked_sea_squirt_ai",
+  "name": "Stalked Sea Squirt (AI)",
+  "template": "parts",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      14,
+      30,
+      14
+    ],
+    "size_blocks": [
+      0.88,
+      1.88,
+      0.88
+    ],
+    "core_size_blocks": [
+      0.81,
+      1.75,
+      0.81
+    ],
+    "cubes": 10
+  },
+  "bones": [
+    {
+      "name": "stalked_sea_squirt_ai",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "base",
+      "parent": "stalked_sea_squirt_ai",
+      "role": "body",
+      "pivot": [
+        0,
+        0,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stalk",
+      "parent": "base",
+      "role": "segment",
+      "pivot": [
+        0,
+        6,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stalk_2",
+      "parent": "stalk",
+      "role": "segment",
+      "pivot": [
+        0,
+        11,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "stalk_2",
+      "role": "head",
+      "pivot": [
+        0.5,
+        16,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "rim",
+      "parent": "head",
+      "role": "part",
+      "pivot": [
+        0.5,
+        16.5,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "siphon",
+      "parent": "head",
+      "role": "part",
+      "pivot": [
+        -0.5,
+        27,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 4,
+      "bones": [
+        "head",
+        "base",
+        "stalk",
+        "stalk_2"
+      ],
+      "description": "Breathing body / head, appendages drift"
+    },
+    {
+      "name": "sway",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "stalk",
+        "stalk_2"
+      ],
+      "description": "Current sway: stalks bend, everything above follows"
+    },
+    {
+      "name": "pulse",
+      "loop": "loop",
+      "length": 1.6,
+      "bones": [
+        "head"
+      ],
+      "description": "The head / bell contracts and relaxes"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.8,
+      "bones": [
+        "head",
+        "stalk"
+      ],
+      "description": "Flinch: squeeze and jerk"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2,
+      "bones": [
+        "stalk",
+        "stalk_2",
+        "head"
+      ],
+      "description": "Collapses: appendages droop, the body deflates"
+    }
+  ],
+  "definition": {
+    "template": "parts",
+    "category": "parts",
+    "body": {
+      "length": 10,
+      "width": 10,
+      "height": 16
+    },
+    "parts": [],
+    "params": {
+      "orientation": "upright",
+      "parts": [
+        {
+          "name": "base",
+          "shape": "cylinder",
+          "size": [
+            6,
+            6,
+            6
+          ],
+          "taper": 0.85,
+          "color": "#8c7c68",
+          "role": "body"
+        },
+        {
+          "name": "stalk",
+          "shape": "cylinder",
+          "parent": "base",
+          "at": "tip",
+          "size": [
+            5,
+            10,
+            5
+          ],
+          "segments": 2,
+          "taper": 0.9,
+          "color": "#a3b4bf"
+        },
+        {
+          "name": "head",
+          "shape": "profile",
+          "parent": "stalk",
+          "at": "tip",
+          "size": [
+            13,
+            12,
+            13
+          ],
+          "profile": [
+            0.74,
+            1,
+            1,
+            0.97,
+            0.9,
+            0.76,
+            0.5
+          ],
+          "color": "#bccfdc"
+        },
+        {
+          "name": "rim",
+          "shape": "cylinder",
+          "parent": "head",
+          "at": [
+            0.5,
+            0.12,
+            0.5
+          ],
+          "center": true,
+          "size": [
+            14,
+            2,
+            14
+          ],
+          "color": "#a4978a",
+          "detail": 2
+        },
+        {
+          "name": "siphon",
+          "shape": "dome",
+          "parent": "head",
+          "at": "top",
+          "offset": [
+            -1,
+            -1,
+            0
+          ],
+          "size": [
+            5,
+            3,
+            5
+          ],
+          "color": "#d3e2ec",
+          "detail": 2
+        }
+      ],
+      "scale": 1
+    },
+    "palette": {
+      "part_base": "#8c7c68",
+      "part_stalk": "#a3b4bf",
+      "part_head": "#bccfdc",
+      "part_rim": "#a4978a",
+      "part_siphon": "#d3e2ec"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.35
+    },
+    "glow": [],
+    "animation": {
+      "speed": 1,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.06,
+      "hue": 4,
+      "lightness": 0.03
+    },
+    "id": "stalked_sea_squirt_ai",
+    "name": "Stalked Sea Squirt (AI)",
+    "name_ja": "有柄ホヤ（AI 組立）",
+    "habitat": "abyssal_floor",
+    "notes": "Assembled by Claude Code from samples/stalked_ascidian.png (centre individual, ~12.5 px per unit).",
+    "animations": [
+      "idle",
+      "sway",
+      "pulse",
+      "hurt",
+      "death"
+    ]
+  }
+}

@@ -1,0 +1,126 @@
+{
+	"id": "vent_eelpout",
+	"name": "Vent Eelpout",
+	"name_ja": "ゲンゲ（熱水域）",
+	"scientific_name": "Thermarces cerberus",
+	"category": "eel",
+	"template": "eel",
+	"habitat": "hydrothermal_vent",
+	"order": 17,
+	"notes": "Pale pinkish eel-like fish lurking among tubeworms at vents: blunt head, fleshy lips, big fan-shaped pectoral fins and a continuous dorsal-anal fin around the tail.",
+	"body": {
+		"length": 30,
+		"width": 4,
+		"height": 5,
+		"segments": 6,
+		"taper": 0.4
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 5,
+			"width": 5,
+			"height": 5,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"jaw_length": 5,
+			"upper_length": 5,
+			"width": 1,
+			"gape": 30,
+			"rest_gape": 0,
+			"pouch": 0
+		},
+		"teeth": {
+			"count": 0
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.75,
+			"forward": 0.35,
+			"protrude": 0.5
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 3,
+			"angle": 40
+		},
+		"dorsal": {
+			"enabled": true,
+			"start": 0.12,
+			"end": 1.0,
+			"height": 2
+		},
+		"anal": {
+			"enabled": true,
+			"start": 0.35,
+			"end": 1.0,
+			"height": 2
+		},
+		"caudal": {
+			"enabled": true,
+			"length": 3,
+			"height": 4,
+			"shape": "round"
+		},
+		"tail_tip": {
+			"enabled": false
+		},
+		"gills": {
+			"frills": 0
+		}
+	},
+	"palette": {
+		"body": "#cfb2aa",
+		"belly": "#dcc4bd",
+		"fin": "#c9a69c",
+		"mouth": "#8a4a50",
+		"lip": "#c09a92",
+		"eye": "#15161a",
+		"eye_iris": "#5e6670",
+		"eye_ring": "#b0908a",
+		"glow_eye": "#a0a8b4"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.4,
+		"countershade": 0.6
+	},
+	"glow": [
+		{
+			"part": "eyes",
+			"intensity": 0.25,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"mouth": 0.08,
+		"fin": 0.12,
+		"eye": 0.1,
+		"hue": 6,
+		"lightness": 0.03
+	}
+}

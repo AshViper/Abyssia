@@ -1,0 +1,621 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "brittle_star",
+  "name": "Notched Brittle Star",
+  "template": "parts",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      46.95,
+      2.5,
+      47.5
+    ],
+    "size_blocks": [
+      2.93,
+      0.16,
+      2.97
+    ],
+    "core_size_blocks": [
+      0.44,
+      0.16,
+      0.44
+    ],
+    "cubes": 22
+  },
+  "bones": [
+    {
+      "name": "brittle_star",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "disc",
+      "parent": "brittle_star",
+      "role": "body",
+      "pivot": [
+        0,
+        0,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "disc_top",
+      "parent": "disc",
+      "role": "body",
+      "pivot": [
+        0.5,
+        1.5,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1",
+      "parent": "disc",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        0.5,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1_2",
+      "parent": "arm_1",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        0.5,
+        -10
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_1_3",
+      "parent": "arm_1_2",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        0.5,
+        -15
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_1_4",
+      "parent": "arm_1_3",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        0.5,
+        -21
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_2",
+      "parent": "disc",
+      "role": "tentacle",
+      "pivot": [
+        -3,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        72,
+        0
+      ]
+    },
+    {
+      "name": "arm_2_2",
+      "parent": "arm_2",
+      "role": "tentacle",
+      "pivot": [
+        -3,
+        0.5,
+        -7.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_2_3",
+      "parent": "arm_2_2",
+      "role": "tentacle",
+      "pivot": [
+        -3,
+        0.5,
+        -12.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_2_4",
+      "parent": "arm_2_3",
+      "role": "tentacle",
+      "pivot": [
+        -3,
+        0.5,
+        -18.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_3",
+      "parent": "disc",
+      "role": "tentacle",
+      "pivot": [
+        -1.5,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        -180,
+        36,
+        180
+      ]
+    },
+    {
+      "name": "arm_3_2",
+      "parent": "arm_3",
+      "role": "tentacle",
+      "pivot": [
+        -1.5,
+        0.5,
+        -3.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_3_3",
+      "parent": "arm_3_2",
+      "role": "tentacle",
+      "pivot": [
+        -1.5,
+        0.5,
+        -8.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_3_4",
+      "parent": "arm_3_3",
+      "role": "tentacle",
+      "pivot": [
+        -1.5,
+        0.5,
+        -14.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_4",
+      "parent": "disc",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        0.5,
+        2.5
+      ],
+      "rotation": [
+        180,
+        -36,
+        180
+      ]
+    },
+    {
+      "name": "arm_4_2",
+      "parent": "arm_4",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        0.5,
+        -3.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_4_3",
+      "parent": "arm_4_2",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        0.5,
+        -8.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_4_4",
+      "parent": "arm_4_3",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        0.5,
+        -14.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_5",
+      "parent": "disc",
+      "role": "tentacle",
+      "pivot": [
+        4,
+        0.5,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        -72,
+        0
+      ]
+    },
+    {
+      "name": "arm_5_2",
+      "parent": "arm_5",
+      "role": "tentacle",
+      "pivot": [
+        4,
+        0.5,
+        -7.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_5_3",
+      "parent": "arm_5_2",
+      "role": "tentacle",
+      "pivot": [
+        4,
+        0.5,
+        -12.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_5_4",
+      "parent": "arm_5_3",
+      "role": "tentacle",
+      "pivot": [
+        4,
+        0.5,
+        -18.5
+      ],
+      "rotation": [
+        0,
+        12,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "disc",
+        "disc_top",
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_1_4",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_2_4",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_3_4",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_4_4",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_5_4"
+      ],
+      "description": "Breathing body / head, appendages drift"
+    },
+    {
+      "name": "tentacle_move",
+      "loop": "loop",
+      "length": 3.75,
+      "bones": [
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_1_4",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_2_4",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_3_4",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_4_4",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_5_4"
+      ],
+      "description": "Tentacles curl and uncurl in a travelling wave"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 1,
+      "bones": [
+        "disc",
+        "arm_1",
+        "arm_2",
+        "arm_3",
+        "arm_4",
+        "arm_5"
+      ],
+      "description": "Flinch: squeeze and jerk"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.5,
+      "bones": [
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_1_4",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_2_4",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_3_4",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_4_4",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_5_4",
+        "disc"
+      ],
+      "description": "Collapses: appendages droop, the body deflates"
+    }
+  ],
+  "definition": {
+    "template": "parts",
+    "category": "echinoderm",
+    "body": {
+      "length": 10,
+      "width": 10,
+      "height": 16
+    },
+    "parts": [],
+    "params": {
+      "orientation": "upright",
+      "parts": [
+        {
+          "name": "disc",
+          "shape": "ellipsoid",
+          "size": [
+            8,
+            2,
+            8
+          ],
+          "color": "#8a5a44",
+          "role": "body"
+        },
+        {
+          "name": "disc_top",
+          "shape": "dome",
+          "parent": "disc",
+          "at": [
+            0.5,
+            0.75,
+            0.5
+          ],
+          "size": [
+            5,
+            1,
+            5
+          ],
+          "color": "#9a6a52",
+          "detail": 2
+        },
+        {
+          "name": "arm",
+          "shape": "cylinder",
+          "parent": "disc",
+          "at": [
+            0.5,
+            0.3,
+            0.5
+          ],
+          "axis": "-z",
+          "size": [
+            1,
+            1,
+            22
+          ],
+          "taper": 0.5,
+          "count": 5,
+          "arrange": "ring",
+          "radius": 3.5,
+          "segments": 4,
+          "curl": [
+            0,
+            12,
+            0
+          ],
+          "color": "#86604c",
+          "color_to": "#b08a70"
+        }
+      ],
+      "scale": 1
+    },
+    "palette": {
+      "part_disc": "#8a5a44",
+      "part_disc_top": "#9a6a52",
+      "part_arm": "#86604c",
+      "grad_arm": "#b08a70"
+    },
+    "texture": {
+      "pattern": "bands",
+      "pattern_strength": 0.3,
+      "pattern_scale": 1.2
+    },
+    "glow": [],
+    "animation": {
+      "speed": 0.8,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "hue": 5,
+      "lightness": 0.04
+    },
+    "id": "brittle_star",
+    "name": "Notched Brittle Star",
+    "name_ja": "キタクシノハクモヒトデ",
+    "scientific_name": "Ophiura sarsii",
+    "habitat": "continental_slope",
+    "order": 72,
+    "notes": "Brittle star of the soft-bottom slope carpets off northern Japan: a flat, round central disc about 2.5 cm across (notched where each arm joins, with small arm combs) and five long, thin, jointed, snake-like arms 3-4 times the disc diameter; reddish brown to brick above, paler below. Crawls by rowing its arms. No bioluminescence recorded for this species.",
+    "animations": [
+      "idle",
+      "tentacle_move",
+      "hurt",
+      "death"
+    ]
+  }
+}

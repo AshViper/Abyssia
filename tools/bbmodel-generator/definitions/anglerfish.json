@@ -1,0 +1,156 @@
+{
+	"id": "anglerfish",
+	"name": "Anglerfish",
+	"name_ja": "チョウチンアンコウ",
+	"scientific_name": "Melanocetus johnsonii",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "bathypelagic",
+	"order": 1,
+	"notes": "Huge head and gaping underbite jaw with needle teeth, tiny eyes, an illicium arching forward from the snout with a glowing esca, small globular body and a rounded tail fan.",
+	"body": {
+		"length": 5,
+		"width": 7,
+		"height": 7,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"illicium",
+		"esca",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 7,
+			"width": 9,
+			"height": 9,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 3,
+			"underbite": 1,
+			"gape": 38,
+			"rest_gape": 10,
+			"width": 1,
+			"round": 1
+		},
+		"teeth": {
+			"count": 5,
+			"length": 2,
+			"vary": 1,
+			"side": 1,
+			"upper": true,
+			"lower": true
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.62,
+			"forward": 0.3,
+			"protrude": 0.5
+		},
+		"lure": {
+			"enabled": true,
+			"base": "head",
+			"position": 0.2,
+			"length": 8,
+			"segments": 3,
+			"lean": 10,
+			"arc": 135,
+			"esca": 2
+		},
+		"tail": {
+			"segments": 1,
+			"length": 3,
+			"width": 3,
+			"height": 5,
+			"taper": 0.8
+		},
+		"caudal": {
+			"length": 4,
+			"height": 7,
+			"shape": "round"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 3,
+			"angle": 35,
+			"droop": 10,
+			"position": 0.3
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 3,
+			"height": 2,
+			"position": 0.7,
+			"apex": 0.8
+		},
+		"anal": {
+			"enabled": true,
+			"length": 2,
+			"height": 2,
+			"position": 0.75
+		}
+	},
+	"palette": {
+		"body": "#3e4a5e",
+		"belly": "#4d596d",
+		"fin": "#4a5670",
+		"lure": "#4a566a",
+		"mouth": "#5a2a3c",
+		"lip": "#323b4c",
+		"teeth": "#e2dccb",
+		"eye": "#0c0e14",
+		"eye_iris": "#6a8a94",
+		"eye_ring": "#2c3442",
+		"glow": "#7cf2e4",
+		"glow_eye": "#8fb5bd"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.55,
+		"countershade": 1
+	},
+	"glow": [
+		{
+			"part": "esca",
+			"intensity": 1.0
+		},
+		{
+			"part": "eyes",
+			"intensity": 0.4,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"glow"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.08,
+		"fin": 0.15,
+		"tail": 0.1,
+		"eye": 0.15,
+		"glow": 0.25,
+		"lure": 0.12,
+		"hue": 8,
+		"lightness": 0.03
+	}
+}

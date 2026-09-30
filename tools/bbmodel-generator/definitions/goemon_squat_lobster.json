@@ -1,0 +1,110 @@
+{
+	"id": "goemon_squat_lobster",
+	"name": "Goemon Squat Lobster",
+	"name_ja": "ゴエモンコシオリエビ",
+	"scientific_name": "Shinkaia crosnieri",
+	"category": "crustacean",
+	"template": "crustacean",
+	"plan": "crab",
+	"habitat": "hydrothermal_vent",
+	"order": 14,
+	"notes": "Pale vent squat lobster of the Okinawa Trough: long slender claws, three visible pairs of walking legs, abdomen folded under the body and a dense beard of setae that farms bacteria.",
+	"body": {
+		"length": 8,
+		"width": 7,
+		"height": 4
+	},
+	"parts": [
+		"body",
+		"eye",
+		"antennae",
+		"claws",
+		"legs",
+		"abdomen",
+		"tail",
+		"setae"
+	],
+	"params": {
+		"eye": {
+			"size": 1,
+			"stalk": 1
+		},
+		"antennae": {
+			"length": 6,
+			"segments": 2,
+			"sweep": 40,
+			"lift": 8
+		},
+		"claws": {
+			"enabled": true,
+			"arm": 6,
+			"hand": 5,
+			"hand_size": 2,
+			"finger": 3,
+			"spread": 20
+		},
+		"legs": {
+			"pairs": 3,
+			"upper": 4,
+			"lower": 4,
+			"splay": 62,
+			"fan": 40,
+			"width": 1
+		},
+		"abdomen": {
+			"segments": 3,
+			"length": 6,
+			"width": 5,
+			"height": 2,
+			"taper": 0.8,
+			"curve": 45,
+			"swimmerets": false
+		},
+		"tail_fan": {
+			"length": 2,
+			"width": 5
+		},
+		"setae": {
+			"length": 3
+		}
+	},
+	"palette": {
+		"shell": "#ddd8cb",
+		"body": "#ddd8cb",
+		"belly": "#c9bda5",
+		"leg": "#d3cdbe",
+		"claw": "#e3ded1",
+		"claw_tip": "#9c9185",
+		"fin": "#d8d0c0",
+		"eye": "#2a2622",
+		"eye_iris": "#6a625a",
+		"eye_ring": "#c4bcae"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.8,
+		"countershade": 0.3
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"walk",
+		"claw_snap",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"claws": 0.12,
+		"legs": 0.1,
+		"antennae": 0.1,
+		"abdomen": 0.08,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

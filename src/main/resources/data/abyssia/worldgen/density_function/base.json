@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:mul",
+  "argument1": 0.7,
+  "argument2": {
+    "type": "minecraft:shifted_noise",
+    "noise": "minecraft:continentalness",
+    "xz_scale": 0.1,
+    "y_scale": 0,
+    "shift_x": {
+      "type": "minecraft:mul",
+      "argument1": 0.4,
+      "argument2": "minecraft:shift_x"
+    },
+    "shift_y": 0,
+    "shift_z": {
+      "type": "minecraft:mul",
+      "argument1": 0.4,
+      "argument2": "minecraft:shift_z"
+    }
+  }
+}

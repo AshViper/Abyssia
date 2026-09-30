@@ -1,0 +1,119 @@
+{
+	"archetype": "shrimp",
+	"captions": {
+		"en": [
+			"a pale translucent vent shrimp with long spindly legs",
+			"ohara shrimp"
+		],
+		"ja": [
+			"細長い脚を持つ淡い半透明のエビ",
+			"オハラエビ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "body",
+				"shape": "profile",
+				"size": [
+					6,
+					6,
+					18
+				],
+				"axis": "z",
+				"segments": 4,
+				"profile": [
+					1,
+					1,
+					0.85,
+					0.65,
+					0.45
+				],
+				"curl": 10,
+				"color": "#d8c8c0"
+			},
+			{
+				"name": "tail_fin",
+				"shape": "plane",
+				"size": [
+					7,
+					0,
+					4
+				],
+				"parent": "body",
+				"at": "tip",
+				"axis": "z",
+				"outline": "fan",
+				"color": "#d8c8c0"
+			},
+			{
+				"name": "antenna",
+				"shape": "cylinder",
+				"size": [
+					1,
+					1,
+					18
+				],
+				"parent": "body",
+				"at": [
+					0.6,
+					0.7,
+					0
+				],
+				"axis": "-z",
+				"rotate": [
+					5,
+					50,
+					0
+				],
+				"segments": 3,
+				"mirror": true,
+				"color": "#d0c0b8"
+			},
+			{
+				"name": "leg",
+				"shape": "cylinder",
+				"size": [
+					1,
+					9,
+					1
+				],
+				"parent": "body",
+				"at": [
+					0.9,
+					0.1,
+					0.2
+				],
+				"axis": "-y",
+				"count": 5,
+				"arrange": "row",
+				"spacing": [
+					0,
+					0,
+					2
+				],
+				"rotate": [
+					0,
+					0,
+					-25
+				],
+				"segments": 2,
+				"mirror": true,
+				"color": "#d0c0b8"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 1,
+				"parent": "body",
+				"at": [
+					0.8,
+					0.8,
+					0.05
+				],
+				"mirror": true
+			}
+		]
+	}
+}

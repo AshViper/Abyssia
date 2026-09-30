@@ -1,0 +1,121 @@
+{
+  "patches": [
+    {
+      "data": "crystal",
+      "weight": 6
+    },
+    {
+      "data": "open",
+      "weight": 2
+    },
+    {
+      "data": "rock",
+      "weight": 1
+    },
+    {
+      "data": "plant",
+      "weight": 1
+    },
+    {
+      "data": "mineral",
+      "weight": 1
+    }
+  ],
+  "structures": {
+    "pillars": 0.6,
+    "floating_rocks": 0.5,
+    "bridges": 0.4,
+    "shelves": 0.8,
+    "wall_caves": 1.0,
+    "mounds": 0.6,
+    "hollows": 0.6,
+    "valleys": 0.3,
+    "rubble": 0.4,
+    "stalactites": 1.0,
+    "rock_spikes": 1.2,
+    "mega_ores": 0.3,
+    "mineral_pillars": 0.2,
+    "crystal_forests": 2.0,
+    "lakes": 0.4,
+    "gardens": 0.6,
+    "groves": 0.2
+  },
+  "ceiling_glow": 0.06,
+  "wall_relief": 1.5,
+  "center_chance": 0.75,
+  "deep_patches": [
+    {
+      "data": "crystal",
+      "weight": 5
+    },
+    {
+      "data": "water",
+      "weight": 1
+    },
+    {
+      "data": "open",
+      "weight": 1
+    }
+  ],
+  "kelp_forest": {
+    "density": 0.15,
+    "clearings": 0.3,
+    "lean": 0.2,
+    "min_height": 8,
+    "max_height": 30,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_kelp"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:giant_cave_kelp"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "hanging": {
+    "density": 0.3,
+    "reach_floor": 0.05,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:abyssal_vine"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_vine"
+          }
+        },
+        "weight": 2
+      }
+    ]
+  },
+  "centers": [
+    {
+      "data": "giant_crystal",
+      "weight": 6
+    },
+    {
+      "data": "deep_sea_garden",
+      "weight": 1
+    },
+    {
+      "data": "lake",
+      "weight": 1
+    }
+  ]
+}

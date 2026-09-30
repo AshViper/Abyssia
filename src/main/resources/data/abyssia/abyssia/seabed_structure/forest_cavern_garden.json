@@ -1,0 +1,91 @@
+{
+  "category": "vegetation",
+  "tier": "small",
+  "footprint_radius": 12,
+  "max_height": 30,
+  "formation": {
+    "type": "vegetation",
+    "shape": "grove",
+    "radius": [
+      6,
+      10
+    ],
+    "density": 0.4,
+    "clearings": 0.1,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_kelp"
+          },
+          "min_height": 6,
+          "max_height": 20
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_tube_plant"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_coral"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "understory": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_fern"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_grass"
+          },
+          "max_height": 3
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_bloom"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "understory_density": 0.3,
+    "soil": [
+      {
+        "data": {
+          "Name": "abyssia:organic_sediment"
+        },
+        "weight": 1
+      }
+    ],
+    "soil_chance": 0.4
+  },
+  "anchor": "cavern",
+  "conditions": {
+    "min_clearance": 8,
+    "max_top_y": 240
+  },
+  "preferred_mobs": [
+    "abyssia:barreleye"
+  ]
+}

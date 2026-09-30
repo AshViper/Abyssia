@@ -1,0 +1,129 @@
+{
+  "category": "geological",
+  "tier": "medium",
+  "footprint_radius": 38,
+  "max_height": 30,
+  "formation": {
+    "type": "rock",
+    "count": [
+      2,
+      4
+    ],
+    "spread": 12,
+    "size": [
+      6,
+      10
+    ],
+    "height_ratio": 1.8,
+    "elongation": [
+      2.5,
+      4
+    ],
+    "sink": 0.25,
+    "tilt": 0.15,
+    "erosion": 0.3,
+    "layers": 3,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:mineral_host_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_rock"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 1.5
+  },
+  "dressing": {
+    "radius": 34,
+    "density": 0.1,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:giant_tube"
+          },
+          "min_height": 4,
+          "max_height": 12
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:soul_coral"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_crystal_cluster"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:knotstalk"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:silt_comb"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:lumen_quill"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:frilled_shark"
+  ]
+}

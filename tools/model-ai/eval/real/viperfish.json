@@ -1,0 +1,164 @@
+{
+	"archetype": "fish",
+	"captions": {
+		"en": [
+			"a black viperfish with huge fangs and a glowing lure on its back",
+			"slender deep-sea fish with needle teeth"
+		],
+		"ja": [
+			"巨大な牙と背中に光る誘引突起を持つ黒いホウライエソ",
+			"針のような歯の細長い深海魚"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "body",
+				"shape": "profile",
+				"size": [
+					5,
+					8,
+					24
+				],
+				"axis": "-z",
+				"center": true,
+				"profile": [
+					0.3,
+					0.6,
+					0.9,
+					1,
+					0.95
+				],
+				"color": "#1e2430"
+			},
+			{
+				"name": "jaw",
+				"shape": "box",
+				"size": [
+					4,
+					2,
+					6
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.2,
+					0.05
+				],
+				"axis": "-z",
+				"rotate": [
+					20,
+					0,
+					0
+				],
+				"color": "#1e2430"
+			},
+			{
+				"name": "fang",
+				"shape": "cone",
+				"size": [
+					1,
+					4,
+					1
+				],
+				"parent": "body",
+				"at": [
+					0.6,
+					0.45,
+					0
+				],
+				"axis": "y",
+				"tip": 0.2,
+				"mirror": true,
+				"color": "#e8e2cf"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 2,
+				"parent": "body",
+				"at": [
+					1,
+					0.7,
+					0.1
+				],
+				"mirror": true
+			},
+			{
+				"name": "lure",
+				"shape": "cylinder",
+				"size": [
+					1,
+					10,
+					1
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					1,
+					0.25
+				],
+				"axis": "y",
+				"segments": 3,
+				"curl": -30,
+				"color": "#1e2430"
+			},
+			{
+				"name": "lure_bulb",
+				"shape": "ellipsoid",
+				"size": [
+					2,
+					2,
+					2
+				],
+				"parent": "lure",
+				"at": "tip",
+				"center": true,
+				"color": "#80c8ff",
+				"glow": 1.5,
+				"glow_color": "#80c8ff"
+			},
+			{
+				"name": "photophore",
+				"shape": "box",
+				"size": [
+					1,
+					1,
+					1
+				],
+				"parent": "body",
+				"at": [
+					1,
+					0.15,
+					0.3
+				],
+				"count": 4,
+				"arrange": "row",
+				"spacing": [
+					0,
+					0,
+					3
+				],
+				"mirror": true,
+				"color": "#80c8ff",
+				"glow": 1,
+				"glow_color": "#80c8ff"
+			},
+			{
+				"name": "tail_fin",
+				"shape": "plane",
+				"size": [
+					0,
+					6,
+					4
+				],
+				"parent": "body",
+				"at": "back",
+				"axis": "z",
+				"outline": "fork",
+				"color": "#1e2430"
+			}
+		]
+	}
+}

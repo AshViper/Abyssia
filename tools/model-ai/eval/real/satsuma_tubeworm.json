@@ -1,0 +1,60 @@
+{
+	"archetype": "tubeworm",
+	"captions": {
+		"en": [
+			"a cluster of thin white tubeworms with red tips",
+			"Satsuma tubeworm colony"
+		],
+		"ja": [
+			"先が赤い細く白いチューブワームの群れ",
+			"サツマハオリムシの群生"
+		]
+	},
+	"spec": {
+		"orientation": "upright",
+		"parts": [
+			{
+				"name": "base",
+				"shape": "box",
+				"size": [
+					12,
+					1,
+					12
+				],
+				"color": "#3a3430",
+				"role": "body"
+			},
+			{
+				"name": "tube",
+				"shape": "cylinder",
+				"size": [
+					2,
+					30,
+					2
+				],
+				"parent": "base",
+				"at": "top",
+				"count": 6,
+				"arrange": "ring",
+				"radius": 4,
+				"tilt": 6,
+				"segments": 3,
+				"curl": 3,
+				"color": "#d8d0c0"
+			},
+			{
+				"name": "plume",
+				"shape": "ellipsoid",
+				"size": [
+					3,
+					3,
+					3
+				],
+				"parent": "tube",
+				"at": "tip",
+				"center": true,
+				"color": "#b82a2a"
+			}
+		]
+	}
+}

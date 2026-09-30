@@ -1,0 +1,662 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "tubeworm",
+  "name": "Giant Tubeworm",
+  "template": "worm",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      12,
+      30.01,
+      14.28
+    ],
+    "size_blocks": [
+      0.75,
+      1.88,
+      0.89
+    ],
+    "core_size_blocks": [
+      0.75,
+      1.62,
+      0.84
+    ],
+    "cubes": 44
+  },
+  "bones": [
+    {
+      "name": "tubeworm",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "tubeworm",
+      "role": "body",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_1",
+      "parent": "body",
+      "role": "tube",
+      "pivot": [
+        2,
+        2,
+        0
+      ],
+      "rotation": [
+        -5.6,
+        0,
+        6.3
+      ]
+    },
+    {
+      "name": "worm_1_2",
+      "parent": "worm_1",
+      "role": "tube_segment",
+      "pivot": [
+        2,
+        9,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_1_3",
+      "parent": "worm_1_2",
+      "role": "tube_segment",
+      "pivot": [
+        2,
+        15,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "plume_1",
+      "parent": "worm_1_3",
+      "role": "plume",
+      "pivot": [
+        2,
+        19,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_2",
+      "parent": "body",
+      "role": "tube",
+      "pivot": [
+        -3,
+        2,
+        -3
+      ],
+      "rotation": [
+        5.1,
+        0,
+        0.4
+      ]
+    },
+    {
+      "name": "worm_2_2",
+      "parent": "worm_2",
+      "role": "tube_segment",
+      "pivot": [
+        -3,
+        9,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_2_3",
+      "parent": "worm_2_2",
+      "role": "tube_segment",
+      "pivot": [
+        -3,
+        15,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "plume_2",
+      "parent": "worm_2_3",
+      "role": "plume",
+      "pivot": [
+        -3,
+        20,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_3",
+      "parent": "body",
+      "role": "tube",
+      "pivot": [
+        -4,
+        2,
+        2
+      ],
+      "rotation": [
+        -0.3,
+        0,
+        -3.4
+      ]
+    },
+    {
+      "name": "worm_3_2",
+      "parent": "worm_3",
+      "role": "tube_segment",
+      "pivot": [
+        -4,
+        10,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_3_3",
+      "parent": "worm_3_2",
+      "role": "tube_segment",
+      "pivot": [
+        -4,
+        18,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "plume_3",
+      "parent": "worm_3_3",
+      "role": "plume",
+      "pivot": [
+        -4,
+        24,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_4",
+      "parent": "body",
+      "role": "tube",
+      "pivot": [
+        0,
+        2,
+        3
+      ],
+      "rotation": [
+        -2.1,
+        0,
+        5
+      ]
+    },
+    {
+      "name": "worm_4_2",
+      "parent": "worm_4",
+      "role": "tube_segment",
+      "pivot": [
+        0,
+        8,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_4_3",
+      "parent": "worm_4_2",
+      "role": "tube_segment",
+      "pivot": [
+        0,
+        14,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "plume_4",
+      "parent": "worm_4_3",
+      "role": "plume",
+      "pivot": [
+        0,
+        18,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_5",
+      "parent": "body",
+      "role": "tube",
+      "pivot": [
+        3,
+        2,
+        -4
+      ],
+      "rotation": [
+        3.3,
+        0,
+        5.7
+      ]
+    },
+    {
+      "name": "worm_5_2",
+      "parent": "worm_5",
+      "role": "tube_segment",
+      "pivot": [
+        3,
+        11,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_5_3",
+      "parent": "worm_5_2",
+      "role": "tube_segment",
+      "pivot": [
+        3,
+        19,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "plume_5",
+      "parent": "worm_5_3",
+      "role": "plume",
+      "pivot": [
+        3,
+        25,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_6",
+      "parent": "body",
+      "role": "tube",
+      "pivot": [
+        0,
+        2,
+        -4
+      ],
+      "rotation": [
+        -6.1,
+        0,
+        -4.1
+      ]
+    },
+    {
+      "name": "worm_6_2",
+      "parent": "worm_6",
+      "role": "tube_segment",
+      "pivot": [
+        0,
+        10,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "worm_6_3",
+      "parent": "worm_6_2",
+      "role": "tube_segment",
+      "pivot": [
+        0,
+        18,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "plume_6",
+      "parent": "worm_6_3",
+      "role": "plume",
+      "pivot": [
+        0,
+        24,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "plume_1",
+        "plume_2",
+        "plume_3",
+        "plume_4",
+        "plume_5",
+        "plume_6",
+        "worm_1",
+        "worm_2",
+        "worm_3",
+        "worm_4",
+        "worm_5",
+        "worm_6",
+        "worm_1_2",
+        "worm_2_2",
+        "worm_3_2",
+        "worm_4_2",
+        "worm_5_2",
+        "worm_6_2",
+        "worm_1_3",
+        "worm_2_3",
+        "worm_3_3",
+        "worm_4_3",
+        "worm_5_3",
+        "worm_6_3"
+      ],
+      "description": "Plumes breathe and sway gently, tubes barely move"
+    },
+    {
+      "name": "sway",
+      "loop": "loop",
+      "length": 6.25,
+      "bones": [
+        "worm_1",
+        "worm_2",
+        "worm_3",
+        "worm_4",
+        "worm_5",
+        "worm_6",
+        "worm_1_2",
+        "worm_2_2",
+        "worm_3_2",
+        "worm_4_2",
+        "worm_5_2",
+        "worm_6_2",
+        "worm_1_3",
+        "worm_2_3",
+        "worm_3_3",
+        "worm_4_3",
+        "worm_5_3",
+        "worm_6_3",
+        "plume_1",
+        "plume_2",
+        "plume_3",
+        "plume_4",
+        "plume_5",
+        "plume_6"
+      ],
+      "description": "Current sway: tubes bend together with a delay across the colony, plumes stream"
+    },
+    {
+      "name": "retract",
+      "loop": "hold",
+      "length": 0.63,
+      "bones": [
+        "plume_1",
+        "plume_2",
+        "plume_3",
+        "plume_4",
+        "plume_5",
+        "plume_6"
+      ],
+      "description": "Plumes snap back into the tubes"
+    },
+    {
+      "name": "extend",
+      "loop": "once",
+      "length": 1.5,
+      "bones": [
+        "plume_1",
+        "plume_2",
+        "plume_3",
+        "plume_4",
+        "plume_5",
+        "plume_6"
+      ],
+      "description": "Plumes slowly unfurl out of the tubes"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 1,
+      "bones": [
+        "plume_1",
+        "plume_2",
+        "plume_3",
+        "plume_4",
+        "plume_5",
+        "plume_6",
+        "worm_1",
+        "worm_2",
+        "worm_3",
+        "worm_4",
+        "worm_5",
+        "worm_6"
+      ],
+      "description": "Flinch: plumes duck and pop back out"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.5,
+      "bones": [
+        "plume_1",
+        "plume_2",
+        "plume_3",
+        "plume_4",
+        "plume_5",
+        "plume_6",
+        "worm_1",
+        "worm_2",
+        "worm_3",
+        "worm_4",
+        "worm_5",
+        "worm_6"
+      ],
+      "description": "Plumes wilt and droop, tubes lean"
+    }
+  ],
+  "definition": {
+    "template": "worm",
+    "category": "tubeworm",
+    "body": {
+      "length": 12,
+      "width": 12,
+      "height": 18
+    },
+    "parts": [
+      "base",
+      "tube",
+      "plume"
+    ],
+    "params": {
+      "colony": {
+        "count": 6,
+        "spread": 1,
+        "base": true,
+        "base_height": 3
+      },
+      "tube": {
+        "width": 2,
+        "height": 18,
+        "variance": 0.35,
+        "segments": 3,
+        "tilt": 7
+      },
+      "plume": {
+        "length": 5,
+        "width": 4,
+        "filaments": 2,
+        "collar": true
+      }
+    },
+    "palette": {
+      "tube": "#d5cebd",
+      "plume": "#b23a44",
+      "rock": "#3a3432",
+      "body": "#3a3432"
+    },
+    "texture": {
+      "pattern": "plain"
+    },
+    "glow": [],
+    "animations": [
+      "idle",
+      "sway",
+      "retract",
+      "extend",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 0.8,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.06,
+      "tube": 0.15,
+      "plume": 0.12,
+      "hue": 5,
+      "lightness": 0.03
+    },
+    "id": "tubeworm",
+    "name": "Giant Tubeworm",
+    "name_ja": "チューブワーム",
+    "scientific_name": "Riftia pachyptila",
+    "habitat": "hydrothermal_vent",
+    "order": 10,
+    "notes": "Colony of tall white chitin tubes rooted in hydrothermal vent rock, each crowned by a blood-red feathery plume (haemoglobin-rich gills) that retracts when disturbed."
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "category": "geological",
+  "tier": "small",
+  "footprint_radius": 14,
+  "max_height": 14,
+  "formation": {
+    "type": "rock",
+    "count": [
+      1,
+      2
+    ],
+    "spread": 5,
+    "size": [
+      3,
+      6
+    ],
+    "height_ratio": 0.9,
+    "elongation": [
+      1.5,
+      2.5
+    ],
+    "sink": 0.4,
+    "tilt": 0.5,
+    "erosion": 0.25,
+    "layers": 2,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:abyssal_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:mineral_host_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_sea_rock"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 1.5,
+    "max_top_y": 215
+  },
+  "dressing": {
+    "radius": 12,
+    "density": 0.15,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sponge_plant"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:soul_coral"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:tube_plant"
+          },
+          "min_height": 3,
+          "max_height": 8
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:manganese_nodules"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:knotstalk"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:oil_bladder_weed"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:lumen_quill"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:giant_isopod"
+  ]
+}

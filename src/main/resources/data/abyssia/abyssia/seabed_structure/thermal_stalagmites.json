@@ -1,0 +1,43 @@
+{
+  "category": "cave",
+  "tier": "small",
+  "footprint_radius": 8,
+  "max_height": 40,
+  "formation": {
+    "type": "cave",
+    "shape": "stalagmites",
+    "count": [
+      3,
+      6
+    ],
+    "spread": 3.5,
+    "radius": [
+      1,
+      2
+    ],
+    "length": [
+      0.15,
+      0.35
+    ],
+    "erosion": 0.25,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:thermal_cave_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:mineral_cave_rock"
+        },
+        "weight": 2
+      }
+    ]
+  },
+  "anchor": "cavern",
+  "conditions": {
+    "min_clearance": 8,
+    "max_top_y": 240
+  }
+}

@@ -1,0 +1,357 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "scaly_foot_snail",
+  "name": "Scaly-foot Snail",
+  "template": "gastropod",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      32
+    ],
+    "texture_image": [
+      64,
+      32
+    ],
+    "glow_texture": false,
+    "size_units": [
+      7.75,
+      11.96,
+      14.68
+    ],
+    "size_blocks": [
+      0.48,
+      0.75,
+      0.92
+    ],
+    "core_size_blocks": [
+      0.48,
+      0.75,
+      0.75
+    ],
+    "cubes": 20
+  },
+  "bones": [
+    {
+      "name": "scaly_foot_snail",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "scaly_foot_snail",
+      "role": "body",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        1.5,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_tentacle",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        1.5,
+        -6
+      ],
+      "rotation": [
+        20,
+        -30,
+        0
+      ]
+    },
+    {
+      "name": "left_tentacle",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        1.5,
+        -6
+      ],
+      "rotation": [
+        20,
+        30,
+        0
+      ]
+    },
+    {
+      "name": "shell",
+      "parent": "body",
+      "role": "shell",
+      "pivot": [
+        0,
+        2,
+        1
+      ],
+      "rotation": [
+        -18,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "shell_2",
+      "parent": "shell",
+      "role": "shell",
+      "pivot": [
+        1,
+        5,
+        3
+      ],
+      "rotation": [
+        -12,
+        28,
+        8
+      ]
+    },
+    {
+      "name": "shell_3",
+      "parent": "shell_2",
+      "role": "shell",
+      "pivot": [
+        1.5,
+        8,
+        4
+      ],
+      "rotation": [
+        -12,
+        28,
+        8
+      ]
+    },
+    {
+      "name": "right_scales",
+      "parent": "body",
+      "role": "scales",
+      "pivot": [
+        2.5,
+        3,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_scales",
+      "parent": "body",
+      "role": "scales",
+      "pivot": [
+        -2.5,
+        3,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 5.71,
+      "bones": [
+        "right_tentacle",
+        "left_tentacle",
+        "shell",
+        "body"
+      ],
+      "description": "Resting: tentacles feel around, shell rocks slightly"
+    },
+    {
+      "name": "crawl",
+      "loop": "loop",
+      "length": 2.86,
+      "bones": [
+        "body",
+        "head",
+        "shell",
+        "right_tentacle",
+        "left_tentacle",
+        "right_scales",
+        "left_scales"
+      ],
+      "description": "Crawling: the foot stretches and contracts, head bobs, shell sways"
+    },
+    {
+      "name": "retract",
+      "loop": "hold",
+      "length": 1.14,
+      "bones": [
+        "head",
+        "right_tentacle",
+        "left_tentacle",
+        "shell"
+      ],
+      "description": "Pulls the head and tentacles in and clamps the shell down"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.71,
+      "bones": [
+        "shell",
+        "head"
+      ],
+      "description": "Flinch: head ducks, shell jerks"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.29,
+      "bones": [
+        "body",
+        "right_tentacle",
+        "left_tentacle"
+      ],
+      "description": "Tips over onto the shell, foot goes limp"
+    }
+  ],
+  "definition": {
+    "template": "gastropod",
+    "category": "gastropod",
+    "body": {
+      "length": 10,
+      "width": 5,
+      "height": 3
+    },
+    "parts": [
+      "body",
+      "shell",
+      "scales",
+      "head",
+      "tentacles"
+    ],
+    "params": {
+      "shell": {
+        "size": 7,
+        "whorls": 3,
+        "shrink": 0.68,
+        "rise": 0.55,
+        "tilt": 18
+      },
+      "scales": {
+        "rows": 1,
+        "count": 5,
+        "size": 2
+      },
+      "head": {
+        "length": 3,
+        "width": 3,
+        "height": 2
+      },
+      "tentacles": {
+        "length": 3
+      }
+    },
+    "palette": {
+      "shell": "#2c2c31",
+      "scale": "#3b3d44",
+      "flesh": "#8a4440",
+      "body": "#8a4440",
+      "belly": "#9a5650",
+      "mouth": "#1c1c20",
+      "glow": "#c8d8e8"
+    },
+    "texture": {
+      "pattern": "bands",
+      "pattern_strength": 0.55,
+      "countershade": 0.3
+    },
+    "glow": [],
+    "animations": [
+      "idle",
+      "crawl",
+      "retract",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 0.7,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "shell": 0.1,
+      "scales": 0.1,
+      "hue": 4,
+      "lightness": 0.03
+    },
+    "id": "scaly_foot_snail",
+    "name": "Scaly-foot Snail",
+    "name_ja": "スケーリーフット（ウロコフネタマガイ）",
+    "scientific_name": "Chrysomallon squamiferum",
+    "habitat": "hydrothermal_vent",
+    "order": 13,
+    "notes": "Vent snail armoured with iron sulfide: a black metallic coiled shell and a foot covered in overlapping iron scales (sclerites), with a reddish snout and short tentacles."
+  }
+}

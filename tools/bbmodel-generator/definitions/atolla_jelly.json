@@ -1,0 +1,94 @@
+{
+	"id": "atolla_jelly",
+	"name": "Atolla Jellyfish",
+	"name_ja": "ムラサキカムリクラゲ",
+	"scientific_name": "Atolla wyvillei",
+	"category": "jellyfish",
+	"template": "medusa",
+	"habitat": "bathypelagic",
+	"order": 19,
+	"notes": "Deep-sea crown jelly: a flat red disc-shaped bell with a coronal groove and marginal lappets, a deep red stomach, about 20 tentacles held out sideways and one hypertrophied tentacle trailing far behind. Blue pinwheel 'burglar alarm' waves run around the bell when attacked.",
+	"body": {
+		"width": 12,
+		"height": 5
+	},
+	"parts": [
+		"bell",
+		"stomach",
+		"groove",
+		"lappets",
+		"tentacles",
+		"long_tentacle"
+	],
+	"params": {
+		"bell": {
+			"profile": "disc",
+			"tiers": 2,
+			"alpha": 165
+		},
+		"stomach": {
+			"enabled": true,
+			"width": 6,
+			"height": 3
+		},
+		"groove": {
+			"enabled": true,
+			"sectors": 8,
+			"height": 1,
+			"at": 0.3
+		},
+		"lappets": {
+			"enabled": true,
+			"height": 2
+		},
+		"tentacles": {
+			"count": 16,
+			"length": 7,
+			"segments": 1,
+			"width": 1,
+			"spread": 72
+		},
+		"long_tentacle": {
+			"enabled": true,
+			"length": 30,
+			"segments": 3
+		}
+	},
+	"palette": {
+		"dome": "#8c2c34",
+		"body": "#7a2430",
+		"flesh": "#5c1219",
+		"membrane": "#6a1c26",
+		"glow": "#3d7dff"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.25,
+		"countershade": 0.2
+	},
+	"glow": [
+		{
+			"part": "groove",
+			"intensity": 1.0,
+			"color": "glow"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"pulse",
+		"spread",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"bell": 0.08,
+		"tentacles": 0.12,
+		"hue": 6,
+		"lightness": 0.04
+	}
+}

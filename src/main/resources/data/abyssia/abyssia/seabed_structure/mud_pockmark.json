@@ -1,0 +1,80 @@
+{
+  "category": "sediment",
+  "tier": "small",
+  "footprint_radius": 12,
+  "max_height": 4,
+  "formation": {
+    "type": "crater",
+    "radius": [
+      4,
+      7
+    ],
+    "depth": [
+      1.5,
+      3
+    ],
+    "rim_height": [
+      1,
+      2
+    ],
+    "rim_width": 0.4,
+    "roughness": 0.3,
+    "floor": [
+      {
+        "data": {
+          "Name": "abyssia:deep_mud"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:organic_sediment"
+        },
+        "weight": 1
+      }
+    ],
+    "rim": [
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_mud"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 0.3,
+    "max_top_y": 215
+  },
+  "dressing": {
+    "radius": 10,
+    "density": 0.12,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:abyssal_moss"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:yumenamako"
+  ]
+}

@@ -1,0 +1,712 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "venus_flower_basket",
+  "name": "Venus' Flower Basket",
+  "template": "parts",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      15.52,
+      33.45,
+      15.52
+    ],
+    "size_blocks": [
+      0.97,
+      2.09,
+      0.97
+    ],
+    "core_size_blocks": [
+      0.44,
+      2,
+      0.63
+    ],
+    "cubes": 27
+  },
+  "bones": [
+    {
+      "name": "venus_flower_basket",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "base",
+      "parent": "venus_flower_basket",
+      "role": "body",
+      "pivot": [
+        0,
+        1.3681,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tube",
+      "parent": "base",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.3681,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tube_2",
+      "parent": "tube",
+      "role": "segment",
+      "pivot": [
+        0,
+        10.3681,
+        -3
+      ],
+      "rotation": [
+        5,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tube_3",
+      "parent": "tube_2",
+      "role": "segment",
+      "pivot": [
+        0,
+        17.3681,
+        -3
+      ],
+      "rotation": [
+        5,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tube_4",
+      "parent": "tube_3",
+      "role": "segment",
+      "pivot": [
+        0,
+        24.3681,
+        -3
+      ],
+      "rotation": [
+        5,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "ridge",
+      "parent": "tube_3",
+      "role": "part",
+      "pivot": [
+        0,
+        18.3681,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "ridge_upper",
+      "parent": "tube_4",
+      "role": "part",
+      "pivot": [
+        0,
+        25.3681,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "sieve_plate",
+      "parent": "tube_4",
+      "role": "head",
+      "pivot": [
+        0,
+        31.3681,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "frill",
+      "parent": "tube_4",
+      "role": "fin",
+      "pivot": [
+        0,
+        30.3681,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_1",
+      "parent": "base",
+      "role": "plume",
+      "pivot": [
+        0,
+        1.8681,
+        -4
+      ],
+      "rotation": [
+        70,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_1_2",
+      "parent": "root_tuft_1",
+      "role": "plume",
+      "pivot": [
+        0,
+        -2.1319,
+        -4
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_2",
+      "parent": "base",
+      "role": "plume",
+      "pivot": [
+        -0.5,
+        1.8681,
+        -3.5
+      ],
+      "rotation": [
+        70,
+        45,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_2_2",
+      "parent": "root_tuft_2",
+      "role": "plume",
+      "pivot": [
+        -0.5,
+        -2.1319,
+        -3.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_3",
+      "parent": "base",
+      "role": "plume",
+      "pivot": [
+        -1,
+        1.8681,
+        -3
+      ],
+      "rotation": [
+        0,
+        90,
+        -70
+      ]
+    },
+    {
+      "name": "root_tuft_3_2",
+      "parent": "root_tuft_3",
+      "role": "plume",
+      "pivot": [
+        -1,
+        -2.1319,
+        -3
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_4",
+      "parent": "base",
+      "role": "plume",
+      "pivot": [
+        -0.5,
+        1.8681,
+        -2.5
+      ],
+      "rotation": [
+        -110,
+        45,
+        180
+      ]
+    },
+    {
+      "name": "root_tuft_4_2",
+      "parent": "root_tuft_4",
+      "role": "plume",
+      "pivot": [
+        -0.5,
+        -2.1319,
+        -2.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_5",
+      "parent": "base",
+      "role": "plume",
+      "pivot": [
+        0,
+        1.8681,
+        -2
+      ],
+      "rotation": [
+        -110,
+        0,
+        180
+      ]
+    },
+    {
+      "name": "root_tuft_5_2",
+      "parent": "root_tuft_5",
+      "role": "plume",
+      "pivot": [
+        0,
+        -2.1319,
+        -2
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_6",
+      "parent": "base",
+      "role": "plume",
+      "pivot": [
+        0.5,
+        1.8681,
+        -2.5
+      ],
+      "rotation": [
+        -110,
+        -45,
+        180
+      ]
+    },
+    {
+      "name": "root_tuft_6_2",
+      "parent": "root_tuft_6",
+      "role": "plume",
+      "pivot": [
+        0.5,
+        -2.1319,
+        -2.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_7",
+      "parent": "base",
+      "role": "plume",
+      "pivot": [
+        1,
+        1.8681,
+        -3
+      ],
+      "rotation": [
+        0,
+        -90,
+        70
+      ]
+    },
+    {
+      "name": "root_tuft_7_2",
+      "parent": "root_tuft_7",
+      "role": "plume",
+      "pivot": [
+        1,
+        -2.1319,
+        -3
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_8",
+      "parent": "base",
+      "role": "plume",
+      "pivot": [
+        0.5,
+        1.8681,
+        -3.5
+      ],
+      "rotation": [
+        70,
+        -45,
+        0
+      ]
+    },
+    {
+      "name": "root_tuft_8_2",
+      "parent": "root_tuft_8",
+      "role": "plume",
+      "pivot": [
+        0.5,
+        -2.1319,
+        -3.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 8,
+      "bones": [
+        "sieve_plate",
+        "base",
+        "tube",
+        "tube_2",
+        "tube_3",
+        "tube_4",
+        "frill",
+        "root_tuft_1",
+        "root_tuft_1_2",
+        "root_tuft_2",
+        "root_tuft_2_2",
+        "root_tuft_3",
+        "root_tuft_3_2",
+        "root_tuft_4",
+        "root_tuft_4_2",
+        "root_tuft_5",
+        "root_tuft_5_2",
+        "root_tuft_6",
+        "root_tuft_6_2",
+        "root_tuft_7",
+        "root_tuft_7_2",
+        "root_tuft_8",
+        "root_tuft_8_2"
+      ],
+      "description": "Breathing body / head, appendages drift"
+    },
+    {
+      "name": "sway",
+      "loop": "loop",
+      "length": 10,
+      "bones": [
+        "tube",
+        "tube_2",
+        "tube_3",
+        "tube_4"
+      ],
+      "description": "Current sway: stalks bend, everything above follows"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 1.6,
+      "bones": [
+        "sieve_plate",
+        "tube"
+      ],
+      "description": "Flinch: squeeze and jerk"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 4,
+      "bones": [
+        "tube",
+        "tube_2",
+        "tube_3",
+        "tube_4",
+        "frill",
+        "sieve_plate"
+      ],
+      "description": "Collapses: appendages droop, the body deflates"
+    }
+  ],
+  "definition": {
+    "template": "parts",
+    "category": "sponge",
+    "body": {
+      "length": 10,
+      "width": 10,
+      "height": 16
+    },
+    "parts": [],
+    "params": {
+      "orientation": "upright",
+      "parts": [
+        {
+          "name": "base",
+          "shape": "cylinder",
+          "size": [
+            3,
+            2,
+            3
+          ],
+          "taper": 1.3,
+          "color": "#d6d0c0",
+          "role": "body"
+        },
+        {
+          "name": "tube",
+          "shape": "profile",
+          "parent": "base",
+          "at": "top",
+          "size": [
+            6,
+            28,
+            6
+          ],
+          "profile": [
+            0.55,
+            0.7,
+            0.82,
+            0.9,
+            0.96,
+            1,
+            1
+          ],
+          "segments": 4,
+          "curl": 5,
+          "color": "#e6e2d4",
+          "color_to": "#efece2",
+          "material": "shell",
+          "role": "segment"
+        },
+        {
+          "name": "ridge",
+          "shape": "cylinder",
+          "parent": "tube",
+          "at": [
+            0.5,
+            0.55,
+            0.5
+          ],
+          "center": true,
+          "size": [
+            7,
+            1,
+            7
+          ],
+          "color": "#f2efe6",
+          "detail": 3
+        },
+        {
+          "name": "ridge_upper",
+          "shape": "cylinder",
+          "parent": "tube",
+          "at": [
+            0.5,
+            0.8,
+            0.5
+          ],
+          "center": true,
+          "size": [
+            7,
+            1,
+            7
+          ],
+          "color": "#f2efe6",
+          "detail": 3
+        },
+        {
+          "name": "sieve_plate",
+          "shape": "dome",
+          "parent": "tube",
+          "at": "tip",
+          "size": [
+            7,
+            2,
+            7
+          ],
+          "color": "#f4f1e8",
+          "role": "head"
+        },
+        {
+          "name": "frill",
+          "shape": "cylinder",
+          "parent": "tube",
+          "at": "tip",
+          "offset": [
+            0,
+            -1,
+            0
+          ],
+          "size": [
+            8,
+            1,
+            8
+          ],
+          "color": "#ece8dc",
+          "detail": 2
+        },
+        {
+          "name": "root_tuft",
+          "shape": "cylinder",
+          "parent": "base",
+          "at": [
+            0.5,
+            0.3,
+            0.5
+          ],
+          "axis": "-y",
+          "size": [
+            1,
+            7,
+            1
+          ],
+          "count": 8,
+          "arrange": "ring",
+          "radius": 1,
+          "tilt": 70,
+          "segments": 2,
+          "curl": 20,
+          "color": "#dcd8cc",
+          "color_to": "#f0eee6",
+          "material": "setae",
+          "role": "plume"
+        }
+      ],
+      "scale": 1
+    },
+    "palette": {
+      "part_base": "#d6d0c0",
+      "part_tube": "#e6e2d4",
+      "grad_tube": "#efece2",
+      "part_ridge": "#f2efe6",
+      "part_ridge_upper": "#f2efe6",
+      "part_sieve_plate": "#f4f1e8",
+      "part_frill": "#ece8dc",
+      "part_root_tuft": "#dcd8cc",
+      "grad_root_tuft": "#f0eee6"
+    },
+    "texture": {
+      "pattern": "scales",
+      "pattern_strength": 0.45,
+      "pattern_scale": 1
+    },
+    "glow": [],
+    "animation": {
+      "speed": 0.5,
+      "amplitude": 0.4
+    },
+    "variation": {
+      "body": 0.1,
+      "hue": 3,
+      "lightness": 0.03
+    },
+    "id": "venus_flower_basket",
+    "name": "Venus' Flower Basket",
+    "name_ja": "カイロウドウケツ",
+    "scientific_name": "Euplectella aspergillum",
+    "habitat": "continental_slope",
+    "order": 74,
+    "notes": "Hexactinellid glass sponge: a tall, gently curved, thin-walled tube (usually 10-30 cm, 2-6 cm wide) of fused silica spicules forming a square-mesh lattice with oblique spiral ridges, widening slightly toward the top, closed by a domed sieve plate; anchored in soft sediment by a tuft of long, hair-thin glassy basal fibres. Pale white to cream. A pair of spongicolid shrimps often lives trapped inside. Filter feeder; the sponge itself is not known to be bioluminescent.",
+    "animations": [
+      "idle",
+      "sway",
+      "hurt",
+      "death"
+    ]
+  }
+}

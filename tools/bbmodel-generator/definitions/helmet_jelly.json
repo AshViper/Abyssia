@@ -1,0 +1,88 @@
+{
+	"id": "helmet_jelly",
+	"name": "Helmet Jellyfish",
+	"name_ja": "クロカムリクラゲ",
+	"scientific_name": "Periphylla periphylla",
+	"category": "jellyfish",
+	"template": "medusa",
+	"habitat": "bathypelagic",
+	"order": 20,
+	"notes": "Crown jelly with a tall conical helmet-shaped bell: a transparent outer bell over dark red-purple pigmented tissue and gut, a coronal groove, marginal lappets and 12 thick tentacles. Blue-green light from the coronal groove and dome; sparkling luminous particles from the lappets.",
+	"body": {
+		"width": 10,
+		"height": 12
+	},
+	"parts": [
+		"bell",
+		"stomach",
+		"groove",
+		"lappets",
+		"tentacles"
+	],
+	"params": {
+		"bell": {
+			"profile": "helmet",
+			"tiers": 4,
+			"alpha": 140
+		},
+		"stomach": {
+			"enabled": true,
+			"width": 6,
+			"height": 8
+		},
+		"groove": {
+			"enabled": true,
+			"sectors": 8,
+			"height": 1,
+			"at": 0.25
+		},
+		"lappets": {
+			"enabled": true,
+			"height": 2
+		},
+		"tentacles": {
+			"count": 12,
+			"length": 12,
+			"segments": 2,
+			"width": 1,
+			"spread": 30
+		}
+	},
+	"palette": {
+		"dome": "#6e2a3c",
+		"body": "#5a1e30",
+		"flesh": "#3a0c1a",
+		"membrane": "#4a1424",
+		"glow": "#4fe0bf"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.25,
+		"countershade": 0.2
+	},
+	"glow": [
+		{
+			"part": "groove",
+			"intensity": 1.0,
+			"color": "glow"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"pulse",
+		"spread",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"bell": 0.08,
+		"tentacles": 0.12,
+		"hue": 6,
+		"lightness": 0.04
+	}
+}

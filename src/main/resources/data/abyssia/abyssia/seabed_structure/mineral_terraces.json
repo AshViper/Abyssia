@@ -1,0 +1,106 @@
+{
+  "category": "thermal",
+  "tier": "medium",
+  "footprint_radius": 24,
+  "max_height": 8,
+  "formation": {
+    "type": "sediment",
+    "count": [
+      3,
+      6
+    ],
+    "spread": 9,
+    "radius": [
+      4,
+      8
+    ],
+    "height": [
+      2,
+      5
+    ],
+    "surface": [
+      {
+        "data": {
+          "Name": "abyssia:mineral_sediment"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:sulfur_deposit"
+        },
+        "weight": 1
+      }
+    ],
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:black_mineral_deposit"
+        },
+        "weight": 1
+      }
+    ],
+    "layers": 1
+  },
+  "conditions": {
+    "avoid_vent_fields": false,
+    "max_slope": 0.5
+  },
+  "dressing": {
+    "radius": 22,
+    "density": 0.25,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_tube"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:heat_moss"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:vent_grass"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_plant"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sulfur_cluster"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:tubeworm",
+    "abyssia:satsuma_tubeworm",
+    "abyssia:deep_sea_shrimp",
+    "abyssia:yunohana_crab",
+    "abyssia:ohara_shrimp",
+    "abyssia:scaly_foot_snail",
+    "abyssia:vent_eelpout"
+  ]
+}

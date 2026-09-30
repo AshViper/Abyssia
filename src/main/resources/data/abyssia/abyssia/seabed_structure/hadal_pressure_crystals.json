@@ -1,0 +1,89 @@
+{
+  "category": "crystal",
+  "tier": "medium",
+  "footprint_radius": 18,
+  "max_height": 16,
+  "formation": {
+    "type": "crystal",
+    "count": [
+      5,
+      10
+    ],
+    "spread": 6,
+    "length": [
+      3,
+      9
+    ],
+    "radius": [
+      0.8,
+      1.6
+    ],
+    "tilt": 0.6,
+    "center_scale": 1.5,
+    "crystal": [
+      {
+        "data": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:violet_crystal_block"
+        },
+        "weight": 1
+      }
+    ],
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:deep_crystal_block"
+        },
+        "weight": 1
+      }
+    ],
+    "base": [
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "base_radius": 6,
+    "base_height": 1.5
+  },
+  "conditions": {
+    "max_slope": 0.8
+  },
+  "dressing": {
+    "radius": 16,
+    "density": 0.3,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_crystal_cluster"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pale_crystal_cluster"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_shards"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

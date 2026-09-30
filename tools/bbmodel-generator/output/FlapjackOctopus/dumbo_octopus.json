@@ -1,0 +1,657 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "dumbo_octopus",
+  "name": "Flapjack Octopus",
+  "template": "parts",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      128,
+      64
+    ],
+    "texture_image": [
+      128,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      18.17,
+      12.99,
+      18.17
+    ],
+    "size_blocks": [
+      1.14,
+      0.81,
+      1.14
+    ],
+    "core_size_blocks": [
+      0.94,
+      0.38,
+      0.94
+    ],
+    "cubes": 24
+  },
+  "bones": [
+    {
+      "name": "dumbo_octopus",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mantle",
+      "parent": "dumbo_octopus",
+      "role": "body",
+      "pivot": [
+        0,
+        3.5239,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "web",
+      "parent": "mantle",
+      "role": "fin",
+      "pivot": [
+        0.5,
+        2.5239,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1",
+      "parent": "web",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        3.5239,
+        -7.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1_2",
+      "parent": "arm_1",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        1.5239,
+        -7.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_2",
+      "parent": "web",
+      "role": "tentacle",
+      "pivot": [
+        -4.5,
+        3.5239,
+        -5.5
+      ],
+      "rotation": [
+        30,
+        45,
+        0
+      ]
+    },
+    {
+      "name": "arm_2_2",
+      "parent": "arm_2",
+      "role": "tentacle",
+      "pivot": [
+        -4.5,
+        1.5239,
+        -5.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_3",
+      "parent": "web",
+      "role": "tentacle",
+      "pivot": [
+        -6.5,
+        3.5239,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        90,
+        -30
+      ]
+    },
+    {
+      "name": "arm_3_2",
+      "parent": "arm_3",
+      "role": "tentacle",
+      "pivot": [
+        -6.5,
+        1.5239,
+        -0.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_4",
+      "parent": "web",
+      "role": "tentacle",
+      "pivot": [
+        -4.5,
+        3.5239,
+        4.5
+      ],
+      "rotation": [
+        -150,
+        45,
+        180
+      ]
+    },
+    {
+      "name": "arm_4_2",
+      "parent": "arm_4",
+      "role": "tentacle",
+      "pivot": [
+        -4.5,
+        1.5239,
+        4.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_5",
+      "parent": "web",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        3.5239,
+        6.5
+      ],
+      "rotation": [
+        -150,
+        0,
+        180
+      ]
+    },
+    {
+      "name": "arm_5_2",
+      "parent": "arm_5",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        1.5239,
+        6.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_6",
+      "parent": "web",
+      "role": "tentacle",
+      "pivot": [
+        5.5,
+        3.5239,
+        4.5
+      ],
+      "rotation": [
+        -150,
+        -45,
+        180
+      ]
+    },
+    {
+      "name": "arm_6_2",
+      "parent": "arm_6",
+      "role": "tentacle",
+      "pivot": [
+        5.5,
+        1.5239,
+        4.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_7",
+      "parent": "web",
+      "role": "tentacle",
+      "pivot": [
+        7.5,
+        3.5239,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        -90,
+        30
+      ]
+    },
+    {
+      "name": "arm_7_2",
+      "parent": "arm_7",
+      "role": "tentacle",
+      "pivot": [
+        7.5,
+        1.5239,
+        -0.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_8",
+      "parent": "web",
+      "role": "tentacle",
+      "pivot": [
+        5.5,
+        3.5239,
+        -5.5
+      ],
+      "rotation": [
+        30,
+        -45,
+        0
+      ]
+    },
+    {
+      "name": "arm_8_2",
+      "parent": "arm_8",
+      "role": "tentacle",
+      "pivot": [
+        5.5,
+        1.5239,
+        -5.5
+      ],
+      "rotation": [
+        20,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "ear_fin_right",
+      "parent": "mantle",
+      "role": "fin",
+      "pivot": [
+        5,
+        8.5239,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        -30
+      ]
+    },
+    {
+      "name": "ear_fin_left",
+      "parent": "mantle",
+      "role": "fin",
+      "pivot": [
+        -4,
+        8.5239,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        30
+      ]
+    },
+    {
+      "name": "eye_right",
+      "parent": "mantle",
+      "role": "eye",
+      "pivot": [
+        3,
+        7.5239,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "eye_left",
+      "parent": "mantle",
+      "role": "eye",
+      "pivot": [
+        -2,
+        7.5239,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "mantle",
+        "web",
+        "arm_1",
+        "arm_1_2",
+        "arm_2",
+        "arm_2_2",
+        "arm_3",
+        "arm_3_2",
+        "arm_4",
+        "arm_4_2",
+        "arm_5",
+        "arm_5_2",
+        "arm_6",
+        "arm_6_2",
+        "arm_7",
+        "arm_7_2",
+        "arm_8",
+        "arm_8_2",
+        "ear_fin_right",
+        "ear_fin_left"
+      ],
+      "description": "Breathing body / head, appendages drift"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 2,
+      "bones": [
+        "mantle",
+        "web",
+        "ear_fin_right",
+        "ear_fin_left"
+      ],
+      "description": "Body and tail undulate, fins paddle"
+    },
+    {
+      "name": "tentacle_move",
+      "loop": "loop",
+      "length": 3.75,
+      "bones": [
+        "arm_1",
+        "arm_1_2",
+        "arm_2",
+        "arm_2_2",
+        "arm_3",
+        "arm_3_2",
+        "arm_4",
+        "arm_4_2",
+        "arm_5",
+        "arm_5_2",
+        "arm_6",
+        "arm_6_2",
+        "arm_7",
+        "arm_7_2",
+        "arm_8",
+        "arm_8_2"
+      ],
+      "description": "Tentacles curl and uncurl in a travelling wave"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 1,
+      "bones": [
+        "mantle",
+        "arm_1",
+        "arm_2",
+        "arm_3",
+        "arm_4",
+        "arm_5",
+        "arm_6",
+        "arm_7",
+        "arm_8"
+      ],
+      "description": "Flinch: squeeze and jerk"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.5,
+      "bones": [
+        "web",
+        "arm_1",
+        "arm_1_2",
+        "arm_2",
+        "arm_2_2",
+        "arm_3",
+        "arm_3_2",
+        "arm_4",
+        "arm_4_2",
+        "arm_5",
+        "arm_5_2",
+        "arm_6",
+        "arm_6_2",
+        "arm_7",
+        "arm_7_2",
+        "arm_8",
+        "arm_8_2",
+        "ear_fin_right",
+        "ear_fin_left",
+        "mantle"
+      ],
+      "description": "Collapses: appendages droop, the body deflates"
+    }
+  ],
+  "definition": {
+    "template": "parts",
+    "category": "cephalopod",
+    "body": {
+      "length": 10,
+      "width": 10,
+      "height": 16
+    },
+    "parts": [],
+    "params": {
+      "orientation": "horizontal",
+      "parts": [
+        {
+          "name": "mantle",
+          "shape": "dome",
+          "size": [
+            15,
+            6,
+            15
+          ],
+          "role": "body",
+          "color": "#c0553a",
+          "belly": "#d88a6a"
+        },
+        {
+          "name": "web",
+          "shape": "cylinder",
+          "parent": "mantle",
+          "at": "bottom",
+          "center": true,
+          "size": [
+            17,
+            2,
+            17
+          ],
+          "role": "fin",
+          "color": "#b24c35"
+        },
+        {
+          "name": "ear_fin",
+          "shape": "plane",
+          "parent": "mantle",
+          "at": [
+            0.8,
+            0.85,
+            0.45
+          ],
+          "size": [
+            3,
+            4,
+            0
+          ],
+          "axis": "y",
+          "outline": "leaf",
+          "rotate": [
+            0,
+            0,
+            -30
+          ],
+          "mirror": true,
+          "role": "fin",
+          "color": "#c86446"
+        },
+        {
+          "name": "eye",
+          "shape": "eye",
+          "size": 2,
+          "parent": "mantle",
+          "at": [
+            0.68,
+            0.7,
+            0.2
+          ],
+          "mirror": true
+        },
+        {
+          "name": "arm",
+          "shape": "cylinder",
+          "parent": "web",
+          "at": "center",
+          "size": [
+            2,
+            3,
+            2
+          ],
+          "axis": "-y",
+          "count": 8,
+          "arrange": "ring",
+          "radius": 7,
+          "tilt": 30,
+          "segments": 2,
+          "curl": 20,
+          "role": "tentacle",
+          "color": "#a94731"
+        }
+      ],
+      "scale": 1
+    },
+    "palette": {
+      "part_mantle": "#c0553a",
+      "belly_mantle": "#d88a6a",
+      "part_web": "#b24c35",
+      "part_ear_fin": "#c86446",
+      "part_arm": "#a94731"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.3
+    },
+    "glow": [],
+    "animation": {
+      "speed": 0.8,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "hue": 5,
+      "lightness": 0.04
+    },
+    "id": "dumbo_octopus",
+    "name": "Flapjack Octopus",
+    "name_ja": "メンダコ",
+    "scientific_name": "Exsuperoteuthis depressa (syn. Opisthoteuthis depressa)",
+    "habitat": "continental_slope",
+    "order": 65,
+    "notes": "Small cirrate 'pancake' octopus of Japan's muddy slopes: a soft, flattened, orange-red umbrella of body and arm web, two small ear-like fins on top, dark eyes, and short webbed arms edged with cirri curling out under the rim.",
+    "animations": [
+      "idle",
+      "swim",
+      "tentacle_move",
+      "hurt",
+      "death"
+    ]
+  }
+}

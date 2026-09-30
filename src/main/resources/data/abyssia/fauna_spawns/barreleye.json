@@ -1,0 +1,31 @@
+{
+  "entity": "abyssia:barreleye",
+  "role": "passive",
+  "weight": 5,
+  "group": {
+    "min": 1,
+    "max": 1
+  },
+  "depth_m": {
+    "min": 400,
+    "core_min": 600,
+    "core_max": 800,
+    "max": 1100
+  },
+  "placement": "open_water",
+  "cave_factor": 1.0,
+  "open_factor": 0.6,
+  "max_light": 7,
+  "cap": {
+    "count": 24,
+    "radius": 64
+  },
+  "habitat": [
+    {
+      "blocks": "#abyssia:fauna/crystal",
+      "radius": 4,
+      "min": 2,
+      "factor": 3.0
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bbmodel-generator",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/bbmodel-generator/server.js"
+      ],
+      "port": 5178
+    },
+    {
+      "name": "model-ai-dashboard",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tools/model-ai/dashboard.js"
+      ],
+      "port": 5179
+    },
+    {
+      "name": "agentflow",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "tools/agentflow/server.py",
+        "8765"
+      ],
+      "port": 8765
+    }
+  ]
+}

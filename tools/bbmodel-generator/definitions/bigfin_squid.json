@@ -1,0 +1,58 @@
+{
+	"id": "bigfin_squid",
+	"name": "Bigfin Squid",
+	"name_ja": "ミズヒキイカ",
+	"scientific_name": "Magnapinna pacifica (Magnapinna spp.)",
+	"category": "cephalopod",
+	"template": "parts",
+	"habitat": "bathypelagic",
+	"order": 55,
+	"notes": "Small pale reddish-pink mantle carrying two huge rounded fins almost as long as the mantle; ten arms and tentacles all alike: a short thick proximal part held out sideways at a right angle ('elbow'), then very long thin white sticky filaments hanging straight down, many times the body length. Hovers arms-down near the seafloor. No light organs known. Built upright with the parts template because the squid template cannot bend the arms.",
+	"body": {
+		"length": 8,
+		"width": 8,
+		"height": 64
+	},
+	"parts": [],
+	"params": {
+		"orientation": "upright",
+		"scale": 1,
+		"parts": [
+			{ "name": "mantle", "shape": "profile", "axis": "y", "size": [5, 14, 5], "profile": [0.85, 1, 1, 0.9, 0.7, 0.45, 0.2], "color": "#b86f68", "belly": "#c98a82" },
+			{ "name": "fin", "parent": "mantle", "at": [1, 0.62, 0.5], "shape": "plane", "axis": "x", "size": [9, 13, 0], "outline": "round", "color": "#c48178", "mirror": true },
+			{ "name": "head", "parent": "mantle", "at": "base", "shape": "ellipsoid", "axis": "-y", "size": [5, 4, 5], "color": "#a8615b" },
+			{ "name": "eye", "parent": "head", "at": [1, 0.55, 0.45], "shape": "eye", "size": 2, "mirror": true },
+			{ "name": "arm", "parent": "head", "at": "tip", "shape": "cylinder", "axis": "-y", "size": [1.5, 8, 1.5], "taper": 0.6,
+			  "count": 10, "arrange": "ring", "radius": 1.5, "tilt": 80, "color": "#a35a55" },
+			{ "name": "filament", "parent": "arm", "at": "tip", "shape": "cylinder", "axis": "-y", "rotate": [-80, 0, 0], "size": [1, 46, 1],
+			  "segments": 4, "curl": 3, "color": "#e6dcd6", "role": "tentacle" }
+		]
+	},
+	"palette": {
+		"eye": "#0b0c10",
+		"eye_iris": "#6d5a5a",
+		"eye_ring": "#7a403c",
+		"eye_glint": "#e6f0f6"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.3
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"sway",
+		"tentacle_move",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.6,
+		"amplitude": 0.8
+	},
+	"variation": {
+		"body": 0.06,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

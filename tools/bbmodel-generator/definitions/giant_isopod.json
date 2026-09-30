@@ -1,0 +1,102 @@
+{
+	"id": "giant_isopod",
+	"name": "Giant Isopod",
+	"name_ja": "ダイオウグソクムシ",
+	"scientific_name": "Bathynomus giganteus",
+	"category": "isopod",
+	"template": "arthropod",
+	"habitat": "abyssal_floor",
+	"order": 2,
+	"notes": "Flattened armoured body of overlapping plates, large dark compound eyes, long second antennae, seven pairs of walking legs, a broad tail shield with uropods; rolls up defensively.",
+	"body": {
+		"length": 18,
+		"width": 10,
+		"height": 4,
+		"segments": 7
+	},
+	"parts": [
+		"body",
+		"head",
+		"eye",
+		"antennae",
+		"legs",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 3,
+			"width": 7,
+			"height": 3
+		},
+		"eye": {
+			"size": 2,
+			"forward": 0.2
+		},
+		"antennae": {
+			"length": 12,
+			"segments": 3,
+			"spread": 42,
+			"antennules": true
+		},
+		"legs": {
+			"pairs": 7,
+			"upper": 3,
+			"lower": 3,
+			"splay": 62,
+			"fan": 30,
+			"width": 1
+		},
+		"tail": {
+			"pleon": 2,
+			"length": 4,
+			"width": 0.75,
+			"uropods": 3
+		}
+	},
+	"palette": {
+		"shell": "#9c94a8",
+		"body": "#9c94a8",
+		"belly": "#b4adbb",
+		"leg": "#8c8599",
+		"eye": "#13151b",
+		"eye_iris": "#566070",
+		"eye_ring": "#6f687c",
+		"eye_glint": "#dfe6ee",
+		"glow": "#b8d0e8",
+		"glow_eye": "#8a9cb0"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.4,
+		"countershade": 0.5
+	},
+	"glow": [
+		{
+			"part": "eyes",
+			"intensity": 0.3,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"walk",
+		"curl",
+		"uncurl",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"legs": 0.1,
+		"antennae": 0.12,
+		"tail": 0.1,
+		"eye": 0.1,
+		"hue": 8,
+		"lightness": 0.04
+	}
+}

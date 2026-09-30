@@ -1,0 +1,128 @@
+{
+	"id": "gulper_eel",
+	"name": "Gulper Eel",
+	"name_ja": "フクロウナギ",
+	"scientific_name": "Eurypharynx pelecanoides",
+	"category": "eel",
+	"template": "eel",
+	"habitat": "bathypelagic",
+	"order": 3,
+	"notes": "Tiny head with minute eyes at the snout tip, enormous loosely hinged jaws with an expandable pouch, a thin whip-like body and a luminous organ at the tail tip.",
+	"body": {
+		"length": 44,
+		"width": 3,
+		"height": 4,
+		"segments": 8,
+		"taper": 0.25
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail",
+		"tail_tip"
+	],
+	"params": {
+		"head": {
+			"length": 3,
+			"width": 3,
+			"height": 4,
+			"round": 0
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"jaw_length": 11,
+			"upper_length": 10,
+			"width": 2.7,
+			"gape": 72,
+			"rest_gape": 6,
+			"pouch": 3
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.8,
+			"forward": 0.15,
+			"protrude": 0.5
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"angle": 40
+		},
+		"dorsal": {
+			"enabled": true,
+			"start": 0.25,
+			"end": 0.97,
+			"height": 1
+		},
+		"anal": {
+			"enabled": true,
+			"start": 0.35,
+			"end": 0.97,
+			"height": 1
+		},
+		"caudal": {
+			"enabled": false
+		},
+		"tail_tip": {
+			"enabled": true,
+			"size": 2
+		}
+	},
+	"palette": {
+		"body": "#252833",
+		"belly": "#2f3340",
+		"fin": "#2c3040",
+		"mouth": "#3e2230",
+		"lip": "#20232d",
+		"membrane": "#332c3c",
+		"lure": "#3a2a36",
+		"eye": "#0a0b10",
+		"eye_iris": "#50606e",
+		"eye_ring": "#1b1e27",
+		"glow": "#ff6f96",
+		"glow_eye": "#8a9aae"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.4,
+		"countershade": 0.6
+	},
+	"glow": [
+		{
+			"part": "tail_tip",
+			"intensity": 1.0
+		},
+		{
+			"part": "eyes",
+			"intensity": 0.3,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"glow"
+	],
+	"animation": {
+		"speed": 0.9,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"mouth": 0.1,
+		"fin": 0.12,
+		"eye": 0.1,
+		"glow": 0.25,
+		"hue": 6,
+		"lightness": 0.03
+	}
+}

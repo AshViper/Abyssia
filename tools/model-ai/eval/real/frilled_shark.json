@@ -1,0 +1,114 @@
+{
+	"archetype": "eel",
+	"captions": {
+		"en": [
+			"a frilled shark: long eel-like dark body with frilly gills",
+			"Primitive deep-sea shark shaped like an eel"
+		],
+		"ja": [
+			"ウナギのような細長い体とフリル状のえらを持つラブカ",
+			"暗い色の細長いサメ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "body",
+				"shape": "cylinder",
+				"size": [
+					6,
+					6,
+					44
+				],
+				"axis": "z",
+				"segments": 6,
+				"taper": 0.35,
+				"color": "#3a4034"
+			},
+			{
+				"name": "head",
+				"shape": "box",
+				"size": [
+					7,
+					6,
+					9
+				],
+				"parent": "body",
+				"at": "front",
+				"axis": "-z",
+				"color": "#3a4034"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 1,
+				"parent": "head",
+				"at": [
+					1,
+					0.7,
+					0.4
+				],
+				"mirror": true
+			},
+			{
+				"name": "gill",
+				"shape": "plane",
+				"size": [
+					0,
+					5,
+					1
+				],
+				"parent": "body",
+				"at": [
+					1,
+					0.5,
+					0.05
+				],
+				"axis": "x",
+				"outline": "frill",
+				"count": 3,
+				"arrange": "row",
+				"spacing": [
+					0,
+					0,
+					2
+				],
+				"mirror": true,
+				"color": "#8a3a3a"
+			},
+			{
+				"name": "dorsal_fin",
+				"shape": "plane",
+				"size": [
+					0,
+					3,
+					6
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					1,
+					0.75
+				],
+				"axis": "y",
+				"outline": "triangle",
+				"color": "#3a4034"
+			},
+			{
+				"name": "tail_fin",
+				"shape": "plane",
+				"size": [
+					0,
+					6,
+					6
+				],
+				"parent": "body",
+				"at": "tip",
+				"axis": "z",
+				"outline": "heterocercal",
+				"color": "#3a4034"
+			}
+		]
+	}
+}

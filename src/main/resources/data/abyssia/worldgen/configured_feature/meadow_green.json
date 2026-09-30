@@ -1,0 +1,239 @@
+{
+  "type": "minecraft:simple_random_selector",
+  "config": {
+    "features": [
+      {
+        "feature": {
+          "type": "abyssia:column_plant",
+          "config": {
+            "head": {
+              "Name": "abyssia:abyssal_grass",
+              "Properties": {
+                "top": "true"
+              }
+            },
+            "body": {
+              "Name": "abyssia:abyssal_grass",
+              "Properties": {
+                "top": "false"
+              }
+            },
+            "min_height": 1,
+            "max_height": 3,
+            "cluster_scale": 0.05
+          }
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "type": "abyssia:column_plant",
+          "config": {
+            "head": {
+              "Name": "abyssia:abyssal_grass",
+              "Properties": {
+                "top": "true"
+              }
+            },
+            "body": {
+              "Name": "abyssia:abyssal_grass",
+              "Properties": {
+                "top": "false"
+              }
+            },
+            "min_height": 1,
+            "max_height": 3,
+            "cluster_scale": 0.05
+          }
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "type": "abyssia:column_plant",
+          "config": {
+            "head": {
+              "Name": "abyssia:abyssal_grass",
+              "Properties": {
+                "top": "true"
+              }
+            },
+            "body": {
+              "Name": "abyssia:abyssal_grass",
+              "Properties": {
+                "top": "false"
+              }
+            },
+            "min_height": 1,
+            "max_height": 3,
+            "cluster_scale": 0.05
+          }
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "type": "abyssia:column_plant",
+          "config": {
+            "head": {
+              "Name": "abyssia:teal_abyssal_grass",
+              "Properties": {
+                "top": "true"
+              }
+            },
+            "body": {
+              "Name": "abyssia:teal_abyssal_grass",
+              "Properties": {
+                "top": "false"
+              }
+            },
+            "min_height": 1,
+            "max_height": 2,
+            "cluster_scale": 0.05
+          }
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "type": "minecraft:simple_block",
+          "config": {
+            "to_place": {
+              "type": "minecraft:simple_state_provider",
+              "state": {
+                "Name": "abyssia:sea_fern"
+              }
+            }
+          }
+        },
+        "placement": [
+          {
+            "type": "minecraft:block_predicate_filter",
+            "predicate": {
+              "type": "minecraft:all_of",
+              "predicates": [
+                {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": [
+                    "minecraft:water"
+                  ]
+                },
+                {
+                  "type": "minecraft:would_survive",
+                  "state": {
+                    "Name": "abyssia:sea_fern"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "feature": {
+          "type": "minecraft:simple_block",
+          "config": {
+            "to_place": {
+              "type": "minecraft:simple_state_provider",
+              "state": {
+                "Name": "abyssia:sea_fern"
+              }
+            }
+          }
+        },
+        "placement": [
+          {
+            "type": "minecraft:block_predicate_filter",
+            "predicate": {
+              "type": "minecraft:all_of",
+              "predicates": [
+                {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": [
+                    "minecraft:water"
+                  ]
+                },
+                {
+                  "type": "minecraft:would_survive",
+                  "state": {
+                    "Name": "abyssia:sea_fern"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "feature": {
+          "type": "minecraft:simple_block",
+          "config": {
+            "to_place": {
+              "type": "minecraft:simple_state_provider",
+              "state": {
+                "Name": "abyssia:abyssal_moss"
+              }
+            }
+          }
+        },
+        "placement": [
+          {
+            "type": "minecraft:block_predicate_filter",
+            "predicate": {
+              "type": "minecraft:all_of",
+              "predicates": [
+                {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": [
+                    "minecraft:water"
+                  ]
+                },
+                {
+                  "type": "minecraft:would_survive",
+                  "state": {
+                    "Name": "abyssia:abyssal_moss"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "feature": {
+          "type": "minecraft:simple_block",
+          "config": {
+            "to_place": {
+              "type": "minecraft:simple_state_provider",
+              "state": {
+                "Name": "abyssia:abyssal_moss"
+              }
+            }
+          }
+        },
+        "placement": [
+          {
+            "type": "minecraft:block_predicate_filter",
+            "predicate": {
+              "type": "minecraft:all_of",
+              "predicates": [
+                {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": [
+                    "minecraft:water"
+                  ]
+                },
+                {
+                  "type": "minecraft:would_survive",
+                  "state": {
+                    "Name": "abyssia:abyssal_moss"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

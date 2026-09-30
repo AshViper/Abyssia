@@ -1,0 +1,958 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "deep_sea_shrimp",
+  "name": "Deep-sea Shrimp",
+  "template": "crustacean",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": true,
+    "size_units": [
+      42.56,
+      17.24,
+      29.9
+    ],
+    "size_blocks": [
+      2.66,
+      1.08,
+      1.87
+    ],
+    "core_size_blocks": [
+      0.25,
+      0.69,
+      1.35
+    ],
+    "cubes": 48
+  },
+  "bones": [
+    {
+      "name": "deep_sea_shrimp",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "deep_sea_shrimp",
+      "role": "body",
+      "pivot": [
+        0,
+        11.0564,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_eye",
+      "parent": "body",
+      "role": "eye",
+      "pivot": [
+        1,
+        11.5564,
+        -10.5
+      ],
+      "rotation": [
+        0,
+        -20,
+        0
+      ]
+    },
+    {
+      "name": "left_eye",
+      "parent": "body",
+      "role": "eye",
+      "pivot": [
+        -1,
+        11.5564,
+        -10.5
+      ],
+      "rotation": [
+        0,
+        20,
+        0
+      ]
+    },
+    {
+      "name": "rostrum",
+      "parent": "body",
+      "role": "rostrum",
+      "pivot": [
+        0,
+        12.5564,
+        -10.5
+      ],
+      "rotation": [
+        14,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_antenna",
+      "parent": "body",
+      "role": "antenna",
+      "pivot": [
+        0.5,
+        12.0564,
+        -9.5
+      ],
+      "rotation": [
+        22,
+        -40,
+        0
+      ]
+    },
+    {
+      "name": "right_antenna_2",
+      "parent": "right_antenna",
+      "role": "antenna",
+      "pivot": [
+        0.5,
+        12.0564,
+        -20.5
+      ],
+      "rotation": [
+        -8.8,
+        -60,
+        0
+      ]
+    },
+    {
+      "name": "right_antenna_3",
+      "parent": "right_antenna_2",
+      "role": "antenna",
+      "pivot": [
+        0.5,
+        12.0564,
+        -30.5
+      ],
+      "rotation": [
+        -8.8,
+        -60,
+        0
+      ]
+    },
+    {
+      "name": "left_antenna",
+      "parent": "body",
+      "role": "antenna",
+      "pivot": [
+        -0.5,
+        12.0564,
+        -9.5
+      ],
+      "rotation": [
+        22,
+        40,
+        0
+      ]
+    },
+    {
+      "name": "left_antenna_2",
+      "parent": "left_antenna",
+      "role": "antenna",
+      "pivot": [
+        -0.5,
+        12.0564,
+        -20.5
+      ],
+      "rotation": [
+        -8.8,
+        60,
+        0
+      ]
+    },
+    {
+      "name": "left_antenna_3",
+      "parent": "left_antenna_2",
+      "role": "antenna",
+      "pivot": [
+        -0.5,
+        12.0564,
+        -30.5
+      ],
+      "rotation": [
+        -8.8,
+        60,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_1",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        1,
+        9.5564,
+        -9.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_1_foot",
+      "parent": "right_leg_1",
+      "role": "leg_foot",
+      "pivot": [
+        2.358,
+        5.8477,
+        -10.1333
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_1",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        -1,
+        9.5564,
+        -9.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_1_foot",
+      "parent": "left_leg_1",
+      "role": "leg_foot",
+      "pivot": [
+        -2.358,
+        5.8477,
+        -10.1333
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_2",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        1,
+        9.5564,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_2_foot",
+      "parent": "right_leg_2",
+      "role": "leg_foot",
+      "pivot": [
+        2.4629,
+        5.8477,
+        -8.3243
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_2",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        -1,
+        9.5564,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_2_foot",
+      "parent": "left_leg_2",
+      "role": "leg_foot",
+      "pivot": [
+        -2.4629,
+        5.8477,
+        -8.3243
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_3",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        1,
+        9.5564,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_3_foot",
+      "parent": "right_leg_3",
+      "role": "leg_foot",
+      "pivot": [
+        2.4984,
+        5.8477,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_3",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        -1,
+        9.5564,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_3_foot",
+      "parent": "left_leg_3",
+      "role": "leg_foot",
+      "pivot": [
+        -2.4984,
+        5.8477,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_4",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        1,
+        9.5564,
+        -5.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_4_foot",
+      "parent": "right_leg_4",
+      "role": "leg_foot",
+      "pivot": [
+        2.4629,
+        5.8477,
+        -5.1757
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_4",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        -1,
+        9.5564,
+        -5.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_4_foot",
+      "parent": "left_leg_4",
+      "role": "leg_foot",
+      "pivot": [
+        -2.4629,
+        5.8477,
+        -5.1757
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_5",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        1,
+        9.5564,
+        -4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_5_foot",
+      "parent": "right_leg_5",
+      "role": "leg_foot",
+      "pivot": [
+        2.358,
+        5.8477,
+        -3.8667
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_5",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        -1,
+        9.5564,
+        -4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_5_foot",
+      "parent": "left_leg_5",
+      "role": "leg_foot",
+      "pivot": [
+        -2.358,
+        5.8477,
+        -3.8667
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "abdomen",
+      "parent": "body",
+      "role": "abdomen",
+      "pivot": [
+        0,
+        11.0564,
+        -4.5
+      ],
+      "rotation": [
+        9,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "abdomen_2",
+      "parent": "abdomen",
+      "role": "abdomen",
+      "pivot": [
+        0,
+        11.0564,
+        -1.5
+      ],
+      "rotation": [
+        9,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "abdomen_3",
+      "parent": "abdomen_2",
+      "role": "abdomen",
+      "pivot": [
+        0,
+        11.5564,
+        1.5
+      ],
+      "rotation": [
+        9,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "abdomen_4",
+      "parent": "abdomen_3",
+      "role": "abdomen",
+      "pivot": [
+        0,
+        11.5564,
+        4.5
+      ],
+      "rotation": [
+        9,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "abdomen_5",
+      "parent": "abdomen_4",
+      "role": "abdomen",
+      "pivot": [
+        0,
+        12.0564,
+        6.5
+      ],
+      "rotation": [
+        9,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "abdomen_6",
+      "parent": "abdomen_5",
+      "role": "abdomen",
+      "pivot": [
+        0,
+        12.0564,
+        9.5
+      ],
+      "rotation": [
+        9,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_fan",
+      "parent": "abdomen_6",
+      "role": "tail_fin",
+      "pivot": [
+        0,
+        12.0564,
+        11.5
+      ],
+      "rotation": [
+        4.5,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_uropod",
+      "parent": "tail_fan",
+      "role": "uropod",
+      "pivot": [
+        1,
+        12.0564,
+        11.5
+      ],
+      "rotation": [
+        0,
+        22,
+        0
+      ]
+    },
+    {
+      "name": "left_uropod",
+      "parent": "tail_fan",
+      "role": "uropod",
+      "pivot": [
+        -1,
+        12.0564,
+        11.5
+      ],
+      "rotation": [
+        0,
+        -22,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 3,
+      "bones": [
+        "body",
+        "right_antenna",
+        "left_antenna",
+        "right_antenna_2",
+        "left_antenna_2",
+        "right_antenna_3",
+        "left_antenna_3",
+        "right_eye",
+        "left_eye",
+        "abdomen",
+        "abdomen_2",
+        "abdomen_3",
+        "abdomen_4",
+        "abdomen_5",
+        "abdomen_6",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5"
+      ],
+      "description": "Resting: claws flex, antennae sweep, swimmerets paddle, legs fidget"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 0.8,
+      "bones": [
+        "abdomen",
+        "abdomen_2",
+        "abdomen_3",
+        "abdomen_4",
+        "abdomen_5",
+        "abdomen_6",
+        "tail_fan",
+        "right_antenna",
+        "left_antenna",
+        "right_antenna_2",
+        "left_antenna_2",
+        "right_antenna_3",
+        "left_antenna_3",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "body"
+      ],
+      "description": "Swimming: swimmerets beat in a wave, abdomen flexes, antennae stream back"
+    },
+    {
+      "name": "flick",
+      "loop": "once",
+      "length": 0.5,
+      "bones": [
+        "abdomen",
+        "abdomen_2",
+        "abdomen_3",
+        "abdomen_4",
+        "abdomen_5",
+        "abdomen_6",
+        "tail_fan",
+        "body"
+      ],
+      "description": "Escape tail-flip: the abdomen snaps under the body and back"
+    },
+    {
+      "name": "walk",
+      "loop": "loop",
+      "length": 0.9,
+      "bones": [
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "body"
+      ],
+      "description": "Walking: alternating leg waves with a slight body sway"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.5,
+      "bones": [
+        "body",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "abdomen",
+        "abdomen_2",
+        "abdomen_3",
+        "abdomen_4",
+        "abdomen_5",
+        "abdomen_6"
+      ],
+      "description": "Jolt: shell twitches, legs and claws flinch"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2,
+      "bones": [
+        "body",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "abdomen",
+        "abdomen_2",
+        "abdomen_3",
+        "abdomen_4",
+        "abdomen_5",
+        "abdomen_6"
+      ],
+      "description": "Rolls over, legs and claws fold up"
+    }
+  ],
+  "definition": {
+    "template": "crustacean",
+    "category": "shrimp",
+    "plan": "shrimp",
+    "body": {
+      "length": 7,
+      "width": 4,
+      "height": 5
+    },
+    "parts": [
+      "body",
+      "eye",
+      "rostrum",
+      "antennae",
+      "legs",
+      "abdomen",
+      "tail"
+    ],
+    "params": {
+      "eye": {
+        "size": 2,
+        "stalk": 1
+      },
+      "rostrum": {
+        "length": 6,
+        "angle": 14
+      },
+      "antennae": {
+        "length": 30,
+        "segments": 3,
+        "sweep": 160,
+        "lift": 22
+      },
+      "claws": {
+        "enabled": false,
+        "arm": 4,
+        "hand": 4,
+        "hand_size": 3,
+        "finger": 3,
+        "spread": 40
+      },
+      "setae": {
+        "length": 0
+      },
+      "legs": {
+        "pairs": 5,
+        "upper": 4,
+        "lower": 4,
+        "splay": 22,
+        "fan": 25,
+        "width": 1
+      },
+      "abdomen": {
+        "segments": 6,
+        "length": 16,
+        "width": 4,
+        "height": 5,
+        "taper": 0.5,
+        "curve": 9,
+        "swimmerets": true
+      },
+      "tail_fan": {
+        "length": 5,
+        "width": 7
+      }
+    },
+    "palette": {
+      "shell": "#a24c43",
+      "body": "#a24c43",
+      "belly": "#bb6f5f",
+      "leg": "#b0594b",
+      "membrane": "#c07868",
+      "fin": "#b45f50",
+      "eye": "#0c0c10",
+      "eye_iris": "#4a3a3a",
+      "eye_ring": "#6e2f2a",
+      "eye_glint": "#ffe0d8",
+      "glow": "#6fb8ff",
+      "glow_eye": "#9aa8c0"
+    },
+    "texture": {
+      "pattern": "spots",
+      "pattern_strength": 0.35,
+      "countershade": 0.8
+    },
+    "glow": [
+      {
+        "part": "body",
+        "anchor": [
+          1,
+          0.12,
+          0.2
+        ],
+        "count": 3,
+        "step": [
+          0,
+          0,
+          2
+        ],
+        "radius": 0.55,
+        "mirror": true,
+        "intensity": 0.9
+      },
+      {
+        "part": "eyes",
+        "intensity": 0.3,
+        "color": "glow_eye"
+      }
+    ],
+    "animations": [
+      "idle",
+      "swim",
+      "flick",
+      "walk",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 1,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "claws": 0.12,
+      "legs": 0.1,
+      "antennae": 0.12,
+      "abdomen": 0.08,
+      "eye": 0.1,
+      "hue": 6,
+      "lightness": 0.03
+    },
+    "id": "deep_sea_shrimp",
+    "name": "Deep-sea Shrimp",
+    "name_ja": "シンカイエビ",
+    "scientific_name": "Acanthephyra purpurea (type)",
+    "habitat": "bathypelagic",
+    "order": 12,
+    "notes": "Blood-red deep-sea shrimp (red looks black in the deep): serrated rostrum, large dark eyes, antennae far longer than the body, a curved abdomen with swimmerets, a fanned tail and blue photophores."
+  }
+}

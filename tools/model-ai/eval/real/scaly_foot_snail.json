@@ -1,0 +1,103 @@
+{
+	"archetype": "snail",
+	"captions": {
+		"en": [
+			"a snail with a black iron shell and a red foot",
+			"scaly-foot snail"
+		],
+		"ja": [
+			"黒い鉄の殻と赤い足を持つ巻貝",
+			"ウロコフネタマガイ"
+		]
+	},
+	"spec": {
+		"orientation": "upright",
+		"parts": [
+			{
+				"name": "foot",
+				"shape": "ellipsoid",
+				"size": [
+					6,
+					3,
+					13
+				],
+				"axis": "-z",
+				"center": true,
+				"color": "#8a3a2a",
+				"role": "body"
+			},
+			{
+				"name": "shell",
+				"shape": "profile",
+				"size": [
+					8,
+					9,
+					8
+				],
+				"parent": "foot",
+				"at": [
+					0.5,
+					1,
+					0.6
+				],
+				"axis": "y",
+				"profile": [
+					0.85,
+					1,
+					0.95,
+					0.75,
+					0.45
+				],
+				"rotate": [
+					-10,
+					0,
+					0
+				],
+				"color": "#1e1e22",
+				"material": "shell"
+			},
+			{
+				"name": "scale",
+				"shape": "plane",
+				"size": [
+					0,
+					3,
+					6
+				],
+				"parent": "foot",
+				"at": [
+					1,
+					0.8,
+					0.6
+				],
+				"axis": "y",
+				"outline": "frill",
+				"mirror": true,
+				"color": "#26262a"
+			},
+			{
+				"name": "eye_stalk",
+				"shape": "cylinder",
+				"size": [
+					1,
+					4,
+					1
+				],
+				"parent": "foot",
+				"at": [
+					0.7,
+					0.8,
+					0.05
+				],
+				"axis": "y",
+				"rotate": [
+					-20,
+					0,
+					0
+				],
+				"mirror": true,
+				"color": "#8a3a2a"
+			}
+		]
+	}
+}

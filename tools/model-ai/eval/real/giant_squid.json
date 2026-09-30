@@ -1,0 +1,129 @@
+{
+	"archetype": "squid",
+	"captions": {
+		"en": [
+			"a giant red squid swimming horizontally with long tentacles",
+			"Giant squid, huge eyes"
+		],
+		"ja": [
+			"長い触腕で水平に泳ぐ赤いダイオウイカ",
+			"目の大きなダイオウイカ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "mantle",
+				"shape": "profile",
+				"size": [
+					10,
+					10,
+					26
+				],
+				"axis": "z",
+				"profile": [
+					1,
+					1,
+					0.9,
+					0.7,
+					0.4,
+					0.2
+				],
+				"segments": 2,
+				"color": "#a8322a"
+			},
+			{
+				"name": "fin",
+				"shape": "plane",
+				"size": [
+					6,
+					0,
+					8
+				],
+				"parent": "mantle",
+				"at": [
+					1,
+					0.5,
+					0.85
+				],
+				"axis": "x",
+				"outline": "round",
+				"mirror": true,
+				"color": "#a8322a"
+			},
+			{
+				"name": "head",
+				"shape": "ellipsoid",
+				"size": [
+					8,
+					8,
+					6
+				],
+				"parent": "mantle",
+				"at": "front",
+				"axis": "-z",
+				"color": "#a8322a"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 3,
+				"parent": "head",
+				"at": [
+					1,
+					0.55,
+					0.5
+				],
+				"mirror": true
+			},
+			{
+				"name": "arm",
+				"shape": "cylinder",
+				"size": [
+					1,
+					1,
+					12
+				],
+				"parent": "head",
+				"at": "front",
+				"axis": "-z",
+				"count": 4,
+				"arrange": "row",
+				"spacing": [
+					0,
+					1.5,
+					0
+				],
+				"rotate": [
+					0,
+					10,
+					0
+				],
+				"segments": 3,
+				"curl": 4,
+				"mirror": true,
+				"color": "#b8423a"
+			},
+			{
+				"name": "tentacle",
+				"shape": "cylinder",
+				"size": [
+					1,
+					1,
+					26
+				],
+				"parent": "head",
+				"at": [
+					0.6,
+					0.5,
+					0
+				],
+				"axis": "-z",
+				"segments": 4,
+				"mirror": true,
+				"color": "#b8423a"
+			}
+		]
+	}
+}

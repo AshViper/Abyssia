@@ -1,0 +1,1777 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "sea_lily",
+  "name": "Sea Lily",
+  "template": "parts",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      24.69,
+      45.56,
+      24.92
+    ],
+    "size_blocks": [
+      1.54,
+      2.85,
+      1.56
+    ],
+    "core_size_blocks": [
+      0.38,
+      2.14,
+      0.54
+    ],
+    "cubes": 89
+  },
+  "bones": [
+    {
+      "name": "sea_lily",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "base",
+      "parent": "sea_lily",
+      "role": "body",
+      "pivot": [
+        0,
+        0,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stalk",
+      "parent": "base",
+      "role": "segment",
+      "pivot": [
+        0.5,
+        1,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stalk_2",
+      "parent": "stalk",
+      "role": "segment",
+      "pivot": [
+        0.5,
+        7,
+        -2.5
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stalk_3",
+      "parent": "stalk_2",
+      "role": "segment",
+      "pivot": [
+        0.5,
+        13,
+        -2.5
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stalk_4",
+      "parent": "stalk_3",
+      "role": "segment",
+      "pivot": [
+        0.5,
+        19,
+        -2.5
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stalk_5",
+      "parent": "stalk_4",
+      "role": "segment",
+      "pivot": [
+        0.5,
+        25,
+        -2.5
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_low_1",
+      "parent": "stalk",
+      "role": "part",
+      "pivot": [
+        1,
+        4.5,
+        -3
+      ],
+      "rotation": [
+        -110,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_low_1_2",
+      "parent": "cirrus_low_1",
+      "role": "part",
+      "pivot": [
+        1,
+        6.5,
+        -3
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_low_2",
+      "parent": "stalk",
+      "role": "part",
+      "pivot": [
+        0,
+        4.5,
+        -2.5
+      ],
+      "rotation": [
+        -110,
+        72,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_low_2_2",
+      "parent": "cirrus_low_2",
+      "role": "part",
+      "pivot": [
+        0,
+        6.5,
+        -2.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_low_3",
+      "parent": "stalk",
+      "role": "part",
+      "pivot": [
+        0.5,
+        4.5,
+        -1
+      ],
+      "rotation": [
+        70,
+        36,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_low_3_2",
+      "parent": "cirrus_low_3",
+      "role": "part",
+      "pivot": [
+        0.5,
+        6.5,
+        -1
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_low_4",
+      "parent": "stalk",
+      "role": "part",
+      "pivot": [
+        1.5,
+        4.5,
+        -1
+      ],
+      "rotation": [
+        70,
+        -36,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_low_4_2",
+      "parent": "cirrus_low_4",
+      "role": "part",
+      "pivot": [
+        1.5,
+        6.5,
+        -1
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_low_5",
+      "parent": "stalk",
+      "role": "part",
+      "pivot": [
+        2,
+        4.5,
+        -2.5
+      ],
+      "rotation": [
+        -110,
+        -72,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_low_5_2",
+      "parent": "cirrus_low_5",
+      "role": "part",
+      "pivot": [
+        2,
+        6.5,
+        -2.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_mid_1",
+      "parent": "stalk_2",
+      "role": "part",
+      "pivot": [
+        0.5,
+        12.5,
+        -3
+      ],
+      "rotation": [
+        -110,
+        36,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_mid_1_2",
+      "parent": "cirrus_mid_1",
+      "role": "part",
+      "pivot": [
+        0.5,
+        14.5,
+        -3
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_mid_2",
+      "parent": "stalk_2",
+      "role": "part",
+      "pivot": [
+        0,
+        12.5,
+        -1.5
+      ],
+      "rotation": [
+        70,
+        72,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_mid_2_2",
+      "parent": "cirrus_mid_2",
+      "role": "part",
+      "pivot": [
+        0,
+        14.5,
+        -1.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_mid_3",
+      "parent": "stalk_2",
+      "role": "part",
+      "pivot": [
+        1,
+        12.5,
+        -1
+      ],
+      "rotation": [
+        70,
+        0,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_mid_3_2",
+      "parent": "cirrus_mid_3",
+      "role": "part",
+      "pivot": [
+        1,
+        14.5,
+        -1
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_mid_4",
+      "parent": "stalk_2",
+      "role": "part",
+      "pivot": [
+        2,
+        12.5,
+        -1.5
+      ],
+      "rotation": [
+        70,
+        -72,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_mid_4_2",
+      "parent": "cirrus_mid_4",
+      "role": "part",
+      "pivot": [
+        2,
+        14.5,
+        -1.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_mid_5",
+      "parent": "stalk_2",
+      "role": "part",
+      "pivot": [
+        1.5,
+        12.5,
+        -3
+      ],
+      "rotation": [
+        -110,
+        -36,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_mid_5_2",
+      "parent": "cirrus_mid_5",
+      "role": "part",
+      "pivot": [
+        1.5,
+        14.5,
+        -3
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_high_1",
+      "parent": "stalk_4",
+      "role": "part",
+      "pivot": [
+        1,
+        20,
+        -3
+      ],
+      "rotation": [
+        -110,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_high_1_2",
+      "parent": "cirrus_high_1",
+      "role": "part",
+      "pivot": [
+        1,
+        22,
+        -3
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_high_2",
+      "parent": "stalk_4",
+      "role": "part",
+      "pivot": [
+        0,
+        20,
+        -2.5
+      ],
+      "rotation": [
+        -110,
+        72,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_high_2_2",
+      "parent": "cirrus_high_2",
+      "role": "part",
+      "pivot": [
+        0,
+        22,
+        -2.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_high_3",
+      "parent": "stalk_4",
+      "role": "part",
+      "pivot": [
+        0.5,
+        20,
+        -1
+      ],
+      "rotation": [
+        70,
+        36,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_high_3_2",
+      "parent": "cirrus_high_3",
+      "role": "part",
+      "pivot": [
+        0.5,
+        22,
+        -1
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_high_4",
+      "parent": "stalk_4",
+      "role": "part",
+      "pivot": [
+        1.5,
+        20,
+        -1
+      ],
+      "rotation": [
+        70,
+        -36,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_high_4_2",
+      "parent": "cirrus_high_4",
+      "role": "part",
+      "pivot": [
+        1.5,
+        22,
+        -1
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_high_5",
+      "parent": "stalk_4",
+      "role": "part",
+      "pivot": [
+        2,
+        20,
+        -2.5
+      ],
+      "rotation": [
+        -110,
+        -72,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_high_5_2",
+      "parent": "cirrus_high_5",
+      "role": "part",
+      "pivot": [
+        2,
+        22,
+        -2.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_top_1",
+      "parent": "stalk_5",
+      "role": "part",
+      "pivot": [
+        0.5,
+        27.5,
+        -3
+      ],
+      "rotation": [
+        -110,
+        36,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_top_1_2",
+      "parent": "cirrus_top_1",
+      "role": "part",
+      "pivot": [
+        0.5,
+        29.5,
+        -3
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_top_2",
+      "parent": "stalk_5",
+      "role": "part",
+      "pivot": [
+        0,
+        27.5,
+        -1.5
+      ],
+      "rotation": [
+        70,
+        72,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_top_2_2",
+      "parent": "cirrus_top_2",
+      "role": "part",
+      "pivot": [
+        0,
+        29.5,
+        -1.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_top_3",
+      "parent": "stalk_5",
+      "role": "part",
+      "pivot": [
+        1,
+        27.5,
+        -1
+      ],
+      "rotation": [
+        70,
+        0,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_top_3_2",
+      "parent": "cirrus_top_3",
+      "role": "part",
+      "pivot": [
+        1,
+        29.5,
+        -1
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_top_4",
+      "parent": "stalk_5",
+      "role": "part",
+      "pivot": [
+        2,
+        27.5,
+        -1.5
+      ],
+      "rotation": [
+        70,
+        -72,
+        180
+      ]
+    },
+    {
+      "name": "cirrus_top_4_2",
+      "parent": "cirrus_top_4",
+      "role": "part",
+      "pivot": [
+        2,
+        29.5,
+        -1.5
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_top_5",
+      "parent": "stalk_5",
+      "role": "part",
+      "pivot": [
+        1.5,
+        27.5,
+        -3
+      ],
+      "rotation": [
+        -110,
+        -36,
+        0
+      ]
+    },
+    {
+      "name": "cirrus_top_5_2",
+      "parent": "cirrus_top_5",
+      "role": "part",
+      "pivot": [
+        1.5,
+        29.5,
+        -3
+      ],
+      "rotation": [
+        30,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "calyx",
+      "parent": "stalk_5",
+      "role": "head",
+      "pivot": [
+        1,
+        31,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        34,
+        -3.5
+      ],
+      "rotation": [
+        -40,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1_2",
+      "parent": "arm_1",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        39,
+        -3.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1_3",
+      "parent": "arm_1_2",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        44,
+        -3.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_1",
+      "parent": "arm_1",
+      "role": "part",
+      "pivot": [
+        1.5,
+        34,
+        -3.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_2",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        34,
+        -3
+      ],
+      "rotation": [
+        -40,
+        36,
+        0
+      ]
+    },
+    {
+      "name": "arm_2_2",
+      "parent": "arm_2",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        39,
+        -3
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_2_3",
+      "parent": "arm_2_2",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        44,
+        -3
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_2",
+      "parent": "arm_2",
+      "role": "part",
+      "pivot": [
+        0.5,
+        34,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_3",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        34,
+        -2.5
+      ],
+      "rotation": [
+        -40,
+        72,
+        0
+      ]
+    },
+    {
+      "name": "arm_3_2",
+      "parent": "arm_3",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        39,
+        -2.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_3_3",
+      "parent": "arm_3_2",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        44,
+        -2.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_3",
+      "parent": "arm_3",
+      "role": "part",
+      "pivot": [
+        -0.5,
+        34,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_4",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        34,
+        -1.5
+      ],
+      "rotation": [
+        140,
+        72,
+        180
+      ]
+    },
+    {
+      "name": "arm_4_2",
+      "parent": "arm_4",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        39,
+        -1.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_4_3",
+      "parent": "arm_4_2",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        44,
+        -1.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_4",
+      "parent": "arm_4",
+      "role": "part",
+      "pivot": [
+        -0.5,
+        34,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_5",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        34,
+        -1
+      ],
+      "rotation": [
+        140,
+        36,
+        180
+      ]
+    },
+    {
+      "name": "arm_5_2",
+      "parent": "arm_5",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        39,
+        -1
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_5_3",
+      "parent": "arm_5_2",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        44,
+        -1
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_5",
+      "parent": "arm_5",
+      "role": "part",
+      "pivot": [
+        0.5,
+        34,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_6",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        34,
+        -0.5
+      ],
+      "rotation": [
+        140,
+        0,
+        180
+      ]
+    },
+    {
+      "name": "arm_6_2",
+      "parent": "arm_6",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        39,
+        -0.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_6_3",
+      "parent": "arm_6_2",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        44,
+        -0.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_6",
+      "parent": "arm_6",
+      "role": "part",
+      "pivot": [
+        1.5,
+        34,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_7",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        34,
+        -1
+      ],
+      "rotation": [
+        140,
+        -36,
+        180
+      ]
+    },
+    {
+      "name": "arm_7_2",
+      "parent": "arm_7",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        39,
+        -1
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_7_3",
+      "parent": "arm_7_2",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        44,
+        -1
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_7",
+      "parent": "arm_7",
+      "role": "part",
+      "pivot": [
+        2.5,
+        34,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_8",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        34,
+        -1.5
+      ],
+      "rotation": [
+        140,
+        -72,
+        180
+      ]
+    },
+    {
+      "name": "arm_8_2",
+      "parent": "arm_8",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        39,
+        -1.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_8_3",
+      "parent": "arm_8_2",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        44,
+        -1.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_8",
+      "parent": "arm_8",
+      "role": "part",
+      "pivot": [
+        2.5,
+        34,
+        -1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_9",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        34,
+        -2.5
+      ],
+      "rotation": [
+        -40,
+        -72,
+        0
+      ]
+    },
+    {
+      "name": "arm_9_2",
+      "parent": "arm_9",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        39,
+        -2.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_9_3",
+      "parent": "arm_9_2",
+      "role": "tentacle",
+      "pivot": [
+        2.5,
+        44,
+        -2.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_9",
+      "parent": "arm_9",
+      "role": "part",
+      "pivot": [
+        2.5,
+        34,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_10",
+      "parent": "calyx",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        34,
+        -3
+      ],
+      "rotation": [
+        -40,
+        -36,
+        0
+      ]
+    },
+    {
+      "name": "arm_10_2",
+      "parent": "arm_10",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        39,
+        -3
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_10_3",
+      "parent": "arm_10_2",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        44,
+        -3
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pinnules_10",
+      "parent": "arm_10",
+      "role": "part",
+      "pivot": [
+        2.5,
+        34,
+        -2.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 6.67,
+      "bones": [
+        "calyx",
+        "base",
+        "stalk",
+        "stalk_2",
+        "stalk_3",
+        "stalk_4",
+        "stalk_5",
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_6",
+        "arm_6_2",
+        "arm_6_3",
+        "arm_7",
+        "arm_7_2",
+        "arm_7_3",
+        "arm_8",
+        "arm_8_2",
+        "arm_8_3",
+        "arm_9",
+        "arm_9_2",
+        "arm_9_3",
+        "arm_10",
+        "arm_10_2",
+        "arm_10_3"
+      ],
+      "description": "Breathing body / head, appendages drift"
+    },
+    {
+      "name": "sway",
+      "loop": "loop",
+      "length": 8.33,
+      "bones": [
+        "stalk",
+        "stalk_2",
+        "stalk_3",
+        "stalk_4",
+        "stalk_5"
+      ],
+      "description": "Current sway: stalks bend, everything above follows"
+    },
+    {
+      "name": "tentacle_move",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_6",
+        "arm_6_2",
+        "arm_6_3",
+        "arm_7",
+        "arm_7_2",
+        "arm_7_3",
+        "arm_8",
+        "arm_8_2",
+        "arm_8_3",
+        "arm_9",
+        "arm_9_2",
+        "arm_9_3",
+        "arm_10",
+        "arm_10_2",
+        "arm_10_3"
+      ],
+      "description": "Tentacles curl and uncurl in a travelling wave"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 1.33,
+      "bones": [
+        "calyx",
+        "stalk",
+        "arm_1",
+        "arm_2",
+        "arm_3",
+        "arm_4",
+        "arm_5",
+        "arm_6",
+        "arm_7",
+        "arm_8",
+        "arm_9",
+        "arm_10"
+      ],
+      "description": "Flinch: squeeze and jerk"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 3.33,
+      "bones": [
+        "stalk",
+        "stalk_2",
+        "stalk_3",
+        "stalk_4",
+        "stalk_5",
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_6",
+        "arm_6_2",
+        "arm_6_3",
+        "arm_7",
+        "arm_7_2",
+        "arm_7_3",
+        "arm_8",
+        "arm_8_2",
+        "arm_8_3",
+        "arm_9",
+        "arm_9_2",
+        "arm_9_3",
+        "arm_10",
+        "arm_10_2",
+        "arm_10_3",
+        "calyx"
+      ],
+      "description": "Collapses: appendages droop, the body deflates"
+    }
+  ],
+  "definition": {
+    "template": "parts",
+    "category": "echinoderm",
+    "body": {
+      "length": 10,
+      "width": 10,
+      "height": 16
+    },
+    "parts": [],
+    "params": {
+      "orientation": "upright",
+      "parts": [
+        {
+          "name": "base",
+          "shape": "cylinder",
+          "size": [
+            3,
+            1,
+            3
+          ],
+          "color": "#9a7e70",
+          "role": "body"
+        },
+        {
+          "name": "stalk",
+          "shape": "cylinder",
+          "parent": "base",
+          "at": "top",
+          "size": [
+            2,
+            30,
+            2
+          ],
+          "segments": 5,
+          "curl": 3,
+          "color": "#c8a292",
+          "color_to": "#d4ae9c"
+        },
+        {
+          "name": "cirrus_low",
+          "shape": "cylinder",
+          "parent": "stalk",
+          "at": [
+            0.5,
+            0.12,
+            0.5
+          ],
+          "size": [
+            1,
+            4,
+            1
+          ],
+          "count": 5,
+          "arrange": "ring",
+          "radius": 1,
+          "tilt": 110,
+          "segments": 2,
+          "curl": 30,
+          "color": "#b89080",
+          "detail": 2
+        },
+        {
+          "name": "cirrus_mid",
+          "shape": "cylinder",
+          "parent": "stalk",
+          "at": [
+            0.5,
+            0.38,
+            0.5
+          ],
+          "size": [
+            1,
+            4,
+            1
+          ],
+          "count": 5,
+          "arrange": "ring",
+          "radius": 1,
+          "tilt": 110,
+          "start_angle": 36,
+          "segments": 2,
+          "curl": 30,
+          "color": "#b89080",
+          "detail": 2
+        },
+        {
+          "name": "cirrus_high",
+          "shape": "cylinder",
+          "parent": "stalk",
+          "at": [
+            0.5,
+            0.64,
+            0.5
+          ],
+          "size": [
+            1,
+            4,
+            1
+          ],
+          "count": 5,
+          "arrange": "ring",
+          "radius": 1,
+          "tilt": 110,
+          "segments": 2,
+          "curl": 30,
+          "color": "#b89080",
+          "detail": 3
+        },
+        {
+          "name": "cirrus_top",
+          "shape": "cylinder",
+          "parent": "stalk",
+          "at": [
+            0.5,
+            0.88,
+            0.5
+          ],
+          "size": [
+            1,
+            4,
+            1
+          ],
+          "count": 5,
+          "arrange": "ring",
+          "radius": 1,
+          "tilt": 110,
+          "start_angle": 36,
+          "segments": 2,
+          "curl": 30,
+          "color": "#b89080",
+          "detail": 3
+        },
+        {
+          "name": "calyx",
+          "shape": "cone",
+          "parent": "stalk",
+          "at": "tip",
+          "size": [
+            4,
+            3,
+            4
+          ],
+          "tip": 1.6,
+          "color": "#c09080",
+          "role": "head"
+        },
+        {
+          "name": "arm",
+          "shape": "cylinder",
+          "parent": "calyx",
+          "at": "top",
+          "axis": "y",
+          "size": [
+            1,
+            14,
+            1
+          ],
+          "count": 10,
+          "arrange": "ring",
+          "radius": 1.5,
+          "tilt": 40,
+          "segments": 3,
+          "curl": -15,
+          "color": "#d0a090",
+          "color_to": "#e2bcaa",
+          "role": "tentacle"
+        },
+        {
+          "name": "pinnules",
+          "shape": "plane",
+          "parent": "arm",
+          "at": "base",
+          "size": [
+            4,
+            13,
+            0
+          ],
+          "outline": "leaf",
+          "material": "plume",
+          "color": "#dcb4a2",
+          "detail": 2
+        }
+      ],
+      "scale": 1
+    },
+    "palette": {
+      "part_base": "#9a7e70",
+      "part_stalk": "#c8a292",
+      "grad_stalk": "#d4ae9c",
+      "part_cirrus_low": "#b89080",
+      "part_cirrus_mid": "#b89080",
+      "part_cirrus_high": "#b89080",
+      "part_cirrus_top": "#b89080",
+      "part_calyx": "#c09080",
+      "part_arm": "#d0a090",
+      "grad_arm": "#e2bcaa",
+      "part_pinnules": "#dcb4a2"
+    },
+    "texture": {
+      "pattern": "bands",
+      "pattern_strength": 0.3,
+      "pattern_scale": 0.8
+    },
+    "glow": [],
+    "animation": {
+      "speed": 0.6,
+      "amplitude": 0.8
+    },
+    "variation": {
+      "body": 0.07,
+      "hue": 5,
+      "lightness": 0.04
+    },
+    "id": "sea_lily",
+    "name": "Sea Lily",
+    "name_ja": "トリノアシ",
+    "scientific_name": "Metacrinus rotundus",
+    "habitat": "continental_slope",
+    "order": 73,
+    "notes": "Stalked crinoid of the rocky and gravelly shelf edge off central Japan: a long, jointed, round-pentagonal stalk (30-50 cm) with whorls of five short, clawed cirri at intervals, a small cup-shaped calyx and a crown of five arms that branch 3-4 times into about 50 feathery arms fringed with pinnules, held open like a parabolic fan into the current 10-50 cm above the bottom. Pale reddish in life. Filter feeder; sheds its crown under stress and regrows it. No bioluminescence.",
+    "animations": [
+      "idle",
+      "sway",
+      "tentacle_move",
+      "hurt",
+      "death"
+    ]
+  }
+}

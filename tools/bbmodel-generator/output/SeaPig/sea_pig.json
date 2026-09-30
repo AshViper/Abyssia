@@ -1,0 +1,627 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "sea_pig",
+  "name": "Sea Pig",
+  "template": "parts",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      32
+    ],
+    "texture_image": [
+      64,
+      32
+    ],
+    "glow_texture": false,
+    "size_units": [
+      9,
+      13.06,
+      17.5
+    ],
+    "size_blocks": [
+      0.56,
+      0.82,
+      1.09
+    ],
+    "core_size_blocks": [
+      0.56,
+      0.44,
+      0.94
+    ],
+    "cubes": 21
+  },
+  "bones": [
+    {
+      "name": "sea_pig",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "sea_pig",
+      "role": "body",
+      "pivot": [
+        0,
+        4.5,
+        7.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "papilla_1",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        8,
+        -4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "papilla_1_2",
+      "parent": "papilla_1",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        11,
+        -4.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "papilla_2",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        1.5,
+        8,
+        -4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "papilla_2_2",
+      "parent": "papilla_2",
+      "role": "tentacle",
+      "pivot": [
+        1.5,
+        11,
+        -4.5
+      ],
+      "rotation": [
+        -15,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_1_right",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        4.5,
+        3,
+        -9.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_1_left",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        3,
+        -9.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_2_right",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        4.5,
+        3,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_2_left",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        3,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_3_right",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        4.5,
+        3,
+        -4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_3_left",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        3,
+        -4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_4_right",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        4.5,
+        3,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_4_left",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        3,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_5_right",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        4.5,
+        3,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "leg_5_left",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        3,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_tentacle_1",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        -1.5,
+        3.5,
+        -7.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_tentacle_2",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        3.5,
+        -7.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_tentacle_3",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        1.5,
+        3.5,
+        -7.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_tentacle_4",
+      "parent": "body",
+      "role": "tentacle",
+      "pivot": [
+        3,
+        3.5,
+        -7.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "body",
+        "papilla_1",
+        "papilla_1_2",
+        "papilla_2",
+        "papilla_2_2",
+        "leg_1_right",
+        "leg_1_left",
+        "leg_2_right",
+        "leg_2_left",
+        "leg_3_right",
+        "leg_3_left",
+        "leg_4_right",
+        "leg_4_left",
+        "leg_5_right",
+        "leg_5_left",
+        "oral_tentacle_1",
+        "oral_tentacle_2",
+        "oral_tentacle_3",
+        "oral_tentacle_4"
+      ],
+      "description": "Breathing body / head, appendages drift"
+    },
+    {
+      "name": "tentacle_move",
+      "loop": "loop",
+      "length": 3.75,
+      "bones": [
+        "papilla_1",
+        "papilla_1_2",
+        "papilla_2",
+        "papilla_2_2",
+        "leg_1_right",
+        "leg_1_left",
+        "leg_2_right",
+        "leg_2_left",
+        "leg_3_right",
+        "leg_3_left",
+        "leg_4_right",
+        "leg_4_left",
+        "leg_5_right",
+        "leg_5_left",
+        "oral_tentacle_1",
+        "oral_tentacle_2",
+        "oral_tentacle_3",
+        "oral_tentacle_4"
+      ],
+      "description": "Tentacles curl and uncurl in a travelling wave"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 1,
+      "bones": [
+        "body",
+        "papilla_1",
+        "papilla_2",
+        "leg_1_right",
+        "leg_1_left",
+        "leg_2_right",
+        "leg_2_left",
+        "leg_3_right",
+        "leg_3_left",
+        "leg_4_right",
+        "leg_4_left",
+        "leg_5_right",
+        "leg_5_left",
+        "oral_tentacle_1",
+        "oral_tentacle_2",
+        "oral_tentacle_3",
+        "oral_tentacle_4"
+      ],
+      "description": "Flinch: squeeze and jerk"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.5,
+      "bones": [
+        "papilla_1",
+        "papilla_1_2",
+        "papilla_2",
+        "papilla_2_2",
+        "leg_1_right",
+        "leg_1_left",
+        "leg_2_right",
+        "leg_2_left",
+        "leg_3_right",
+        "leg_3_left",
+        "leg_4_right",
+        "leg_4_left",
+        "leg_5_right",
+        "leg_5_left",
+        "oral_tentacle_1",
+        "oral_tentacle_2",
+        "oral_tentacle_3",
+        "oral_tentacle_4",
+        "body"
+      ],
+      "description": "Collapses: appendages droop, the body deflates"
+    }
+  ],
+  "definition": {
+    "template": "parts",
+    "category": "sea_cucumber",
+    "body": {
+      "length": 10,
+      "width": 10,
+      "height": 16
+    },
+    "parts": [],
+    "params": {
+      "orientation": "horizontal",
+      "parts": [
+        {
+          "name": "body",
+          "shape": "ellipsoid",
+          "size": [
+            9,
+            7,
+            15
+          ],
+          "axis": "-z",
+          "center": true,
+          "color": "#d49ca2",
+          "belly": "#e6c0c2"
+        },
+        {
+          "name": "papilla",
+          "shape": "cylinder",
+          "parent": "body",
+          "at": [
+            0.5,
+            0.9,
+            0.2
+          ],
+          "size": [
+            1,
+            5,
+            1
+          ],
+          "count": 2,
+          "arrange": "row",
+          "spacing": [
+            2,
+            0,
+            0
+          ],
+          "rotate": [
+            0,
+            0,
+            0
+          ],
+          "segments": 2,
+          "curl": -15,
+          "role": "tentacle",
+          "color": "#dca8ad",
+          "detail": 1,
+          "axis": "y"
+        },
+        {
+          "name": "leg",
+          "shape": "cylinder",
+          "parent": "body",
+          "at": [
+            0.95,
+            0.2,
+            0.2
+          ],
+          "size": [
+            1,
+            3,
+            1
+          ],
+          "axis": "-y",
+          "count": 5,
+          "arrange": "row",
+          "spacing": [
+            0,
+            0,
+            2.4
+          ],
+          "rotate": [
+            0,
+            0,
+            0
+          ],
+          "mirror": true,
+          "role": "tentacle",
+          "color": "#cf959b"
+        },
+        {
+          "name": "oral_tentacle",
+          "shape": "cylinder",
+          "parent": "body",
+          "at": [
+            0.5,
+            0.25,
+            0
+          ],
+          "size": [
+            1,
+            2,
+            1
+          ],
+          "axis": "-y",
+          "count": 4,
+          "arrange": "row",
+          "spacing": [
+            1.5,
+            0,
+            0
+          ],
+          "role": "tentacle",
+          "color": "#e2b4b8",
+          "detail": 2
+        }
+      ],
+      "scale": 1
+    },
+    "palette": {
+      "part_body": "#d49ca2",
+      "belly_body": "#e6c0c2",
+      "part_papilla": "#dca8ad",
+      "part_leg": "#cf959b",
+      "part_oral_tentacle": "#e2b4b8"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.35
+    },
+    "glow": [],
+    "animation": {
+      "speed": 0.8,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "hue": 5,
+      "lightness": 0.04
+    },
+    "id": "sea_pig",
+    "name": "Sea Pig",
+    "name_ja": "センジュナマコ",
+    "scientific_name": "Scotoplanes globosa",
+    "habitat": "abyssal_floor",
+    "order": 64,
+    "notes": "Plump, pale pink, slightly translucent abyssal sea cucumber: a blunt oval body walking on five to seven pairs of stubby leg-like tube feet, with a pair of long dorsal papillae ('antennae') raised over the front and a few small feeding tentacles below the mouth. Assembled from parts (the softbody template has no legs or dorsal papillae).",
+    "animations": [
+      "idle",
+      "tentacle_move",
+      "hurt",
+      "death"
+    ]
+  }
+}

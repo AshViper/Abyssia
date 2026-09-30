@@ -1,0 +1,97 @@
+{
+	"id": "japanese_spider_crab",
+	"name": "Japanese Spider Crab",
+	"name_ja": "タカアシガニ",
+	"scientific_name": "Macrocheira kaempferi",
+	"category": "crab",
+	"template": "crustacean",
+	"plan": "crab",
+	"habitat": "continental_slope",
+	"order": 65,
+	"notes": "The largest-legged arthropod: a small knobbly pear-shaped carapace with two short horns, long thin chelipeds and four pairs of enormous spindly walking legs; orange-red with white spots along the legs.",
+	"body": {
+		"length": 10,
+		"width": 9,
+		"height": 5
+	},
+	"parts": [
+		"body",
+		"eye",
+		"rostrum",
+		"antennae",
+		"claws",
+		"legs"
+	],
+	"params": {
+		"eye": {
+			"size": 1,
+			"stalk": 1
+		},
+		"rostrum": {
+			"length": 3,
+			"angle": 10
+		},
+		"antennae": {
+			"length": 3,
+			"segments": 2,
+			"sweep": 30,
+			"lift": 10
+		},
+		"claws": {
+			"enabled": true,
+			"arm": 12,
+			"hand": 5,
+			"hand_size": 1,
+			"finger": 2,
+			"spread": 30
+		},
+		"legs": {
+			"pairs": 4,
+			"upper": 14,
+			"lower": 16,
+			"splay": 72,
+			"fan": 55,
+			"width": 1
+		},
+		"abdomen": {
+			"segments": 0
+		}
+	},
+	"palette": {
+		"shell": "#b8573a",
+		"body": "#b8573a",
+		"belly": "#d9b394",
+		"leg": "#c0643f",
+		"claw": "#c26a45",
+		"claw_tip": "#e8dccb",
+		"eye": "#1e1a18",
+		"eye_iris": "#4a3a30",
+		"eye_ring": "#8f4630"
+	},
+	"texture": {
+		"pattern": "spots",
+		"pattern_strength": 0.6,
+		"countershade": 0.4
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"walk",
+		"claw_snap",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.7,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"claws": 0.12,
+		"legs": 0.1,
+		"antennae": 0.12,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

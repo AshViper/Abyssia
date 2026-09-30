@@ -1,0 +1,107 @@
+{
+  "category": "sediment",
+  "tier": "large",
+  "footprint_radius": 60,
+  "max_height": 14,
+  "formation": {
+    "type": "sediment",
+    "count": [
+      3,
+      5
+    ],
+    "spread": 26,
+    "radius": [
+      18,
+      30
+    ],
+    "height": [
+      5,
+      12
+    ],
+    "surface": [
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 2
+      }
+    ],
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 1
+      }
+    ],
+    "layers": 3,
+    "organic": [
+      {
+        "data": {
+          "Name": "abyssia:organic_sediment"
+        },
+        "weight": 1
+      }
+    ],
+    "organic_chance": 0.1
+  },
+  "conditions": {
+    "max_slope": 0.5
+  },
+  "dressing": {
+    "radius": 56,
+    "density": 0.05,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:abyssal_moss"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:abyssal_grass"
+          },
+          "max_height": 2
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sponge_plant"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:silt_comb"
+          }
+        },
+        "weight": 3
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:yumenamako"
+  ]
+}

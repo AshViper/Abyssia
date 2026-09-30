@@ -1,0 +1,1003 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "giant_squid",
+  "name": "Giant Squid",
+  "template": "squid",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      128,
+      64
+    ],
+    "texture_image": [
+      128,
+      64
+    ],
+    "glow_texture": true,
+    "size_units": [
+      14,
+      11.88,
+      59.74
+    ],
+    "size_blocks": [
+      0.88,
+      0.74,
+      3.73
+    ],
+    "core_size_blocks": [
+      0.5,
+      0.5,
+      1.81
+    ],
+    "cubes": 41
+  },
+  "bones": [
+    {
+      "name": "giant_squid",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "giant_squid",
+      "role": "body",
+      "pivot": [
+        0,
+        5.9394,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mantle",
+      "parent": "body",
+      "role": "mantle",
+      "pivot": [
+        0,
+        5.9394,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mantle_tip",
+      "parent": "mantle",
+      "role": "mantle",
+      "pivot": [
+        0,
+        5.9394,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_fin",
+      "parent": "mantle_tip",
+      "role": "fin",
+      "pivot": [
+        2,
+        5.9394,
+        10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_fin",
+      "parent": "mantle_tip",
+      "role": "fin",
+      "pivot": [
+        -2,
+        5.9394,
+        10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        5.9394,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        3.05,
+        6.4394,
+        -10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        -3.05,
+        6.4394,
+        -10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1",
+      "parent": "head",
+      "role": "arm",
+      "pivot": [
+        -0.5,
+        7.4394,
+        -12
+      ],
+      "rotation": [
+        12,
+        5,
+        0
+      ]
+    },
+    {
+      "name": "arm_1_2",
+      "parent": "arm_1",
+      "role": "arm",
+      "pivot": [
+        -0.5,
+        7.4394,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1_3",
+      "parent": "arm_1_2",
+      "role": "arm",
+      "pivot": [
+        -0.5,
+        7.4394,
+        -25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_2",
+      "parent": "head",
+      "role": "arm",
+      "pivot": [
+        -1.5,
+        6.4394,
+        -12
+      ],
+      "rotation": [
+        5,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_2_2",
+      "parent": "arm_2",
+      "role": "arm",
+      "pivot": [
+        -1.5,
+        6.4394,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_2_3",
+      "parent": "arm_2_2",
+      "role": "arm",
+      "pivot": [
+        -1.5,
+        6.4394,
+        -25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_3",
+      "parent": "head",
+      "role": "arm",
+      "pivot": [
+        -1.5,
+        5.4394,
+        -12
+      ],
+      "rotation": [
+        -5,
+        12,
+        0
+      ]
+    },
+    {
+      "name": "arm_3_2",
+      "parent": "arm_3",
+      "role": "arm",
+      "pivot": [
+        -1.5,
+        5.4394,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_3_3",
+      "parent": "arm_3_2",
+      "role": "arm",
+      "pivot": [
+        -1.5,
+        5.4394,
+        -25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_4",
+      "parent": "head",
+      "role": "arm",
+      "pivot": [
+        -0.5,
+        4.4394,
+        -12
+      ],
+      "rotation": [
+        -12,
+        5,
+        0
+      ]
+    },
+    {
+      "name": "arm_4_2",
+      "parent": "arm_4",
+      "role": "arm",
+      "pivot": [
+        -0.5,
+        4.4394,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_4_3",
+      "parent": "arm_4_2",
+      "role": "arm",
+      "pivot": [
+        -0.5,
+        4.4394,
+        -25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_5",
+      "parent": "head",
+      "role": "arm",
+      "pivot": [
+        0.5,
+        4.4394,
+        -12
+      ],
+      "rotation": [
+        -12,
+        -5,
+        0
+      ]
+    },
+    {
+      "name": "arm_5_2",
+      "parent": "arm_5",
+      "role": "arm",
+      "pivot": [
+        0.5,
+        4.4394,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_5_3",
+      "parent": "arm_5_2",
+      "role": "arm",
+      "pivot": [
+        0.5,
+        4.4394,
+        -25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_6",
+      "parent": "head",
+      "role": "arm",
+      "pivot": [
+        1.5,
+        5.4394,
+        -12
+      ],
+      "rotation": [
+        -5,
+        -12,
+        0
+      ]
+    },
+    {
+      "name": "arm_6_2",
+      "parent": "arm_6",
+      "role": "arm",
+      "pivot": [
+        1.5,
+        5.4394,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_6_3",
+      "parent": "arm_6_2",
+      "role": "arm",
+      "pivot": [
+        1.5,
+        5.4394,
+        -25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_7",
+      "parent": "head",
+      "role": "arm",
+      "pivot": [
+        1.5,
+        6.4394,
+        -12
+      ],
+      "rotation": [
+        5,
+        -12,
+        0
+      ]
+    },
+    {
+      "name": "arm_7_2",
+      "parent": "arm_7",
+      "role": "arm",
+      "pivot": [
+        1.5,
+        6.4394,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_7_3",
+      "parent": "arm_7_2",
+      "role": "arm",
+      "pivot": [
+        1.5,
+        6.4394,
+        -25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_8",
+      "parent": "head",
+      "role": "arm",
+      "pivot": [
+        0.5,
+        7.4394,
+        -12
+      ],
+      "rotation": [
+        12,
+        -5,
+        0
+      ]
+    },
+    {
+      "name": "arm_8_2",
+      "parent": "arm_8",
+      "role": "arm",
+      "pivot": [
+        0.5,
+        7.4394,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_8_3",
+      "parent": "arm_8_2",
+      "role": "arm",
+      "pivot": [
+        0.5,
+        7.4394,
+        -25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_tentacle",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        1.1667,
+        4.9394,
+        -12
+      ],
+      "rotation": [
+        -6,
+        -8,
+        0
+      ]
+    },
+    {
+      "name": "right_tentacle_2",
+      "parent": "right_tentacle",
+      "role": "tentacle",
+      "pivot": [
+        1.1667,
+        4.9394,
+        -22
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_tentacle_3",
+      "parent": "right_tentacle_2",
+      "role": "tentacle",
+      "pivot": [
+        1.1667,
+        4.9394,
+        -32
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_club",
+      "parent": "right_tentacle_3",
+      "role": "club",
+      "pivot": [
+        1.1667,
+        4.9394,
+        -41
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_tentacle",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        -1.1667,
+        4.9394,
+        -12
+      ],
+      "rotation": [
+        -6,
+        8,
+        0
+      ]
+    },
+    {
+      "name": "left_tentacle_2",
+      "parent": "left_tentacle",
+      "role": "tentacle",
+      "pivot": [
+        -1.1667,
+        4.9394,
+        -22
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_tentacle_3",
+      "parent": "left_tentacle_2",
+      "role": "tentacle",
+      "pivot": [
+        -1.1667,
+        4.9394,
+        -32
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_club",
+      "parent": "left_tentacle_3",
+      "role": "club",
+      "pivot": [
+        -1.1667,
+        4.9394,
+        -41
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 4.44,
+      "bones": [
+        "body",
+        "right_fin",
+        "left_fin",
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_6",
+        "arm_6_2",
+        "arm_6_3",
+        "arm_7",
+        "arm_7_2",
+        "arm_7_3",
+        "arm_8",
+        "arm_8_2",
+        "arm_8_3",
+        "left_tentacle",
+        "left_tentacle_2",
+        "left_tentacle_3",
+        "right_tentacle",
+        "right_tentacle_2",
+        "right_tentacle_3"
+      ],
+      "description": "Hovering: arms curl slowly out of phase, fins ripple, mantle breathes"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 1.78,
+      "bones": [
+        "body",
+        "mantle",
+        "mantle_tip",
+        "right_fin",
+        "left_fin",
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_6",
+        "arm_6_2",
+        "arm_6_3",
+        "arm_7",
+        "arm_7_2",
+        "arm_7_3",
+        "arm_8",
+        "arm_8_2",
+        "arm_8_3",
+        "left_tentacle",
+        "left_tentacle_2",
+        "left_tentacle_3",
+        "right_tentacle",
+        "right_tentacle_2",
+        "right_tentacle_3"
+      ],
+      "description": "Jet swimming: mantle pumps, arms gather and trail, fins beat"
+    },
+    {
+      "name": "tentacle_move",
+      "loop": "loop",
+      "length": 3.33,
+      "bones": [
+        "left_tentacle",
+        "left_tentacle_2",
+        "left_tentacle_3",
+        "right_tentacle",
+        "right_tentacle_2",
+        "right_tentacle_3",
+        "right_club",
+        "left_club",
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_6",
+        "arm_6_2",
+        "arm_6_3",
+        "arm_7",
+        "arm_7_2",
+        "arm_7_3",
+        "arm_8",
+        "arm_8_2",
+        "arm_8_3"
+      ],
+      "description": "Feeding tentacles reach out, curl and flick their clubs"
+    },
+    {
+      "name": "grab",
+      "loop": "once",
+      "length": 1.33,
+      "bones": [
+        "left_tentacle",
+        "left_tentacle_2",
+        "left_tentacle_3",
+        "right_tentacle",
+        "right_tentacle_2",
+        "right_tentacle_3",
+        "right_club",
+        "left_club",
+        "arm_1",
+        "arm_2",
+        "arm_3",
+        "arm_4",
+        "arm_5",
+        "arm_6",
+        "arm_7",
+        "arm_8"
+      ],
+      "description": "Strike: tentacles shoot forward together and snap back"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.67,
+      "bones": [
+        "body",
+        "arm_1",
+        "arm_2",
+        "arm_3",
+        "arm_4",
+        "arm_5",
+        "arm_6",
+        "arm_7",
+        "arm_8"
+      ],
+      "description": "Flinch: arms flare, mantle jerks"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.44,
+      "bones": [
+        "body",
+        "arm_1",
+        "arm_1_2",
+        "arm_1_3",
+        "arm_2",
+        "arm_2_2",
+        "arm_2_3",
+        "arm_3",
+        "arm_3_2",
+        "arm_3_3",
+        "arm_4",
+        "arm_4_2",
+        "arm_4_3",
+        "arm_5",
+        "arm_5_2",
+        "arm_5_3",
+        "arm_6",
+        "arm_6_2",
+        "arm_6_3",
+        "arm_7",
+        "arm_7_2",
+        "arm_7_3",
+        "arm_8",
+        "arm_8_2",
+        "arm_8_3",
+        "left_tentacle",
+        "left_tentacle_2",
+        "left_tentacle_3",
+        "right_tentacle",
+        "right_tentacle_2",
+        "right_tentacle_3"
+      ],
+      "description": "Arms and tentacles go limp and droop, the squid rolls and sinks"
+    }
+  ],
+  "definition": {
+    "template": "squid",
+    "category": "cephalopod",
+    "body": {
+      "length": 22,
+      "width": 8,
+      "height": 8,
+      "taper": 0.45,
+      "segments": 3
+    },
+    "parts": [
+      "body",
+      "head",
+      "eye",
+      "arms",
+      "tentacles",
+      "fin",
+      "beak"
+    ],
+    "params": {
+      "head": {
+        "length": 5,
+        "width": 7,
+        "height": 7
+      },
+      "eye": {
+        "size": 3,
+        "height": 0.55,
+        "forward": 0.45,
+        "protrude": 0.35
+      },
+      "arms": {
+        "count": 8,
+        "length": 18,
+        "segments": 3,
+        "width": 2,
+        "taper": 0.5,
+        "splay": 13,
+        "ring": 0.75
+      },
+      "tentacles": {
+        "count": 2,
+        "length": 28,
+        "segments": 3,
+        "width": 1,
+        "club": 5,
+        "club_width": 2
+      },
+      "fins": {
+        "length": 7,
+        "width": 5,
+        "position": 1,
+        "shape": "sail"
+      },
+      "beak": {
+        "enabled": true,
+        "size": 2
+      }
+    },
+    "palette": {
+      "body": "#8e4d46",
+      "belly": "#a8695e",
+      "fin": "#83453f",
+      "sucker": "#d2ae9c",
+      "mouth": "#2a1e22",
+      "eye": "#0b0c10",
+      "eye_iris": "#7d8fa0",
+      "eye_ring": "#6a3a36",
+      "eye_glint": "#e6f0f6",
+      "glow": "#b8d8f0",
+      "glow_eye": "#a8c4dc"
+    },
+    "texture": {
+      "pattern": "spots",
+      "pattern_strength": 0.55,
+      "pattern_scale": 1,
+      "countershade": 0.7
+    },
+    "glow": [
+      {
+        "part": "eyes",
+        "intensity": 0.5,
+        "color": "glow_eye"
+      }
+    ],
+    "animations": [
+      "idle",
+      "swim",
+      "tentacle_move",
+      "grab",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 0.9,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "head": 0.06,
+      "arms": 0.1,
+      "tentacles": 0.12,
+      "fin": 0.12,
+      "eye": 0.1,
+      "hue": 6,
+      "lightness": 0.03
+    },
+    "id": "giant_squid",
+    "name": "Giant Squid",
+    "name_ja": "ダイオウイカ",
+    "scientific_name": "Architeuthis dux",
+    "habitat": "bathypelagic",
+    "order": 8,
+    "notes": "Long muscular mantle with small rounded terminal fins, the largest eyes in the animal kingdom, eight thick sucker-lined arms and two very long feeding tentacles ending in toothed clubs."
+  }
+}

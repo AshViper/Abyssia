@@ -1,0 +1,112 @@
+{
+  "execution_order": [
+    [
+      "B01-new-biomes-design",
+      "TEST01-simple",
+      "B02-new-biome-blocks"
+    ],
+    [
+      "M01-rare-metals",
+      "B03-new-biome-textures-chatgpt"
+    ],
+    [
+      "M02-crust-uses"
+    ],
+    [
+      "M03-underwater-tools"
+    ],
+    [
+      "R01-crust-uses-and-tools"
+    ]
+  ],
+  "tasks": [
+    {
+      "id": "B01-new-biomes-design",
+      "tier": "heavy",
+      "task": "実装タスク: B01 深海バイオーム5種追加（設計）\n\n## 目的\ndeep_ocean に冒険向けの新バイオーム5種を追加。既存10種の比率・大きな連続領域を維持する。\n\n## 編集対象ファイル\ntools/gen_worldgen.py, tools/gen_deep_assets.py(lang/biome名), src/main/resources/data/abyssia/worldgen/**(生成物・手編集禁止)\n\n## 制約\n\n\n## 完了条件\n\n\n## 指示\n1. 上記ファイルのみを編集する\n2. 制約を遵守する\n3. 完了条件を満たす実装を行う\n4. ビルドエラーがないことを確認\n5. 実装内容を簡潔に報告\n\n他のファイルは編集しないこと。\n並列実行中のため、gradle build/runClient は実行しないこと。\n",
+      "files": [
+        "tools/gen_worldgen.py",
+        "tools/gen_deep_assets.py(lang/biome名)",
+        "src/main/resources/data/abyssia/worldgen/**(生成物・手編集禁止)"
+      ]
+    },
+    {
+      "id": "B02-new-biome-blocks",
+      "tier": "standard",
+      "task": "実装タスク: B02 新バイオーム用ブロック登録とテクスチャ取込\n\n## 目的\nB01 の新ブロック15種（各バイオーム surface/sub/rock）を登録し、ChatGPT 生成画像を 16x16 に落として取り込む。\n\n## 編集対象ファイル\ntools/gen_deep_assets.py, tools/forge_textures.py, src/main/resources/assets/abyssia/**(生成物), inbox/textures/**\n\n## 制約\n既存の rock テクスチャ(texture_locks)を上書きしない。生成物は手編集しない。B01 のブロックID確定後に着手。\n\n## 完了条件\nブロックが登録され、blockstate/model/lang/loot が生成される。ビルド通過。\n\n## 指示\n1. 上記ファイルのみを編集する\n2. 制約を遵守する\n3. 完了条件を満たす実装を行う\n4. ビルドエラーがないことを確認\n5. 実装内容を簡潔に報告\n\n他のファイルは編集しないこと。\n並列実行中のため、gradle build/runClient は実行しないこと。\n",
+      "files": [
+        "tools/gen_deep_assets.py",
+        "tools/forge_textures.py",
+        "src/main/resources/assets/abyssia/**(生成物)",
+        "inbox/textures/**"
+      ]
+    },
+    {
+      "id": "B03-new-biome-textures-chatgpt",
+      "tier": "light",
+      "task": "実装タスク: B03 新バイオーム用テクスチャ（ChatGPT）\n\n## 目的\nB01 の15ブロック分の 16x16 タイルテクスチャを ChatGPT に作らせ、inbox/textures/<block_id>.png に保存。\n\n## 編集対象ファイル\ninbox/textures/**\n\n## 制約\nピクセルアート、深海の暗い色調、タイル可能(シームレス)、ブロックごとに別画像。\n\n## 完了条件\n15枚が inbox/textures に揃う。\n\n## 指示\n1. 上記ファイルのみを編集する\n2. 制約を遵守する\n3. 完了条件を満たす実装を行う\n4. ビルドエラーがないことを確認\n5. 実装内容を簡潔に報告\n\n他のファイルは編集しないこと。\n並列実行中のため、gradle build/runClient は実行しないこと。\n",
+      "files": [
+        "inbox/textures/**"
+      ]
+    },
+    {
+      "id": "M01-rare-metals",
+      "tier": "heavy",
+      "task": "実装タスク: M01 レアメタル6種の追加\n\n## 目的\n実在の深海資源に基づくレアメタル6種を追加: molybdenum(モリブデン) / vanadium(バナジウム) / tellurium(テルル) / platinum(白金) / tungsten(タングステン) / yttrium(イットリウム, レアアース泥由来)。各: raw_<id>, <id>_ingot, <id>_ore(深層岩の鉱石ブロック)。\n\n## 編集対象ファイル\ntools/gen_deep_assets.py, tools/mineral_textures.py, tools/gen_worldgen.py, tools/seabed_structures.py(必要時のみ), src/main/java/com/abyssia/registry/**(手書き部分のみ), 生成物\n\n## 制約\nテクスチャは ChatGPT を使わず mineral_textures.py の Recolour(バニラ raw_iron/gold/copper, 各ingot)方式で色替えのみ(mineral-texture-categories 決定)。既存 rock テクスチャ(texture_locks)厳守。生成物は手編集しない、生成元を直して gen_deep_assets → forge_textures/mineral_textures を再実行。各金属は実在に即した色相(白金=明灰白、テルル=銀青灰、モリブデン=鉛青、バナジウム=青緑灰、タングステン=暗灰、イットリウム=淡黄白灰)。ID/lang(en/ja)/tooltip(産地の一言)を付ける。ビルドはメインが実行。\n\n## 完了条件\n全アイテム/ブロックの blockstate/model/lang/loot/recipe/tag が生成され、tools 再実行が通り、ID 一覧を STATUS に列挙する。\n\n## 指示\n1. 上記ファイルのみを編集する\n2. 制約を遵守する\n3. 完了条件を満たす実装を行う\n4. ビルドエラーがないことを確認\n5. 実装内容を簡潔に報告\n\n他のファイルは編集しないこと。\n並列実行中のため、gradle build/runClient は実行しないこと。\n",
+      "files": [
+        "tools/gen_deep_assets.py",
+        "tools/mineral_textures.py",
+        "tools/gen_worldgen.py",
+        "tools/seabed_structures.py(必要時のみ)",
+        "src/main/java/com/abyssia/registry/**(手書き部分のみ)",
+        "生成物"
+      ]
+    },
+    {
+      "id": "M02-crust-uses",
+      "tier": "standard",
+      "task": "実装タスク: M02 クラストの使い道\n\n## 目的\n6種の *_crust(manganese/cobalt/nickel/iron/copper/cave_mineral)に使い道を付ける。\n\n## 編集対象ファイル\ntools/gen_deep_assets.py, tools/mineral_textures.py, tools/plant_defs.py(レシピ参照のみ), 生成物   ※M01 完了後に着手\n\n## 制約\n新規機械/GUIは作らない。既存レシピ/バニラを上書きしない(ID は <result>_from_<crust>)。crust のテクスチャ形状は変更しない(mineral-texture-categories)。plant_defs.check() を壊さない。\n\n## 完了条件\nレシピ/ロード/lang 生成、ツール再実行成功、追加ブロックID列挙。\n\n## 指示\n1. 上記ファイルのみを編集する\n2. 制約を遵守する\n3. 完了条件を満たす実装を行う\n4. ビルドエラーがないことを確認\n5. 実装内容を簡潔に報告\n\n他のファイルは編集しないこと。\n並列実行中のため、gradle build/runClient は実行しないこと。\n",
+      "files": [
+        "tools/gen_deep_assets.py",
+        "tools/mineral_textures.py",
+        "tools/plant_defs.py(レシピ参照のみ)",
+        "生成物   ※M01 完了後に着手"
+      ]
+    },
+    {
+      "id": "M03-underwater-tools",
+      "tier": "standard",
+      "task": "実装タスク: M03 水中活動向けツール・装備\n\n## 目的\n新ティア「Abyssal Alloy(深海合金)」= ingot(vanadium+cobalt+nickel)。\n\n## 編集対象ファイル\nsrc/main/java/com/abyssia/item/**, src/main/java/com/abyssia/registry/ModItems.java(追加のみ)/新規 ModTools.java, src/main/java/com/abyssia/Abyssia.java(イベント登録のみ), tools/gen_deep_assets.py(モデル/lang/レシピ), tools/mineral_textures.py, 生成物   ※M01 完了後に着手\n\n## 制約\nテクスチャは ChatGPT 不使用。バニラのダイヤ/ネザライトの装備・ツールアイコンと防具レイヤーPNGを Recolour(色替えのみ)で。防具レイヤーは assets/abyssia/textures/models/armor/*_layer_1/2.png。tag 追加は generator 経由。ビルドはメインが実行。\n\n## 完了条件\nアイテム登録・lang・モデル・レシピ・tag 生成、Java がコンパイル可能な状態(メインがビルド確認)。\n\n## 指示\n1. 上記ファイルのみを編集する\n2. 制約を遵守する\n3. 完了条件を満たす実装を行う\n4. ビルドエラーがないことを確認\n5. 実装内容を簡潔に報告\n\n他のファイルは編集しないこと。\n並列実行中のため、gradle build/runClient は実行しないこと。\n",
+      "files": [
+        "src/main/java/com/abyssia/item/**",
+        "src/main/java/com/abyssia/registry/ModItems.java(追加のみ)/新規 ModTools.java",
+        "src/main/java/com/abyssia/Abyssia.java(イベント登録のみ)",
+        "tools/gen_deep_assets.py(モデル/lang/レシピ)",
+        "tools/mineral_textures.py",
+        "生成物   ※M01 完了後に着手"
+      ]
+    },
+    {
+      "id": "R01-crust-uses-and-tools",
+      "tier": "standard",
+      "task": "実装タスク: R01 クラスト用途と水中ツールの統合\n\n## 目的\n既存の M02（クラストの精錬・建材化）と M03（水中活動向けツール・装備）を、この依頼の実装範囲として処理する。\n\n## 編集対象ファイル\nM02-crust-uses.md, M03-underwater-tools.md, tools/gen_deep_assets.py, tools/mineral_textures.py, src/main/java/com/abyssia/item/**, src/main/java/com/abyssia/registry/ModItems.java, 生成物\n\n## 制約\n既存仕様を重複実装しない。M01 のレアメタル生成物を前提にし、既存レシピ・テクスチャロック・plant_defs の整合性を維持する。新規機械や GUI は追加しない。\n\n## 完了条件\nM02 と M03 の受け入れ条件を満たし、生成スクリプトが再実行できる。最後にメインの Codex がビルドと検証を実行する。\n\n## 指示\n1. 上記ファイルのみを編集する\n2. 制約を遵守する\n3. 完了条件を満たす実装を行う\n4. ビルドエラーがないことを確認\n5. 実装内容を簡潔に報告\n\n他のファイルは編集しないこと。\n並列実行中のため、gradle build/runClient は実行しないこと。\n",
+      "files": [
+        "M02-crust-uses.md",
+        "M03-underwater-tools.md",
+        "tools/gen_deep_assets.py",
+        "tools/mineral_textures.py",
+        "src/main/java/com/abyssia/item/**",
+        "src/main/java/com/abyssia/registry/ModItems.java",
+        "生成物"
+      ]
+    },
+    {
+      "id": "TEST01-simple",
+      "tier": "light",
+      "task": "実装タスク: TEST01 簡単なテストタスク\n\n## 目的\nテスト用のファイルを作成して、ワークフローが正常に動作することを確認する。\n\n## 編集対象ファイル\ndocs/test_output.txt\n\n## 制約\n既存ファイルを変更しない。\n\n## 完了条件\ndocs/test_output.txt が作成され、タイムスタンプとメッセージが記録されている。\n\n## 指示\n1. 上記ファイルのみを編集する\n2. 制約を遵守する\n3. 完了条件を満たす実装を行う\n4. ビルドエラーがないことを確認\n5. 実装内容を簡潔に報告\n\n他のファイルは編集しないこと。\n並列実行中のため、gradle build/runClient は実行しないこと。\n",
+      "files": [
+        "docs/test_output.txt"
+      ]
+    }
+  ]
+}

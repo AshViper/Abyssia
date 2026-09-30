@@ -1,0 +1,112 @@
+{
+	"id": "ohara_shrimp",
+	"name": "Vent Shrimp",
+	"name_ja": "オハラエビ",
+	"scientific_name": "Alvinocaris longirostris",
+	"category": "shrimp",
+	"template": "crustacean",
+	"plan": "shrimp",
+	"habitat": "hydrothermal_vent",
+	"order": 15,
+	"notes": "Pale pinkish vent shrimp swarming around chimneys: long straight rostrum, small eyes, long antennae and a translucent-looking body.",
+	"body": {
+		"length": 6,
+		"width": 4,
+		"height": 4
+	},
+	"parts": [
+		"body",
+		"eye",
+		"rostrum",
+		"antennae",
+		"legs",
+		"abdomen",
+		"tail"
+	],
+	"params": {
+		"eye": {
+			"size": 1,
+			"stalk": 1
+		},
+		"rostrum": {
+			"length": 8,
+			"angle": 6
+		},
+		"antennae": {
+			"length": 24,
+			"segments": 3,
+			"sweep": 160,
+			"lift": 20
+		},
+		"claws": {
+			"enabled": false
+		},
+		"legs": {
+			"pairs": 5,
+			"upper": 3,
+			"lower": 3,
+			"splay": 24,
+			"fan": 25,
+			"width": 1
+		},
+		"abdomen": {
+			"segments": 5,
+			"length": 13,
+			"width": 4,
+			"height": 4,
+			"taper": 0.5,
+			"curve": 8,
+			"swimmerets": true
+		},
+		"tail_fan": {
+			"length": 4,
+			"width": 6
+		}
+	},
+	"palette": {
+		"shell": "#dcc2bb",
+		"body": "#dcc2bb",
+		"belly": "#e8d6d0",
+		"leg": "#d4b4aa",
+		"membrane": "#e0c8c0",
+		"fin": "#d8bab0",
+		"eye": "#1a1618",
+		"eye_iris": "#5a4a48",
+		"eye_ring": "#b8958c",
+		"glow": "#d8e8ff",
+		"glow_eye": "#b0a4a8"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.35,
+		"countershade": 0.5
+	},
+	"glow": [
+		{
+			"part": "eyes",
+			"intensity": 0.2,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"flick",
+		"walk",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1.1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"legs": 0.1,
+		"antennae": 0.12,
+		"abdomen": 0.08,
+		"eye": 0.1,
+		"hue": 6,
+		"lightness": 0.03
+	}
+}

@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 16,
+    "xz_spread": 6,
+    "y_spread": 1,
+    "feature": {
+      "feature": {
+        "type": "abyssia:column_plant",
+        "config": {
+          "head": {
+            "Name": "abyssia:deep_kelp",
+            "Properties": {
+              "top": "true"
+            }
+          },
+          "body": {
+            "Name": "abyssia:deep_kelp",
+            "Properties": {
+              "top": "false"
+            }
+          },
+          "min_height": 30,
+          "max_height": 60,
+          "cluster_scale": 0.02
+        }
+      },
+      "placement": []
+    }
+  }
+}

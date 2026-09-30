@@ -1,0 +1,102 @@
+{
+  "category": "geological",
+  "tier": "medium",
+  "footprint_radius": 30,
+  "max_height": 36,
+  "formation": {
+    "type": "rock",
+    "count": [
+      1,
+      2
+    ],
+    "spread": 6,
+    "size": [
+      7,
+      12
+    ],
+    "height_ratio": 1.3,
+    "elongation": [
+      1,
+      1.5
+    ],
+    "sink": 0.2,
+    "erosion": 0.35,
+    "layers": 4,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:abyssal_rock"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 1.0
+  },
+  "dressing": {
+    "radius": 26,
+    "density": 0.06,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:hadal_bloom"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_crystal_cluster"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:silt_comb"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_gourd"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:goblin_shark"
+  ]
+}

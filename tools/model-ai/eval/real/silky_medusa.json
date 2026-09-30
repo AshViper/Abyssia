@@ -1,0 +1,56 @@
+{
+	"archetype": "jellyfish",
+	"captions": {
+		"en": [
+			"a pale glowing blue-white jellyfish with grey tentacles",
+			"small white jellyfish"
+		],
+		"ja": [
+			"灰色の触手を持つ淡く光る青白いクラゲ",
+			"小さな白いクラゲ"
+		]
+	},
+	"spec": {
+		"orientation": "upright",
+		"parts": [
+			{
+				"name": "bell",
+				"shape": "profile",
+				"size": [
+					12,
+					9,
+					12
+				],
+				"profile": [
+					1,
+					0.9,
+					0.7,
+					0.5,
+					0.3
+				],
+				"color": "#e8f8ff",
+				"glow": 0.6,
+				"glow_color": "#bff0ff"
+			},
+			{
+				"name": "tentacle",
+				"shape": "cylinder",
+				"size": [
+					2,
+					8,
+					2
+				],
+				"parent": "bell",
+				"at": "bottom",
+				"axis": "-y",
+				"count": 8,
+				"arrange": "ring",
+				"radius": 5,
+				"tilt": 25,
+				"segments": 2,
+				"curl": 5,
+				"color": "#98a4b0"
+			}
+		]
+	}
+}

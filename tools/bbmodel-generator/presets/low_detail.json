@@ -1,0 +1,14 @@
+{
+	"id": "low_detail",
+	"name": "Low Detail",
+	"description": "LOD Low: essential parts only (no teeth rows, single-segment chains), 5-shade ramps. For distant or numerous mobs.",
+	"settings": { "detail": "low", "pixelScale": 16, "textureSize": "auto", "uvMode": "box" },
+	"geometry": { "exaggeration": { "head": 1, "eye": 1.2, "teeth": 1, "fin": 1, "glow": 1.2, "limb": 1 }, "finThickness": 0 },
+	"texture": {
+		"saturation": 0.85, "brightness": 0.95, "contrast": 1, "rampSteps": 5, "hueShift": 0.8,
+		"shadowHue": 265, "highlightHue": 195, "noise": 0.2, "pixelNoise": 0.12, "speckle": 0.15,
+		"countershade": 0.4, "faceShade": 0.5, "edge": 0.1, "pattern": 0.6,
+		"glowStrength": 1, "glowBleed": 0.3, "finAlpha": 255
+	},
+	"animation": { "amplitude": 1, "speed": 1 }
+}

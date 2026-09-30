@@ -1,0 +1,631 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "chimaera",
+  "name": "Chimaera",
+  "template": "fish",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      16.5,
+      15.44,
+      40
+    ],
+    "size_blocks": [
+      1.03,
+      0.97,
+      2.5
+    ],
+    "core_size_blocks": [
+      0.38,
+      0.44,
+      2
+    ],
+    "cubes": 22
+  },
+  "bones": [
+    {
+      "name": "chimaera",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "chimaera",
+      "role": "body",
+      "pivot": [
+        0,
+        5.4434,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        5.4434,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mouth",
+      "parent": "head",
+      "role": "jaw",
+      "pivot": [
+        0,
+        4.4434,
+        -11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper_teeth",
+      "parent": "head",
+      "role": "teeth",
+      "pivot": [
+        0,
+        4.4434,
+        -16
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lower_teeth",
+      "parent": "mouth",
+      "role": "teeth",
+      "pivot": [
+        0,
+        4.4434,
+        -15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        3,
+        7.9434,
+        -13.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        -3,
+        7.9434,
+        -13.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        3,
+        5.4434,
+        -10
+      ],
+      "rotation": [
+        0,
+        35,
+        -50
+      ]
+    },
+    {
+      "name": "left_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        -3,
+        5.4434,
+        -10
+      ],
+      "rotation": [
+        0,
+        -35,
+        50
+      ]
+    },
+    {
+      "name": "right_pelvic_fin",
+      "parent": "body",
+      "role": "pelvic",
+      "pivot": [
+        2,
+        2.4434,
+        -4
+      ],
+      "rotation": [
+        -20,
+        20,
+        0
+      ]
+    },
+    {
+      "name": "left_pelvic_fin",
+      "parent": "body",
+      "role": "pelvic",
+      "pivot": [
+        -2,
+        2.4434,
+        -4
+      ],
+      "rotation": [
+        -20,
+        -20,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin",
+      "parent": "body",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        9.4434,
+        -11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_2",
+      "parent": "body",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        9.4434,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail",
+      "parent": "body",
+      "role": "tail",
+      "pivot": [
+        0,
+        5.4434,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_2",
+      "parent": "tail",
+      "role": "tail",
+      "pivot": [
+        0,
+        5.4434,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_3",
+      "parent": "tail_2",
+      "role": "tail",
+      "pivot": [
+        0,
+        5.4434,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_4",
+      "parent": "tail_3",
+      "role": "tail",
+      "pivot": [
+        0,
+        5.4434,
+        12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_fin",
+      "parent": "tail_4",
+      "role": "tail_fin",
+      "pivot": [
+        0,
+        5.4434,
+        16
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 4,
+      "bones": [
+        "body",
+        "tail",
+        "tail_2",
+        "tail_3",
+        "tail_4",
+        "tail_fin",
+        "right_fin",
+        "left_fin",
+        "right_pelvic_fin",
+        "left_pelvic_fin",
+        "dorsal_fin",
+        "dorsal_fin_2",
+        "mouth"
+      ],
+      "description": "Hovering: slow bob, breathing jaw, fluttering fins, swaying lure"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 1.6,
+      "bones": [
+        "body",
+        "head",
+        "tail",
+        "tail_2",
+        "tail_3",
+        "tail_4",
+        "tail_fin",
+        "right_fin",
+        "left_fin",
+        "right_pelvic_fin",
+        "left_pelvic_fin",
+        "dorsal_fin",
+        "dorsal_fin_2",
+        "mouth"
+      ],
+      "description": "Swimming: tail beat with body counter-sway, paddling fins, lure dragging back"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.67,
+      "bones": [
+        "body",
+        "mouth",
+        "tail",
+        "tail_2",
+        "tail_3",
+        "tail_4",
+        "right_fin",
+        "left_fin"
+      ],
+      "description": "Flinch: twist, jolt and snap"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.13,
+      "bones": [
+        "body",
+        "mouth",
+        "tail",
+        "tail_2",
+        "tail_3",
+        "tail_4",
+        "right_fin",
+        "left_fin"
+      ],
+      "description": "Rolls onto its side and sinks, jaw slack, lure drooping, light fading"
+    },
+    {
+      "name": "mouth_open",
+      "loop": "hold",
+      "length": 0.67,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Opens the jaw to full gape and holds"
+    },
+    {
+      "name": "mouth_close",
+      "loop": "once",
+      "length": 0.47,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Snaps the jaw shut from full gape"
+    },
+    {
+      "name": "bite",
+      "loop": "once",
+      "length": 0.8,
+      "bones": [
+        "mouth",
+        "body"
+      ],
+      "description": "Lunge and bite"
+    }
+  ],
+  "definition": {
+    "template": "fish",
+    "category": "chimaera",
+    "body": {
+      "length": 10,
+      "width": 6,
+      "height": 7,
+      "round": 1
+    },
+    "parts": [
+      "body",
+      "head",
+      "mouth",
+      "teeth",
+      "eye",
+      "fin",
+      "tail"
+    ],
+    "params": {
+      "head": {
+        "length": 6,
+        "width": 6,
+        "height": 7,
+        "drop": 0,
+        "round": 1
+      },
+      "snout": {
+        "length": 0,
+        "width": 3,
+        "height": 1
+      },
+      "mouth": {
+        "enabled": true,
+        "jaw_height": 2,
+        "underbite": -1,
+        "gape": 25,
+        "rest_gape": 0,
+        "width": 0.5,
+        "protrude": 0,
+        "round": 0
+      },
+      "teeth": {
+        "count": 1,
+        "length": 1,
+        "vary": 0,
+        "side": 0,
+        "upper": true,
+        "lower": true,
+        "fangs": 0,
+        "fang_length": 3
+      },
+      "eye": {
+        "size": 3,
+        "height": 0.6,
+        "forward": 0.4,
+        "protrude": 0.5,
+        "tubular": 0
+      },
+      "lure": {
+        "enabled": false,
+        "base": "head",
+        "position": 0.2,
+        "length": 6,
+        "segments": 3,
+        "lean": 15,
+        "arc": 120,
+        "esca": 2
+      },
+      "dome": {
+        "enabled": false,
+        "height": 3
+      },
+      "tail": {
+        "segments": 4,
+        "length": 18,
+        "width": 4,
+        "height": 4,
+        "taper": 0.2
+      },
+      "caudal": {
+        "length": 8,
+        "height": 2,
+        "shape": "rect"
+      },
+      "pectoral": {
+        "enabled": true,
+        "length": 8,
+        "height": 6,
+        "angle": 35,
+        "droop": 50,
+        "position": 0.05
+      },
+      "pelvic": {
+        "enabled": true,
+        "length": 3,
+        "height": 2,
+        "position": 0.7
+      },
+      "dorsal": {
+        "count": 2,
+        "length": 3,
+        "height": 6,
+        "position": 0.05,
+        "apex": 0.05,
+        "second_position": 0.75
+      },
+      "anal": {
+        "enabled": false,
+        "length": 2,
+        "height": 2,
+        "position": 0.7
+      },
+      "photophores": {
+        "enabled": false,
+        "spacing": 2,
+        "radius": 0.6,
+        "rows": 1,
+        "head": true
+      },
+      "gills": {
+        "slits": 0
+      }
+    },
+    "palette": {
+      "body": "#aeb4bc",
+      "belly": "#cfd3d6",
+      "fin": "#6e7480",
+      "mouth": "#5a3e46",
+      "lip": "#8e949c",
+      "teeth": "#e8e2d2",
+      "eye": "#0e1a18",
+      "eye_iris": "#5aa89a",
+      "eye_ring": "#3c4048"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.3,
+      "countershade": 1
+    },
+    "glow": [],
+    "animations": [
+      "idle",
+      "swim",
+      "hurt",
+      "death",
+      "mouth_open",
+      "mouth_close",
+      "bite"
+    ],
+    "animation": {
+      "speed": 0.75,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "head": 0.06,
+      "fin": 0.12,
+      "tail": 0.08,
+      "eye": 0.1,
+      "glow": 0.2,
+      "lure": 0.1,
+      "hue": 4,
+      "lightness": 0.03
+    },
+    "id": "chimaera",
+    "name": "Chimaera",
+    "name_ja": "ギンザメ",
+    "scientific_name": "Chimaera phantasma",
+    "habitat": "continental_slope",
+    "order": 26,
+    "notes": "Silver chimaera (ghost shark): big blunt triangular head with large eyes and a small underslung mouth with crushing tooth plates, large wing-like pectoral fins it flaps to swim, a tall narrow first dorsal fin with a venomous spine at its front, a long low second dorsal, and a body tapering to a long whip-like tail; silvery with dark lateral bands. Approximations: the spine is the leading edge of the first dorsal (apex at the front); tooth plates are two short incisor-like teeth; the lateral bands are left to countershading."
+  }
+}

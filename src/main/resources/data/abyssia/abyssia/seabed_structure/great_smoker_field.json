@@ -1,0 +1,190 @@
+{
+  "category": "landmark",
+  "tier": "colossal",
+  "footprint_radius": 100,
+  "max_height": 45,
+  "formation": {
+    "type": "vent",
+    "count": [
+      18,
+      30
+    ],
+    "spread": 70,
+    "height": [
+      14,
+      38
+    ],
+    "width": [
+      1.8,
+      3.2
+    ],
+    "lean": 0.08,
+    "chimney": [
+      {
+        "data": {
+          "Name": "abyssia:black_vent_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:vent_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:mineral_vent_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:black_mineral_deposit"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:sulfur_vent_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent_chance": 0.2,
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:thermal_vent",
+          "Properties": {
+            "type": "black_smoker",
+            "activity": "strong"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:thermal_vent",
+          "Properties": {
+            "type": "white_smoker",
+            "activity": "active"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:thermal_vent",
+          "Properties": {
+            "type": "superheated",
+            "activity": "superheated"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "mound": [
+      {
+        "data": {
+          "Name": "abyssia:mineral_sediment"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:black_mineral_deposit"
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:sulfur_deposit"
+        },
+        "weight": 1
+      }
+    ],
+    "mound_radius": 12,
+    "mound_height": 5,
+    "flanges": 0.6
+  },
+  "conditions": {
+    "avoid_vent_fields": false,
+    "max_slope": 0.4,
+    "max_top_y": 125
+  },
+  "dressing": {
+    "radius": 96,
+    "density": 0.3,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_tube"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:heat_moss"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:vent_grass"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_plant"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sulfur_cluster"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "minerals": [
+      {
+        "data": {
+          "Name": "abyssia:sulfur_deposit"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:copper_crust"
+        },
+        "weight": 1
+      }
+    ],
+    "mineral_chance": 0.25
+  },
+  "preferred_mobs": [
+    "abyssia:tubeworm",
+    "abyssia:satsuma_tubeworm",
+    "abyssia:deep_sea_shrimp",
+    "abyssia:yunohana_crab",
+    "abyssia:ohara_shrimp",
+    "abyssia:scaly_foot_snail",
+    "abyssia:vent_eelpout"
+  ]
+}

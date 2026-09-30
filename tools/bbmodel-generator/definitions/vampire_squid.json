@@ -1,0 +1,116 @@
+{
+	"id": "vampire_squid",
+	"name": "Vampire Squid",
+	"name_ja": "コウモリダコ",
+	"scientific_name": "Vampyroteuthis infernalis",
+	"category": "cephalopod",
+	"template": "squid",
+	"habitat": "mesopelagic",
+	"order": 53,
+	"notes": "Soft, gelatinous dark red-black body ~30 cm long with one pair of ear-like fins on the rear mantle, very large blue-glinting eyes, eight arms joined by a black web (cloak) lined with fleshy cirri, and two long retractile sticky filaments. Light organs: a large lidded photophore at the base of each fin and a light organ at the tip of every arm (blue light, also a glowing mucus cloud). The squid template has no web: the arms are wide, splayed and dark to read as a cloak.",
+	"body": {
+		"length": 9,
+		"width": 8,
+		"height": 8,
+		"taper": 0.7,
+		"segments": 2
+	},
+	"parts": [
+		"body",
+		"head",
+		"eye",
+		"arms",
+		"tentacles",
+		"fin"
+	],
+	"params": {
+		"head": {
+			"length": 3,
+			"width": 7,
+			"height": 7
+		},
+		"eye": {
+			"size": 3,
+			"height": 0.55,
+			"forward": 0.5,
+			"protrude": 0.35
+		},
+		"arms": {
+			"count": 8,
+			"length": 9,
+			"segments": 3,
+			"width": 4,
+			"taper": 0.4,
+			"splay": 30,
+			"ring": 0.8
+		},
+		"tentacles": {
+			"count": 2,
+			"length": 14,
+			"segments": 2,
+			"width": 1,
+			"club": 1,
+			"club_width": 1
+		},
+		"fins": {
+			"length": 4,
+			"width": 5,
+			"position": 1,
+			"shape": "round"
+		},
+		"beak": {
+			"enabled": false,
+			"size": 1
+		}
+	},
+	"palette": {
+		"body": "#4a181d",
+		"belly": "#3a1217",
+		"fin": "#521d22",
+		"sucker": "#140a0c",
+		"mouth": "#120a0b",
+		"eye": "#0a0c14",
+		"eye_iris": "#3f86cf",
+		"eye_ring": "#2a1014",
+		"eye_glint": "#d8ecff",
+		"glow": "#5fb4ff"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.35,
+		"countershade": 0.3
+	},
+	"glow": [
+		{ "part": "arm_1_3", "intensity": 1.0, "anchor": [0.5, 0.5, 0], "radius": 0.9 },
+		{ "part": "arm_2_3", "intensity": 1.0, "anchor": [0.5, 0.5, 0], "radius": 0.9 },
+		{ "part": "arm_3_3", "intensity": 1.0, "anchor": [0.5, 0.5, 0], "radius": 0.9 },
+		{ "part": "arm_4_3", "intensity": 1.0, "anchor": [0.5, 0.5, 0], "radius": 0.9 },
+		{ "part": "arm_5_3", "intensity": 1.0, "anchor": [0.5, 0.5, 0], "radius": 0.9 },
+		{ "part": "arm_6_3", "intensity": 1.0, "anchor": [0.5, 0.5, 0], "radius": 0.9 },
+		{ "part": "arm_7_3", "intensity": 1.0, "anchor": [0.5, 0.5, 0], "radius": 0.9 },
+		{ "part": "arm_8_3", "intensity": 1.0, "anchor": [0.5, 0.5, 0], "radius": 0.9 },
+		{ "part": "right_fin", "intensity": 1.1, "anchor": [0.3, 0.5, 0.5], "radius": 1.6 },
+		{ "part": "left_fin", "intensity": 1.1, "anchor": [0.7, 0.5, 0.5], "radius": 1.6 }
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"tentacle_move",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.7,
+		"amplitude": 0.9
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"arms": 0.1,
+		"tentacles": 0.12,
+		"fin": 0.12,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

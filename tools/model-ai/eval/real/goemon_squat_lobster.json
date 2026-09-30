@@ -1,0 +1,132 @@
+{
+	"archetype": "shrimp",
+	"captions": {
+		"en": [
+			"a white squat lobster with long thin claws",
+			"pale squat lobster from hydrothermal vents"
+		],
+		"ja": [
+			"細長いはさみを持つ白いコシオリエビ",
+			"熱水噴出孔の白いゴエモンコシオリエビ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "carapace",
+				"shape": "ellipsoid",
+				"size": [
+					8,
+					5,
+					8
+				],
+				"axis": "-z",
+				"center": true,
+				"color": "#e0dcd0",
+				"role": "body"
+			},
+			{
+				"name": "abdomen",
+				"shape": "profile",
+				"size": [
+					6,
+					4,
+					6
+				],
+				"parent": "carapace",
+				"at": "back",
+				"axis": "z",
+				"profile": [
+					1,
+					0.8,
+					0.6
+				],
+				"segments": 2,
+				"curl": 40,
+				"color": "#d8d4c8"
+			},
+			{
+				"name": "arm",
+				"shape": "cylinder",
+				"size": [
+					2,
+					2,
+					8
+				],
+				"parent": "carapace",
+				"at": [
+					0.85,
+					0.5,
+					0
+				],
+				"axis": "-z",
+				"rotate": [
+					0,
+					20,
+					0
+				],
+				"mirror": true,
+				"color": "#e8e4d8"
+			},
+			{
+				"name": "claw",
+				"shape": "box",
+				"size": [
+					2,
+					2,
+					6
+				],
+				"parent": "arm",
+				"at": "tip",
+				"axis": "-z",
+				"mirror": true,
+				"color": "#f0ece0"
+			},
+			{
+				"name": "leg",
+				"shape": "cylinder",
+				"size": [
+					5,
+					1,
+					1
+				],
+				"parent": "carapace",
+				"at": [
+					1,
+					0.3,
+					0.5
+				],
+				"axis": "x",
+				"count": 3,
+				"arrange": "row",
+				"spacing": [
+					0,
+					0,
+					2
+				],
+				"rotate": [
+					0,
+					0,
+					-30
+				],
+				"segments": 2,
+				"curl": -30,
+				"mirror": true,
+				"color": "#e0dcd0"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 1,
+				"parent": "carapace",
+				"at": [
+					0.7,
+					0.8,
+					0
+				],
+				"mirror": true
+			}
+		]
+	}
+}

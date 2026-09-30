@@ -1,0 +1,537 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "giant_phantom_jelly",
+  "name": "Giant Phantom Jelly",
+  "template": "medusa",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      128,
+      128
+    ],
+    "texture_image": [
+      128,
+      128
+    ],
+    "glow_texture": false,
+    "size_units": [
+      24,
+      83.75,
+      24
+    ],
+    "size_blocks": [
+      1.5,
+      5.23,
+      1.5
+    ],
+    "core_size_blocks": [
+      1.5,
+      5.23,
+      1.5
+    ],
+    "cubes": 20
+  },
+  "bones": [
+    {
+      "name": "giant_phantom_jelly",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "bell",
+      "parent": "giant_phantom_jelly",
+      "role": "bell",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stomach",
+      "parent": "bell",
+      "role": "stomach",
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_1",
+      "parent": "bell",
+      "role": "oral_arm",
+      "pivot": [
+        3,
+        1,
+        3
+      ],
+      "rotation": [
+        -4.2,
+        0,
+        4.2
+      ]
+    },
+    {
+      "name": "oral_arm_1_s2",
+      "parent": "oral_arm_1",
+      "role": "oral_arm",
+      "pivot": [
+        3,
+        -18,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_1_s3",
+      "parent": "oral_arm_1_s2",
+      "role": "oral_arm",
+      "pivot": [
+        3,
+        -36,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_1_s4",
+      "parent": "oral_arm_1_s3",
+      "role": "oral_arm",
+      "pivot": [
+        3,
+        -54,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_2",
+      "parent": "bell",
+      "role": "oral_arm",
+      "pivot": [
+        -3,
+        1,
+        3
+      ],
+      "rotation": [
+        -4.2,
+        0,
+        -4.2
+      ]
+    },
+    {
+      "name": "oral_arm_2_s2",
+      "parent": "oral_arm_2",
+      "role": "oral_arm",
+      "pivot": [
+        -3,
+        -18,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_2_s3",
+      "parent": "oral_arm_2_s2",
+      "role": "oral_arm",
+      "pivot": [
+        -3,
+        -36,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_2_s4",
+      "parent": "oral_arm_2_s3",
+      "role": "oral_arm",
+      "pivot": [
+        -3,
+        -54,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_3",
+      "parent": "bell",
+      "role": "oral_arm",
+      "pivot": [
+        -3,
+        1,
+        -3
+      ],
+      "rotation": [
+        4.2,
+        0,
+        -4.2
+      ]
+    },
+    {
+      "name": "oral_arm_3_s2",
+      "parent": "oral_arm_3",
+      "role": "oral_arm",
+      "pivot": [
+        -3,
+        -18,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_3_s3",
+      "parent": "oral_arm_3_s2",
+      "role": "oral_arm",
+      "pivot": [
+        -3,
+        -36,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_3_s4",
+      "parent": "oral_arm_3_s3",
+      "role": "oral_arm",
+      "pivot": [
+        -3,
+        -54,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_4",
+      "parent": "bell",
+      "role": "oral_arm",
+      "pivot": [
+        3,
+        1,
+        -3
+      ],
+      "rotation": [
+        4.2,
+        0,
+        4.2
+      ]
+    },
+    {
+      "name": "oral_arm_4_s2",
+      "parent": "oral_arm_4",
+      "role": "oral_arm",
+      "pivot": [
+        3,
+        -18,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_4_s3",
+      "parent": "oral_arm_4_s2",
+      "role": "oral_arm",
+      "pivot": [
+        3,
+        -36,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "oral_arm_4_s4",
+      "parent": "oral_arm_4_s3",
+      "role": "oral_arm",
+      "pivot": [
+        3,
+        -54,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 6,
+      "bones": [
+        "bell",
+        "oral_arm_1",
+        "oral_arm_1_s2",
+        "oral_arm_1_s3",
+        "oral_arm_1_s4",
+        "oral_arm_2",
+        "oral_arm_2_s2",
+        "oral_arm_2_s3",
+        "oral_arm_2_s4",
+        "oral_arm_3",
+        "oral_arm_3_s2",
+        "oral_arm_3_s3",
+        "oral_arm_3_s4",
+        "oral_arm_4",
+        "oral_arm_4_s2",
+        "oral_arm_4_s3",
+        "oral_arm_4_s4"
+      ],
+      "description": "Drifting: the bell breathes slowly, tentacles and arms sway out of phase"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 0.8,
+      "bones": [
+        "bell"
+      ],
+      "description": "Escape: rapid bell strokes, tentacles swept back together"
+    },
+    {
+      "name": "pulse",
+      "loop": "once",
+      "length": 1.4,
+      "bones": [
+        "bell",
+        "oral_arm_1",
+        "oral_arm_1_s2",
+        "oral_arm_1_s3",
+        "oral_arm_1_s4",
+        "oral_arm_2",
+        "oral_arm_2_s2",
+        "oral_arm_2_s3",
+        "oral_arm_2_s4",
+        "oral_arm_3",
+        "oral_arm_3_s2",
+        "oral_arm_3_s3",
+        "oral_arm_3_s4",
+        "oral_arm_4",
+        "oral_arm_4_s2",
+        "oral_arm_4_s3",
+        "oral_arm_4_s4"
+      ],
+      "description": "One bell stroke: a quick contraction, a slow relaxation; tentacles gather then trail"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.6,
+      "bones": [
+        "bell"
+      ],
+      "description": "Flinch: a hard contraction, tentacles snap inward"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.4,
+      "bones": [
+        "bell",
+        "oral_arm_1",
+        "oral_arm_1_s2",
+        "oral_arm_1_s3",
+        "oral_arm_1_s4",
+        "oral_arm_2",
+        "oral_arm_2_s2",
+        "oral_arm_2_s3",
+        "oral_arm_2_s4",
+        "oral_arm_3",
+        "oral_arm_3_s2",
+        "oral_arm_3_s3",
+        "oral_arm_3_s4",
+        "oral_arm_4",
+        "oral_arm_4_s2",
+        "oral_arm_4_s3",
+        "oral_arm_4_s4"
+      ],
+      "description": "The bell stops, sags and flattens; tentacles and arms go limp"
+    }
+  ],
+  "definition": {
+    "template": "medusa",
+    "category": "jellyfish",
+    "body": {
+      "width": 24,
+      "height": 12
+    },
+    "parts": [
+      "bell",
+      "stomach",
+      "oral_arms"
+    ],
+    "params": {
+      "bell": {
+        "profile": "dome",
+        "tiers": 3,
+        "alpha": 215
+      },
+      "stomach": {
+        "enabled": true,
+        "width": 10,
+        "height": 5
+      },
+      "groove": {
+        "enabled": false,
+        "sectors": 8,
+        "height": 1,
+        "at": 0.35
+      },
+      "lappets": {
+        "enabled": false,
+        "height": 2
+      },
+      "tentacles": {
+        "count": 0,
+        "length": 10,
+        "segments": 2,
+        "width": 1,
+        "spread": 20
+      },
+      "long_tentacle": {
+        "enabled": false,
+        "length": 24,
+        "segments": 3
+      },
+      "oral_arms": {
+        "count": 4,
+        "length": 72,
+        "width": 6,
+        "segments": 4
+      }
+    },
+    "palette": {
+      "dome": "#5c1622",
+      "body": "#4a121c",
+      "flesh": "#360a12",
+      "membrane": "#621a26"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.25,
+      "countershade": 0.2
+    },
+    "glow": [],
+    "animations": [
+      "idle",
+      "swim",
+      "pulse",
+      "spread",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 1,
+      "amplitude": 1
+    },
+    "variation": {
+      "bell": 0.08,
+      "tentacles": 0.1,
+      "hue": 5,
+      "lightness": 0.03
+    },
+    "id": "giant_phantom_jelly",
+    "name": "Giant Phantom Jelly",
+    "name_ja": "ダイオウクラゲ",
+    "scientific_name": "Stygiomedusa gigantea",
+    "habitat": "bathypelagic",
+    "order": 21,
+    "notes": "Giant jellyfish: a broad dark crimson bell over a metre wide, no marginal tentacles, and four broad ribbon-like oral arms more than ten metres long. No bioluminescence known."
+  }
+}

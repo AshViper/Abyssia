@@ -1,0 +1,98 @@
+{
+	"archetype": "crab",
+	"captions": {
+		"en": [
+			"a white hydrothermal vent crab with big claws and no visible eyes",
+			"pale vent crab"
+		],
+		"ja": [
+			"大きなはさみを持つ白い熱水噴出孔のカニ",
+			"白っぽいユノハナガニ"
+		]
+	},
+	"spec": {
+		"orientation": "upright",
+		"parts": [
+			{
+				"name": "carapace",
+				"shape": "ellipsoid",
+				"size": [
+					14,
+					5,
+					12
+				],
+				"color": "#dcd8cc",
+				"role": "body"
+			},
+			{
+				"name": "leg",
+				"shape": "cylinder",
+				"size": [
+					9,
+					2,
+					2
+				],
+				"parent": "carapace",
+				"at": [
+					1,
+					0.3,
+					0.55
+				],
+				"axis": "x",
+				"count": 4,
+				"arrange": "row",
+				"spacing": [
+					0,
+					0,
+					2.5
+				],
+				"rotate": [
+					0,
+					0,
+					-25
+				],
+				"segments": 2,
+				"curl": -45,
+				"mirror": true,
+				"color": "#d4d0c4"
+			},
+			{
+				"name": "arm",
+				"shape": "cylinder",
+				"size": [
+					2,
+					2,
+					5
+				],
+				"parent": "carapace",
+				"at": [
+					0.85,
+					0.4,
+					0.05
+				],
+				"axis": "-z",
+				"rotate": [
+					0,
+					25,
+					0
+				],
+				"mirror": true,
+				"color": "#d4d0c4"
+			},
+			{
+				"name": "claw",
+				"shape": "box",
+				"size": [
+					4,
+					3,
+					6
+				],
+				"parent": "arm",
+				"at": "tip",
+				"axis": "-z",
+				"mirror": true,
+				"color": "#e4e0d4"
+			}
+		]
+	}
+}

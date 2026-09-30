@@ -1,0 +1,130 @@
+{
+	"id": "deep_sea_shrimp",
+	"name": "Deep-sea Shrimp",
+	"name_ja": "シンカイエビ",
+	"scientific_name": "Acanthephyra purpurea (type)",
+	"category": "shrimp",
+	"template": "crustacean",
+	"habitat": "bathypelagic",
+	"plan": "shrimp",
+	"order": 12,
+	"notes": "Blood-red deep-sea shrimp (red looks black in the deep): serrated rostrum, large dark eyes, antennae far longer than the body, a curved abdomen with swimmerets, a fanned tail and blue photophores.",
+	"body": {
+		"length": 7,
+		"width": 4,
+		"height": 5
+	},
+	"parts": [
+		"body",
+		"eye",
+		"rostrum",
+		"antennae",
+		"legs",
+		"abdomen",
+		"tail"
+	],
+	"params": {
+		"eye": {
+			"size": 2,
+			"stalk": 1
+		},
+		"rostrum": {
+			"length": 6,
+			"angle": 14
+		},
+		"antennae": {
+			"length": 30,
+			"segments": 3,
+			"sweep": 160,
+			"lift": 22
+		},
+		"claws": {
+			"enabled": false
+		},
+		"legs": {
+			"pairs": 5,
+			"upper": 4,
+			"lower": 4,
+			"splay": 22,
+			"fan": 25,
+			"width": 1
+		},
+		"abdomen": {
+			"segments": 6,
+			"length": 16,
+			"width": 4,
+			"height": 5,
+			"taper": 0.5,
+			"curve": 9,
+			"swimmerets": true
+		},
+		"tail_fan": {
+			"length": 5,
+			"width": 7
+		}
+	},
+	"palette": {
+		"shell": "#a24c43",
+		"body": "#a24c43",
+		"belly": "#bb6f5f",
+		"leg": "#b0594b",
+		"membrane": "#c07868",
+		"fin": "#b45f50",
+		"eye": "#0c0c10",
+		"eye_iris": "#4a3a3a",
+		"eye_ring": "#6e2f2a",
+		"eye_glint": "#ffe0d8",
+		"glow": "#6fb8ff",
+		"glow_eye": "#9aa8c0"
+	},
+	"texture": {
+		"pattern": "spots",
+		"pattern_strength": 0.35,
+		"countershade": 0.8
+	},
+	"glow": [
+		{
+			"part": "body",
+			"anchor": [
+				1,
+				0.12,
+				0.2
+			],
+			"count": 3,
+			"step": [
+				0,
+				0,
+				2
+			],
+			"radius": 0.55,
+			"mirror": true,
+			"intensity": 0.9
+		},
+		{
+			"part": "eyes",
+			"intensity": 0.3,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"flick",
+		"walk",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"legs": 0.1,
+		"antennae": 0.12,
+		"abdomen": 0.08,
+		"eye": 0.1,
+		"hue": 6,
+		"lightness": 0.03
+	}
+}

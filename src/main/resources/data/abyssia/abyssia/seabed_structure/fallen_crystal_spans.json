@@ -1,0 +1,103 @@
+{
+  "category": "crystal",
+  "tier": "medium",
+  "footprint_radius": 30,
+  "max_height": 14,
+  "formation": {
+    "type": "crystal",
+    "count": [
+      2,
+      4
+    ],
+    "spread": 3,
+    "length": [
+      14,
+      24
+    ],
+    "radius": [
+      1.2,
+      2
+    ],
+    "tilt": 1.3,
+    "center_scale": 1.1,
+    "crystal": [
+      {
+        "data": {
+          "Name": "abyssia:deep_crystal_block"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:cyan_crystal_block"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:blue_crystal_block"
+        },
+        "weight": 1
+      }
+    ],
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "weight": 1
+      }
+    ],
+    "base": [
+      {
+        "data": {
+          "Name": "abyssia:crystal_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "base_radius": 5,
+    "base_height": 1.5
+  },
+  "conditions": {
+    "max_slope": 0.8
+  },
+  "dressing": {
+    "radius": 20,
+    "density": 0.2,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:deep_crystal_cluster"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_shards"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_needle"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

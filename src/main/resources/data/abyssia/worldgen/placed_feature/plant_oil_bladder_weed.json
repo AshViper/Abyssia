@@ -1,0 +1,30 @@
+{
+  "feature": "abyssia:plant_oil_bladder_weed",
+  "placement": [
+    {
+      "type": "abyssia:config",
+      "option": "vegetation"
+    },
+    {
+      "type": "minecraft:noise_based_count",
+      "noise_to_count_ratio": 1,
+      "noise_factor": 60.0,
+      "noise_offset": 0.15
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "OCEAN_FLOOR_WG"
+    },
+    {
+      "type": "abyssia:depth",
+      "min_depth": 2500,
+      "max_depth": 5500
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

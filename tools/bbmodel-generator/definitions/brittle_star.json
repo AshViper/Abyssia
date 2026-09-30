@@ -1,0 +1,27 @@
+{
+	"id": "brittle_star",
+	"name": "Notched Brittle Star",
+	"name_ja": "キタクシノハクモヒトデ",
+	"scientific_name": "Ophiura sarsii",
+	"category": "echinoderm",
+	"template": "parts",
+	"habitat": "continental_slope",
+	"order": 72,
+	"notes": "Brittle star of the soft-bottom slope carpets off northern Japan: a flat, round central disc about 2.5 cm across (notched where each arm joins, with small arm combs) and five long, thin, jointed, snake-like arms 3-4 times the disc diameter; reddish brown to brick above, paler below. Crawls by rowing its arms. No bioluminescence recorded for this species.",
+	"params": {
+		"orientation": "upright",
+		"scale": 1,
+		"parts": [
+			{ "name": "disc", "shape": "ellipsoid", "size": [8, 2, 8], "color": "#8a5a44", "role": "body" },
+			{ "name": "disc_top", "shape": "dome", "parent": "disc", "at": [0.5, 0.75, 0.5], "size": [5, 1, 5], "color": "#9a6a52", "detail": 2 },
+			{ "name": "arm", "shape": "cylinder", "parent": "disc", "at": [0.5, 0.3, 0.5], "axis": "-z", "size": [1, 1, 22], "taper": 0.5,
+				"count": 5, "arrange": "ring", "radius": 3.5, "segments": 4, "curl": [0, 12, 0], "color": "#86604c", "color_to": "#b08a70" }
+		]
+	},
+	"palette": {},
+	"texture": { "pattern": "bands", "pattern_strength": 0.3, "pattern_scale": 1.2 },
+	"glow": [],
+	"animations": ["idle", "tentacle_move", "hurt", "death"],
+	"animation": { "speed": 0.8, "amplitude": 1 },
+	"variation": { "body": 0.08, "hue": 5, "lightness": 0.04 }
+}

@@ -1,0 +1,167 @@
+{
+	"archetype": "fish",
+	"captions": {
+		"en": [
+			"a deep-sea anglerfish with a glowing lure and sharp teeth",
+			"Black anglerfish, big mouth, cyan light on a stalk"
+		],
+		"ja": [
+			"光る提灯を持つ深海のチョウチンアンコウ",
+			"黒くて口の大きいアンコウ。頭に水色に光る誘引突起"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"texture": {
+			"pattern": "speckle"
+		},
+		"parts": [
+			{
+				"name": "body",
+				"shape": "profile",
+				"size": [
+					11,
+					12,
+					18
+				],
+				"axis": "-z",
+				"center": true,
+				"profile": [
+					0.5,
+					0.8,
+					1,
+					1,
+					0.95
+				],
+				"color": "#2e3440"
+			},
+			{
+				"name": "jaw",
+				"shape": "box",
+				"size": [
+					10,
+					4,
+					6
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.15,
+					0.05
+				],
+				"axis": "-z",
+				"rotate": [
+					15,
+					0,
+					0
+				],
+				"color": "#2e3440"
+			},
+			{
+				"name": "teeth",
+				"shape": "cone",
+				"size": [
+					1,
+					2,
+					1
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.35,
+					0
+				],
+				"axis": "-y",
+				"count": 4,
+				"arrange": "row",
+				"spacing": [
+					2,
+					0,
+					0
+				],
+				"tip": 0.2,
+				"color": "#e8e2cf",
+				"material": "teeth"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 2,
+				"parent": "body",
+				"at": [
+					1,
+					0.7,
+					0.2
+				],
+				"mirror": true
+			},
+			{
+				"name": "tail_fin",
+				"shape": "plane",
+				"size": [
+					0,
+					8,
+					5
+				],
+				"parent": "body",
+				"at": "back",
+				"axis": "z",
+				"outline": "fan",
+				"color": "#2e3440"
+			},
+			{
+				"name": "pectoral_fin",
+				"shape": "plane",
+				"size": [
+					4,
+					0,
+					3
+				],
+				"parent": "body",
+				"at": [
+					1,
+					0.35,
+					0.5
+				],
+				"axis": "x",
+				"outline": "round",
+				"mirror": true,
+				"color": "#2e3440"
+			},
+			{
+				"name": "lure",
+				"shape": "cylinder",
+				"size": [
+					1,
+					8,
+					1
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					1,
+					0.2
+				],
+				"axis": "y",
+				"segments": 3,
+				"curl": -25,
+				"color": "#2e3440"
+			},
+			{
+				"name": "lure_bulb",
+				"shape": "ellipsoid",
+				"size": [
+					3,
+					3,
+					3
+				],
+				"parent": "lure",
+				"at": "tip",
+				"center": true,
+				"color": "#7ff0f0",
+				"glow": 1.5,
+				"glow_color": "#7ff0f0"
+			}
+		]
+	}
+}

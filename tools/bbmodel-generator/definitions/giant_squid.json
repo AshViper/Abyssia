@@ -1,0 +1,115 @@
+{
+	"id": "giant_squid",
+	"name": "Giant Squid",
+	"name_ja": "ダイオウイカ",
+	"scientific_name": "Architeuthis dux",
+	"category": "cephalopod",
+	"template": "squid",
+	"habitat": "bathypelagic",
+	"order": 8,
+	"notes": "Long muscular mantle with small rounded terminal fins, the largest eyes in the animal kingdom, eight thick sucker-lined arms and two very long feeding tentacles ending in toothed clubs.",
+	"body": {
+		"length": 22,
+		"width": 8,
+		"height": 8,
+		"taper": 0.45,
+		"segments": 3
+	},
+	"parts": [
+		"body",
+		"head",
+		"eye",
+		"arms",
+		"tentacles",
+		"fin",
+		"beak"
+	],
+	"params": {
+		"head": {
+			"length": 5,
+			"width": 7,
+			"height": 7
+		},
+		"eye": {
+			"size": 3,
+			"height": 0.55,
+			"forward": 0.45,
+			"protrude": 0.35
+		},
+		"arms": {
+			"count": 8,
+			"length": 18,
+			"segments": 3,
+			"width": 2,
+			"taper": 0.5,
+			"splay": 13,
+			"ring": 0.75
+		},
+		"tentacles": {
+			"count": 2,
+			"length": 28,
+			"segments": 3,
+			"width": 1,
+			"club": 5,
+			"club_width": 2
+		},
+		"fins": {
+			"length": 7,
+			"width": 5,
+			"position": 1,
+			"shape": "sail"
+		},
+		"beak": {
+			"enabled": true,
+			"size": 2
+		}
+	},
+	"palette": {
+		"body": "#8e4d46",
+		"belly": "#a8695e",
+		"fin": "#83453f",
+		"sucker": "#d2ae9c",
+		"mouth": "#2a1e22",
+		"eye": "#0b0c10",
+		"eye_iris": "#7d8fa0",
+		"eye_ring": "#6a3a36",
+		"eye_glint": "#e6f0f6",
+		"glow": "#b8d8f0",
+		"glow_eye": "#a8c4dc"
+	},
+	"texture": {
+		"pattern": "spots",
+		"pattern_strength": 0.55,
+		"pattern_scale": 1,
+		"countershade": 0.7
+	},
+	"glow": [
+		{
+			"part": "eyes",
+			"intensity": 0.5,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"tentacle_move",
+		"grab",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.9,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"arms": 0.1,
+		"tentacles": 0.12,
+		"fin": 0.12,
+		"eye": 0.1,
+		"hue": 6,
+		"lightness": 0.03
+	}
+}

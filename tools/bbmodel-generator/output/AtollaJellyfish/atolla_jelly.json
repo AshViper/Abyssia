@@ -1,0 +1,847 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "atolla_jelly",
+  "name": "Atolla Jellyfish",
+  "template": "medusa",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": true,
+    "size_units": [
+      24.37,
+      33.81,
+      24.72
+    ],
+    "size_blocks": [
+      1.52,
+      2.11,
+      1.54
+    ],
+    "core_size_blocks": [
+      1.52,
+      2.11,
+      1.54
+    ],
+    "cubes": 34
+  },
+  "bones": [
+    {
+      "name": "atolla_jelly",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "bell",
+      "parent": "atolla_jelly",
+      "role": "bell",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stomach",
+      "parent": "bell",
+      "role": "stomach",
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "groove_1",
+      "parent": "bell",
+      "role": "groove",
+      "pivot": [
+        -3,
+        1,
+        -6.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "groove_2",
+      "parent": "bell",
+      "role": "groove",
+      "pivot": [
+        3,
+        1,
+        -6.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "groove_3",
+      "parent": "bell",
+      "role": "groove",
+      "pivot": [
+        6.05,
+        1,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "groove_4",
+      "parent": "bell",
+      "role": "groove",
+      "pivot": [
+        6.05,
+        1,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "groove_5",
+      "parent": "bell",
+      "role": "groove",
+      "pivot": [
+        3,
+        1,
+        6.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "groove_6",
+      "parent": "bell",
+      "role": "groove",
+      "pivot": [
+        -3,
+        1,
+        6.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "groove_7",
+      "parent": "bell",
+      "role": "groove",
+      "pivot": [
+        -6.05,
+        1,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "groove_8",
+      "parent": "bell",
+      "role": "groove",
+      "pivot": [
+        -6.05,
+        1,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lappets_front",
+      "parent": "bell",
+      "role": "lappet",
+      "pivot": [
+        0,
+        0,
+        -6.05
+      ],
+      "rotation": [
+        18,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lappets_right",
+      "parent": "bell",
+      "role": "lappet",
+      "pivot": [
+        6.05,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        18
+      ]
+    },
+    {
+      "name": "lappets_back",
+      "parent": "bell",
+      "role": "lappet",
+      "pivot": [
+        0,
+        0,
+        6.05
+      ],
+      "rotation": [
+        -18,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lappets_left",
+      "parent": "bell",
+      "role": "lappet",
+      "pivot": [
+        -6.05,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        -18
+      ]
+    },
+    {
+      "name": "tentacle_1",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        5.5,
+        0,
+        1
+      ],
+      "rotation": [
+        -14,
+        0,
+        70.6
+      ]
+    },
+    {
+      "name": "tentacle_2",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        5.5,
+        0,
+        3.5
+      ],
+      "rotation": [
+        -40,
+        0,
+        59.9
+      ]
+    },
+    {
+      "name": "tentacle_3",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        0,
+        5.5
+      ],
+      "rotation": [
+        -59.9,
+        0,
+        40
+      ]
+    },
+    {
+      "name": "tentacle_4",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        0,
+        5.5
+      ],
+      "rotation": [
+        -70.6,
+        0,
+        14
+      ]
+    },
+    {
+      "name": "tentacle_5",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        0,
+        5.5
+      ],
+      "rotation": [
+        -70.6,
+        0,
+        -14
+      ]
+    },
+    {
+      "name": "tentacle_6",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        0,
+        5.5
+      ],
+      "rotation": [
+        -59.9,
+        0,
+        -40
+      ]
+    },
+    {
+      "name": "tentacle_7",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -5.5,
+        0,
+        3.5
+      ],
+      "rotation": [
+        -40,
+        0,
+        -59.9
+      ]
+    },
+    {
+      "name": "tentacle_8",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -5.5,
+        0,
+        1
+      ],
+      "rotation": [
+        -14,
+        0,
+        -70.6
+      ]
+    },
+    {
+      "name": "tentacle_9",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -5.5,
+        0,
+        -1
+      ],
+      "rotation": [
+        14,
+        0,
+        -70.6
+      ]
+    },
+    {
+      "name": "tentacle_10",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -5.5,
+        0,
+        -3.5
+      ],
+      "rotation": [
+        40,
+        0,
+        -59.9
+      ]
+    },
+    {
+      "name": "tentacle_11",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        0,
+        -5.5
+      ],
+      "rotation": [
+        59.9,
+        0,
+        -40
+      ]
+    },
+    {
+      "name": "tentacle_12",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        0,
+        -5.5
+      ],
+      "rotation": [
+        70.6,
+        0,
+        -14
+      ]
+    },
+    {
+      "name": "tentacle_13",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        0,
+        -5.5
+      ],
+      "rotation": [
+        70.6,
+        0,
+        14
+      ]
+    },
+    {
+      "name": "tentacle_14",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        0,
+        -5.5
+      ],
+      "rotation": [
+        59.9,
+        0,
+        40
+      ]
+    },
+    {
+      "name": "tentacle_15",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        5.5,
+        0,
+        -3.5
+      ],
+      "rotation": [
+        40,
+        0,
+        59.9
+      ]
+    },
+    {
+      "name": "tentacle_16",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        5.5,
+        0,
+        -1
+      ],
+      "rotation": [
+        14,
+        0,
+        70.6
+      ]
+    },
+    {
+      "name": "long_tentacle",
+      "parent": "bell",
+      "role": "long_tentacle",
+      "pivot": [
+        0,
+        0,
+        5
+      ],
+      "rotation": [
+        -25,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "long_tentacle_2",
+      "parent": "long_tentacle",
+      "role": "long_tentacle",
+      "pivot": [
+        0,
+        -10,
+        5
+      ],
+      "rotation": [
+        12,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "long_tentacle_3",
+      "parent": "long_tentacle_2",
+      "role": "long_tentacle",
+      "pivot": [
+        0,
+        -20,
+        5
+      ],
+      "rotation": [
+        12,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 6,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_2",
+        "tentacle_3",
+        "tentacle_4",
+        "tentacle_5",
+        "tentacle_6",
+        "tentacle_7",
+        "tentacle_8",
+        "tentacle_9",
+        "tentacle_10",
+        "tentacle_11",
+        "tentacle_12",
+        "tentacle_13",
+        "tentacle_14",
+        "tentacle_15",
+        "tentacle_16",
+        "long_tentacle",
+        "long_tentacle_2",
+        "long_tentacle_3",
+        "lappets_front",
+        "lappets_right",
+        "lappets_back",
+        "lappets_left"
+      ],
+      "description": "Drifting: the bell breathes slowly, tentacles and arms sway out of phase"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 0.8,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_2",
+        "tentacle_3",
+        "tentacle_4",
+        "tentacle_5",
+        "tentacle_6",
+        "tentacle_7",
+        "tentacle_8",
+        "tentacle_9",
+        "tentacle_10",
+        "tentacle_11",
+        "tentacle_12",
+        "tentacle_13",
+        "tentacle_14",
+        "tentacle_15",
+        "tentacle_16",
+        "lappets_front",
+        "lappets_right",
+        "lappets_back",
+        "lappets_left"
+      ],
+      "description": "Escape: rapid bell strokes, tentacles swept back together"
+    },
+    {
+      "name": "pulse",
+      "loop": "once",
+      "length": 1.4,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_2",
+        "tentacle_3",
+        "tentacle_4",
+        "tentacle_5",
+        "tentacle_6",
+        "tentacle_7",
+        "tentacle_8",
+        "tentacle_9",
+        "tentacle_10",
+        "tentacle_11",
+        "tentacle_12",
+        "tentacle_13",
+        "tentacle_14",
+        "tentacle_15",
+        "tentacle_16",
+        "lappets_front",
+        "lappets_right",
+        "lappets_back",
+        "lappets_left"
+      ],
+      "description": "One bell stroke: a quick contraction, a slow relaxation; tentacles gather then trail"
+    },
+    {
+      "name": "spread",
+      "loop": "hold",
+      "length": 0.8,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_2",
+        "tentacle_3",
+        "tentacle_4",
+        "tentacle_5",
+        "tentacle_6",
+        "tentacle_7",
+        "tentacle_8",
+        "tentacle_9",
+        "tentacle_10",
+        "tentacle_11",
+        "tentacle_12",
+        "tentacle_13",
+        "tentacle_14",
+        "tentacle_15",
+        "tentacle_16",
+        "long_tentacle",
+        "long_tentacle_2",
+        "long_tentacle_3"
+      ],
+      "description": "Defence: tentacles flare out wide and stiffen, the bell swells"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.6,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_2",
+        "tentacle_3",
+        "tentacle_4",
+        "tentacle_5",
+        "tentacle_6",
+        "tentacle_7",
+        "tentacle_8",
+        "tentacle_9",
+        "tentacle_10",
+        "tentacle_11",
+        "tentacle_12",
+        "tentacle_13",
+        "tentacle_14",
+        "tentacle_15",
+        "tentacle_16"
+      ],
+      "description": "Flinch: a hard contraction, tentacles snap inward"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.4,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_2",
+        "tentacle_3",
+        "tentacle_4",
+        "tentacle_5",
+        "tentacle_6",
+        "tentacle_7",
+        "tentacle_8",
+        "tentacle_9",
+        "tentacle_10",
+        "tentacle_11",
+        "tentacle_12",
+        "tentacle_13",
+        "tentacle_14",
+        "tentacle_15",
+        "tentacle_16"
+      ],
+      "description": "The bell stops, sags and flattens; tentacles and arms go limp"
+    }
+  ],
+  "definition": {
+    "template": "medusa",
+    "category": "jellyfish",
+    "body": {
+      "width": 12,
+      "height": 5
+    },
+    "parts": [
+      "bell",
+      "stomach",
+      "groove",
+      "lappets",
+      "tentacles",
+      "long_tentacle"
+    ],
+    "params": {
+      "bell": {
+        "profile": "disc",
+        "tiers": 2,
+        "alpha": 165
+      },
+      "stomach": {
+        "enabled": true,
+        "width": 6,
+        "height": 3
+      },
+      "groove": {
+        "enabled": true,
+        "sectors": 8,
+        "height": 1,
+        "at": 0.3
+      },
+      "lappets": {
+        "enabled": true,
+        "height": 2
+      },
+      "tentacles": {
+        "count": 16,
+        "length": 7,
+        "segments": 1,
+        "width": 1,
+        "spread": 72
+      },
+      "long_tentacle": {
+        "enabled": true,
+        "length": 30,
+        "segments": 3
+      },
+      "oral_arms": {
+        "count": 0,
+        "length": 16,
+        "width": 3,
+        "segments": 3
+      }
+    },
+    "palette": {
+      "dome": "#8c2c34",
+      "body": "#7a2430",
+      "flesh": "#5c1219",
+      "membrane": "#6a1c26",
+      "glow": "#3d7dff"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.25,
+      "countershade": 0.2
+    },
+    "glow": [
+      {
+        "part": "groove",
+        "intensity": 1,
+        "color": "glow"
+      }
+    ],
+    "animations": [
+      "idle",
+      "swim",
+      "pulse",
+      "spread",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 1,
+      "amplitude": 1
+    },
+    "variation": {
+      "bell": 0.08,
+      "tentacles": 0.12,
+      "hue": 6,
+      "lightness": 0.04
+    },
+    "id": "atolla_jelly",
+    "name": "Atolla Jellyfish",
+    "name_ja": "ムラサキカムリクラゲ",
+    "scientific_name": "Atolla wyvillei",
+    "habitat": "bathypelagic",
+    "order": 19,
+    "notes": "Deep-sea crown jelly: a flat red disc-shaped bell with a coronal groove and marginal lappets, a deep red stomach, about 20 tentacles held out sideways and one hypertrophied tentacle trailing far behind. Blue pinwheel 'burglar alarm' waves run around the bell when attacked."
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "category": "cave",
+  "tier": "medium",
+  "footprint_radius": 14,
+  "max_height": 120,
+  "formation": {
+    "type": "cave",
+    "shape": "column",
+    "count": [
+      1,
+      2
+    ],
+    "spread": 5,
+    "radius": [
+      2.5,
+      5
+    ],
+    "waist": 0.45,
+    "erosion": 0.3,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:crystal_cave_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:layered_cave_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:crystal_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent_chance": 0.12
+  },
+  "anchor": "cavern",
+  "conditions": {
+    "min_clearance": 10,
+    "max_top_y": 240
+  }
+}

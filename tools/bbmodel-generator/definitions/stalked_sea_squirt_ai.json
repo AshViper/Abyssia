@@ -1,0 +1,26 @@
+{
+	"id": "stalked_sea_squirt_ai",
+	"name": "Stalked Sea Squirt (AI)",
+	"name_ja": "有柄ホヤ（AI 組立）",
+	"template": "parts",
+	"category": "parts",
+	"habitat": "abyssal_floor",
+	"notes": "Assembled by Claude Code from samples/stalked_ascidian.png (centre individual, ~12.5 px per unit).",
+	"params": {
+		"orientation": "upright",
+		"scale": 1,
+		"parts": [
+			{ "name": "base", "shape": "cylinder", "size": [6, 6, 6], "taper": 0.85, "color": "#8c7c68", "role": "body" },
+			{ "name": "stalk", "shape": "cylinder", "parent": "base", "at": "tip", "size": [5, 10, 5], "segments": 2, "taper": 0.9, "color": "#a3b4bf" },
+			{ "name": "head", "shape": "profile", "parent": "stalk", "at": "tip", "size": [13, 12, 13], "profile": [0.74, 1, 1, 0.97, 0.9, 0.76, 0.5], "color": "#bccfdc" },
+			{ "name": "rim", "shape": "cylinder", "parent": "head", "at": [0.5, 0.12, 0.5], "center": true, "size": [14, 2, 14], "color": "#a4978a", "detail": 2 },
+			{ "name": "siphon", "shape": "dome", "parent": "head", "at": "top", "offset": [-1, -1, 0], "size": [5, 3, 5], "color": "#d3e2ec", "detail": 2 }
+		]
+	},
+	"palette": {},
+	"texture": { "pattern": "mottled", "pattern_strength": 0.35 },
+	"glow": [],
+	"animations": ["idle", "sway", "pulse", "hurt", "death"],
+	"animation": { "speed": 1, "amplitude": 1 },
+	"variation": { "body": 0.06, "hue": 4, "lightness": 0.03 }
+}

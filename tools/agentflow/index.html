@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Flow</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--fg:#1c2330;--mut:#6b7686;--line:#b8c0cc;--bd:#d6dbe3;--acc:#2f6fed;
+--queued:#8b95a5;--running:#2f6fed;--done:#1f9d55;--failed:#d64545;--escalated:#d98a12;--idle:#8b95a5}
+@media (prefers-color-scheme:dark){:root{--bg:#12161d;--panel:#1b212b;--fg:#e6eaf0;--mut:#8f9aab;--line:#4a5566;--bd:#2c3542;--acc:#5b9bff}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,"Yu Gothic UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--panel)}
+h1{font-size:16px;margin:0}
+.chip{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:13px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.tabs{display:flex;gap:4px;padding:8px 16px 0}
+.tab{font:inherit;background:none;color:var(--mut);border:0;border-bottom:2px solid transparent;padding:6px 12px;cursor:pointer}
+.tab.on{color:var(--fg);border-color:var(--acc)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;padding:12px 16px}
+@media(max-width:900px){main{grid-template-columns:minmax(0,1fr)}}
+main>*{min-width:0}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:10px;padding:8px;overflow:auto}
+svg#svg{display:block;width:100%;height:auto;min-width:760px}
+.node rect{fill:var(--panel);stroke-width:2;rx:8}
+.node{cursor:pointer}
+.node text{fill:var(--fg);font-size:12px}
+.node .t2{fill:var(--mut);font-size:11px}
+.node.idle rect{stroke-dasharray:none;opacity:.9}
+.band{fill:none;stroke:var(--bd);stroke-dasharray:4 4;rx:12}
+.band-l{fill:var(--mut);font-size:12px}
+.lane-l{fill:var(--mut);font-size:11px}
+.edge{fill:none;stroke:var(--line);stroke-width:1.5;opacity:.6}
+.edge.esc{stroke:var(--escalated);stroke-dasharray:5 4;opacity:1}
+.beads{fill:none;stroke:var(--acc);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:1 13;opacity:.28;animation:flow 2.6s linear infinite}
+.beads.act{opacity:.95;stroke-width:3.2;animation-duration:.9s;filter:drop-shadow(0 0 3px var(--acc))}
+@keyframes flow{to{stroke-dashoffset:-28}}
+.pkt{fill:var(--acc);filter:drop-shadow(0 0 5px var(--acc))}
+.running rect{animation:p 1.4s ease-in-out infinite}
+@keyframes p{50%{stroke-opacity:.35}}
+@media (prefers-reduced-motion:reduce){.beads,.running rect{animation:none}}
+#detail h2,.h2{font-size:14px;margin:4px 0 8px}
+#detail dl{margin:0;display:grid;grid-template-columns:70px 1fr;gap:4px 8px;font-size:13px}
+#detail dt{color:var(--mut)} #detail dd{margin:0;word-break:break-all}
+#log{list-style:none;margin:0;padding:0;max-height:340px;overflow:auto;font-size:13px}
+#log li{display:grid;grid-template-columns:62px 92px 64px 1fr;gap:8px;padding:4px 0;border-top:1px solid var(--bd)}
+#log .tm,#log .md{color:var(--mut);font-size:11px}
+#log .who{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#log .msg{overflow-wrap:anywhere}
+#log .k-error .msg{color:var(--failed)} #log .k-decision .msg,#log .k-esc .msg{color:var(--escalated)}
+form{display:grid;gap:8px}
+label{font-size:12px;color:var(--mut);display:grid;gap:3px}
+input,textarea,select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:6px 8px;width:100%}
+textarea{min-height:90px;resize:vertical}
+button.b{font:inherit;background:var(--acc);color:#fff;border:0;border-radius:6px;padding:6px 10px;cursor:pointer}
+button.b.sub{background:var(--panel);color:var(--fg);border:1px solid var(--bd)}
+button.b.red{background:var(--failed)}
+button:disabled{opacity:.5}
+#reqs{margin:8px 0 0;padding:0;list-style:none;font-size:13px}
+#reqs li{padding:5px 0;border-top:1px solid var(--bd);display:flex;gap:6px}
+#reqs .st{color:var(--mut);font-size:11px;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:10px}
+pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;overflow:auto;color:var(--mut)}
+/* textures */
+#tex{padding:12px 16px}
+.bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:10px}
+.bar input,.bar select{width:auto}
+.pill{font:inherit;font-size:12px;border:1px solid var(--bd);background:var(--panel);color:var(--fg);border-radius:99px;padding:3px 10px;cursor:pointer}
+.pill.on{background:var(--acc);border-color:var(--acc);color:#fff}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cw,150px),1fr));gap:8px}
+.tc{background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:6px;text-align:center}
+.tc .im{display:flex;gap:4px;justify-content:center}
+.tb{overflow:hidden;background:repeating-conic-gradient(#0000 0 25%,#8883 0 50%) 0 0/8px 8px;border-radius:3px}
+.tb img{display:block;image-rendering:pixelated}
+.tc .nm{font-size:11px;color:var(--mut);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc .tag{font-size:10px;padding:0 5px;border-radius:99px;margin-left:3px;color:#fff}
+.sub2{font-size:10px;color:var(--mut)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Agent Flow</h1>
+  <span class="chip">Main: <b id="mainModel">-</b> <span id="mainNote"></span></span>
+  <span class="chip" id="counts"></span>
+  <span class="chip" id="upd">-</span>
+    <span class="chip" style="margin-left:auto">
+    <label>実行主体<select id="runnerSel"><option value="codex">Codexのみ</option><option value="claude">Claude</option></select></label>
+    <label style="display:inline-flex;flex-direction:row;align-items:center;gap:4px;color:var(--fg)"><input type="checkbox" id="autoOn" style="width:auto"> 自動実行</label>
+    <span id="autoSt"></span>
+    <button class="b sub" id="autoRun">今すぐ</button>
+    <button class="b sub" id="autoStop">停止</button>
+    <button class="b sub" id="resetBtn">リセット</button>
+  </span>
+</header>
+<div class="tabs"><button class="tab on" data-t="flow">フロー</button><button class="tab" data-t="tex">テクスチャ</button></div>
+
+<main id="flow">
+  <div>
+    <div class="card"><svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div class="card" style="margin-top:12px">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+        <h2 class="h2" style="margin:0">アクティビティ</h2>
+        <label style="display:flex;flex-direction:row;align-items:center;gap:4px"><input type="checkbox" id="onlySel" style="width:auto"> 選択中のノードのみ</label>
+        <span class="chip" id="selName"></span>
+      </div>
+      <ol id="log"></ol>
+      <details style="margin-top:6px"><summary class="chip" style="cursor:pointer">自動実行ログ</summary><pre id="alog"></pre></details>
+    </div>
+  </div>
+  <div>
+    <div class="card" id="apr" hidden style="margin-bottom:12px;border-color:var(--escalated)"></div>
+    <div class="card" id="detail"><h2 class="h2">詳細</h2><div style="color:var(--mut)">ノードをクリック</div></div>
+    <div class="card" style="margin-top:12px">
+      <h2 class="h2">実装したいこと</h2>
+      <form id="rf">
+        <label>タイトル<input id="rt" required maxlength="120" placeholder="例: 深海クラゲの新種を追加"></label>
+        <label>内容・希望<textarea id="rb" placeholder="どんな挙動/見た目/制約か。ざっくりでOK"></textarea></label>
+        <label>関係しそうなファイル(任意)<input id="rfiles" placeholder="例: src/main/java/.../fauna"></label>
+        <label>仕様化<select id="rvia"><option value="codex">Codexがそのまま仕様化</option><option value="claude">Claudeがそのまま仕様化</option><option value="chatgpt">ChatGPTに仕様書/テクスチャを依頼</option></select></label>
+        <label>重さ<select id="rtier"><option value="auto">おまかせ</option><option value="light">light (Codex)</option><option value="standard">standard (Codex)</option><option value="heavy">heavy (Codex)</option></select></label>
+        <button class="b" id="rsend">送信して開始</button>
+        <span id="rmsg" class="chip"></span>
+      </form>
+      <ul id="reqs"></ul>
+    </div>
+    <div class="card legend" style="margin-top:12px" id="legend"></div>
+  </div>
+</main>
+
+<section id="tex" hidden>
+  <div class="bar">
+    <span id="tsum" class="chip"></span>
+  </div>
+  <div class="bar">
+    <span id="tf"></span>
+    <select id="tk"><option value="block">ブロック</option><option value="item">アイテム</option><option value="entity">エンティティ</option><option value="">すべて</option></select>
+    <select id="tv"><option value="cmp">変更前 | 現在</option><option value="cur">現在のみ</option><option value="old">変更前のみ</option></select>
+    <label style="flex-direction:row;align-items:center;gap:6px">サイズ <input type="range" id="tz" min="48" max="160" value="96" style="width:120px;padding:0"></label>
+    <input id="tq" placeholder="名前で検索">
+  </div>
+  <div id="grid"></div>
+</section>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const COL={queued:"var(--queued)",running:"var(--running)",done:"var(--done)",failed:"var(--failed)",escalated:"var(--escalated)",idle:"var(--idle)"};
+const LABEL={queued:"待機",running:"実行中",done:"完了",failed:"失敗",escalated:"格上げ",idle:"待機"};
+const TIERS=[["light","codex"],["standard","codex"],["heavy","codex"]];
+// stage: [key, title, default sub, band, x]
+const STAGES=[["request","依頼","フォーム/CLI","top",30],["router","Main Agent","tier振り分け・統合","top",290],["chatgpt","ChatGPT","仕様書/テクスチャ","top",550],["texture","Texture Pipeline","Forge/Studio/取込","top",810],
+  ["verify","Verification","検証","bot",290],["build","Build/Test","gradle(メインのみ)","bot",550],["memory","Memory","Obsidian更新","bot",810]];
+const BW=190,BH=58,NW=340,NH=54,GAP=10,LW=380,LX=30;
+let state={tasks:[],stages:{},main:{},log:[]},auto={},selected=null,lastJson="",seenT=null,edgeD={};
+
+const $=id=>document.getElementById(id);
+function el(n,a={},p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(p,x,y,s,cls){const t=el("text",{x,y,class:cls||""},p);t.textContent=s.length>32?s.slice(0,31)+"…":s;return t}
+const vcurve=(x1,y1,x2,y2)=>{const m=(y1+y2)/2;return `M${x1},${y1} C${x1},${m} ${x2},${m} ${x2},${y2}`};
+const hcurve=(x1,y1,x2,y2)=>{const m=(x1+x2)/2;return `M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}`};
+
+function view(){ // idle decay: nothing running for a while -> everything shows 待機
+  const now=Date.now()/1000,tk=state.tasks||[],stg=state.stages||{};
+  const busy=tk.some(t=>t.status==="running"||t.status==="queued")||Object.values(stg).some(s=>s.status==="running")||auto.running;
+  const idle=!busy&&(now-(state.updated||0)>45);
+  return {idle,tasks:idle?tk.filter(t=>t.status==="queued"||t.status==="running"):tk,
+    st:k=>idle?"idle":((stg[k]||{}).status||"idle")};
+}
+
+function render(){
+  const svg=$("svg");svg.innerHTML="";edgeD={};
+  const V=view(),tasks=V.tasks,W=1230;
+  const lanes=TIERS.map(([tier,model])=>({tier,model,ts:tasks.filter(t=>t.tier===tier)}));
+  const laneH=Math.max(96,44+Math.max(...lanes.map(l=>l.ts.length))*(NH+GAP));
+  const topY=26,midY=topY+BH+38,botY=midY+laneH+40;
+  const H=botY+BH+26;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  // bands
+  el("rect",{x:8,y:6,width:W-16,height:BH+46,class:"band"},svg);txt(svg,18,20,"テクスチャ・管理","band-l");
+  el("rect",{x:8,y:midY-34,width:W-16,height:laneH+42,class:"band"},svg);txt(svg,18,midY-18,"作業エージェント","band-l");
+  el("rect",{x:8,y:botY-30,width:W-16,height:BH+50,class:"band"},svg);txt(svg,18,botY-14,"その他","band-l");
+  const pos={};
+  for(const [k,,, band,x] of STAGES)pos[k]={x,y:band==="top"?topY:botY,w:BW,h:BH};
+  lanes.forEach((L,i)=>{const lx=LX+i*(LW+10);txt(svg,lx+6,midY-4,`${L.tier} → ${L.model}`,"lane-l");
+    L.ts.forEach((t,j)=>{pos[t.id]={x:lx+(LW-NW)/2,y:midY+8+j*(NH+GAP),w:NW,h:NH}})});
+  const byId=Object.fromEntries(tasks.map(t=>[t.id,t]));
+  const edges=[]; // [from,to,d,extraClass]
+  const bot=k=>({x:pos[k].x+pos[k].w/2,y:pos[k].y+pos[k].h}),top=k=>({x:pos[k].x+pos[k].w/2,y:pos[k].y});
+  const right=k=>({x:pos[k].x+pos[k].w,y:pos[k].y+pos[k].h/2}),left=k=>({x:pos[k].x,y:pos[k].y+pos[k].h/2});
+  const H2=(a,b)=>edges.push([a,b,hcurve(right(a).x,right(a).y,left(b).x,left(b).y)]);
+  H2("request","router");H2("router","chatgpt");H2("chatgpt","texture");H2("verify","build");H2("build","memory");
+  edges.push(["texture","build",vcurve(bot("texture").x,bot("texture").y,top("build").x,top("build").y)]);
+  for(const t of tasks){
+    edges.push(["router",t.id,vcurve(bot("router").x,bot("router").y,top(t.id).x,top(t.id).y)]);
+    edges.push([t.id,"verify",vcurve(bot(t.id).x,bot(t.id).y,top("verify").x,top("verify").y)]);
+    if(t.parent&&pos[t.parent]){const q=byId[t.parent]||{};
+      edges.push([t.parent,t.id,hcurve(right(t.parent).x,right(t.parent).y,left(t.id).x,left(t.id).y),"esc"]);}
+  }
+  const stt=k=>byId[k]?byId[k].status:V.st(k);
+  const active=(a,b)=>stt(a)==="running"||stt(b)==="running";
+  for(const [a,b,d,cls] of edges){
+    edgeD[a+">"+b]=d;
+    el("path",{d,class:"edge "+(cls||"")},svg);
+    const act=active(a,b);
+    el("path",{d,class:"beads"+(act?" act":"")},svg);
+    if(act)for(let i=0;i<2;i++){const c=el("circle",{r:3.6,class:"pkt"},svg);
+      el("animateMotion",{path:d,dur:"1.8s",begin:`${i*0.9}s`,repeatCount:"indefinite"},c)}
+  }
+  // nodes
+  for(const [k,name,sub] of STAGES){
+    const s=(state.stages||{})[k]||{};const st=V.st(k);
+    const s2=k==="router"&&(state.main||{}).model?`${state.main.model}${state.main.note?" · "+state.main.note:""}`:(st!=="idle"&&s.note?s.note:sub);
+    box(svg,pos[k],name,s2,st,()=>select({kind:"stage",name,k,status:st,note:s.note||""}));
+  }
+  for(const t of tasks){
+    const last=t.status==="running"?[...(state.log||[])].reverse().find(l=>l.who===t.id&&l.kind!=="status"):null;
+    box(svg,pos[t.id],`${t.id}  ${t.title||""}`,`${t.model} · ${LABEL[t.status]}${last?" · "+last.msg:(t.note?" · "+t.note:"")}`,t.status,()=>select({kind:"task",...t}));
+  }
+  legend();header();
+}
+function box(svg,p,title,sub,status,onclick){
+  const g=el("g",{class:"node "+status,transform:`translate(${p.x},${p.y})`},svg);
+  el("rect",{width:p.w,height:p.h,stroke:COL[status]||COL.idle},g);
+  txt(g,10,p.h/2-3,title);txt(g,10,p.h/2+14,sub,"t2");
+  g.addEventListener("click",onclick);
+}
+function packet(who){ // one-shot bright packet for a fresh log entry
+  const svg=$("svg");let d=null;
+  const T={request:"request>router",chatgpt:"router>chatgpt",texture:"chatgpt>texture",build:"verify>build",memory:"build>memory"};
+  if(T[who])d=edgeD[T[who]];
+  else if(who==="verify")d=Object.entries(edgeD).find(([k])=>k.endsWith(">verify"))?.[1];
+  else d=edgeD["router>"+who];
+  if(!d)return;
+  const c=el("circle",{r:5.5,class:"pkt"},svg);
+  el("animateMotion",{path:d,dur:"1.1s",repeatCount:"1",fill:"freeze"},c);
+  setTimeout(()=>c.remove(),1300);
+}
+function legend(){
+  $("legend").innerHTML=Object.keys(LABEL).filter(k=>k!=="idle").map(k=>`<span class="chip"><i class="dot" style="background:${COL[k]}"></i>${LABEL[k]}</span>`).join("")+`<span class="chip">破線=格上げ / 光の粒=情報の流れ</span>`;
+}
+function header(){
+  const tk=view().tasks,c=s=>tk.filter(t=>t.status===s).length;
+  $("mainModel").textContent=(state.main||{}).model||"-";
+  $("mainNote").textContent=(state.main||{}).note||"";
+  $("counts").textContent=`実行中 ${c("running")} / 待機 ${c("queued")} / 完了 ${c("done")} / 失敗 ${c("failed")}`;
+  const u=state.updated;$("upd").textContent=u?"更新 "+new Date(u*1000).toLocaleTimeString():"データなし";
+}
+const fmt=t=>t?new Date(t*1000).toLocaleTimeString():"-";
+function select(o){selected=o;detail();renderLog()}
+function selKey(){return selected?(selected.kind==="task"?selected.id:selected.k):null}
+function detail(){
+  const d=$("detail");if(!selected)return;const o=selected;
+  const rows=o.kind==="task"
+    ?[["ID",o.id],["title",o.title||"-"],["tier",o.tier],["model",o.model],["状態",LABEL[o.status]],["files",o.files||"-"],["親",o.parent||"-"],["開始",fmt(o.started)],["終了",fmt(o.ended)],["note",o.note||"-"]]
+    :[["stage",o.name],["状態",LABEL[o.status]||o.status],["note",o.note||"-"]];
+  d.innerHTML="<h2 class='h2'>"+(o.kind==="task"?"タスク":"ステージ")+"</h2><dl>"+rows.map(()=>"<dt></dt><dd></dd>").join("")+"</dl>";
+  d.querySelectorAll("dt").forEach((e,i)=>e.textContent=rows[i][0]);d.querySelectorAll("dd").forEach((e,i)=>e.textContent=rows[i][1]);
+}
+function renderLog(){
+  const ol=$("log"),only=$("onlySel").checked,key=selKey();
+  $("selName").textContent=key?"選択: "+key:"";
+  let ls=[...(state.log||[])].reverse();if(only&&key)ls=ls.filter(l=>l.who===key);
+  ol.innerHTML="";
+  if(!ls.length){const li=document.createElement("li");li.textContent="まだ記録がありません";ol.appendChild(li);return}
+  for(const l of ls.slice(0,150)){
+    const li=document.createElement("li");li.className="k-"+l.kind;
+    const mk=(c,t)=>{const s=document.createElement("span");s.className=c;s.textContent=t;return s};
+    li.append(mk("tm",new Date(l.t*1000).toLocaleTimeString()),mk("who",l.who),mk("md",l.model||""),mk("msg",l.msg));ol.appendChild(li);
+  }
+}
+$("onlySel").addEventListener("change",renderLog);
+
+async function poll(){
+  try{
+    const s=await (await fetch("state.json",{cache:"no-store"})).text();
+    if(s!==lastJson){lastJson=s;state=JSON.parse(s);render();renderLog();
+      const L=state.log||[];
+      if(seenT!==null)L.filter(l=>l.t>seenT).slice(-6).forEach(l=>packet(l.who==="main"?"router":l.who));
+      seenT=L.length?L[L.length-1].t:0;
+      if(selected&&selected.kind==="task"){const f=(state.tasks||[]).find(t=>t.id===selected.id);if(f)selected={kind:"task",...f};detail();}}
+  }catch(e){$("upd").textContent="サーバー未接続"}
+}
+setInterval(()=>{ if(!document.hidden&&Date.now()/1000-(state.updated||0)>44&&Date.now()/1000-(state.updated||0)<48)render(); },1000); // idle decay redraw
+
+// ---- requests / approvals / autorun
+const RST={new:"未着手",specced:"仕様化済",running:"実装中",done:"完了"};
+async function reqs(){
+  try{const rs=await (await fetch("requests.json",{cache:"no-store"})).json();
+    const ul=$("reqs");ul.innerHTML="";
+    rs.filter(r=>r.status!=="done").reverse().forEach(r=>{const li=document.createElement("li");
+      const st=document.createElement("span");st.className="st";st.textContent=RST[r.status]||r.status;
+      const t=document.createElement("span");t.textContent=r.title;li.append(st,t);ul.appendChild(li)});
+  }catch(e){}
+}
+$("rf").addEventListener("submit",async e=>{
+  e.preventDefault();const b=$("rsend"),m=$("rmsg");b.disabled=true;
+  try{const r=await fetch("/api/request",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+    title:$("rt").value,body:$("rb").value,files:$("rfiles").value,via:$("rvia").value,tier:$("rtier").value})});
+    if(!r.ok)throw 0;const j=await r.json();e.target.reset();
+    m.textContent=j.autorun&&j.autorun.enabled?"送信しました。自動で作業を開始します":"送信しました(自動実行はOFF)";reqs();autoPoll();
+  }catch(_){m.textContent="送信失敗"}b.disabled=false});
+async function aprs(){
+  try{const all=await (await fetch("approvals.json",{cache:"no-store"})).json();
+    const box=$("apr"),p=all.filter(a=>a.status==="pending");
+    document.title=p.length?`(${p.length}) 承認待ち - Agent Flow`:"Agent Flow";
+    box.hidden=!p.length;if(!p.length){box.innerHTML="";box.dataset.key="";return}
+    const key=p.map(a=>a.id).join();if(box.dataset.key===key)return;box.dataset.key=key;
+    box.innerHTML="<h2 class='h2'>承認待ち</h2>";
+    for(const a of p){
+      const d=document.createElement("div");d.style.cssText="padding:6px 0;border-top:1px solid var(--bd)";
+      const q=document.createElement("div");q.textContent=`[${a.who}] ${a.question}`;q.style.marginBottom="6px";
+      const ok=document.createElement("button");ok.className="b";ok.textContent="承認";
+      const ng=document.createElement("button");ng.className="b red";ng.textContent="拒否";ng.style.marginLeft="8px";
+      for(const [b,ans] of [[ok,"approve"],[ng,"deny"]])b.onclick=async()=>{b.disabled=true;
+        await fetch("/api/approval",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:a.id,answer:ans})});box.dataset.key="";aprs()};
+      d.append(q,ok,ng);box.appendChild(d);
+    }
+  }catch(e){}
+}
+async function autoPoll(){
+  try{auto=await (await fetch("autorun.json",{cache:"no-store"})).json();
+    $("autoOn").checked=auto.enabled;
+    $("runnerSel").value=auto.runner||"claude";
+    const available=auto.runner==="codex"?auto.codex:auto.claude;
+    $("autoSt").textContent=!available?`${auto.runner||"runner"} CLIなし`:auto.running?`Codex worker ${auto.workers||1}件`:auto.pending?`待機(依頼${auto.pending}件)`:"待機";
+    $("autoSt").style.color=auto.running?"var(--running)":"var(--mut)";
+    $("alog").textContent=(auto.tail||[]).join("\n");
+  }catch(e){}
+}
+const post=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(r=>r.json());
+$("autoOn").onchange=e=>post("/api/autorun",{enabled:e.target.checked}).then(autoPoll);
+$("runnerSel").onchange=e=>post("/api/autorun",{runner:e.target.value}).then(autoPoll);
+$("autoRun").onclick=()=>post("/api/autorun/run").then(autoPoll);
+$("autoStop").onclick=()=>post("/api/autorun/stop").then(autoPoll);
+$("resetBtn").onclick=async()=>{await post("/api/reset");lastJson="";poll()};
+
+// ---- textures
+let TX=[],tf="changed";
+const FILT=[["all","すべて"],["changed","作り直し"],["chatgpt","ChatGPT"],["locked","ロック"],["same","変更なし"]];
+function tpills(){const w=$("tf");w.innerHTML="";for(const [k,l] of FILT){const b=document.createElement("button");b.className="pill"+(tf===k?" on":"");b.textContent=l;b.onclick=()=>{tf=k;tpills();tgrid()};w.appendChild(b)}}
+async function texLoad(){
+  try{TX=await (await fetch("textures.json",{cache:"no-store"})).json();
+    const c=f=>TX.filter(f).length;
+    $("tsum").textContent=`全${TX.length}枚 / 作り直し ${c(t=>t.status==="changed")} / ChatGPT ${c(t=>t.chatgpt)} / ロック ${c(t=>t.locked)} / 新規 ${c(t=>t.status==="new")}`;
+    tgrid();}catch(e){$("tsum").textContent="読み込み失敗"}
+}
+function tgrid(){
+  const g=$("grid"),S=+$("tz").value,k=$("tk").value,v=$("tv").value,q=$("tq").value.trim().toLowerCase();
+  g.style.setProperty("--cw",(v==="cmp"?S*2+30:S+24)+"px");g.innerHTML="";
+  const ok=t=>(!k||t.kind===k)&&(!q||t.path.toLowerCase().includes(q))&&(tf==="all"||(tf==="changed"?t.status==="changed":tf==="same"?t.status==="same":tf==="chatgpt"?t.chatgpt:t.locked));
+  const list=TX.filter(ok);let n=0;
+  for(const t of list){ if(n++>600)break;
+    const c=document.createElement("div");c.className="tc";
+    const im=document.createElement("div");im.className="im";
+    const one=(w,lab)=>{const b=document.createElement("div");b.className="tb";
+      const ent=t.kind==="entity";b.style.width=(ent?Math.min(S*1.6,256):S)+"px";if(!ent)b.style.height=S+"px";
+      const i=document.createElement("img");i.src=`/tex/${w}/${t.path}`;i.style.width="100%";i.title=lab;i.onerror=()=>{b.style.opacity=.25;i.remove()};b.appendChild(i);return b};
+    if(v!=="old")im.appendChild(one("cur","現在"));
+    if(v!=="cur")im.insertBefore(one("old","変更前"),im.firstChild);
+    const nm=document.createElement("div");nm.className="nm";nm.title=t.path;nm.textContent=t.name;
+    for(const [f,l,col] of [[t.chatgpt,"AI","#7c4dff"],[t.locked,"固定","#607d8b"],[t.status==="changed","新","#1f9d55"]])if(f){const s=document.createElement("span");s.className="tag";s.style.background=col;s.textContent=l;nm.appendChild(s)}
+    c.append(im,nm);g.appendChild(c);
+  }
+  if(!list.length)g.textContent="該当なし";
+}
+["tk","tv","tq","tz"].forEach(i=>$(i).addEventListener("input",tgrid));
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));
+  $("flow").hidden=b.dataset.t!=="flow";$("tex").hidden=b.dataset.t!=="tex";
+  if(b.dataset.t==="tex")texLoad();});
+tpills();
+setInterval(()=>{if(!$("tex").hidden)texLoad()},15000);
+
+render();poll();reqs();aprs();autoPoll();
+setInterval(poll,1200);setInterval(reqs,4000);setInterval(aprs,2000);setInterval(autoPoll,2500);
+</script>
+</body>
+</html>

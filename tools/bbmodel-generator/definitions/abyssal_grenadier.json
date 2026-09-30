@@ -1,0 +1,142 @@
+{
+	"id": "abyssal_grenadier",
+	"name": "Abyssal Grenadier",
+	"name_ja": "ヨロイダラ",
+	"scientific_name": "Coryphaenoides armatus",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "abyssal_floor",
+	"order": 24,
+	"notes": "Rattail: big head with large eyes, a conical snout overhanging a small underslung mouth, a short deep trunk and a long tapering 'rat tail' with no real caudal fin; high first dorsal, long low second dorsal and anal fins; brown with a bluish belly. Approximations: the caudal fin is a 1-unit stub at the tail tip; the chin barbel and the fin rows along the tail are not modelled (the anal fin sits at the rear of the trunk).",
+	"body": {
+		"length": 7,
+		"width": 5,
+		"height": 6,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"snout",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 7,
+			"width": 6,
+			"height": 7,
+			"drop": 0,
+			"round": 1
+		},
+		"snout": {
+			"length": 2,
+			"width": 3,
+			"height": 2
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": -1,
+			"gape": 30,
+			"rest_gape": 0,
+			"width": 0.7,
+			"round": 0
+		},
+		"teeth": {
+			"count": 3,
+			"length": 1,
+			"vary": 0,
+			"side": 0,
+			"upper": true,
+			"lower": false
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.6,
+			"forward": 0.4,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 4,
+			"length": 16,
+			"width": 4,
+			"height": 5,
+			"taper": 0.2
+		},
+		"caudal": {
+			"length": 1,
+			"height": 1,
+			"shape": "round"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 30,
+			"droop": 20,
+			"position": 0.15
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 1,
+			"height": 2,
+			"position": 0.3
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 3,
+			"height": 4,
+			"position": 0.15,
+			"apex": 0.3
+		},
+		"anal": {
+			"enabled": true,
+			"length": 4,
+			"height": 2,
+			"position": 1
+		}
+	},
+	"palette": {
+		"body": "#6b5846",
+		"belly": "#56627a",
+		"fin": "#5a4a3e",
+		"mouth": "#4a3036",
+		"lip": "#5e4c3e",
+		"teeth": "#d8d2c4",
+		"eye": "#0b0d12",
+		"eye_iris": "#6a7a88",
+		"eye_ring": "#4a3e34"
+	},
+	"texture": {
+		"pattern": "scales",
+		"pattern_strength": 0.45,
+		"pattern_scale": 1,
+		"countershade": 0.8
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.07,
+		"fin": 0.1,
+		"tail": 0.1,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

@@ -1,0 +1,756 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "silky_medusa",
+  "name": "Silky Medusa",
+  "template": "medusa",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      32
+    ],
+    "texture_image": [
+      64,
+      32
+    ],
+    "glow_texture": true,
+    "size_units": [
+      15.92,
+      14.12,
+      15.96
+    ],
+    "size_blocks": [
+      0.99,
+      0.88,
+      1
+    ],
+    "core_size_blocks": [
+      0.99,
+      0.88,
+      1
+    ],
+    "cubes": 28
+  },
+  "bones": [
+    {
+      "name": "silky_medusa",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "bell",
+      "parent": "silky_medusa",
+      "role": "bell",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "stomach",
+      "parent": "bell",
+      "role": "stomach",
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tentacle_1",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        0,
+        1
+      ],
+      "rotation": [
+        -9.8,
+        0,
+        36.7
+      ]
+    },
+    {
+      "name": "tentacle_1_s2",
+      "parent": "tentacle_1",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        -4,
+        1
+      ],
+      "rotation": [
+        3.4,
+        0,
+        -12.8
+      ]
+    },
+    {
+      "name": "tentacle_2",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        0,
+        3.5
+      ],
+      "rotation": [
+        -26.9,
+        0,
+        26.9
+      ]
+    },
+    {
+      "name": "tentacle_2_s2",
+      "parent": "tentacle_2",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        -4,
+        3.5
+      ],
+      "rotation": [
+        9.4,
+        0,
+        -9.4
+      ]
+    },
+    {
+      "name": "tentacle_3",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        0,
+        3.5
+      ],
+      "rotation": [
+        -36.7,
+        0,
+        9.8
+      ]
+    },
+    {
+      "name": "tentacle_3_s2",
+      "parent": "tentacle_3",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        -4,
+        3.5
+      ],
+      "rotation": [
+        12.8,
+        0,
+        -3.4
+      ]
+    },
+    {
+      "name": "tentacle_4",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        0,
+        3.5
+      ],
+      "rotation": [
+        -36.7,
+        0,
+        -9.8
+      ]
+    },
+    {
+      "name": "tentacle_4_s2",
+      "parent": "tentacle_4",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        -4,
+        3.5
+      ],
+      "rotation": [
+        12.8,
+        0,
+        3.4
+      ]
+    },
+    {
+      "name": "tentacle_5",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        0,
+        3.5
+      ],
+      "rotation": [
+        -26.9,
+        0,
+        -26.9
+      ]
+    },
+    {
+      "name": "tentacle_5_s2",
+      "parent": "tentacle_5",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        -4,
+        3.5
+      ],
+      "rotation": [
+        9.4,
+        0,
+        9.4
+      ]
+    },
+    {
+      "name": "tentacle_6",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        0,
+        1
+      ],
+      "rotation": [
+        -9.8,
+        0,
+        -36.7
+      ]
+    },
+    {
+      "name": "tentacle_6_s2",
+      "parent": "tentacle_6",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        -4,
+        1
+      ],
+      "rotation": [
+        3.4,
+        0,
+        12.8
+      ]
+    },
+    {
+      "name": "tentacle_7",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        0,
+        -1
+      ],
+      "rotation": [
+        9.8,
+        0,
+        -36.7
+      ]
+    },
+    {
+      "name": "tentacle_7_s2",
+      "parent": "tentacle_7",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        -4,
+        -1
+      ],
+      "rotation": [
+        -3.4,
+        0,
+        12.8
+      ]
+    },
+    {
+      "name": "tentacle_8",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        0,
+        -3.5
+      ],
+      "rotation": [
+        26.9,
+        0,
+        -26.9
+      ]
+    },
+    {
+      "name": "tentacle_8_s2",
+      "parent": "tentacle_8",
+      "role": "tentacle",
+      "pivot": [
+        -3.5,
+        -4,
+        -3.5
+      ],
+      "rotation": [
+        -9.4,
+        0,
+        9.4
+      ]
+    },
+    {
+      "name": "tentacle_9",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        0,
+        -3.5
+      ],
+      "rotation": [
+        36.7,
+        0,
+        -9.8
+      ]
+    },
+    {
+      "name": "tentacle_9_s2",
+      "parent": "tentacle_9",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        -4,
+        -3.5
+      ],
+      "rotation": [
+        -12.8,
+        0,
+        3.4
+      ]
+    },
+    {
+      "name": "tentacle_10",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        0,
+        -3.5
+      ],
+      "rotation": [
+        36.7,
+        0,
+        9.8
+      ]
+    },
+    {
+      "name": "tentacle_10_s2",
+      "parent": "tentacle_10",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        -4,
+        -3.5
+      ],
+      "rotation": [
+        -12.8,
+        0,
+        -3.4
+      ]
+    },
+    {
+      "name": "tentacle_11",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        0,
+        -3.5
+      ],
+      "rotation": [
+        26.9,
+        0,
+        26.9
+      ]
+    },
+    {
+      "name": "tentacle_11_s2",
+      "parent": "tentacle_11",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        -4,
+        -3.5
+      ],
+      "rotation": [
+        -9.4,
+        0,
+        -9.4
+      ]
+    },
+    {
+      "name": "tentacle_12",
+      "parent": "bell",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        0,
+        -1
+      ],
+      "rotation": [
+        9.8,
+        0,
+        36.7
+      ]
+    },
+    {
+      "name": "tentacle_12_s2",
+      "parent": "tentacle_12",
+      "role": "tentacle",
+      "pivot": [
+        3.5,
+        -4,
+        -1
+      ],
+      "rotation": [
+        -3.4,
+        0,
+        -12.8
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 6,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_1_s2",
+        "tentacle_2",
+        "tentacle_2_s2",
+        "tentacle_3",
+        "tentacle_3_s2",
+        "tentacle_4",
+        "tentacle_4_s2",
+        "tentacle_5",
+        "tentacle_5_s2",
+        "tentacle_6",
+        "tentacle_6_s2",
+        "tentacle_7",
+        "tentacle_7_s2",
+        "tentacle_8",
+        "tentacle_8_s2",
+        "tentacle_9",
+        "tentacle_9_s2",
+        "tentacle_10",
+        "tentacle_10_s2",
+        "tentacle_11",
+        "tentacle_11_s2",
+        "tentacle_12",
+        "tentacle_12_s2"
+      ],
+      "description": "Drifting: the bell breathes slowly, tentacles and arms sway out of phase"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 0.8,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_1_s2",
+        "tentacle_2",
+        "tentacle_2_s2",
+        "tentacle_3",
+        "tentacle_3_s2",
+        "tentacle_4",
+        "tentacle_4_s2",
+        "tentacle_5",
+        "tentacle_5_s2",
+        "tentacle_6",
+        "tentacle_6_s2",
+        "tentacle_7",
+        "tentacle_7_s2",
+        "tentacle_8",
+        "tentacle_8_s2",
+        "tentacle_9",
+        "tentacle_9_s2",
+        "tentacle_10",
+        "tentacle_10_s2",
+        "tentacle_11",
+        "tentacle_11_s2",
+        "tentacle_12",
+        "tentacle_12_s2"
+      ],
+      "description": "Escape: rapid bell strokes, tentacles swept back together"
+    },
+    {
+      "name": "pulse",
+      "loop": "once",
+      "length": 1.4,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_1_s2",
+        "tentacle_2",
+        "tentacle_2_s2",
+        "tentacle_3",
+        "tentacle_3_s2",
+        "tentacle_4",
+        "tentacle_4_s2",
+        "tentacle_5",
+        "tentacle_5_s2",
+        "tentacle_6",
+        "tentacle_6_s2",
+        "tentacle_7",
+        "tentacle_7_s2",
+        "tentacle_8",
+        "tentacle_8_s2",
+        "tentacle_9",
+        "tentacle_9_s2",
+        "tentacle_10",
+        "tentacle_10_s2",
+        "tentacle_11",
+        "tentacle_11_s2",
+        "tentacle_12",
+        "tentacle_12_s2"
+      ],
+      "description": "One bell stroke: a quick contraction, a slow relaxation; tentacles gather then trail"
+    },
+    {
+      "name": "spread",
+      "loop": "hold",
+      "length": 0.8,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_1_s2",
+        "tentacle_2",
+        "tentacle_2_s2",
+        "tentacle_3",
+        "tentacle_3_s2",
+        "tentacle_4",
+        "tentacle_4_s2",
+        "tentacle_5",
+        "tentacle_5_s2",
+        "tentacle_6",
+        "tentacle_6_s2",
+        "tentacle_7",
+        "tentacle_7_s2",
+        "tentacle_8",
+        "tentacle_8_s2",
+        "tentacle_9",
+        "tentacle_9_s2",
+        "tentacle_10",
+        "tentacle_10_s2",
+        "tentacle_11",
+        "tentacle_11_s2",
+        "tentacle_12",
+        "tentacle_12_s2"
+      ],
+      "description": "Defence: tentacles flare out wide and stiffen, the bell swells"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.6,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_2",
+        "tentacle_3",
+        "tentacle_4",
+        "tentacle_5",
+        "tentacle_6",
+        "tentacle_7",
+        "tentacle_8",
+        "tentacle_9",
+        "tentacle_10",
+        "tentacle_11",
+        "tentacle_12"
+      ],
+      "description": "Flinch: a hard contraction, tentacles snap inward"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.4,
+      "bones": [
+        "bell",
+        "tentacle_1",
+        "tentacle_1_s2",
+        "tentacle_2",
+        "tentacle_2_s2",
+        "tentacle_3",
+        "tentacle_3_s2",
+        "tentacle_4",
+        "tentacle_4_s2",
+        "tentacle_5",
+        "tentacle_5_s2",
+        "tentacle_6",
+        "tentacle_6_s2",
+        "tentacle_7",
+        "tentacle_7_s2",
+        "tentacle_8",
+        "tentacle_8_s2",
+        "tentacle_9",
+        "tentacle_9_s2",
+        "tentacle_10",
+        "tentacle_10_s2",
+        "tentacle_11",
+        "tentacle_11_s2",
+        "tentacle_12",
+        "tentacle_12_s2"
+      ],
+      "description": "The bell stops, sags and flattens; tentacles and arms go limp"
+    }
+  ],
+  "definition": {
+    "template": "medusa",
+    "category": "hydromedusa",
+    "body": {
+      "width": 8,
+      "height": 7
+    },
+    "parts": [
+      "bell",
+      "stomach",
+      "tentacles"
+    ],
+    "params": {
+      "bell": {
+        "profile": "dome",
+        "tiers": 3,
+        "alpha": 95
+      },
+      "stomach": {
+        "enabled": true,
+        "width": 2,
+        "height": 3
+      },
+      "groove": {
+        "enabled": false,
+        "sectors": 8,
+        "height": 1,
+        "at": 0.35
+      },
+      "lappets": {
+        "enabled": false,
+        "height": 2
+      },
+      "tentacles": {
+        "count": 12,
+        "length": 8,
+        "segments": 2,
+        "width": 1,
+        "spread": 38
+      },
+      "long_tentacle": {
+        "enabled": false,
+        "length": 24,
+        "segments": 3
+      },
+      "oral_arms": {
+        "count": 0,
+        "length": 16,
+        "width": 3,
+        "segments": 3
+      }
+    },
+    "palette": {
+      "dome": "#c9d3de",
+      "body": "#aebccb",
+      "flesh": "#b7c8da",
+      "glow": "#6fb2ff"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.25,
+      "countershade": 0.2
+    },
+    "glow": [
+      {
+        "part": "bell",
+        "intensity": 0.9,
+        "color": "glow"
+      }
+    ],
+    "animations": [
+      "idle",
+      "swim",
+      "pulse",
+      "spread",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 1,
+      "amplitude": 1
+    },
+    "variation": {
+      "bell": 0.08,
+      "tentacles": 0.12,
+      "hue": 6,
+      "lightness": 0.04
+    },
+    "id": "silky_medusa",
+    "name": "Silky Medusa",
+    "name_ja": "ニジクラゲ",
+    "scientific_name": "Colobonema sericeum",
+    "habitat": "mesopelagic",
+    "order": 18,
+    "notes": "Small, silky semi-transparent hydromedusa with a tall bell, 32 fine curly tentacles spread out at rest (sheds them as sticky decoys when fleeing) and brilliant blue flashes from the bell."
+  }
+}

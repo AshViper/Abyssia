@@ -1,0 +1,29 @@
+{
+  "entity": "abyssia:brittle_star",
+  "role": "passive",
+  "weight": 14,
+  "group": {
+    "min": 3,
+    "max": 6
+  },
+  "depth_m": {
+    "min": 100,
+    "core_min": 200,
+    "core_max": 600,
+    "max": 3000
+  },
+  "placement": "seabed",
+  "cave_factor": 0.3,
+  "open_factor": 1.0,
+  "max_light": 12,
+  "cap": {
+    "count": 24,
+    "radius": 32
+  },
+  "substrate": [
+    {
+      "blocks": "#abyssia:fauna/soft_sediment",
+      "factor": 3.0
+    }
+  ]
+}

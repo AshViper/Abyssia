@@ -1,0 +1,125 @@
+{
+	"id": "tripod_fish",
+	"name": "Tripod Fish",
+	"name_ja": "オオイトヒキイワシ",
+	"scientific_name": "Bathypterois grallator",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "abyssal_floor",
+	"order": 22,
+	"notes": "Slender silvery-white body, darker head, tiny eyes; stands on three very long stiff fin rays (the two pelvic rays and the lower caudal ray, up to 3x body length) facing the current, with long pectoral rays swept forward and up like antennae. Approximation: the pelvic fins are the two front stilts, the anal fin at the very back stands in for the lower caudal ray, and the pectoral fins are narrow rays yawed forward.",
+	"body": {
+		"length": 14,
+		"width": 3,
+		"height": 3,
+		"round": 0
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 5,
+			"width": 3,
+			"height": 4,
+			"drop": 0,
+			"round": 0
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"underbite": 0,
+			"gape": 30,
+			"rest_gape": 0,
+			"width": 1,
+			"round": 0
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.7,
+			"forward": 0.35,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 1,
+			"length": 3,
+			"width": 2,
+			"height": 2,
+			"taper": 0.8
+		},
+		"caudal": {
+			"length": 3,
+			"height": 5,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 10,
+			"height": 1,
+			"angle": 160,
+			"droop": -35,
+			"position": 0.05
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 1,
+			"height": 14,
+			"position": 0.12
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 3,
+			"height": 3,
+			"position": 0.2,
+			"apex": 0.6
+		},
+		"anal": {
+			"enabled": true,
+			"length": 1,
+			"height": 14,
+			"position": 1
+		}
+	},
+	"palette": {
+		"body": "#b5b8ba",
+		"belly": "#c8c9c6",
+		"fin": "#595e66",
+		"mouth": "#4a3a40",
+		"lip": "#6a6e74",
+		"eye": "#0c0e12",
+		"eye_iris": "#4a5058",
+		"eye_ring": "#3a3f48"
+	},
+	"texture": {
+		"pattern": "scales",
+		"pattern_strength": 0.35,
+		"pattern_scale": 1,
+		"countershade": 0.6
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.7,
+		"amplitude": 0.7
+	},
+	"variation": {
+		"body": 0.06,
+		"head": 0.06,
+		"fin": 0.08,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

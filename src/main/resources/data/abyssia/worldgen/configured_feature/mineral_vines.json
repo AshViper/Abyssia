@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 12,
+    "xz_spread": 4,
+    "y_spread": 1,
+    "feature": {
+      "feature": {
+        "type": "abyssia:column_plant",
+        "config": {
+          "head": {
+            "Name": "abyssia:mineral_vine",
+            "Properties": {
+              "top": "true"
+            }
+          },
+          "body": {
+            "Name": "abyssia:mineral_vine",
+            "Properties": {
+              "top": "false"
+            }
+          },
+          "min_height": 1,
+          "max_height": 3,
+          "cluster_scale": 0.1
+        }
+      },
+      "placement": []
+    }
+  }
+}

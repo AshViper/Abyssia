@@ -1,0 +1,682 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "frilled_shark",
+  "name": "Frilled Shark",
+  "template": "eel",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": true,
+    "size_units": [
+      9.62,
+      7.22,
+      55
+    ],
+    "size_blocks": [
+      0.6,
+      0.45,
+      3.44
+    ],
+    "core_size_blocks": [
+      0.31,
+      0.38,
+      2.88
+    ],
+    "cubes": 42
+  },
+  "bones": [
+    {
+      "name": "frilled_shark",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "frilled_shark",
+      "role": "body",
+      "pivot": [
+        0,
+        3.2214,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_2",
+      "parent": "body",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.2214,
+        -11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_3",
+      "parent": "body_2",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.2214,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_4",
+      "parent": "body_3",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.2214,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_5",
+      "parent": "body_4",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.2214,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_6",
+      "parent": "body_5",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.2214,
+        12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_7",
+      "parent": "body_6",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.2214,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        3.2214,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mouth",
+      "parent": "head",
+      "role": "jaw",
+      "pivot": [
+        0,
+        3.2214,
+        -18
+      ],
+      "rotation": [
+        -5,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lower_teeth",
+      "parent": "mouth",
+      "role": "teeth",
+      "pivot": [
+        0,
+        3.2214,
+        -23
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper_teeth",
+      "parent": "head",
+      "role": "teeth",
+      "pivot": [
+        0,
+        3.2214,
+        -23
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        2.5,
+        5.7214,
+        -21.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        -2.5,
+        5.7214,
+        -21.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_gills",
+      "parent": "body",
+      "role": "gills",
+      "pivot": [
+        2.5,
+        3.2214,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_gills",
+      "parent": "body",
+      "role": "gills",
+      "pivot": [
+        -2.5,
+        3.2214,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        2.5,
+        3.2214,
+        -10
+      ],
+      "rotation": [
+        0,
+        45,
+        -15
+      ]
+    },
+    {
+      "name": "left_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        -2.5,
+        3.2214,
+        -10
+      ],
+      "rotation": [
+        0,
+        -45,
+        15
+      ]
+    },
+    {
+      "name": "right_pelvic_fin",
+      "parent": "body_5",
+      "role": "pelvic",
+      "pivot": [
+        1,
+        2.2214,
+        8
+      ],
+      "rotation": [
+        -20,
+        20,
+        0
+      ]
+    },
+    {
+      "name": "left_pelvic_fin",
+      "parent": "body_5",
+      "role": "pelvic",
+      "pivot": [
+        -1,
+        2.2214,
+        8
+      ],
+      "rotation": [
+        -20,
+        -20,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin",
+      "parent": "body_5",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        5.2214,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_2",
+      "parent": "body_6",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        5.2214,
+        12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin",
+      "parent": "body_5",
+      "role": "anal",
+      "pivot": [
+        0,
+        2.2214,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin_2",
+      "parent": "body_6",
+      "role": "anal",
+      "pivot": [
+        0,
+        2.2214,
+        12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_fin",
+      "parent": "body_7",
+      "role": "tail_fin",
+      "pivot": [
+        0,
+        3.2214,
+        23
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 4.44,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "head",
+        "mouth",
+        "right_fin",
+        "left_fin",
+        "right_gills",
+        "left_gills"
+      ],
+      "description": "Hovering: slow shallow undulation, breathing jaw, drifting fins"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 1.56,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "head",
+        "tail_fin",
+        "right_fin",
+        "left_fin",
+        "right_gills",
+        "left_gills",
+        "mouth"
+      ],
+      "description": "Swimming: travelling wave from head to tail"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.61,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "mouth"
+      ],
+      "description": "Recoil: the body kinks and snaps back"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2,
+      "bones": [
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body",
+        "mouth"
+      ],
+      "description": "Coils up, rolls onto its side and sinks"
+    },
+    {
+      "name": "mouth_open",
+      "loop": "hold",
+      "length": 0.67,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Opens the jaw wide"
+    },
+    {
+      "name": "mouth_close",
+      "loop": "once",
+      "length": 0.44,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Closes the jaw"
+    }
+  ],
+  "definition": {
+    "template": "eel",
+    "category": "eel",
+    "body": {
+      "length": 40,
+      "width": 5,
+      "height": 5,
+      "segments": 7,
+      "taper": 0.45
+    },
+    "parts": [
+      "body",
+      "head",
+      "mouth",
+      "teeth",
+      "eye",
+      "gills",
+      "fin",
+      "tail"
+    ],
+    "params": {
+      "head": {
+        "length": 6,
+        "width": 5,
+        "height": 5,
+        "round": 1
+      },
+      "mouth": {
+        "jaw_height": 2,
+        "jaw_length": 6,
+        "upper_length": 6,
+        "width": 1,
+        "gape": 45,
+        "rest_gape": 5,
+        "pouch": 0
+      },
+      "teeth": {
+        "count": 5,
+        "length": 1,
+        "rows": 2
+      },
+      "eye": {
+        "size": 1,
+        "height": 0.75,
+        "forward": 0.3,
+        "protrude": 0.5
+      },
+      "gills": {
+        "frills": 6,
+        "height": 6,
+        "spacing": 1
+      },
+      "pectoral": {
+        "enabled": true,
+        "length": 3,
+        "height": 2,
+        "angle": 45
+      },
+      "dorsal": {
+        "enabled": true,
+        "start": 0.72,
+        "end": 0.86,
+        "height": 2
+      },
+      "anal": {
+        "enabled": true,
+        "start": 0.62,
+        "end": 0.84,
+        "height": 2
+      },
+      "pelvic": {
+        "enabled": true,
+        "length": 3,
+        "height": 2,
+        "position": 0.6
+      },
+      "caudal": {
+        "enabled": true,
+        "length": 9,
+        "height": 5,
+        "shape": "taper"
+      },
+      "tail_tip": {
+        "enabled": false,
+        "size": 2
+      }
+    },
+    "palette": {
+      "body": "#434b46",
+      "belly": "#566058",
+      "fin": "#3d4540",
+      "mouth": "#6a2f3e",
+      "lip": "#3a423d",
+      "gill": "#8f4450",
+      "teeth": "#e8e6dc",
+      "eye": "#0c0e12",
+      "eye_iris": "#6f8f84",
+      "eye_ring": "#2f3632",
+      "glow": "#9fe8d8",
+      "glow_eye": "#9ab8ae"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.45,
+      "countershade": 1
+    },
+    "glow": [
+      {
+        "part": "eyes",
+        "intensity": 0.35,
+        "color": "glow_eye"
+      }
+    ],
+    "animations": [
+      "idle",
+      "swim",
+      "hurt",
+      "death",
+      "mouth_open",
+      "mouth_close"
+    ],
+    "animation": {
+      "speed": 0.9,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "head": 0.06,
+      "mouth": 0.08,
+      "fin": 0.12,
+      "eye": 0.1,
+      "glow": 0.2,
+      "hue": 6,
+      "lightness": 0.03
+    },
+    "id": "frilled_shark",
+    "name": "Frilled Shark",
+    "name_ja": "ラブカ",
+    "scientific_name": "Chlamydoselachus anguineus",
+    "habitat": "continental_slope",
+    "order": 7,
+    "notes": "Eel-like primitive shark: flat snake-like head with a terminal mouth full of small trident teeth, six pairs of frilly gill slits (the first meeting under the throat), fins set far back and a long low tail."
+  }
+}

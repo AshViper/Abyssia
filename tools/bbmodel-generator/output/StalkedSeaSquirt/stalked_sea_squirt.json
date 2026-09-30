@@ -1,0 +1,294 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "stalked_sea_squirt",
+  "name": "Stalked Sea Squirt",
+  "template": "photo",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      128,
+      64
+    ],
+    "texture_image": [
+      128,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      13,
+      28,
+      13
+    ],
+    "size_blocks": [
+      0.81,
+      1.75,
+      0.81
+    ],
+    "core_size_blocks": [
+      0.81,
+      1.75,
+      0.81
+    ],
+    "cubes": 24
+  },
+  "bones": [
+    {
+      "name": "stalked_sea_squirt",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "base",
+      "parent": "stalked_sea_squirt",
+      "role": "body",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "part_2",
+      "parent": "base",
+      "role": "segment",
+      "pivot": [
+        -0.5,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "part_3",
+      "parent": "part_2",
+      "role": "segment",
+      "pivot": [
+        0.5,
+        15,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "part_4",
+      "parent": "part_3",
+      "role": "segment",
+      "pivot": [
+        0,
+        22,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 4,
+      "bones": [
+        "part_2",
+        "part_3",
+        "part_4"
+      ],
+      "description": "Barely sways in the current; the top slowly breathes"
+    },
+    {
+      "name": "sway",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "base",
+        "part_2",
+        "part_3",
+        "part_4"
+      ],
+      "description": "Current sway: the stalk bends, the top follows with a delay"
+    },
+    {
+      "name": "contract",
+      "loop": "once",
+      "length": 1.6,
+      "bones": [
+        "part_4"
+      ],
+      "description": "Squeezes the top (siphon contraction) and slowly refills"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.8,
+      "bones": [
+        "part_4",
+        "part_2",
+        "part_3"
+      ],
+      "description": "Flinch: the top squeezes, the stalk jerks back"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2,
+      "bones": [
+        "part_2",
+        "part_3",
+        "part_4"
+      ],
+      "description": "Wilts: the stalk bends over and the top deflates"
+    }
+  ],
+  "definition": {
+    "template": "photo",
+    "category": "photo",
+    "body": {
+      "length": 13,
+      "width": 13,
+      "height": 28
+    },
+    "parts": [],
+    "params": {
+      "photo": {
+        "mode": "lathe",
+        "height": 28,
+        "width_scale": 1,
+        "depth_ratio": 1,
+        "segments": 0,
+        "round": true,
+        "grid": [
+          "...0025655...",
+          "..026765620..",
+          ".1377776650..",
+          ".3677777763..",
+          "136777777651.",
+          "256777777753.",
+          "2567777777653",
+          "5666677766655",
+          "5666666666666",
+          "5666666666666",
+          ".55555566666.",
+          ".35544445542.",
+          ".333544444...",
+          "..333333.....",
+          "..333333.....",
+          "..333333.....",
+          "..333333.....",
+          "..553335.....",
+          "...555555....",
+          "...4555555...",
+          "...5455566...",
+          "..544545.....",
+          "..545545.....",
+          "..545544.....",
+          "..545544.....",
+          "...242225....",
+          "...211112....",
+          "...111124...."
+        ],
+        "source": {
+          "file": "samples/stalked_ascidian.png",
+          "crop": {
+            "x": 235,
+            "y": 90,
+            "w": 195,
+            "h": 370
+          },
+          "threshold": 4,
+          "rows": 28,
+          "colors": 8
+        }
+      }
+    },
+    "palette": {
+      "p0": "#233643",
+      "p1": "#525554",
+      "p2": "#6b7173",
+      "p3": "#758997",
+      "body": "#909da5",
+      "p4": "#8b8984",
+      "p5": "#909da5",
+      "p6": "#a7b7c3",
+      "p7": "#c1d4e2"
+    },
+    "texture": {
+      "pattern": "plain"
+    },
+    "glow": [],
+    "animations": [
+      "idle",
+      "sway",
+      "contract",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 1,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.06,
+      "height": 0.08,
+      "hue": 4,
+      "lightness": 0.03
+    },
+    "id": "stalked_sea_squirt",
+    "name": "Stalked Sea Squirt"
+  }
+}

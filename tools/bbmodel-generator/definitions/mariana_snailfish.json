@@ -1,0 +1,118 @@
+{
+	"id": "mariana_snailfish",
+	"name": "Mariana Snailfish",
+	"name_ja": "マリアナスネイルフィッシュ",
+	"scientific_name": "Pseudoliparis swirei",
+	"category": "deep_sea_fish",
+	"template": "eel",
+	"habitat": "hadal_trench",
+	"order": 63,
+	"notes": "Tadpole-shaped hadal snailfish: broad soft head with tiny eyes and a wide toothless mouth, big fan-like pectoral fins, a gelatinous translucent pinkish-white body tapering into a long tail wrapped in continuous dorsal and anal fins that merge with the small tail fin; unpigmented skin shows the pink organs beneath.",
+	"body": {
+		"length": 22,
+		"width": 6,
+		"height": 6,
+		"segments": 5,
+		"taper": 0.15
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 6,
+			"width": 8,
+			"height": 7,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"jaw_length": 4,
+			"upper_length": 4,
+			"width": 1,
+			"gape": 30,
+			"rest_gape": 3,
+			"pouch": 0
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.75,
+			"forward": 0.3,
+			"protrude": 0.3
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 5,
+			"height": 4,
+			"angle": 35
+		},
+		"pelvic": {
+			"enabled": false
+		},
+		"dorsal": {
+			"enabled": true,
+			"start": 0.12,
+			"end": 1.0,
+			"height": 3
+		},
+		"anal": {
+			"enabled": true,
+			"start": 0.3,
+			"end": 1.0,
+			"height": 3
+		},
+		"caudal": {
+			"enabled": true,
+			"length": 3,
+			"height": 3,
+			"shape": "round"
+		},
+		"tail_tip": {
+			"enabled": false
+		}
+	},
+	"palette": {
+		"body": "#e2c4c2",
+		"belly": "#eed2cf",
+		"fin": "#d8bcbc",
+		"mouth": "#c58a90",
+		"lip": "#dcb8b6",
+		"eye": "#1a1418",
+		"eye_iris": "#6a5a60",
+		"eye_ring": "#c8a8a8",
+		"glow": "#ffd0d0",
+		"glow_eye": "#b0a0a4"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.2,
+		"countershade": 0.2
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"mouth": 0.06,
+		"fin": 0.1,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

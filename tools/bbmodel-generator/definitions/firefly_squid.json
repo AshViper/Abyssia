@@ -1,0 +1,117 @@
+{
+	"id": "firefly_squid",
+	"name": "Firefly Squid",
+	"name_ja": "ホタルイカ",
+	"scientific_name": "Watasenia scintillans",
+	"category": "cephalopod",
+	"template": "squid",
+	"habitat": "mesopelagic",
+	"order": 54,
+	"notes": "Small (~7 cm mantle) slender reddish-brown squid with rhomboid terminal fins, large eyes, eight arms and two hooked club tentacles. Three large photophores tip each ventral (fourth) arm and flash bright blue; five small organs line the lower edge of each eye; 800-1000 minute blue and green photophores dot the underside for counter-illumination.",
+	"body": {
+		"length": 12,
+		"width": 4,
+		"height": 4,
+		"taper": 0.4,
+		"segments": 3
+	},
+	"parts": [
+		"body",
+		"head",
+		"eye",
+		"arms",
+		"tentacles",
+		"fin",
+		"beak"
+	],
+	"params": {
+		"head": {
+			"length": 3,
+			"width": 4,
+			"height": 4
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.55,
+			"forward": 0.5,
+			"protrude": 0.35
+		},
+		"arms": {
+			"count": 8,
+			"length": 6,
+			"segments": 3,
+			"width": 1,
+			"taper": 0.6,
+			"splay": 10,
+			"ring": 0.75
+		},
+		"tentacles": {
+			"count": 2,
+			"length": 9,
+			"segments": 2,
+			"width": 1,
+			"club": 2,
+			"club_width": 1
+		},
+		"fins": {
+			"length": 5,
+			"width": 3,
+			"position": 1,
+			"shape": "sail"
+		},
+		"beak": {
+			"enabled": true,
+			"size": 1
+		}
+	},
+	"palette": {
+		"body": "#8a4a3e",
+		"belly": "#a8685a",
+		"fin": "#94574a",
+		"sucker": "#c89a88",
+		"mouth": "#2a1e22",
+		"eye": "#0b0c10",
+		"eye_iris": "#6f7f92",
+		"eye_ring": "#5e2f28",
+		"eye_glint": "#e6f0f6",
+		"glow": "#3f8cff",
+		"glow_skin": "#5fc8e8",
+		"glow_green": "#6fe0a8"
+	},
+	"texture": {
+		"pattern": "spots",
+		"pattern_strength": 0.6,
+		"pattern_scale": 0.7,
+		"countershade": 0.5
+	},
+	"glow": [
+		{ "part": "arm_4_3", "intensity": 1.6, "anchor": [0.5, 0.5, 0], "radius": 1.1 },
+		{ "part": "arm_5_3", "intensity": 1.6, "anchor": [0.5, 0.5, 0], "radius": 1.1 },
+		{ "part": "right_eye", "intensity": 0.8, "anchor": [0.5, 0, 0.5], "radius": 0.6 },
+		{ "part": "left_eye", "intensity": 0.8, "anchor": [0.5, 0, 0.5], "radius": 0.6 },
+		{ "part": "body", "intensity": 0.9, "anchor": [0.5, 0.5, 0.5], "scatter": 12, "faces": ["east", "west", "north"], "radius": 0.45, "color": "glow_skin" },
+		{ "part": "mantle", "intensity": 0.9, "anchor": [0.5, 0.5, 0.5], "scatter": 10, "faces": ["east", "west"], "radius": 0.45, "color": "glow_green" }
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"tentacle_move",
+		"grab",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1.1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"arms": 0.1,
+		"tentacles": 0.12,
+		"fin": 0.12,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

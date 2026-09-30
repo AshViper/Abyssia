@@ -1,0 +1,71 @@
+{
+	"id": "tubeworm",
+	"name": "Giant Tubeworm",
+	"name_ja": "チューブワーム",
+	"scientific_name": "Riftia pachyptila",
+	"category": "tubeworm",
+	"template": "worm",
+	"habitat": "hydrothermal_vent",
+	"order": 10,
+	"notes": "Colony of tall white chitin tubes rooted in hydrothermal vent rock, each crowned by a blood-red feathery plume (haemoglobin-rich gills) that retracts when disturbed.",
+	"body": {
+		"length": 12,
+		"width": 12,
+		"height": 18
+	},
+	"parts": [
+		"base",
+		"tube",
+		"plume"
+	],
+	"params": {
+		"colony": {
+			"count": 6,
+			"spread": 1,
+			"base": true,
+			"base_height": 3
+		},
+		"tube": {
+			"width": 2,
+			"height": 18,
+			"variance": 0.35,
+			"segments": 3,
+			"tilt": 7
+		},
+		"plume": {
+			"length": 5,
+			"width": 4,
+			"filaments": 2,
+			"collar": true
+		}
+	},
+	"palette": {
+		"tube": "#d5cebd",
+		"plume": "#b23a44",
+		"rock": "#3a3432",
+		"body": "#3a3432"
+	},
+	"texture": {
+		"pattern": "plain"
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"sway",
+		"retract",
+		"extend",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.06,
+		"tube": 0.15,
+		"plume": 0.12,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

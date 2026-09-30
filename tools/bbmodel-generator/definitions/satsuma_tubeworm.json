@@ -1,0 +1,71 @@
+{
+	"id": "satsuma_tubeworm",
+	"name": "Satsuma Tubeworm",
+	"name_ja": "サツマハオリムシ",
+	"scientific_name": "Lamellibrachia satsuma",
+	"category": "tubeworm",
+	"template": "worm",
+	"habitat": "hydrothermal_vent",
+	"order": 16,
+	"notes": "Japanese vestimentiferan from Kagoshima Bay vents and seeps: thin, very long beige tubes in a dense bush, crowned with small orange-red plumes.",
+	"body": {
+		"length": 12,
+		"width": 12,
+		"height": 24
+	},
+	"parts": [
+		"base",
+		"tube",
+		"plume"
+	],
+	"params": {
+		"colony": {
+			"count": 9,
+			"spread": 1,
+			"base": true,
+			"base_height": 2
+		},
+		"tube": {
+			"width": 1,
+			"height": 24,
+			"variance": 0.4,
+			"segments": 3,
+			"tilt": 10
+		},
+		"plume": {
+			"length": 3,
+			"width": 3,
+			"filaments": 2,
+			"collar": false
+		}
+	},
+	"palette": {
+		"tube": "#bca98a",
+		"plume": "#c9533c",
+		"rock": "#463c34",
+		"body": "#463c34"
+	},
+	"texture": {
+		"pattern": "plain"
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"sway",
+		"retract",
+		"extend",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.06,
+		"tube": 0.15,
+		"plume": 0.12,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

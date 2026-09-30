@@ -1,0 +1,105 @@
+{
+	"archetype": "sea_slug",
+	"captions": {
+		"en": [
+			"a swimming pink sea cucumber with a veil-like front fin",
+			"translucent pink deep-sea cucumber"
+		],
+		"ja": [
+			"ベールのようなひれで泳ぐピンクのナマコ",
+			"半透明のピンクのユメナマコ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "body",
+				"shape": "profile",
+				"size": [
+					9,
+					9,
+					16
+				],
+				"axis": "-z",
+				"center": true,
+				"profile": [
+					0.6,
+					0.9,
+					1,
+					1,
+					0.9,
+					0.7
+				],
+				"segments": 3,
+				"color": "#c87a90"
+			},
+			{
+				"name": "veil",
+				"shape": "plane",
+				"size": [
+					11,
+					0,
+					7
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.9,
+					0.05
+				],
+				"axis": "-z",
+				"outline": "round",
+				"rotate": [
+					-35,
+					0,
+					0
+				],
+				"color": "#e8b0c0"
+			},
+			{
+				"name": "tail_fin",
+				"shape": "plane",
+				"size": [
+					9,
+					0,
+					5
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.7,
+					1
+				],
+				"axis": "z",
+				"outline": "round",
+				"color": "#e8b0c0"
+			},
+			{
+				"name": "papilla",
+				"shape": "cone",
+				"size": [
+					1,
+					2,
+					1
+				],
+				"parent": "body",
+				"at": [
+					0.7,
+					0,
+					0.3
+				],
+				"axis": "-y",
+				"count": 4,
+				"arrange": "row",
+				"spacing": [
+					0,
+					0,
+					3
+				],
+				"mirror": true,
+				"color": "#e8f0f8"
+			}
+		]
+	}
+}

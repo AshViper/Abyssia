@@ -1,0 +1,155 @@
+{
+  "category": "thermal",
+  "tier": "small",
+  "footprint_radius": 16,
+  "max_height": 8,
+  "formation": {
+    "type": "volcano",
+    "radius": [
+      5,
+      8
+    ],
+    "height": [
+      3,
+      7
+    ],
+    "crater": [
+      0.3,
+      0.4
+    ],
+    "crater_depth": [
+      0.3,
+      0.5
+    ],
+    "gullies": 0.3,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:volcanic_rock"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:black_vent_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "rim": [
+      {
+        "data": {
+          "Name": "abyssia:black_vent_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:volcanic_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "crater_floor": [
+      {
+        "data": {
+          "Name": "abyssia:molten_volcanic_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:volcanic_glass"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:volcanic_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:thermal_vent",
+          "Properties": {
+            "type": "black_smoker",
+            "activity": "strong"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "ash": [
+      {
+        "data": {
+          "Name": "abyssia:volcanic_ash"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:volcanic_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "ash_radius": 1.8,
+    "lava": 0
+  },
+  "conditions": {
+    "max_slope": 0.5
+  },
+  "dressing": {
+    "radius": 14,
+    "density": 0.15,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:heat_moss"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_plant"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_tube"
+          },
+          "max_height": 4
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cinder_stalk"
+          }
+        },
+        "weight": 2
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:vent_eelpout"
+  ]
+}

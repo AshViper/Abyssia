@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 20,
+    "xz_spread": 4,
+    "y_spread": 1,
+    "feature": {
+      "feature": {
+        "type": "abyssia:column_plant",
+        "config": {
+          "head": {
+            "Name": "abyssia:tube_plant",
+            "Properties": {
+              "top": "true"
+            }
+          },
+          "body": {
+            "Name": "abyssia:tube_plant",
+            "Properties": {
+              "top": "false"
+            }
+          },
+          "min_height": 2,
+          "max_height": 8,
+          "cluster_scale": 0.08
+        }
+      },
+      "placement": []
+    }
+  }
+}

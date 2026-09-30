@@ -1,0 +1,1294 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "bigfin_squid",
+  "name": "Bigfin Squid",
+  "template": "parts",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      25.36,
+      66.82,
+      25.86
+    ],
+    "size_blocks": [
+      1.58,
+      4.18,
+      1.62
+    ],
+    "core_size_blocks": [
+      0.31,
+      1.12,
+      0.31
+    ],
+    "cubes": 70
+  },
+  "bones": [
+    {
+      "name": "bigfin_squid",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mantle",
+      "parent": "bigfin_squid",
+      "role": "body",
+      "pivot": [
+        0,
+        51.8218,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "fin_right",
+      "parent": "mantle",
+      "role": "fin",
+      "pivot": [
+        3,
+        60.3218,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "fin_left",
+      "parent": "mantle",
+      "role": "fin",
+      "pivot": [
+        -2,
+        60.3218,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "mantle",
+      "role": "head",
+      "pivot": [
+        0.5,
+        51.8218,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "eye_right",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        3,
+        49.8218,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "eye_left",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        -2,
+        49.8218,
+        -0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_1",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        47.8218,
+        -2
+      ],
+      "rotation": [
+        80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_1",
+      "parent": "arm_1",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        39.8218,
+        -2
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_1_2",
+      "parent": "filament_1",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        27.8218,
+        -2
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_1_3",
+      "parent": "filament_1_2",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        16.8218,
+        -2
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_1_4",
+      "parent": "filament_1_3",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        4.8218,
+        -2
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_2",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        47.8218,
+        -1.5
+      ],
+      "rotation": [
+        80,
+        36,
+        0
+      ]
+    },
+    {
+      "name": "filament_2",
+      "parent": "arm_2",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        39.8218,
+        -1
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_2_2",
+      "parent": "filament_2",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        27.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_2_3",
+      "parent": "filament_2_2",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        16.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_2_4",
+      "parent": "filament_2_3",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        4.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_3",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        47.8218,
+        -1
+      ],
+      "rotation": [
+        80,
+        72,
+        0
+      ]
+    },
+    {
+      "name": "filament_3",
+      "parent": "arm_3",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        39.8218,
+        -1
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_3_2",
+      "parent": "filament_3",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        27.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_3_3",
+      "parent": "filament_3_2",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        16.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_3_4",
+      "parent": "filament_3_3",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        4.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_4",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        47.8218,
+        0
+      ],
+      "rotation": [
+        -100,
+        72,
+        180
+      ]
+    },
+    {
+      "name": "filament_4",
+      "parent": "arm_4",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        39.8218,
+        0
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_4_2",
+      "parent": "filament_4",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        27.8218,
+        0
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_4_3",
+      "parent": "filament_4_2",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        16.8218,
+        0
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_4_4",
+      "parent": "filament_4_3",
+      "role": "tentacle",
+      "pivot": [
+        -1,
+        4.8218,
+        0
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_5",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        -0.5,
+        47.8218,
+        0.5
+      ],
+      "rotation": [
+        -100,
+        36,
+        180
+      ]
+    },
+    {
+      "name": "filament_5",
+      "parent": "arm_5",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        39.8218,
+        1
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_5_2",
+      "parent": "filament_5",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        27.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_5_3",
+      "parent": "filament_5_2",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        16.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_5_4",
+      "parent": "filament_5_3",
+      "role": "tentacle",
+      "pivot": [
+        0,
+        4.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_6",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        0.5,
+        47.8218,
+        1
+      ],
+      "rotation": [
+        -100,
+        0,
+        180
+      ]
+    },
+    {
+      "name": "filament_6",
+      "parent": "arm_6",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        39.8218,
+        1
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_6_2",
+      "parent": "filament_6",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        27.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_6_3",
+      "parent": "filament_6_2",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        16.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_6_4",
+      "parent": "filament_6_3",
+      "role": "tentacle",
+      "pivot": [
+        1,
+        4.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_7",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        1.5,
+        47.8218,
+        0.5
+      ],
+      "rotation": [
+        -100,
+        -36,
+        180
+      ]
+    },
+    {
+      "name": "filament_7",
+      "parent": "arm_7",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        39.8218,
+        1
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_7_2",
+      "parent": "filament_7",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        27.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_7_3",
+      "parent": "filament_7_2",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        16.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_7_4",
+      "parent": "filament_7_3",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        4.8218,
+        1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_8",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        47.8218,
+        0
+      ],
+      "rotation": [
+        -100,
+        -72,
+        180
+      ]
+    },
+    {
+      "name": "filament_8",
+      "parent": "arm_8",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        39.8218,
+        0
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_8_2",
+      "parent": "filament_8",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        27.8218,
+        0
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_8_3",
+      "parent": "filament_8_2",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        16.8218,
+        0
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_8_4",
+      "parent": "filament_8_3",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        4.8218,
+        0
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_9",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        47.8218,
+        -1
+      ],
+      "rotation": [
+        80,
+        -72,
+        0
+      ]
+    },
+    {
+      "name": "filament_9",
+      "parent": "arm_9",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        39.8218,
+        -1
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_9_2",
+      "parent": "filament_9",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        27.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_9_3",
+      "parent": "filament_9_2",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        16.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_9_4",
+      "parent": "filament_9_3",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        4.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "arm_10",
+      "parent": "head",
+      "role": "tentacle",
+      "pivot": [
+        1.5,
+        47.8218,
+        -1.5
+      ],
+      "rotation": [
+        80,
+        -36,
+        0
+      ]
+    },
+    {
+      "name": "filament_10",
+      "parent": "arm_10",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        39.8218,
+        -1
+      ],
+      "rotation": [
+        -80,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_10_2",
+      "parent": "filament_10",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        27.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_10_3",
+      "parent": "filament_10_2",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        16.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "filament_10_4",
+      "parent": "filament_10_3",
+      "role": "tentacle",
+      "pivot": [
+        2,
+        4.8218,
+        -1
+      ],
+      "rotation": [
+        3,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 6.67,
+      "bones": [
+        "head",
+        "mantle",
+        "fin_right",
+        "fin_left",
+        "arm_1",
+        "filament_1",
+        "filament_1_2",
+        "filament_1_3",
+        "filament_1_4",
+        "arm_2",
+        "filament_2",
+        "filament_2_2",
+        "filament_2_3",
+        "filament_2_4",
+        "arm_3",
+        "filament_3",
+        "filament_3_2",
+        "filament_3_3",
+        "filament_3_4",
+        "arm_4",
+        "filament_4",
+        "filament_4_2",
+        "filament_4_3",
+        "filament_4_4",
+        "arm_5",
+        "filament_5",
+        "filament_5_2",
+        "filament_5_3",
+        "filament_5_4",
+        "arm_6",
+        "filament_6",
+        "filament_6_2",
+        "filament_6_3",
+        "filament_6_4",
+        "arm_7",
+        "filament_7",
+        "filament_7_2",
+        "filament_7_3",
+        "filament_7_4",
+        "arm_8",
+        "filament_8",
+        "filament_8_2",
+        "filament_8_3",
+        "filament_8_4",
+        "arm_9",
+        "filament_9",
+        "filament_9_2",
+        "filament_9_3",
+        "filament_9_4",
+        "arm_10",
+        "filament_10",
+        "filament_10_2",
+        "filament_10_3",
+        "filament_10_4"
+      ],
+      "description": "Breathing body / head, appendages drift"
+    },
+    {
+      "name": "tentacle_move",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "arm_1",
+        "filament_1",
+        "filament_1_2",
+        "filament_1_3",
+        "filament_1_4",
+        "arm_2",
+        "filament_2",
+        "filament_2_2",
+        "filament_2_3",
+        "filament_2_4",
+        "arm_3",
+        "filament_3",
+        "filament_3_2",
+        "filament_3_3",
+        "filament_3_4",
+        "arm_4",
+        "filament_4",
+        "filament_4_2",
+        "filament_4_3",
+        "filament_4_4",
+        "arm_5",
+        "filament_5",
+        "filament_5_2",
+        "filament_5_3",
+        "filament_5_4",
+        "arm_6",
+        "filament_6",
+        "filament_6_2",
+        "filament_6_3",
+        "filament_6_4",
+        "arm_7",
+        "filament_7",
+        "filament_7_2",
+        "filament_7_3",
+        "filament_7_4",
+        "arm_8",
+        "filament_8",
+        "filament_8_2",
+        "filament_8_3",
+        "filament_8_4",
+        "arm_9",
+        "filament_9",
+        "filament_9_2",
+        "filament_9_3",
+        "filament_9_4",
+        "arm_10",
+        "filament_10",
+        "filament_10_2",
+        "filament_10_3",
+        "filament_10_4"
+      ],
+      "description": "Tentacles curl and uncurl in a travelling wave"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 1.33,
+      "bones": [
+        "head",
+        "arm_1",
+        "filament_1",
+        "arm_2",
+        "filament_2",
+        "arm_3",
+        "filament_3",
+        "arm_4",
+        "filament_4",
+        "arm_5",
+        "filament_5",
+        "arm_6",
+        "filament_6",
+        "arm_7",
+        "filament_7",
+        "arm_8",
+        "filament_8",
+        "arm_9",
+        "filament_9",
+        "arm_10",
+        "filament_10"
+      ],
+      "description": "Flinch: squeeze and jerk"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 3.33,
+      "bones": [
+        "fin_right",
+        "fin_left",
+        "arm_1",
+        "filament_1",
+        "filament_1_2",
+        "filament_1_3",
+        "filament_1_4",
+        "arm_2",
+        "filament_2",
+        "filament_2_2",
+        "filament_2_3",
+        "filament_2_4",
+        "arm_3",
+        "filament_3",
+        "filament_3_2",
+        "filament_3_3",
+        "filament_3_4",
+        "arm_4",
+        "filament_4",
+        "filament_4_2",
+        "filament_4_3",
+        "filament_4_4",
+        "arm_5",
+        "filament_5",
+        "filament_5_2",
+        "filament_5_3",
+        "filament_5_4",
+        "arm_6",
+        "filament_6",
+        "filament_6_2",
+        "filament_6_3",
+        "filament_6_4",
+        "arm_7",
+        "filament_7",
+        "filament_7_2",
+        "filament_7_3",
+        "filament_7_4",
+        "arm_8",
+        "filament_8",
+        "filament_8_2",
+        "filament_8_3",
+        "filament_8_4",
+        "arm_9",
+        "filament_9",
+        "filament_9_2",
+        "filament_9_3",
+        "filament_9_4",
+        "arm_10",
+        "filament_10",
+        "filament_10_2",
+        "filament_10_3",
+        "filament_10_4",
+        "head"
+      ],
+      "description": "Collapses: appendages droop, the body deflates"
+    }
+  ],
+  "definition": {
+    "template": "parts",
+    "category": "cephalopod",
+    "body": {
+      "length": 8,
+      "width": 8,
+      "height": 64
+    },
+    "parts": [],
+    "params": {
+      "orientation": "upright",
+      "parts": [
+        {
+          "name": "mantle",
+          "shape": "profile",
+          "axis": "y",
+          "size": [
+            5,
+            14,
+            5
+          ],
+          "profile": [
+            0.85,
+            1,
+            1,
+            0.9,
+            0.7,
+            0.45,
+            0.2
+          ],
+          "color": "#b86f68",
+          "belly": "#c98a82"
+        },
+        {
+          "name": "fin",
+          "parent": "mantle",
+          "at": [
+            1,
+            0.62,
+            0.5
+          ],
+          "shape": "plane",
+          "axis": "x",
+          "size": [
+            9,
+            13,
+            0
+          ],
+          "outline": "round",
+          "color": "#c48178",
+          "mirror": true
+        },
+        {
+          "name": "head",
+          "parent": "mantle",
+          "at": "base",
+          "shape": "ellipsoid",
+          "axis": "-y",
+          "size": [
+            5,
+            4,
+            5
+          ],
+          "color": "#a8615b"
+        },
+        {
+          "name": "eye",
+          "parent": "head",
+          "at": [
+            1,
+            0.55,
+            0.45
+          ],
+          "shape": "eye",
+          "size": 2,
+          "mirror": true
+        },
+        {
+          "name": "arm",
+          "parent": "head",
+          "at": "tip",
+          "shape": "cylinder",
+          "axis": "-y",
+          "size": [
+            1.5,
+            8,
+            1.5
+          ],
+          "taper": 0.6,
+          "count": 10,
+          "arrange": "ring",
+          "radius": 1.5,
+          "tilt": 80,
+          "color": "#a35a55"
+        },
+        {
+          "name": "filament",
+          "parent": "arm",
+          "at": "tip",
+          "shape": "cylinder",
+          "axis": "-y",
+          "rotate": [
+            -80,
+            0,
+            0
+          ],
+          "size": [
+            1,
+            46,
+            1
+          ],
+          "segments": 4,
+          "curl": 3,
+          "color": "#e6dcd6",
+          "role": "tentacle"
+        }
+      ],
+      "scale": 1
+    },
+    "palette": {
+      "eye": "#0b0c10",
+      "eye_iris": "#6d5a5a",
+      "eye_ring": "#7a403c",
+      "eye_glint": "#e6f0f6",
+      "part_mantle": "#b86f68",
+      "belly_mantle": "#c98a82",
+      "part_fin": "#c48178",
+      "part_head": "#a8615b",
+      "part_arm": "#a35a55",
+      "part_filament": "#e6dcd6"
+    },
+    "texture": {
+      "pattern": "speckle",
+      "pattern_strength": 0.3
+    },
+    "glow": [],
+    "animation": {
+      "speed": 0.6,
+      "amplitude": 0.8
+    },
+    "variation": {
+      "body": 0.06,
+      "hue": 4,
+      "lightness": 0.03
+    },
+    "id": "bigfin_squid",
+    "name": "Bigfin Squid",
+    "name_ja": "ミズヒキイカ",
+    "scientific_name": "Magnapinna pacifica (Magnapinna spp.)",
+    "habitat": "bathypelagic",
+    "order": 55,
+    "notes": "Small pale reddish-pink mantle carrying two huge rounded fins almost as long as the mantle; ten arms and tentacles all alike: a short thick proximal part held out sideways at a right angle ('elbow'), then very long thin white sticky filaments hanging straight down, many times the body length. Hovers arms-down near the seafloor. No light organs known. Built upright with the parts template because the squid template cannot bend the arms.",
+    "animations": [
+      "idle",
+      "sway",
+      "tentacle_move",
+      "hurt",
+      "death"
+    ]
+  }
+}

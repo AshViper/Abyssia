@@ -1,0 +1,29 @@
+{
+  "entity": "abyssia:yumenamako",
+  "role": "passive",
+  "weight": 14,
+  "group": {
+    "min": 1,
+    "max": 3
+  },
+  "depth_m": {
+    "min": 500,
+    "core_min": 1500,
+    "core_max": 4500,
+    "max": 6000
+  },
+  "placement": "seabed",
+  "cave_factor": 0.5,
+  "open_factor": 1.0,
+  "max_light": 15,
+  "cap": {
+    "count": 48,
+    "radius": 48
+  },
+  "substrate": [
+    {
+      "blocks": "#abyssia:fauna/soft_sediment",
+      "factor": 3.0
+    }
+  ]
+}

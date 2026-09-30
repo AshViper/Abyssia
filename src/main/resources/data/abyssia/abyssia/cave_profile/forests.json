@@ -1,0 +1,166 @@
+{
+  "biomes": [
+    "abyssia:abyssal_forest",
+    "abyssia:deep_forest",
+    "abyssia:glow_gardens"
+  ],
+  "system_chance": 0.8,
+  "minor_cave_chance": 0.4,
+  "connection_chance": 0.45,
+  "cave_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 20
+    },
+    {
+      "data": "medium_sea_cave",
+      "weight": 25
+    },
+    {
+      "data": "large_abyssal_cave",
+      "weight": 14
+    },
+    {
+      "data": "massive_cavern",
+      "weight": 3
+    },
+    {
+      "data": "eroded_cave",
+      "weight": 10
+    },
+    {
+      "data": "sea_tunnel",
+      "weight": 6
+    },
+    {
+      "data": "underground_sea",
+      "weight": 1
+    }
+  ],
+  "minor_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 6
+    },
+    {
+      "data": "sea_arch",
+      "weight": 2
+    },
+    {
+      "data": "eroded_cave",
+      "weight": 2
+    }
+  ],
+  "landmark_chance": 0.03,
+  "landmarks": [
+    {
+      "data": "giant_kelp_cavern",
+      "weight": 3
+    },
+    {
+      "data": "deep_cave_forest",
+      "weight": 3
+    },
+    {
+      "data": "abyssal_underground_lake",
+      "weight": 1
+    }
+  ],
+  "environment": "abyssia:forest",
+  "luminous_chance": 0.15,
+  "strata": [
+    {
+      "depth": 0,
+      "state": {
+        "Name": "abyssia:organic_sediment"
+      }
+    },
+    {
+      "depth": 4,
+      "state": {
+        "Name": "abyssia:organic_cave_rock"
+      }
+    },
+    {
+      "depth": 20,
+      "state": {
+        "Name": "abyssia:wet_cave_rock"
+      }
+    },
+    {
+      "depth": 45,
+      "state": {
+        "Name": "abyssia:layered_cave_rock"
+      }
+    },
+    {
+      "depth": 80,
+      "state": {
+        "Name": "abyssia:abyssal_cave_rock"
+      }
+    }
+  ],
+  "ores": [
+    {
+      "data": {
+        "Name": "abyssia:abyssal_iron_ore"
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "Name": "abyssia:deep_copper_ore"
+      },
+      "weight": 2
+    }
+  ],
+  "cavern_templates": [
+    {
+      "data": "abyssia:forest",
+      "weight": 6
+    },
+    {
+      "data": "abyssia:mixed",
+      "weight": 2
+    },
+    {
+      "data": "abyssia:lake",
+      "weight": 2
+    }
+  ],
+  "crystal_colors": [
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:green_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:nickel_cluster"
+        }
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:cyan_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:deep_crystal_cluster"
+        }
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:pale_crystal_cluster"
+        }
+      },
+      "weight": 1
+    }
+  ]
+}

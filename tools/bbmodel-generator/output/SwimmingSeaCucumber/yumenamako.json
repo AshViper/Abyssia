@@ -1,0 +1,319 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "yumenamako",
+  "name": "Swimming Sea Cucumber",
+  "template": "softbody",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      32
+    ],
+    "texture_image": [
+      64,
+      32
+    ],
+    "glow_texture": true,
+    "size_units": [
+      11,
+      12.67,
+      18.28
+    ],
+    "size_blocks": [
+      0.69,
+      0.79,
+      1.14
+    ],
+    "core_size_blocks": [
+      0.56,
+      0.38,
+      0.88
+    ],
+    "cubes": 22
+  },
+  "bones": [
+    {
+      "name": "yumenamako",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "yumenamako",
+      "role": "body",
+      "pivot": [
+        0,
+        4.1213,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_2",
+      "parent": "body",
+      "role": "segment",
+      "pivot": [
+        0,
+        4.1213,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_3",
+      "parent": "body_2",
+      "role": "segment",
+      "pivot": [
+        0,
+        4.1213,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "veil",
+      "parent": "body",
+      "role": "veil",
+      "pivot": [
+        0,
+        6.1213,
+        -6
+      ],
+      "rotation": [
+        -35,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "brim",
+      "parent": "body_3",
+      "role": "brim",
+      "pivot": [
+        0,
+        6.1213,
+        6
+      ],
+      "rotation": [
+        25,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tentacles",
+      "parent": "body",
+      "role": "tentacles",
+      "pivot": [
+        0,
+        2.1213,
+        -6
+      ],
+      "rotation": [
+        45,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "veil",
+        "brim",
+        "tentacles"
+      ],
+      "description": "Drifting: veil ripples, body pulses, tentacles sift"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 2,
+      "bones": [
+        "veil",
+        "brim",
+        "body_2",
+        "body_3",
+        "body"
+      ],
+      "description": "Swimming: the veil beats like a wing, the body undulates vertically"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.75,
+      "bones": [
+        "body",
+        "veil"
+      ],
+      "description": "Contracts sharply, veil folds back"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 3,
+      "bones": [
+        "body",
+        "veil",
+        "brim",
+        "body_2",
+        "body_3"
+      ],
+      "description": "Veil collapses, body sags and sinks"
+    }
+  ],
+  "definition": {
+    "template": "softbody",
+    "category": "sea_cucumber",
+    "body": {
+      "length": 14,
+      "width": 7,
+      "height": 6,
+      "segments": 3,
+      "taper": 0.75
+    },
+    "parts": [
+      "body",
+      "veil",
+      "brim",
+      "tentacles",
+      "feet"
+    ],
+    "params": {
+      "veil": {
+        "enabled": true,
+        "width": 11,
+        "height": 8,
+        "lean": 35
+      },
+      "brim": {
+        "enabled": true,
+        "width": 7,
+        "height": 4
+      },
+      "tentacles": {
+        "count": 6,
+        "length": 2
+      },
+      "feet": {
+        "count": 4
+      },
+      "translucent": false
+    },
+    "palette": {
+      "flesh": "#b25a6c",
+      "body": "#b25a6c",
+      "belly": "#c47b89",
+      "membrane": "#c46f83",
+      "fin": "#c46f83",
+      "glow": "#7ff2d6"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.5,
+      "countershade": 0.6
+    },
+    "glow": [
+      {
+        "part": "body",
+        "scatter": 9,
+        "radius": 0.5,
+        "intensity": 0.85,
+        "faces": [
+          "up",
+          "east",
+          "west"
+        ]
+      },
+      {
+        "part": "veil",
+        "scatter": 4,
+        "radius": 0.5,
+        "intensity": 0.7
+      }
+    ],
+    "animations": [
+      "idle",
+      "swim",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 0.8,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "veil": 0.12,
+      "brim": 0.12,
+      "hue": 8,
+      "lightness": 0.04
+    },
+    "id": "yumenamako",
+    "name": "Swimming Sea Cucumber",
+    "name_ja": "ユメナマコ",
+    "scientific_name": "Enypniastes eximia",
+    "habitat": "abyssal_floor",
+    "order": 9,
+    "notes": "Translucent rose-red gelatinous body with a large webbed veil at the front used like a wing, a smaller posterior brim, a fringe of oral tentacles and faint blue-green bioluminescence."
+  }
+}

@@ -1,0 +1,78 @@
+{
+	"id": "scaly_foot_snail",
+	"name": "Scaly-foot Snail",
+	"name_ja": "スケーリーフット（ウロコフネタマガイ）",
+	"scientific_name": "Chrysomallon squamiferum",
+	"category": "gastropod",
+	"template": "gastropod",
+	"habitat": "hydrothermal_vent",
+	"order": 13,
+	"notes": "Vent snail armoured with iron sulfide: a black metallic coiled shell and a foot covered in overlapping iron scales (sclerites), with a reddish snout and short tentacles.",
+	"body": {
+		"length": 10,
+		"width": 5,
+		"height": 3
+	},
+	"parts": [
+		"body",
+		"shell",
+		"scales",
+		"head",
+		"tentacles"
+	],
+	"params": {
+		"shell": {
+			"size": 7,
+			"whorls": 3,
+			"shrink": 0.68,
+			"rise": 0.55,
+			"tilt": 18
+		},
+		"scales": {
+			"rows": 1,
+			"count": 5,
+			"size": 2
+		},
+		"head": {
+			"length": 3,
+			"width": 3,
+			"height": 2
+		},
+		"tentacles": {
+			"length": 3
+		}
+	},
+	"palette": {
+		"shell": "#2c2c31",
+		"scale": "#3b3d44",
+		"flesh": "#8a4440",
+		"body": "#8a4440",
+		"belly": "#9a5650",
+		"mouth": "#1c1c20",
+		"glow": "#c8d8e8"
+	},
+	"texture": {
+		"pattern": "bands",
+		"pattern_strength": 0.55,
+		"countershade": 0.3
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"crawl",
+		"retract",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.7,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"shell": 0.1,
+		"scales": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

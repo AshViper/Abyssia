@@ -1,0 +1,175 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:mul",
+    "argument1": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:mul",
+          "argument1": 0.78125,
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": {
+              "type": "minecraft:square",
+              "argument": {
+                "type": "minecraft:clamp",
+                "input": {
+                  "type": "minecraft:mul",
+                  "argument1": 14.285714285714285,
+                  "argument2": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:mul",
+                      "argument1": -1,
+                      "argument2": {
+                        "type": "minecraft:abs",
+                        "argument": "abyssia:trench_field"
+                      }
+                    },
+                    "argument2": 0.14
+                  }
+                },
+                "min": 0.0,
+                "max": 1.0
+              }
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": 3.0,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": -2.0,
+                "argument2": {
+                  "type": "minecraft:clamp",
+                  "input": {
+                    "type": "minecraft:mul",
+                    "argument1": 14.285714285714285,
+                    "argument2": {
+                      "type": "minecraft:add",
+                      "argument1": {
+                        "type": "minecraft:mul",
+                        "argument1": -1,
+                        "argument2": {
+                          "type": "minecraft:abs",
+                          "argument": "abyssia:trench_field"
+                        }
+                      },
+                      "argument2": 0.14
+                    }
+                  },
+                  "min": 0.0,
+                  "max": 1.0
+                }
+              }
+            }
+          }
+        },
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": 0.96875,
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": {
+              "type": "minecraft:square",
+              "argument": {
+                "type": "minecraft:clamp",
+                "input": {
+                  "type": "minecraft:mul",
+                  "argument1": 25.000000000000004,
+                  "argument2": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:mul",
+                      "argument1": -1,
+                      "argument2": {
+                        "type": "minecraft:abs",
+                        "argument": "abyssia:trench_field"
+                      }
+                    },
+                    "argument2": 0.06
+                  }
+                },
+                "min": 0.0,
+                "max": 1.0
+              }
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": 3.0,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": -2.0,
+                "argument2": {
+                  "type": "minecraft:clamp",
+                  "input": {
+                    "type": "minecraft:mul",
+                    "argument1": 25.000000000000004,
+                    "argument2": {
+                      "type": "minecraft:add",
+                      "argument1": {
+                        "type": "minecraft:mul",
+                        "argument1": -1,
+                        "argument2": {
+                          "type": "minecraft:abs",
+                          "argument": "abyssia:trench_field"
+                        }
+                      },
+                      "argument2": 0.06
+                    }
+                  },
+                  "min": 0.0,
+                  "max": 1.0
+                }
+              }
+            }
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:square",
+          "argument": {
+            "type": "minecraft:clamp",
+            "input": {
+              "type": "minecraft:mul",
+              "argument1": 5.0,
+              "argument2": "abyssia:trench_region"
+            },
+            "min": 0.0,
+            "max": 1.0
+          }
+        },
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": 3.0,
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": -2.0,
+            "argument2": {
+              "type": "minecraft:clamp",
+              "input": {
+                "type": "minecraft:mul",
+                "argument1": 5.0,
+                "argument2": "abyssia:trench_region"
+              },
+              "min": 0.0,
+              "max": 1.0
+            }
+          }
+        }
+      }
+    },
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": 1.0,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": -0.5,
+        "argument2": "abyssia:deep_shelf"
+      }
+    }
+  }
+}

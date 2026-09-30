@@ -1,0 +1,48 @@
+{
+	"archetype": "jellyfish",
+	"captions": {
+		"en": [
+			"a huge dark red jellyfish with four enormous ribbon-like arms",
+			"giant phantom jelly"
+		],
+		"ja": [
+			"4本の巨大なリボン状の腕を持つ暗い赤の大クラゲ",
+			"ダイオウクラゲ"
+		]
+	},
+	"spec": {
+		"orientation": "upright",
+		"parts": [
+			{
+				"name": "bell",
+				"shape": "dome",
+				"size": [
+					22,
+					9,
+					22
+				],
+				"color": "#6a1e22"
+			},
+			{
+				"name": "oral_arm",
+				"shape": "plane",
+				"size": [
+					4,
+					70,
+					0
+				],
+				"parent": "bell",
+				"at": "bottom",
+				"axis": "-y",
+				"outline": "frill",
+				"count": 4,
+				"arrange": "ring",
+				"radius": 4,
+				"tilt": 4,
+				"segments": 5,
+				"curl": 4,
+				"color": "#5a181c"
+			}
+		]
+	}
+}

@@ -1,0 +1,129 @@
+{
+  "category": "landmark",
+  "tier": "colossal",
+  "footprint_radius": 140,
+  "max_height": 10,
+  "formation": {
+    "type": "crater",
+    "radius": [
+      60,
+      80
+    ],
+    "depth": [
+      14,
+      24
+    ],
+    "rim_height": [
+      4,
+      8
+    ],
+    "rim_width": 0.3,
+    "peak": 0.6,
+    "roughness": 0.5,
+    "floor": [
+      {
+        "data": {
+          "Name": "abyssia:deep_mud"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 1
+      }
+    ],
+    "rim": [
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "ejecta": [
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_rock"
+        },
+        "weight": 2
+      }
+    ],
+    "ejecta_density": 0.03
+  },
+  "conditions": {
+    "min_y": -100,
+    "max_slope": 0.35
+  },
+  "dressing": {
+    "radius": 120,
+    "density": 0.02,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:hadal_bloom"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_crystal_cluster"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:silt_comb"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_gourd"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:goblin_shark",
+    "abyssia:giant_squid"
+  ]
+}

@@ -1,0 +1,580 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "hagfish",
+  "name": "Hagfish",
+  "template": "eel",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      32
+    ],
+    "texture_image": [
+      64,
+      32
+    ],
+    "glow_texture": false,
+    "size_units": [
+      4,
+      6,
+      48
+    ],
+    "size_blocks": [
+      0.25,
+      0.38,
+      3
+    ],
+    "core_size_blocks": [
+      0.25,
+      0.25,
+      2.75
+    ],
+    "cubes": 20
+  },
+  "bones": [
+    {
+      "name": "hagfish",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "hagfish",
+      "role": "body",
+      "pivot": [
+        0,
+        3,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_2",
+      "parent": "body",
+      "role": "segment",
+      "pivot": [
+        0,
+        3,
+        -13
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_3",
+      "parent": "body_2",
+      "role": "segment",
+      "pivot": [
+        0,
+        3,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_4",
+      "parent": "body_3",
+      "role": "segment",
+      "pivot": [
+        0,
+        3,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_5",
+      "parent": "body_4",
+      "role": "segment",
+      "pivot": [
+        0,
+        3,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_6",
+      "parent": "body_5",
+      "role": "segment",
+      "pivot": [
+        0,
+        3,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_7",
+      "parent": "body_6",
+      "role": "segment",
+      "pivot": [
+        0,
+        3,
+        12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_8",
+      "parent": "body_7",
+      "role": "segment",
+      "pivot": [
+        0,
+        3,
+        17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        3,
+        -18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mouth",
+      "parent": "head",
+      "role": "jaw",
+      "pivot": [
+        0,
+        2,
+        -19
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lower_teeth",
+      "parent": "mouth",
+      "role": "teeth",
+      "pivot": [
+        0,
+        2,
+        -21
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper_teeth",
+      "parent": "head",
+      "role": "teeth",
+      "pivot": [
+        0,
+        2,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin",
+      "parent": "body_6",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        5,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_2",
+      "parent": "body_7",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        5,
+        12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_3",
+      "parent": "body_8",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        5,
+        17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin",
+      "parent": "body_7",
+      "role": "anal",
+      "pivot": [
+        0,
+        2,
+        12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin_2",
+      "parent": "body_8",
+      "role": "anal",
+      "pivot": [
+        0,
+        2,
+        17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_fin",
+      "parent": "body_8",
+      "role": "tail_fin",
+      "pivot": [
+        0,
+        3,
+        22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 4.44,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body_8",
+        "head",
+        "mouth"
+      ],
+      "description": "Hovering: slow shallow undulation, breathing jaw, drifting fins"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 1.56,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body_8",
+        "head",
+        "tail_fin",
+        "mouth"
+      ],
+      "description": "Swimming: travelling wave from head to tail"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.61,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body_8",
+        "mouth"
+      ],
+      "description": "Recoil: the body kinks and snaps back"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2,
+      "bones": [
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body_8",
+        "body",
+        "mouth"
+      ],
+      "description": "Coils up, rolls onto its side and sinks"
+    },
+    {
+      "name": "mouth_open",
+      "loop": "hold",
+      "length": 0.67,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Opens the jaw wide"
+    },
+    {
+      "name": "mouth_close",
+      "loop": "once",
+      "length": 0.44,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Closes the jaw"
+    }
+  ],
+  "definition": {
+    "template": "eel",
+    "category": "eel",
+    "body": {
+      "length": 40,
+      "width": 4,
+      "height": 4,
+      "segments": 8,
+      "taper": 0.7
+    },
+    "parts": [
+      "body",
+      "head",
+      "mouth",
+      "teeth",
+      "fin",
+      "tail"
+    ],
+    "params": {
+      "head": {
+        "length": 4,
+        "width": 4,
+        "height": 4,
+        "round": 1
+      },
+      "mouth": {
+        "jaw_height": 1,
+        "jaw_length": 3,
+        "upper_length": 3,
+        "width": 1,
+        "gape": 20,
+        "rest_gape": 0,
+        "pouch": 0
+      },
+      "teeth": {
+        "count": 4,
+        "length": 2,
+        "rows": 1
+      },
+      "eye": {
+        "size": 1,
+        "height": 0.7,
+        "forward": 0.2,
+        "protrude": 0.5
+      },
+      "gills": {
+        "frills": 0,
+        "height": 1,
+        "spacing": 1
+      },
+      "pectoral": {
+        "enabled": false,
+        "length": 2,
+        "height": 2,
+        "angle": 40
+      },
+      "dorsal": {
+        "enabled": true,
+        "start": 0.72,
+        "end": 1,
+        "height": 1
+      },
+      "anal": {
+        "enabled": true,
+        "start": 0.8,
+        "end": 1,
+        "height": 1
+      },
+      "pelvic": {
+        "enabled": false,
+        "length": 2,
+        "height": 2,
+        "position": 0.55
+      },
+      "caudal": {
+        "enabled": true,
+        "length": 4,
+        "height": 4,
+        "shape": "round"
+      },
+      "tail_tip": {
+        "enabled": false,
+        "size": 2
+      }
+    },
+    "palette": {
+      "body": "#8a6e6a",
+      "belly": "#a88a84",
+      "fin": "#7e6460",
+      "mouth": "#7a4048",
+      "lip": "#9a7a74",
+      "gill": "#6a4a4c",
+      "teeth": "#c49a92",
+      "eye": "#b89a94",
+      "eye_iris": "#b89a94",
+      "eye_ring": "#8a6e6a",
+      "glow": "#ffffff",
+      "glow_eye": "#b89a94"
+    },
+    "texture": {
+      "pattern": "mottled",
+      "pattern_strength": 0.35,
+      "countershade": 0.5
+    },
+    "glow": [],
+    "animations": [
+      "idle",
+      "swim",
+      "hurt",
+      "death",
+      "mouth_open",
+      "mouth_close"
+    ],
+    "animation": {
+      "speed": 0.9,
+      "amplitude": 1.1
+    },
+    "variation": {
+      "body": 0.08,
+      "head": 0.06,
+      "mouth": 0.06,
+      "fin": 0.1,
+      "eye": 0.1,
+      "glow": 0.2,
+      "hue": 5,
+      "lightness": 0.03
+    },
+    "id": "hagfish",
+    "name": "Hagfish",
+    "name_ja": "ヌタウナギ",
+    "scientific_name": "Eptatretus burgeri",
+    "habitat": "continental_shelf_mud",
+    "order": 64,
+    "notes": "Jawless, eel-like scavenger: blunt snout ringed by short fleshy barbels around the single nostril and the slit-like mouth (horny rasping tooth plates inside), eyes only as pale spots under the skin, a row of six small gill pores on each side, no paired fins - only a low fin fold running around the tail; pinkish grey-brown with a white line down the back, coated in slime."
+  }
+}

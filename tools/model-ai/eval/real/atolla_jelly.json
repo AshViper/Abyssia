@@ -1,0 +1,85 @@
+{
+	"archetype": "jellyfish",
+	"captions": {
+		"en": [
+			"a dark red deep-sea jellyfish with one very long tentacle",
+			"crown jellyfish, red bell, glowing blue ring, many short tentacles"
+		],
+		"ja": [
+			"1本だけ長い触手を持つ暗い赤の深海クラゲ",
+			"赤い傘に青く光る輪がある冠クラゲ"
+		]
+	},
+	"spec": {
+		"orientation": "upright",
+		"parts": [
+			{
+				"name": "bell",
+				"shape": "dome",
+				"size": [
+					18,
+					7,
+					18
+				],
+				"color": "#7a2a2a"
+			},
+			{
+				"name": "rim",
+				"shape": "cylinder",
+				"size": [
+					19,
+					1,
+					19
+				],
+				"parent": "bell",
+				"at": [
+					0.5,
+					0.1,
+					0.5
+				],
+				"center": true,
+				"color": "#9fe0ff",
+				"glow": 1,
+				"glow_color": "#9fe0ff"
+			},
+			{
+				"name": "tentacle",
+				"shape": "cylinder",
+				"size": [
+					1,
+					6,
+					1
+				],
+				"parent": "bell",
+				"at": "bottom",
+				"axis": "-y",
+				"count": 16,
+				"arrange": "ring",
+				"radius": 8,
+				"tilt": 35,
+				"segments": 2,
+				"curl": 10,
+				"color": "#6a2020"
+			},
+			{
+				"name": "long_tentacle",
+				"shape": "cylinder",
+				"size": [
+					1,
+					26,
+					1
+				],
+				"parent": "bell",
+				"at": [
+					0.8,
+					0,
+					0.5
+				],
+				"axis": "-y",
+				"segments": 4,
+				"curl": 6,
+				"color": "#5a1a1a"
+			}
+		]
+	}
+}

@@ -1,0 +1,139 @@
+{
+	"archetype": "fish",
+	"captions": {
+		"en": [
+			"a pink goblin shark with a long flat snout",
+			"pinkish grey shark with a blade-like nose"
+		],
+		"ja": [
+			"長く平たい鼻先を持つピンク色のミツクリザメ",
+			"ピンクがかった灰色のサメ。刃のような鼻"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "body",
+				"shape": "profile",
+				"size": [
+					9,
+					10,
+					30
+				],
+				"axis": "-z",
+				"center": true,
+				"profile": [
+					0.35,
+					0.7,
+					0.95,
+					1,
+					0.85
+				],
+				"color": "#b09098"
+			},
+			{
+				"name": "snout",
+				"shape": "box",
+				"size": [
+					4,
+					2,
+					10
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.65,
+					0
+				],
+				"axis": "-z",
+				"color": "#b8989f"
+			},
+			{
+				"name": "jaw",
+				"shape": "box",
+				"size": [
+					6,
+					2,
+					5
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.25,
+					0.05
+				],
+				"axis": "-z",
+				"rotate": [
+					15,
+					0,
+					0
+				],
+				"color": "#c8a0a8"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 1,
+				"parent": "body",
+				"at": [
+					1,
+					0.65,
+					0.1
+				],
+				"mirror": true
+			},
+			{
+				"name": "dorsal_fin",
+				"shape": "plane",
+				"size": [
+					0,
+					4,
+					5
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					1,
+					0.6
+				],
+				"axis": "y",
+				"outline": "triangle",
+				"color": "#a08088"
+			},
+			{
+				"name": "pectoral_fin",
+				"shape": "plane",
+				"size": [
+					6,
+					0,
+					4
+				],
+				"parent": "body",
+				"at": [
+					1,
+					0.3,
+					0.3
+				],
+				"axis": "x",
+				"outline": "leaf",
+				"mirror": true,
+				"color": "#a08088"
+			},
+			{
+				"name": "tail_fin",
+				"shape": "plane",
+				"size": [
+					0,
+					10,
+					8
+				],
+				"parent": "body",
+				"at": "back",
+				"axis": "z",
+				"outline": "heterocercal",
+				"color": "#a08088"
+			}
+		]
+	}
+}

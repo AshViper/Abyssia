@@ -1,0 +1,100 @@
+{
+	"archetype": "fish",
+	"captions": {
+		"en": [
+			"a barreleye fish with a transparent dome head",
+			"Dark fish with a glassy see-through head and big side fins"
+		],
+		"ja": [
+			"透明なドーム状の頭を持つデメニギス",
+			"頭が透明な黒い深海魚。大きな胸びれ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "body",
+				"shape": "ellipsoid",
+				"size": [
+					6,
+					7,
+					18
+				],
+				"axis": "-z",
+				"center": true,
+				"color": "#2a2e38"
+			},
+			{
+				"name": "dome",
+				"shape": "ellipsoid",
+				"size": [
+					7,
+					7,
+					7
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.9,
+					0.15
+				],
+				"center": true,
+				"color": "#b8f0d8",
+				"material": "dome"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 2,
+				"parent": "dome",
+				"at": [
+					0.5,
+					0.3,
+					0.5
+				],
+				"center": true,
+				"count": 2,
+				"arrange": "row",
+				"spacing": [
+					2,
+					0,
+					0
+				]
+			},
+			{
+				"name": "pectoral_fin",
+				"shape": "plane",
+				"size": [
+					7,
+					0,
+					4
+				],
+				"parent": "body",
+				"at": [
+					1,
+					0.35,
+					0.35
+				],
+				"axis": "x",
+				"outline": "leaf",
+				"mirror": true,
+				"color": "#3a3e48"
+			},
+			{
+				"name": "tail_fin",
+				"shape": "plane",
+				"size": [
+					0,
+					6,
+					4
+				],
+				"parent": "body",
+				"at": "back",
+				"axis": "z",
+				"outline": "fork",
+				"color": "#2a2e38"
+			}
+		]
+	}
+}

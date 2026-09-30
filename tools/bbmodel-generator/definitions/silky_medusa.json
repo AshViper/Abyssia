@@ -1,0 +1,75 @@
+{
+	"id": "silky_medusa",
+	"name": "Silky Medusa",
+	"name_ja": "ニジクラゲ",
+	"scientific_name": "Colobonema sericeum",
+	"category": "hydromedusa",
+	"template": "medusa",
+	"habitat": "mesopelagic",
+	"order": 18,
+	"notes": "Small, silky semi-transparent hydromedusa with a tall bell, 32 fine curly tentacles spread out at rest (sheds them as sticky decoys when fleeing) and brilliant blue flashes from the bell.",
+	"body": {
+		"width": 8,
+		"height": 7
+	},
+	"parts": [
+		"bell",
+		"stomach",
+		"tentacles"
+	],
+	"params": {
+		"bell": {
+			"profile": "dome",
+			"tiers": 3,
+			"alpha": 95
+		},
+		"stomach": {
+			"enabled": true,
+			"width": 2,
+			"height": 3
+		},
+		"tentacles": {
+			"count": 12,
+			"length": 8,
+			"segments": 2,
+			"width": 1,
+			"spread": 38
+		}
+	},
+	"palette": {
+		"dome": "#c9d3de",
+		"body": "#aebccb",
+		"flesh": "#b7c8da",
+		"glow": "#6fb2ff"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.25,
+		"countershade": 0.2
+	},
+	"glow": [
+		{
+			"part": "bell",
+			"intensity": 0.9,
+			"color": "glow"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"pulse",
+		"spread",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"bell": 0.08,
+		"tentacles": 0.12,
+		"hue": 6,
+		"lightness": 0.04
+	}
+}

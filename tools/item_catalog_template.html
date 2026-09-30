@@ -1,0 +1,207 @@
+<title>Abyssia Item Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: one reading column; a sticky search + section bar; items shown as inventory slots with the ID beside them. */
+:root {
+  --bg: #eaf0f1; --surface: #f8fbfb; --ink: #11242c; --muted: #566b73; --line: #cfdadd;
+  --accent: #0a6f7b; --accent-soft: #d3eaec;
+  --slot: #c6c6c6; --slot-hi: #ffffff; --slot-lo: #555555;
+  --r-uncommon: #9a7a00; --r-rare: #00818c; --r-epic: #a1289f;
+  --f-display: "DotGothic16", "Zen Kaku Gothic New", system-ui, sans-serif;
+  --f-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #081116; --surface: #0e1c23; --ink: #d6e5e9; --muted: #85a0a8; --line: #1d323b;
+  --accent: #52cdd6; --accent-soft: #123239;
+  --slot: #26363e; --slot-hi: #3b5059; --slot-lo: #0b1519;
+  --r-uncommon: #e8d35a; --r-rare: #5fe3ec; --r-epic: #f07cf0; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #081116; --surface: #0e1c23; --ink: #d6e5e9; --muted: #85a0a8; --line: #1d323b;
+  --accent: #52cdd6; --accent-soft: #123239;
+  --slot: #26363e; --slot-hi: #3b5059; --slot-lo: #0b1519;
+  --r-uncommon: #e8d35a; --r-rare: #5fe3ec; --r-epic: #f07cf0; color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--f-body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; }
+header h1 { font: 400 clamp(1.7rem, 4vw, 2.3rem)/1.2 var(--f-display); margin: 0; text-wrap: balance; }
+header p { color: var(--muted); margin: .4rem 0 0; max-width: 65ch; }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stats b { color: var(--ink); font-weight: 700; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px; margin-top: 18px; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.bar input { flex: 1 1 240px; min-width: 0; font: inherit; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.bar input:focus-visible, .chip:focus-visible, .id:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 .8rem var(--f-body); padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); background: var(--surface); text-decoration: none; white-space: nowrap; }
+.chip span { color: var(--muted); font-variant-numeric: tabular-nums; margin-left: 4px; }
+.chip:hover { border-color: var(--accent); }
+
+section { margin-top: 40px; scroll-margin-top: 80px; }
+h2 { font: 400 1.35rem/1.3 var(--f-display); margin: 0; display: flex; align-items: baseline; gap: 10px; }
+h2 small { font: 400 .85rem var(--f-body); color: var(--muted); }
+.lead { color: var(--muted); font-size: .9rem; margin: .3rem 0 14px; max-width: 70ch; }
+
+/* inventory slot: the one skeuomorphic touch, borrowed from the game's GUI */
+.slot { flex: none; display: grid; place-items: center; background: var(--slot); box-shadow: inset 2px 2px 0 var(--slot-lo), inset -2px -2px 0 var(--slot-hi); }
+.slot img { image-rendering: pixelated; display: block; }
+.s48 { width: 52px; height: 52px; } .s48 img { width: 40px; height: 40px; }
+.s36 { width: 38px; height: 38px; } .s36 img { width: 28px; height: 28px; }
+.s24 { width: 26px; height: 26px; box-shadow: inset 1px 1px 0 var(--slot-lo), inset -1px -1px 0 var(--slot-hi); } .s24 img { width: 20px; height: 20px; }
+.slot .tag { font: 500 .6rem var(--f-mono); color: var(--muted); }
+
+.id { font: .78rem/1.3 var(--f-mono); color: var(--muted); cursor: copy; background: none; border: 0; padding: 0; text-align: left; overflow-wrap: anywhere; }
+.id:hover { color: var(--accent); }
+.id.copied { color: var(--accent); }
+
+/* materials */
+.mats { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 12px; }
+.mat { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.mat-head { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.mat-head > div { min-width: 0; }
+.nm { font-weight: 700; line-height: 1.3; }
+.en { color: var(--muted); font-size: .8rem; }
+.r-uncommon .nm { color: var(--r-uncommon); } .r-rare .nm { color: var(--r-rare); } .r-epic .nm { color: var(--r-epic); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: .75rem; }
+.pill { padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); white-space: nowrap; }
+.pill.rar { background: transparent; border: 1px solid currentColor; }
+.r-common .pill.rar { color: var(--muted); } .r-uncommon .pill.rar { color: var(--r-uncommon); } .r-rare .pill.rar { color: var(--r-rare); } .r-epic .pill.rar { color: var(--r-epic); }
+.hint { font-size: .85rem; color: var(--muted); border-left: 2px solid var(--line); padding-left: 8px; }
+.row-l { font: 500 .7rem var(--f-body); letter-spacing: .06em; color: var(--muted); }
+.mini { display: flex; flex-wrap: wrap; gap: 6px; }
+.m { display: inline-flex; align-items: center; gap: 5px; font-size: .78rem; line-height: 1.2; }
+.m .x { color: var(--muted); font-variant-numeric: tabular-nums; }
+.rec { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: .78rem; }
+.rec .ty { color: var(--muted); font-size: .7rem; min-width: 5.5em; }
+.arrow { color: var(--muted); }
+
+/* drop table */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: .85rem; }
+th { text-align: left; font: 500 .72rem var(--f-body); letter-spacing: .06em; color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--line); }
+td { padding: 8px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+tr:first-child td { border-top: 0; }
+.src { display: flex; gap: 10px; align-items: center; min-width: 200px; }
+.kind { font-size: .72rem; color: var(--muted); white-space: nowrap; }
+.drops { display: grid; gap: 4px; }
+.drop { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.drop.self { opacity: .6; }
+.cond { font-size: .68rem; padding: 0 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+
+/* compact grids */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 6px 14px; }
+.cell { display: flex; gap: 10px; align-items: center; min-width: 0; padding: 4px 0; }
+.cell > div { min-width: 0; }
+.cell .nm { font-weight: 500; font-size: .88rem; }
+.flag { font-size: .66rem; color: var(--accent); }
+.empty-note { color: var(--muted); font-size: .85rem; }
+.none { color: var(--muted); font-size: .9rem; padding: 12px 0; }
+footer { margin-top: 48px; color: var(--muted); font-size: .8rem; }
+footer code { font-family: var(--f-mono); }
+@media (prefers-reduced-motion: no-preference) { .chip, .id { transition: color .15s, border-color .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Abyssia アイテム図鑑</h1>
+    <p>登録済みの全アイテムIDとアイコン、ドロップ表、レシピを現在のソースから集めた一覧です。IDをクリックするとコピーできます。</p>
+    <div class="stats" id="stats"></div>
+  </header>
+  <div class="bar">
+    <input id="q" type="search" placeholder="ID・日本語名・英語名で絞り込み" aria-label="絞り込み">
+    <nav class="chips" id="chips"></nav>
+  </div>
+  <main id="main"></main>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const ICON = D.icons, byId = {};
+[...D.items, ...D.external_items].forEach(e => byId[e.id] = e);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const RAR = {common: "コモン", uncommon: "アンコモン", rare: "レア", epic: "エピック"};
+const KIND = {blocks: "ブロック破壊", harvest: "収穫（右クリック）", entities: "生物"};
+const RTYPE = {crafting_shaped: "作業台", crafting_shapeless: "作業台", smelting: "かまど", blasting: "溶鉱炉", stonecutting: "石切台", smoking: "燻製器"};
+
+function slot(id, size = "s36", src) {
+  const s = src || ICON[id];
+  const e = byId[id];
+  const alt = e ? e.ja : id;
+  return `<span class="slot ${size}" title="${esc(alt)}">${s ? `<img src="${s}" alt="${esc(alt)}" loading="lazy">` : `<span class="tag">#</span>`}</span>`;
+}
+const idBtn = id => `<button class="id" type="button" data-copy="${esc(id)}" title="クリックでコピー">${esc(id)}</button>`;
+const nameOf = id => (byId[id] || {}).ja || id;
+const mini = (id, count) => `<span class="m">${slot(id, "s24")}<span>${esc(nameOf(id))}</span>${count && count !== "1" && count !== 1 ? `<span class="x">×${esc(count)}</span>` : ""}</span>`;
+const searchKey = (...xs) => xs.filter(Boolean).join(" ").toLowerCase();
+
+const mats = D.items.filter(e => e.category === "material");
+const eggs = D.items.filter(e => e.category === "egg");
+const blocks = D.items.filter(e => e.category === "block");
+const vanilla = D.external_items.filter(e => !e.id.startsWith("#"));
+const dropTables = D.loot_tables;
+const dropsElsewhere = new Set(dropTables.filter(t => t.kind === "blocks").map(t => t.source.id));
+
+function matCard(e) {
+  const burn = e.burn ? `<span class="pill">燃料 ${e.burn}t・${e.burn / 200}個精錬</span>` : "";
+  const src = e.dropped_by.length ? `<div><div class="row-l">入手（ドロップ）</div><div class="mini">${
+      e.dropped_by.map(d => `<span class="m">${slot(d.source, "s24")}<span>${esc(nameOf(d.source))}</span><span class="x">${d.kind === "harvest" ? "収穫 " : ""}${d.count !== "1" ? "×" + esc(d.count) : ""}${d.tags.length ? " " + esc(d.tags.join("・")) : ""}</span></span>`).join("")}</div></div>` : "";
+  const made = e.made_by.length ? `<div><div class="row-l">レシピ</div>${e.made_by.map(r => `<div class="rec"><span class="ty">${esc(RTYPE[r.type] || r.type)}</span>${r.inputs.map(i => mini(i.item, i.n)).join("")}<span class="arrow">→</span>${mini(e.id, r.count)}</div>`).join("")}</div>` : "";
+  const used = e.used_in.length ? `<div><div class="row-l">用途</div><div class="mini">${e.used_in.map(r => mini(r.output, r.count)).join("")}</div></div>` : "";
+  return `<article class="mat r-${e.rarity}" data-s="${esc(searchKey(e.id, e.ja, e.en, e.source_hint))}">
+    <div class="mat-head">${slot(e.id, "s48")}<div><div class="nm">${esc(e.ja)}</div><div class="en">${esc(e.en)}</div>${idBtn(e.id)}</div></div>
+    <div class="meta"><span class="pill rar">${RAR[e.rarity] || e.rarity}</span>${burn}</div>
+    ${e.source_hint ? `<div class="hint">${esc(e.source_hint)}</div>` : ""}${src}${made}${used}
+  </article>`;
+}
+
+function dropRow(t) {
+  const drops = t.drops.map(d => `<div class="drop${d.item === t.source.id ? " self" : ""}">${mini(d.item, d.count)}${d.tags.map(x => `<span class="cond">${esc(x)}</span>`).join("")}</div>`).join("");
+  const keys = searchKey(t.source.id, t.source.ja, t.source.en, ...t.drops.map(d => d.item + " " + nameOf(d.item)));
+  return `<tr data-s="${esc(keys)}"><td><div class="src">${slot(t.source.id, "s36", t.source_icon)}<div><div class="nm">${esc(t.source.ja)}</div>${idBtn(t.source.id)}</div></div></td>
+    <td class="kind">${KIND[t.kind] || t.kind}</td><td><div class="drops">${drops}</div></td></tr>`;
+}
+
+const cell = (e, extra = "") => `<div class="cell" data-s="${esc(searchKey(e.id, e.ja, e.en))}">${slot(e.id, "s36")}<div><div class="nm">${esc(e.ja)}</div>${idBtn(e.id)}${extra}</div></div>`;
+
+const SECTIONS = [
+  {id: "materials", label: "素材・鉱物", n: mats.length, lead: "ブロックではない単体アイテム。名前の色はレアリティ（ゲーム内のツールチップと同じ）。燃料値はtick、200tで1個精錬。",
+   html: `<div class="mats">${mats.map(matCard).join("")}</div>`},
+  {id: "drops", label: "ドロップ表", n: dropTables.length, lead: "自分自身以外を落とすブロックと、成熟した資源植物の収穫テーブル。薄く表示している行は、条件付きで落ちるブロック自身。",
+   html: `<div class="tbl-wrap"><table><thead><tr><th>ドロップ元</th><th>方法</th><th>ドロップ</th></tr></thead><tbody>${dropTables.map(dropRow).join("")}</tbody></table></div>`},
+  {id: "eggs", label: "スポーンエッグ", n: eggs.length, lead: "生物の見た目の色でゲーム内と同じように着色。生物のルートテーブルは現在すべて空です。",
+   html: `<div class="grid">${eggs.map(e => cell(e)).join("")}</div>`},
+  {id: "blocks", label: "ブロックアイテム", n: blocks.length, lead: "設置できるブロックのアイテム。「別アイテムを落とす」印の付いたものは、上のドロップ表に行があります。",
+   html: `<div class="grid">${blocks.map(e => cell(e, dropsElsewhere.has(e.id) ? `<div class="flag">別アイテムを落とす</div>` : "")).join("")}</div>`},
+  {id: "vanilla", label: "関連するバニラアイテム", n: vanilla.length, lead: "Abyssiaのドロップ表やレシピに登場するバニラのアイテム。",
+   html: `<div class="grid">${vanilla.map(e => cell(e)).join("")}</div>`},
+];
+
+document.getElementById("stats").innerHTML =
+  `<span>アイテムID <b>${D.items.length}</b></span>` + SECTIONS.map(s => `<span>${s.label} <b>${s.n}</b></span>`).join("");
+document.getElementById("chips").innerHTML = SECTIONS.map(s => `<a class="chip" href="#${s.id}">${s.label}<span>${s.n}</span></a>`).join("");
+document.getElementById("main").innerHTML = SECTIONS.map(s =>
+  `<section id="${s.id}"><h2>${s.label}<small data-count>${s.n}件</small></h2><p class="lead">${s.lead}</p>${s.html}<p class="none" hidden>該当なし</p></section>`).join("");
+document.getElementById("foot").innerHTML =
+  `空のルートテーブル（${D.empty_loot_tables.length}件）: <span class="empty-note">${D.empty_loot_tables.map(esc).join("、")}</span><br>` +
+  `生成: <code>python tools/item_catalog.py</code>（src/main/resources と registry/*.java から毎回再生成）`;
+
+const q = document.getElementById("q");
+q.addEventListener("input", () => {
+  const v = q.value.trim().toLowerCase();
+  document.querySelectorAll("section").forEach(sec => {
+    let shown = 0;
+    sec.querySelectorAll("[data-s]").forEach(el => { const ok = !v || el.dataset.s.includes(v); el.hidden = !ok; if (ok) shown++; });
+    sec.querySelector("[data-count]").textContent = v ? `${shown}件一致` : `${sec.querySelectorAll("[data-s]").length}件`;
+    sec.querySelector(".none").hidden = shown > 0;
+  });
+});
+document.addEventListener("click", ev => {
+  const b = ev.target.closest(".id"); if (!b) return;
+  const done = () => { b.classList.add("copied"); setTimeout(() => b.classList.remove("copied"), 900); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(b); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+  try { navigator.clipboard.writeText(b.dataset.copy).then(done, fallback); } catch (_) { fallback(); }
+});
+</script>

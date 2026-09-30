@@ -1,0 +1,15 @@
+{
+	"id": "rich_deep_sea",
+	"name": "Rich Deep Sea",
+	"default": true,
+	"description": "Chunky boxes and busy pixel-art texturing (fine dithered mottling, hard light belly with a ragged edge, strong fin rays, dark cube edges). Colours still come from the definition, so the Abyssia deep-sea palette stays muted.",
+	"settings": { "detail": "high", "pixelScale": 16, "textureSize": "auto", "uvMode": "box" },
+	"geometry": { "exaggeration": { "head": 1, "eye": 1, "teeth": 1, "fin": 1, "glow": 1, "limb": 1 }, "finThickness": 0, "roundSteps": 3, "roundCorners": false },
+	"texture": {
+		"saturation": 0.9, "brightness": 1, "contrast": 1.25, "rampSteps": 7, "hueShift": 1.2,
+		"shadowHue": 265, "highlightHue": 195, "noise": 0.2, "noiseScale": 0.55, "pixelNoise": 0.75, "speckle": 0.5,
+		"countershade": 0.5, "bellyLine": 0.36, "bellyLift": 2.6, "faceShade": 0.7, "edge": 0.25, "pattern": 1.1, "finRays": 1.8,
+		"glowStrength": 1.1, "glowBleed": 0.35, "finAlpha": 255
+	},
+	"animation": { "amplitude": 1, "speed": 1 }
+}

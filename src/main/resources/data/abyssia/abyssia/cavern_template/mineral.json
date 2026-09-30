@@ -1,0 +1,109 @@
+{
+  "patches": [
+    {
+      "data": "mineral",
+      "weight": 6
+    },
+    {
+      "data": "rock",
+      "weight": 2
+    },
+    {
+      "data": "open",
+      "weight": 2
+    },
+    {
+      "data": "plant",
+      "weight": 1
+    }
+  ],
+  "structures": {
+    "pillars": 0.8,
+    "floating_rocks": 0.4,
+    "bridges": 0.4,
+    "shelves": 1.2,
+    "wall_caves": 1.2,
+    "mounds": 0.8,
+    "hollows": 0.6,
+    "valleys": 0.3,
+    "rubble": 1.0,
+    "stalactites": 0.8,
+    "rock_spikes": 0.8,
+    "mega_ores": 2.0,
+    "mineral_pillars": 1.5,
+    "crystal_forests": 0.3,
+    "lakes": 0.2,
+    "gardens": 0.2,
+    "groves": 0.2
+  },
+  "ceiling_glow": 0.01,
+  "wall_relief": 1.5,
+  "center_chance": 0.65,
+  "deep_patches": [
+    {
+      "data": "mineral",
+      "weight": 5
+    },
+    {
+      "data": "thermal",
+      "weight": 1
+    },
+    {
+      "data": "rock",
+      "weight": 1
+    }
+  ],
+  "kelp_forest": {
+    "density": 0.2,
+    "clearings": 0.3,
+    "lean": 0.3,
+    "min_height": 8,
+    "max_height": 30,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:giant_cave_kelp"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "hanging": {
+    "density": 0.3,
+    "reach_floor": 0.08,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_root"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:deep_root"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "centers": [
+    {
+      "data": "mineral_pillar",
+      "weight": 6
+    },
+    {
+      "data": "giant_pillar",
+      "weight": 2
+    },
+    {
+      "data": "thermal_vents",
+      "weight": 1
+    }
+  ]
+}

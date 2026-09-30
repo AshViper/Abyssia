@@ -1,0 +1,94 @@
+{
+	"id": "yunohana_crab",
+	"name": "Yunohana Crab",
+	"name_ja": "ユノハナガニ",
+	"scientific_name": "Gandalfa yunohana",
+	"category": "crab",
+	"template": "crustacean",
+	"habitat": "hydrothermal_vent",
+	"plan": "crab",
+	"order": 11,
+	"notes": "Pale, almost white hydrothermal-vent crab: squarish hairy carapace, reduced eyes, strong claws with darker fingertips and long spidery walking legs.",
+	"body": {
+		"length": 8,
+		"width": 10,
+		"height": 4
+	},
+	"parts": [
+		"body",
+		"eye",
+		"antennae",
+		"claws",
+		"legs"
+	],
+	"params": {
+		"eye": {
+			"size": 1,
+			"stalk": 1
+		},
+		"antennae": {
+			"length": 4,
+			"segments": 2,
+			"sweep": 30,
+			"lift": 10
+		},
+		"claws": {
+			"enabled": true,
+			"arm": 4,
+			"hand": 4,
+			"hand_size": 3,
+			"finger": 3,
+			"spread": 35
+		},
+		"legs": {
+			"pairs": 4,
+			"upper": 5,
+			"lower": 5,
+			"splay": 70,
+			"fan": 45,
+			"width": 1
+		},
+		"abdomen": {
+			"segments": 0
+		}
+	},
+	"palette": {
+		"shell": "#d6d0c2",
+		"body": "#d6d0c2",
+		"belly": "#e3ded2",
+		"leg": "#cbc4b4",
+		"claw": "#d8d1c1",
+		"claw_tip": "#86796c",
+		"eye": "#2a2622",
+		"eye_iris": "#6a625a",
+		"eye_ring": "#bdb5a6",
+		"glow": "#d8f0ff",
+		"glow_eye": "#b0a898"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.5,
+		"countershade": 0.4
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"walk",
+		"claw_snap",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"claws": 0.12,
+		"legs": 0.1,
+		"antennae": 0.12,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

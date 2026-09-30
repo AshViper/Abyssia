@@ -1,0 +1,202 @@
+{
+	"id": "cookiecutter_shark",
+	"name": "Cookiecutter Shark",
+	"name_ja": "ダルマザメ",
+	"scientific_name": "Isistius brasiliensis",
+	"category": "shark",
+	"template": "fish",
+	"habitat": "mesopelagic",
+	"order": 62,
+	"notes": "Small cigar-shaped dogfish: short blunt snout, large forward-set eyes, fleshy suctorial lips and a saw-like row of big triangular lower teeth, two tiny dorsal fins set far back, a broad tail; dark brown, the belly covered in tiny green-glowing photophores except for a dark collar across the throat.",
+	"body": {
+		"length": 13,
+		"width": 4,
+		"height": 4,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 4,
+			"width": 4,
+			"height": 4,
+			"drop": 0,
+			"round": 1
+		},
+		"snout": {
+			"length": 0,
+			"width": 2,
+			"height": 1
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"underbite": 0,
+			"gape": 40,
+			"rest_gape": 3,
+			"width": 0.8,
+			"protrude": 0,
+			"round": 0
+		},
+		"teeth": {
+			"count": 4,
+			"length": 1,
+			"vary": 0,
+			"side": 1,
+			"upper": false,
+			"lower": true
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.62,
+			"forward": 0.3,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 2,
+			"length": 6,
+			"width": 3,
+			"height": 3,
+			"taper": 0.6
+		},
+		"caudal": {
+			"length": 4,
+			"height": 7,
+			"shape": "heterocercal"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 2,
+			"height": 2,
+			"angle": 30,
+			"droop": 25,
+			"position": 0.15
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"position": 0.85
+		},
+		"dorsal": {
+			"count": 2,
+			"length": 2,
+			"height": 1,
+			"position": 0.85,
+			"second_position": 1.0,
+			"apex": 0.6
+		},
+		"anal": {
+			"enabled": false
+		},
+		"photophores": {
+			"enabled": false,
+			"spacing": 1.5,
+			"radius": 0.5,
+			"rows": 1,
+			"head": false
+		},
+		"gills": {
+			"slits": 5
+		}
+	},
+	"palette": {
+		"body": "#3a2c25",
+		"belly": "#4a3a30",
+		"fin": "#33271f",
+		"mouth": "#5a2a2e",
+		"lip": "#6a4a40",
+		"teeth": "#e6e0d0",
+		"eye": "#0a0b0e",
+		"eye_iris": "#4f7a78",
+		"eye_ring": "#241a15",
+		"glow": "#6dffa8",
+		"glow_eye": "#8fb8b0"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.3,
+		"countershade": 0.5
+	},
+	"glow": [
+		{
+			"part": "body",
+			"anchor": [
+				0.5,
+				0.0,
+				0.12
+			],
+			"step": [
+				0,
+				0,
+				1.4
+			],
+			"count": 9,
+			"radius": 0.9,
+			"intensity": 1.0
+		},
+		{
+			"part": "body",
+			"anchor": [
+				0.2,
+				0.12,
+				0.14
+			],
+			"step": [
+				0,
+				0,
+				1.4
+			],
+			"count": 9,
+			"radius": 0.7,
+			"intensity": 0.9,
+			"mirror": true
+		},
+		{
+			"part": "tail",
+			"anchor": [
+				0.5,
+				0.0,
+				0.1
+			],
+			"step": [
+				0,
+				0,
+				1.4
+			],
+			"count": 3,
+			"radius": 0.8,
+			"intensity": 0.9
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite"
+	],
+	"animation": {
+		"speed": 1.1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.1,
+		"tail": 0.08,
+		"eye": 0.1,
+		"glow": 0.2,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

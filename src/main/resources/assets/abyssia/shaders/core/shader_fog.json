@@ -1,0 +1,14 @@
+{
+    "vertex": "abyssia:shader_fog",
+    "fragment": "abyssia:shader_fog",
+    "attributes": [ "Position" ],
+    "samplers": [
+        { "name": "DepthSampler" }
+    ],
+    "uniforms": [
+        { "name": "InvProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "FogNear", "type": "float", "count": 1, "values": [ 0.0 ] },
+        { "name": "FogFar", "type": "float", "count": 1, "values": [ 1.0 ] },
+        { "name": "FogTint", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 1.0 ] }
+    ]
+}

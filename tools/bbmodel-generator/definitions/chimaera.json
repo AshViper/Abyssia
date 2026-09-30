@@ -1,0 +1,133 @@
+{
+	"id": "chimaera",
+	"name": "Chimaera",
+	"name_ja": "ギンザメ",
+	"scientific_name": "Chimaera phantasma",
+	"category": "chimaera",
+	"template": "fish",
+	"habitat": "continental_slope",
+	"order": 26,
+	"notes": "Silver chimaera (ghost shark): big blunt triangular head with large eyes and a small underslung mouth with crushing tooth plates, large wing-like pectoral fins it flaps to swim, a tall narrow first dorsal fin with a venomous spine at its front, a long low second dorsal, and a body tapering to a long whip-like tail; silvery with dark lateral bands. Approximations: the spine is the leading edge of the first dorsal (apex at the front); tooth plates are two short incisor-like teeth; the lateral bands are left to countershading.",
+	"body": {
+		"length": 10,
+		"width": 6,
+		"height": 7,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 6,
+			"width": 6,
+			"height": 7,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": -1,
+			"gape": 25,
+			"rest_gape": 0,
+			"width": 0.5,
+			"round": 0
+		},
+		"teeth": {
+			"count": 1,
+			"length": 1,
+			"vary": 0,
+			"side": 0,
+			"upper": true,
+			"lower": true
+		},
+		"eye": {
+			"size": 3,
+			"height": 0.6,
+			"forward": 0.4,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 4,
+			"length": 18,
+			"width": 4,
+			"height": 4,
+			"taper": 0.2
+		},
+		"caudal": {
+			"length": 8,
+			"height": 2,
+			"shape": "rect"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 8,
+			"height": 6,
+			"angle": 35,
+			"droop": 50,
+			"position": 0.05
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 0.7
+		},
+		"dorsal": {
+			"count": 2,
+			"length": 3,
+			"height": 6,
+			"position": 0.05,
+			"second_position": 0.75,
+			"apex": 0.05
+		},
+		"anal": {
+			"enabled": false
+		}
+	},
+	"palette": {
+		"body": "#aeb4bc",
+		"belly": "#cfd3d6",
+		"fin": "#6e7480",
+		"mouth": "#5a3e46",
+		"lip": "#8e949c",
+		"teeth": "#e8e2d2",
+		"eye": "#0e1a18",
+		"eye_iris": "#5aa89a",
+		"eye_ring": "#3c4048"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.3,
+		"countershade": 1.0
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite"
+	],
+	"animation": {
+		"speed": 0.75,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.12,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

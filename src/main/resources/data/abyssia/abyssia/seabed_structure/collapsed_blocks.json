@@ -1,0 +1,116 @@
+{
+  "category": "geological",
+  "tier": "small",
+  "footprint_radius": 14,
+  "max_height": 8,
+  "formation": {
+    "type": "rock",
+    "count": [
+      3,
+      7
+    ],
+    "spread": 7,
+    "size": [
+      1.5,
+      3.5
+    ],
+    "height_ratio": 0.9,
+    "sink": 0.3,
+    "tilt": 0.8,
+    "erosion": 0.4,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 5
+      },
+      {
+        "data": {
+          "Name": "abyssia:mineral_host_rock"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 1.5
+  },
+  "dressing": {
+    "radius": 12,
+    "density": 0.15,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:giant_tube"
+          },
+          "min_height": 4,
+          "max_height": 12
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:soul_coral"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_crystal_cluster"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:knotstalk"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:silt_comb"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:lumen_quill"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:frilled_shark"
+  ]
+}

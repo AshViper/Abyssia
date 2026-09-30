@@ -1,0 +1,169 @@
+{
+  "biomes": [
+    "abyssia:deep_crystal_fields",
+    "abyssia:frost_abyss"
+  ],
+  "system_chance": 0.8,
+  "minor_cave_chance": 0.35,
+  "connection_chance": 0.45,
+  "cave_types": [
+    {
+      "data": "crystal_cave",
+      "weight": 35
+    },
+    {
+      "data": "medium_sea_cave",
+      "weight": 15
+    },
+    {
+      "data": "small_sea_cave",
+      "weight": 15
+    },
+    {
+      "data": "large_abyssal_cave",
+      "weight": 8
+    },
+    {
+      "data": "eroded_cave",
+      "weight": 6
+    },
+    {
+      "data": "massive_cavern",
+      "weight": 2
+    }
+  ],
+  "minor_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 6
+    },
+    {
+      "data": "sea_arch",
+      "weight": 2
+    },
+    {
+      "data": "eroded_cave",
+      "weight": 2
+    }
+  ],
+  "landmark_chance": 0.035,
+  "landmarks": [
+    {
+      "data": "massive_crystal_chamber",
+      "weight": 4
+    }
+  ],
+  "environment": "abyssia:crystal",
+  "luminous_chance": 0.4,
+  "strata": [
+    {
+      "depth": 0,
+      "state": {
+        "Name": "abyssia:crystal_sediment"
+      }
+    },
+    {
+      "depth": 4,
+      "state": {
+        "Name": "abyssia:crystal_cave_rock"
+      }
+    },
+    {
+      "depth": 25,
+      "state": {
+        "Name": "abyssia:layered_cave_rock"
+      }
+    },
+    {
+      "depth": 55,
+      "state": {
+        "Name": "abyssia:abyssal_cave_rock"
+      }
+    }
+  ],
+  "ores": [
+    {
+      "data": {
+        "Name": "abyssia:abyssal_crystal_ore"
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "Name": "abyssia:thermal_crystal_ore"
+      },
+      "weight": 1
+    }
+  ],
+  "cavern_templates": [
+    {
+      "data": "abyssia:crystal",
+      "weight": 6
+    },
+    {
+      "data": "abyssia:mixed",
+      "weight": 2
+    },
+    {
+      "data": "abyssia:lake",
+      "weight": 1
+    }
+  ],
+  "crystal_colors": [
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:cyan_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:deep_crystal_cluster"
+        }
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:blue_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:cobalt_cluster"
+        }
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:violet_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:abyssal_crystal_cluster"
+        }
+      },
+      "weight": 1
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:pale_crystal_cluster"
+        }
+      },
+      "weight": 1
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:green_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:nickel_cluster"
+        }
+      },
+      "weight": 1
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "category": "crystal",
+  "tier": "medium",
+  "footprint_radius": 20,
+  "max_height": 40,
+  "formation": {
+    "type": "crystal",
+    "count": [
+      5,
+      10
+    ],
+    "spread": 5,
+    "length": [
+      5,
+      14
+    ],
+    "radius": [
+      1,
+      2.2
+    ],
+    "tilt": 0.8,
+    "center_scale": 1.5,
+    "crystal": [
+      {
+        "data": {
+          "Name": "abyssia:deep_crystal_block"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:cyan_crystal_block"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:violet_crystal_block"
+        },
+        "weight": 1
+      }
+    ],
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "weight": 1
+      }
+    ],
+    "hanging": 0.35
+  },
+  "anchor": "cavern",
+  "conditions": {
+    "min_clearance": 12,
+    "max_top_y": 240
+  },
+  "dressing": {
+    "radius": 14,
+    "density": 0.3,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:deep_crystal_cluster"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_shards"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_needle"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_crystal_plant"
+          }
+        },
+        "weight": 2
+      }
+    ]
+  }
+}

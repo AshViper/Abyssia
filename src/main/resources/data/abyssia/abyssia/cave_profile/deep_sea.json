@@ -1,0 +1,198 @@
+{
+  "biomes": [
+    "abyssia:deep_sea"
+  ],
+  "system_chance": 0.8,
+  "minor_cave_chance": 0.45,
+  "connection_chance": 0.45,
+  "cave_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 30
+    },
+    {
+      "data": "medium_sea_cave",
+      "weight": 28
+    },
+    {
+      "data": "large_abyssal_cave",
+      "weight": 10
+    },
+    {
+      "data": "massive_cavern",
+      "weight": 2
+    },
+    {
+      "data": "sea_tunnel",
+      "weight": 10
+    },
+    {
+      "data": "vertical_shaft",
+      "weight": 5
+    },
+    {
+      "data": "eroded_cave",
+      "weight": 10
+    },
+    {
+      "data": "mineral_cave",
+      "weight": 5
+    },
+    {
+      "data": "crystal_cave",
+      "weight": 2
+    },
+    {
+      "data": "underground_sea",
+      "weight": 1
+    }
+  ],
+  "minor_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 6
+    },
+    {
+      "data": "sea_arch",
+      "weight": 2
+    },
+    {
+      "data": "eroded_cave",
+      "weight": 2
+    }
+  ],
+  "landmark_chance": 0.02,
+  "landmarks": [
+    {
+      "data": "giant_stalactite_chamber",
+      "weight": 2
+    },
+    {
+      "data": "abyssal_underground_lake",
+      "weight": 2
+    },
+    {
+      "data": "ancient_mineral_chamber",
+      "weight": 1
+    },
+    {
+      "data": "massive_crystal_chamber",
+      "weight": 1
+    }
+  ],
+  "environment": "abyssia:abyssal",
+  "luminous_chance": 0.25,
+  "strata": [
+    {
+      "depth": 0,
+      "state": {
+        "Name": "abyssia:cave_sediment"
+      }
+    },
+    {
+      "depth": 5,
+      "state": {
+        "Name": "abyssia:wet_cave_rock"
+      }
+    },
+    {
+      "depth": 18,
+      "state": {
+        "Name": "abyssia:layered_cave_rock"
+      }
+    },
+    {
+      "depth": 40,
+      "state": {
+        "Name": "abyssia:abyssal_cave_rock"
+      }
+    },
+    {
+      "depth": 90,
+      "state": {
+        "Name": "abyssia:dark_cave_rock"
+      }
+    }
+  ],
+  "ores": [
+    {
+      "data": {
+        "Name": "abyssia:abyssal_iron_ore"
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "Name": "abyssia:manganese_ore"
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "Name": "abyssia:deep_copper_ore"
+      },
+      "weight": 2
+    }
+  ],
+  "cavern_templates": [
+    {
+      "data": "abyssia:mixed",
+      "weight": 4
+    },
+    {
+      "data": "abyssia:lake",
+      "weight": 2
+    },
+    {
+      "data": "abyssia:ruins_like_geology",
+      "weight": 2
+    },
+    {
+      "data": "abyssia:forest",
+      "weight": 1
+    },
+    {
+      "data": "abyssia:crystal",
+      "weight": 1
+    },
+    {
+      "data": "abyssia:mineral",
+      "weight": 1
+    }
+  ],
+  "crystal_colors": [
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:cyan_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:deep_crystal_cluster"
+        }
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:blue_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:cobalt_cluster"
+        }
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:pale_crystal_cluster"
+        }
+      },
+      "weight": 1
+    }
+  ]
+}

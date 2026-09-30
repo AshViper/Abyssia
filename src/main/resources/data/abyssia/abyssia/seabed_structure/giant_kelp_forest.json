@@ -1,0 +1,109 @@
+{
+  "category": "vegetation",
+  "tier": "large",
+  "footprint_radius": 74,
+  "max_height": 80,
+  "formation": {
+    "type": "vegetation",
+    "shape": "grove",
+    "radius": [
+      35,
+      60
+    ],
+    "density": 0.35,
+    "clearings": 0.25,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:giant_kelp"
+          },
+          "min_height": 30,
+          "max_height": 80
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:deep_kelp"
+          },
+          "min_height": 20,
+          "max_height": 45
+        },
+        "weight": 2
+      }
+    ],
+    "understory": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:tube_plant"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sponge_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:abyssal_grass"
+          },
+          "max_height": 3
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:glowtip_grass"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sea_fern"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "understory_density": 0.25,
+    "soil": [
+      {
+        "data": {
+          "Name": "abyssia:organic_sediment"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 1
+      }
+    ],
+    "soil_chance": 0.5
+  },
+  "conditions": {
+    "max_top_y": 215,
+    "max_slope": 0.8
+  },
+  "preferred_mobs": [
+    "abyssia:barreleye",
+    "abyssia:viperfish",
+    "abyssia:deep_sea_shrimp",
+    "abyssia:giant_squid"
+  ]
+}

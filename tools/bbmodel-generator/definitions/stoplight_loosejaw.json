@@ -1,0 +1,165 @@
+{
+	"id": "stoplight_loosejaw",
+	"name": "Stoplight loosejaw",
+	"name_ja": "オオクチホシエソ",
+	"scientific_name": "Malacosteus niger",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "bathypelagic",
+	"order": 41,
+	"notes": "Slender black dragonfish with an enormous floorless lower jaw (about a quarter of its length) lined with long teeth, a big red suborbital light organ under the eye and a small blue postorbital one behind it; dorsal and anal fins set far back.",
+	"body": {
+		"length": 10,
+		"width": 3,
+		"height": 4,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 7,
+			"width": 4,
+			"height": 4,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"underbite": 1,
+			"gape": 80,
+			"rest_gape": 14,
+			"width": 1,
+			"round": 0
+		},
+		"teeth": {
+			"count": 5,
+			"length": 1,
+			"vary": 1,
+			"side": 1,
+			"upper": true,
+			"lower": true,
+			"fangs": 1,
+			"fang_length": 2
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.75,
+			"forward": 0.3,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 2,
+			"length": 7,
+			"width": 2,
+			"height": 3,
+			"taper": 0.6
+		},
+		"caudal": {
+			"length": 3,
+			"height": 5,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"angle": 30,
+			"droop": 20,
+			"position": 0.15
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"position": 0.6
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 3,
+			"height": 2,
+			"position": 0.95,
+			"apex": 0.5
+		},
+		"anal": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 0.95
+		}
+	},
+	"palette": {
+		"body": "#15171d",
+		"belly": "#1d2029",
+		"fin": "#1f222b",
+		"mouth": "#3a1a22",
+		"lip": "#15171d",
+		"teeth": "#d8d6cc",
+		"eye": "#08090c",
+		"eye_iris": "#6a7a86",
+		"eye_ring": "#1a1d24",
+		"glow": "#6fd0e8",
+		"glow_red": "#c0282a"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.3,
+		"pattern_scale": 1,
+		"countershade": 0.4
+	},
+	"glow": [
+		{
+			"part": "head",
+			"anchor": [
+				1,
+				0.4,
+				0.3
+			],
+			"radius": 0.9,
+			"mirror": true,
+			"intensity": 1.0,
+			"color": "glow_red"
+		},
+		{
+			"part": "head",
+			"anchor": [
+				1,
+				0.7,
+				0.6
+			],
+			"radius": 0.75,
+			"mirror": true,
+			"intensity": 0.8
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.07,
+		"fin": 0.12,
+		"tail": 0.1,
+		"eye": 0.1,
+		"glow": 0.15,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

@@ -1,0 +1,71 @@
+{
+	"id": "deepstaria",
+	"name": "Deepstaria",
+	"name_ja": "ディープスタリアクラゲ",
+	"scientific_name": "Deepstaria enigmatica",
+	"category": "jellyfish",
+	"template": "medusa",
+	"habitat": "bathypelagic",
+	"order": 75,
+	"notes": "Giant ulmarid jelly: a huge, extremely thin, sheet-like bell (about 60-70 cm) that billows like a plastic bag and closes around prey to bag it; the whole bell is covered by a fine anastomosing canal network like wire netting; no marginal tentacles, only short oral arms under a small stomach. Translucent, faintly violet-bronze. Moves by slow peristaltic waves (about 1.5 cm/s). Not bioluminescent.",
+	"body": {
+		"width": 22,
+		"height": 14
+	},
+	"parts": [
+		"bell",
+		"stomach",
+		"oral_arms"
+	],
+	"params": {
+		"bell": {
+			"profile": "dome",
+			"tiers": 4,
+			"alpha": 105
+		},
+		"stomach": {
+			"enabled": true,
+			"width": 6,
+			"height": 3
+		},
+		"tentacles": {
+			"count": 0
+		},
+		"oral_arms": {
+			"count": 4,
+			"length": 6,
+			"width": 3,
+			"segments": 2
+		}
+	},
+	"palette": {
+		"dome": "#b8a8b4",
+		"body": "#a89aa6",
+		"flesh": "#9a6a4e",
+		"membrane": "#b09aa8"
+	},
+	"texture": {
+		"pattern": "scales",
+		"pattern_strength": 0.55,
+		"pattern_scale": 1.3
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"pulse",
+		"spread",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.6,
+		"amplitude": 1.2
+	},
+	"variation": {
+		"bell": 0.1,
+		"tentacles": 0.1,
+		"hue": 6,
+		"lightness": 0.04
+	}
+}

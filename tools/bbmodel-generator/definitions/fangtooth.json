@@ -1,0 +1,138 @@
+{
+	"id": "fangtooth",
+	"name": "Fangtooth",
+	"name_ja": "オニキンメ",
+	"scientific_name": "Anoplogaster cornuta",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "bathypelagic",
+	"order": 43,
+	"notes": "Adult: a huge, deep head on a short body that tapers fast to the tail, enormous fangs in both jaws (the largest teeth for its size of any sea fish), small eyes and rough dark brown-black skin; no light organs.",
+	"body": {
+		"length": 6,
+		"width": 4,
+		"height": 7,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 7,
+			"width": 5,
+			"height": 8,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 3,
+			"underbite": 0,
+			"gape": 60,
+			"rest_gape": 6,
+			"width": 1,
+			"round": 1
+		},
+		"teeth": {
+			"count": 3,
+			"length": 2,
+			"vary": 1,
+			"side": 1,
+			"upper": true,
+			"lower": true,
+			"fangs": 2,
+			"fang_length": 4
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.75,
+			"forward": 0.35,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 2,
+			"length": 5,
+			"width": 3,
+			"height": 4,
+			"taper": 0.5
+		},
+		"caudal": {
+			"length": 3,
+			"height": 6,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 30,
+			"droop": 15,
+			"position": 0.1
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"position": 0.5
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 4,
+			"height": 2,
+			"position": 0.7,
+			"apex": 0.4
+		},
+		"anal": {
+			"enabled": true,
+			"length": 2,
+			"height": 2,
+			"position": 0.9
+		}
+	},
+	"palette": {
+		"body": "#2a201d",
+		"belly": "#231a18",
+		"fin": "#33282a",
+		"mouth": "#4a2228",
+		"lip": "#2a201d",
+		"teeth": "#e2ddd0",
+		"eye": "#0a0b0e",
+		"eye_iris": "#5a6470",
+		"eye_ring": "#1f1816"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.6,
+		"pattern_scale": 1,
+		"countershade": 0.3
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite"
+	],
+	"animation": {
+		"speed": 1.1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.07,
+		"fin": 0.12,
+		"tail": 0.1,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

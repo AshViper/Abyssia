@@ -1,0 +1,154 @@
+{
+	"id": "goblin_shark",
+	"name": "Goblin Shark",
+	"name_ja": "ミツクリザメ",
+	"scientific_name": "Mitsukurina owstoni",
+	"category": "shark",
+	"template": "fish",
+	"habitat": "continental_slope",
+	"order": 5,
+	"notes": "Long flat blade-like snout over a protrusible jaw full of nail-like teeth, pinkish-grey flabby body, small eyes, rounded dorsal fins and a long heterocercal tail.",
+	"body": {
+		"length": 14,
+		"width": 6,
+		"height": 6,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"snout",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 6,
+			"width": 6,
+			"height": 6,
+			"drop": -1,
+			"round": 1
+		},
+		"snout": {
+			"length": 7,
+			"width": 4,
+			"height": 2
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": 0,
+			"gape": 40,
+			"rest_gape": 4,
+			"width": 0.84,
+			"protrude": 3,
+			"round": 0
+		},
+		"teeth": {
+			"count": 5,
+			"length": 2,
+			"vary": 1,
+			"side": 2,
+			"upper": true,
+			"lower": true
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.6,
+			"forward": 0.25,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 2,
+			"length": 9,
+			"width": 4,
+			"height": 4,
+			"taper": 0.55
+		},
+		"caudal": {
+			"length": 10,
+			"height": 9,
+			"shape": "heterocercal"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 5,
+			"height": 3,
+			"angle": 35,
+			"droop": 55,
+			"position": 0.1
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 0.75
+		},
+		"dorsal": {
+			"count": 2,
+			"length": 4,
+			"height": 3,
+			"position": 0.55,
+			"second_position": 0.95,
+			"apex": 0.6
+		},
+		"anal": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 1
+		},
+		"gills": {
+			"slits": 5
+		}
+	},
+	"palette": {
+		"body": "#8a6f76",
+		"belly": "#a38c90",
+		"fin": "#7c636b",
+		"mouth": "#6a2f3e",
+		"lip": "#7a6068",
+		"teeth": "#e6e0d0",
+		"eye": "#0d0f14",
+		"eye_iris": "#6a7780",
+		"eye_ring": "#5a4a52",
+		"glow": "#9fd8ff",
+		"glow_eye": "#8fa8b8"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.35,
+		"countershade": 0.8
+	},
+	"glow": [
+		{
+			"part": "eyes",
+			"intensity": 0.3,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite"
+	],
+	"animation": {
+		"speed": 0.85,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.12,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

@@ -1,0 +1,174 @@
+{
+	"id": "viperfish",
+	"name": "Viperfish",
+	"name_ja": "ホウライエソ",
+	"scientific_name": "Chauliodus sloani",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "mesopelagic",
+	"order": 4,
+	"notes": "Slender dark body, fangs too long to fit in the mouth (lower fangs rise in front of the face), large eyes, a long first dorsal ray tipped with a light organ and rows of ventral photophores.",
+	"body": {
+		"length": 11,
+		"width": 4,
+		"height": 5,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"lure",
+		"esca",
+		"fin",
+		"tail",
+		"photophores"
+	],
+	"params": {
+		"head": {
+			"length": 5,
+			"width": 5,
+			"height": 6,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": 0,
+			"gape": 55,
+			"rest_gape": 8,
+			"width": 1,
+			"round": 0
+		},
+		"teeth": {
+			"count": 3,
+			"length": 1,
+			"vary": 0,
+			"side": 1,
+			"upper": true,
+			"lower": true,
+			"fangs": 1,
+			"fang_length": 5
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.55,
+			"forward": 0.35,
+			"protrude": 0.5
+		},
+		"lure": {
+			"enabled": true,
+			"base": "dorsal",
+			"position": 0.15,
+			"length": 7,
+			"segments": 2,
+			"lean": 0,
+			"arc": 55,
+			"esca": 1
+		},
+		"tail": {
+			"segments": 2,
+			"length": 8,
+			"width": 3,
+			"height": 4,
+			"taper": 0.55
+		},
+		"caudal": {
+			"length": 4,
+			"height": 7,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 30,
+			"droop": 20,
+			"position": 0.15
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"position": 0.55
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 3,
+			"height": 2,
+			"position": 0.3,
+			"apex": 0.7
+		},
+		"anal": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 0.95
+		},
+		"photophores": {
+			"enabled": true,
+			"spacing": 2,
+			"radius": 0.5,
+			"rows": 2,
+			"head": true
+		}
+	},
+	"palette": {
+		"body": "#27313f",
+		"belly": "#3b4a5c",
+		"fin": "#2f3d4f",
+		"lure": "#33404f",
+		"mouth": "#3a2030",
+		"lip": "#232c38",
+		"teeth": "#dfe3de",
+		"eye": "#0a0c11",
+		"eye_iris": "#5e8fa0",
+		"eye_ring": "#1d242e",
+		"glow": "#7fb8ff",
+		"glow_eye": "#8fb0c8"
+	},
+	"texture": {
+		"pattern": "scales",
+		"pattern_strength": 0.45,
+		"pattern_scale": 1,
+		"countershade": 1.2
+	},
+	"glow": [
+		{
+			"part": "esca",
+			"intensity": 1.0
+		},
+		{
+			"part": "eyes",
+			"intensity": 0.35,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite",
+		"glow"
+	],
+	"animation": {
+		"speed": 1.1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.07,
+		"fin": 0.12,
+		"tail": 0.1,
+		"eye": 0.12,
+		"glow": 0.2,
+		"lure": 0.15,
+		"hue": 6,
+		"lightness": 0.03
+	}
+}

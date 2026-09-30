@@ -1,0 +1,141 @@
+{
+	"id": "frilled_shark",
+	"name": "Frilled Shark",
+	"name_ja": "ラブカ",
+	"scientific_name": "Chlamydoselachus anguineus",
+	"category": "eel",
+	"template": "eel",
+	"habitat": "continental_slope",
+	"order": 7,
+	"notes": "Eel-like primitive shark: flat snake-like head with a terminal mouth full of small trident teeth, six pairs of frilly gill slits (the first meeting under the throat), fins set far back and a long low tail.",
+	"body": {
+		"length": 40,
+		"width": 5,
+		"height": 5,
+		"segments": 7,
+		"taper": 0.45
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"gills",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 6,
+			"width": 5,
+			"height": 5,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"jaw_length": 6,
+			"upper_length": 6,
+			"width": 1,
+			"gape": 45,
+			"rest_gape": 5,
+			"pouch": 0
+		},
+		"teeth": {
+			"count": 5,
+			"length": 1,
+			"rows": 2
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.75,
+			"forward": 0.3,
+			"protrude": 0.5
+		},
+		"gills": {
+			"frills": 6,
+			"height": 6,
+			"spacing": 1
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 45
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 0.6
+		},
+		"dorsal": {
+			"enabled": true,
+			"start": 0.72,
+			"end": 0.86,
+			"height": 2
+		},
+		"anal": {
+			"enabled": true,
+			"start": 0.62,
+			"end": 0.84,
+			"height": 2
+		},
+		"caudal": {
+			"enabled": true,
+			"length": 9,
+			"height": 5,
+			"shape": "taper"
+		},
+		"tail_tip": {
+			"enabled": false
+		}
+	},
+	"palette": {
+		"body": "#434b46",
+		"belly": "#566058",
+		"fin": "#3d4540",
+		"mouth": "#6a2f3e",
+		"lip": "#3a423d",
+		"gill": "#8f4450",
+		"teeth": "#e8e6dc",
+		"eye": "#0c0e12",
+		"eye_iris": "#6f8f84",
+		"eye_ring": "#2f3632",
+		"glow": "#9fe8d8",
+		"glow_eye": "#9ab8ae"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.45,
+		"countershade": 1
+	},
+	"glow": [
+		{
+			"part": "eyes",
+			"intensity": 0.35,
+			"color": "glow_eye"
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.9,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"mouth": 0.08,
+		"fin": 0.12,
+		"eye": 0.1,
+		"hue": 6,
+		"lightness": 0.03
+	}
+}

@@ -1,0 +1,141 @@
+{
+	"id": "sea_pig",
+	"name": "Sea Pig",
+	"name_ja": "センジュナマコ",
+	"scientific_name": "Scotoplanes globosa",
+	"category": "sea_cucumber",
+	"template": "parts",
+	"habitat": "abyssal_floor",
+	"order": 68,
+	"notes": "Plump, pale pink, slightly translucent abyssal sea cucumber: a blunt oval body walking on five to seven pairs of stubby leg-like tube feet, with a pair of long dorsal papillae ('antennae') raised over the front and a few small feeding tentacles below the mouth. Assembled from parts (the softbody template has no legs or dorsal papillae).",
+	"params": {
+		"orientation": "horizontal",
+		"scale": 1,
+		"parts": [
+			{
+				"name": "body",
+				"shape": "ellipsoid",
+				"size": [
+					9,
+					7,
+					15
+				],
+				"axis": "-z",
+				"center": true,
+				"color": "#d49ca2",
+				"belly": "#e6c0c2"
+			},
+			{
+				"name": "papilla",
+				"shape": "cylinder",
+				"parent": "body",
+				"at": [
+					0.5,
+					0.9,
+					0.2
+				],
+				"size": [
+					1,
+					5,
+					1
+				],
+				"count": 2,
+				"arrange": "row",
+				"spacing": [
+					2,
+					0,
+					0
+				],
+				"rotate": [
+					0,
+					0,
+					0
+				],
+				"segments": 2,
+				"curl": -15,
+				"role": "tentacle",
+				"color": "#dca8ad",
+				"detail": 1,
+				"axis": "y"
+			},
+			{
+				"name": "leg",
+				"shape": "cylinder",
+				"parent": "body",
+				"at": [
+					0.95,
+					0.2,
+					0.2
+				],
+				"size": [
+					1,
+					3,
+					1
+				],
+				"axis": "-y",
+				"count": 5,
+				"arrange": "row",
+				"spacing": [
+					0,
+					0,
+					2.4
+				],
+				"rotate": [
+					0,
+					0,
+					0
+				],
+				"mirror": true,
+				"role": "tentacle",
+				"color": "#cf959b"
+			},
+			{
+				"name": "oral_tentacle",
+				"shape": "cylinder",
+				"parent": "body",
+				"at": [
+					0.5,
+					0.25,
+					0
+				],
+				"size": [
+					1,
+					2,
+					1
+				],
+				"axis": "-y",
+				"count": 4,
+				"arrange": "row",
+				"spacing": [
+					1.5,
+					0,
+					0
+				],
+				"role": "tentacle",
+				"color": "#e2b4b8",
+				"detail": 2
+			}
+		]
+	},
+	"palette": {},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.35
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"tentacle_move",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"hue": 5,
+		"lightness": 0.04
+	}
+}

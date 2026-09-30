@@ -1,0 +1,221 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 20,
+    "xz_spread": 6,
+    "y_spread": 1,
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_random_selector",
+        "config": {
+          "features": [
+            {
+              "feature": {
+                "type": "abyssia:crystal_spike",
+                "config": {
+                  "crystal": {
+                    "Name": "abyssia:deep_crystal_block"
+                  },
+                  "cluster": {
+                    "Name": "abyssia:deep_crystal_cluster",
+                    "Properties": {
+                      "facing": "up",
+                      "waterlogged": "true"
+                    }
+                  },
+                  "min_height": 2,
+                  "max_height": 6
+                }
+              },
+              "placement": []
+            },
+            {
+              "feature": {
+                "type": "minecraft:simple_block",
+                "config": {
+                  "to_place": {
+                    "type": "minecraft:simple_state_provider",
+                    "state": {
+                      "Name": "abyssia:crystal_plant"
+                    }
+                  }
+                }
+              },
+              "placement": [
+                {
+                  "type": "minecraft:block_predicate_filter",
+                  "predicate": {
+                    "type": "minecraft:all_of",
+                    "predicates": [
+                      {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": [
+                          "minecraft:water"
+                        ]
+                      },
+                      {
+                        "type": "minecraft:would_survive",
+                        "state": {
+                          "Name": "abyssia:crystal_plant"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "feature": {
+                "type": "minecraft:simple_block",
+                "config": {
+                  "to_place": {
+                    "type": "minecraft:simple_state_provider",
+                    "state": {
+                      "Name": "abyssia:crystal_plant"
+                    }
+                  }
+                }
+              },
+              "placement": [
+                {
+                  "type": "minecraft:block_predicate_filter",
+                  "predicate": {
+                    "type": "minecraft:all_of",
+                    "predicates": [
+                      {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": [
+                          "minecraft:water"
+                        ]
+                      },
+                      {
+                        "type": "minecraft:would_survive",
+                        "state": {
+                          "Name": "abyssia:crystal_plant"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "feature": {
+                "type": "minecraft:simple_block",
+                "config": {
+                  "to_place": {
+                    "type": "minecraft:simple_state_provider",
+                    "state": {
+                      "Name": "abyssia:crystal_plant"
+                    }
+                  }
+                }
+              },
+              "placement": [
+                {
+                  "type": "minecraft:block_predicate_filter",
+                  "predicate": {
+                    "type": "minecraft:all_of",
+                    "predicates": [
+                      {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": [
+                          "minecraft:water"
+                        ]
+                      },
+                      {
+                        "type": "minecraft:would_survive",
+                        "state": {
+                          "Name": "abyssia:crystal_plant"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "feature": {
+                "type": "minecraft:simple_block",
+                "config": {
+                  "to_place": {
+                    "type": "minecraft:simple_state_provider",
+                    "state": {
+                      "Name": "abyssia:deep_crystal_cluster",
+                      "Properties": {
+                        "facing": "up",
+                        "waterlogged": "true"
+                      }
+                    }
+                  }
+                }
+              },
+              "placement": [
+                {
+                  "type": "minecraft:block_predicate_filter",
+                  "predicate": {
+                    "type": "minecraft:all_of",
+                    "predicates": [
+                      {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": [
+                          "minecraft:water"
+                        ]
+                      },
+                      {
+                        "type": "minecraft:would_survive",
+                        "state": {
+                          "Name": "abyssia:deep_crystal_cluster",
+                          "Properties": {
+                            "facing": "up",
+                            "waterlogged": "true"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "feature": {
+                "type": "minecraft:simple_block",
+                "config": {
+                  "to_place": {
+                    "type": "minecraft:simple_state_provider",
+                    "state": {
+                      "Name": "abyssia:glowtip_grass"
+                    }
+                  }
+                }
+              },
+              "placement": [
+                {
+                  "type": "minecraft:block_predicate_filter",
+                  "predicate": {
+                    "type": "minecraft:all_of",
+                    "predicates": [
+                      {
+                        "type": "minecraft:matching_blocks",
+                        "blocks": [
+                          "minecraft:water"
+                        ]
+                      },
+                      {
+                        "type": "minecraft:would_survive",
+                        "state": {
+                          "Name": "abyssia:glowtip_grass"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "placement": []
+    }
+  }
+}

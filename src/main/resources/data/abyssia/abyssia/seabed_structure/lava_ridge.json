@@ -1,0 +1,104 @@
+{
+  "category": "geological",
+  "tier": "medium",
+  "footprint_radius": 28,
+  "max_height": 10,
+  "formation": {
+    "type": "rock",
+    "count": [
+      3,
+      6
+    ],
+    "spread": 12,
+    "size": [
+      2.5,
+      5
+    ],
+    "height_ratio": 0.5,
+    "elongation": [
+      2,
+      3.5
+    ],
+    "sink": 0.45,
+    "erosion": 0.4,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:volcanic_rock"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:black_vent_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:molten_volcanic_rock"
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:volcanic_glass"
+        },
+        "weight": 1
+      }
+    ],
+    "accent_chance": 0.15
+  },
+  "conditions": {
+    "max_slope": 0.8
+  },
+  "dressing": {
+    "radius": 26,
+    "density": 0.08,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:heat_moss"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_plant"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_tube"
+          },
+          "max_height": 4
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cinder_stalk"
+          }
+        },
+        "weight": 2
+      }
+    ]
+  }
+}

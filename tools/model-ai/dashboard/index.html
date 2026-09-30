@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>model-ai 学習ダッシュボード</title>
+<style>
+:root {
+	--bg: #f4f5f7; --card: #ffffff; --text: #1d2330; --muted: #69707d; --line: #e2e5ea;
+	--accent: #2f6fdd; --accent-soft: #dce7fb; --good: #1f8a4c; --good-soft: #dcf3e5;
+	--warn: #b7791f; --warn-soft: #fbefd6; --bad: #c0392b; --bad-soft: #f9e0dd; --eval: #d9822b;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #12151b; --card: #1b1f27; --text: #e6e9ef; --muted: #8d95a3; --line: #2a303b;
+		--accent: #6d9ff5; --accent-soft: #1f2d49; --good: #4cc27f; --good-soft: #173526;
+		--warn: #e0a64a; --warn-soft: #3a2e17; --bad: #ef6b5e; --bad-soft: #3d1f1c; --eval: #f0a35a;
+	}
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 "Segoe UI", "Yu Gothic UI", "Hiragino Sans", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+h1 { font-size: 20px; margin: 0; font-weight: 600; }
+.sub { color: var(--muted); font-size: 12px; }
+.spacer { flex: 1; }
+select { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; font: inherit; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--accent); }
+.badge.done { background: var(--good-soft); color: var(--good); }
+.badge.failed, .badge.unreachable { background: var(--bad-soft); color: var(--bad); }
+.badge.evaluating, .badge.finishing { background: var(--warn-soft); color: var(--warn); }
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; } .span-12 { grid-column: span 12; } .span-6 { grid-column: span 6; }
+@media (max-width: 820px) { .span-8, .span-4, .span-6 { grid-column: span 12; } }
+.card h2 { font-size: 13px; font-weight: 600; margin: 0 0 12px; color: var(--muted); letter-spacing: .02em; }
+.big { font-size: 34px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.bar { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; margin: 10px 0 14px; }
+.bar > div { height: 100%; background: var(--accent); border-radius: 999px; transition: width .6s; }
+.bar.small { height: 6px; margin: 6px 0 10px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.stat .k { color: var(--muted); font-size: 12px; }
+.stat .v { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.alert { margin-top: 12px; padding: 8px 12px; border-radius: 8px; font-size: 13px; }
+.alert.warn { background: var(--warn-soft); color: var(--warn); }
+.alert.bad { background: var(--bad-soft); color: var(--bad); }
+.alert.good { background: var(--good-soft); color: var(--good); }
+svg text { fill: var(--muted); font-size: 11px; }
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.legend i { display: inline-block; width: 12px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; }
+.tablewrap { overflow-x: auto; }
+.ok { color: var(--good); font-weight: 600; } .ng { color: var(--bad); font-weight: 600; }
+pre { margin: 0; font: 12px/1.45 ui-monospace, "Cascadia Mono", Consolas, monospace; white-space: pre-wrap; word-break: break-all; color: var(--muted); max-height: 180px; overflow: auto; }
+.empty { color: var(--muted); font-size: 13px; padding: 20px 0; text-align: center; }
+.live { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--good); display: inline-flex; align-items: center; gap: 6px; }
+.live::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--good); }
+.live.beat::before { animation: beat .9s ease-out; }
+.live.off { color: var(--muted); } .live.off::before { background: var(--muted); }
+.live.stale { color: var(--warn); } .live.stale::before { background: var(--warn); }
+@keyframes beat { 0% { box-shadow: 0 0 0 0 rgba(76, 194, 127, .8); transform: scale(1.5); } 100% { box-shadow: 0 0 0 10px rgba(76, 194, 127, 0); transform: scale(1); } }
+.pulse { stroke: var(--card); stroke-width: 2; }
+@keyframes pulsedot { 50% { r: 6; opacity: .6; } }
+nav a { color: var(--muted); text-decoration: none; margin-right: 12px; font-size: 13px; }
+nav a.on { color: var(--accent); font-weight: 600; }
+/* flow diagram */
+#flow { overflow-x: auto; }
+#flow svg { display: block; width: 100%; min-width: 820px; height: auto; }
+#flow .node rect { stroke-width: 1.5; }
+#flow .pending rect { fill: var(--bg); stroke: var(--line); }
+#flow .done rect { fill: var(--good-soft); stroke: var(--good); }
+#flow .active rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 3; } /* no endless animations: the GPU is training */
+#flow .failed rect { fill: var(--bad-soft); stroke: var(--bad); }
+#flow .static rect { fill: var(--card); stroke: var(--line); }
+#flow .t { fill: var(--text); font-size: 14px; font-weight: 600; }
+#flow .d { fill: var(--muted); font-size: 12px; }
+#flow .done .d { fill: var(--good); } #flow .active .d { fill: var(--accent); } #flow .failed .d { fill: var(--bad); }
+#flow .row { fill: var(--muted); font-size: 12px; font-weight: 600; }
+#flow .arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+#flow .flowing { stroke: var(--accent); stroke-dasharray: 6 5; }
+@keyframes pulse { 50% { stroke-width: 3.5; } }
+@keyframes dash { to { stroke-dashoffset: -11; } }
+/* flowchart */
+#fc { overflow-x: auto; }
+#fc svg { display: block; width: 100%; min-width: 980px; height: auto; }
+#fc .n rect, #fc .n polygon { fill: var(--card); stroke: var(--line); stroke-width: 1.5; transition: fill .15s, stroke .15s; }
+#fc .n text { fill: var(--text); font-size: 12.5px; }
+#fc .n text.s { fill: var(--muted); font-size: 11px; }
+#fc .n.on rect, #fc .n.on polygon { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; }
+#fc .n.done rect, #fc .n.done polygon { fill: var(--good-soft); stroke: var(--good); }
+#fc .n.bad rect { fill: var(--bad-soft); stroke: var(--bad); }
+#fc .e { stroke: var(--muted); stroke-width: 1.3; fill: none; }
+#fc .e.on { stroke: var(--accent); stroke-width: 2.2; }
+#fc .lbl { fill: var(--muted); font-size: 11px; }
+#fc .lane { fill: var(--muted); font-size: 12px; font-weight: 700; }
+#fc .band { fill: var(--bg); }
+/* examples */
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; font-size: 13px; }
+button { background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 5px 12px; font: inherit; cursor: pointer; }
+.examples { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
+.ex { border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; }
+.ex .q { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.ex .meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.ex .imgs { display: grid; gap: 6px; }
+.ex figure { margin: 0; }
+.ex figcaption { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+.ex img { width: 100%; image-rendering: pixelated; background: var(--bg); border-radius: 6px; display: block; }
+.ex .noimg { background: var(--bad-soft); color: var(--bad); border-radius: 6px; font-size: 12px; padding: 22px 8px; text-align: center; }
+.ex details { margin-top: 8px; font-size: 12px; }
+.ex summary { cursor: pointer; color: var(--muted); }
+.ex pre { max-height: 220px; background: var(--bg); padding: 8px; border-radius: 6px; margin-top: 4px; }
+.pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; margin-left: 6px; }
+.pill.good { background: var(--good-soft); color: var(--good); } .pill.bad { background: var(--bad-soft); color: var(--bad); } .pill.mid { background: var(--warn-soft); color: var(--warn); }
+</style>
+</head>
+<body>
+<main>
+	<header>
+		<h1>model-ai 学習ダッシュボード</h1>
+		<nav><a href="/" class="on">進捗</a><a href="/model">モデルの中身</a><a href="/generate">生成</a></nav>
+		<span id="phase" class="badge">…</span>
+		<span class="spacer"></span>
+		<label class="sub">実行 <select id="run"></select></label>
+		<span id="liveDot" class="live off" title="リアルタイム受信中">LIVE</span>
+		<span class="sub" id="updated">読み込み中…</span>
+	</header>
+
+	<div class="grid">
+		<section class="card span-12">
+			<h2>仕組みと現在地　<span class="sub">青い枠がいま動いている段階です</span></h2>
+			<div id="flow"></div>
+		</section>
+
+		<section class="card span-12">
+			<h2>処理の流れ（フローチャート）　<span class="sub" id="fcNote">青 = いま実行中の処理。1 ステップ = 2 件 × 8 回を順伝播・逆伝播してから LoRA を 1 回更新</span></h2>
+			<div id="fc"></div>
+		</section>
+
+		<section class="card span-8">
+			<h2>学習の進み具合</h2>
+			<div class="big" id="percent">–</div>
+			<div class="bar"><div id="pbar" style="width:0%"></div></div>
+			<div class="stats">
+				<div class="stat"><div class="k">ステップ</div><div class="v" id="steps">–</div></div>
+				<div class="stat"><div class="k">経過</div><div class="v" id="elapsed">–</div></div>
+				<div class="stat"><div class="k">残り（目安）</div><div class="v" id="eta">–</div></div>
+				<div class="stat"><div class="k">完了予定</div><div class="v" id="finish">–</div></div>
+				<div class="stat"><div class="k">1ステップ</div><div class="v" id="rate">–</div></div>
+				<div class="stat"><div class="k">学習データ</div><div class="v" id="rows">–</div></div>
+			</div>
+			<div id="alert"></div>
+		</section>
+
+		<section class="card span-4">
+			<h2>GPU</h2>
+			<div class="stat"><div class="k">使用率</div><div class="v" id="gutil">–</div></div>
+			<div class="bar small"><div id="gutilbar" style="width:0%"></div></div>
+			<div class="stat"><div class="k">VRAM</div><div class="v" id="gmem">–</div></div>
+			<div class="bar small"><div id="gmembar" style="width:0%"></div></div>
+			<div class="stats">
+				<div class="stat"><div class="k">温度</div><div class="v" id="gtemp">–</div></div>
+				<div class="stat"><div class="k">電力</div><div class="v" id="gpow">–</div></div>
+			</div>
+			<div class="sub" id="gname"></div>
+		</section>
+
+		<section class="card span-12">
+			<h2>損失（loss）の推移　<span class="sub">下がるほど学習が進んでいます</span></h2>
+			<div id="chart"></div>
+			<div class="legend"><span><i style="background:var(--accent)"></i>学習 loss（細線 = 毎ステップ、太線 = 移動平均）</span><span><i style="background:var(--eval)"></i>検証 loss</span><span id="lastloss"></span></div>
+			<div class="sub" style="margin-top:10px">勾配の大きさ（grad norm）— 急に跳ね上がると学習が不安定なサイン</div>
+			<div id="gradchart"></div>
+		</section>
+
+		<section class="card span-12">
+			<h2>AI の動き：お題 → 出力 → 見た目　<span class="sub">画像は 正面 / 横 / 斜め</span></h2>
+			<div class="controls">
+				<label>表示 <select id="exSource"></select></label>
+				<label>種類 <select id="exTask"><option value="text2spec">文章 → モデル</option><option value="edit">編集指示 → 変更</option></select></label>
+				<label>絞り込み <select id="exFilter"><option value="all">すべて</option><option value="bad">うまくいかなかった例</option><option value="good">うまくいった例</option></select></label>
+				<button id="exMore" type="button">別の例を見る</button>
+				<span class="sub" id="exInfo"></span>
+			</div>
+			<div id="examples" class="examples"></div>
+		</section>
+
+		<section class="card span-12">
+			<h2>評価結果　<span class="sub">フェーズ2合格条件: 有効率 ≥ 0.9 かつ スコアがキーワード基準（test 0.511 / real 0.447）を明確に上回る</span></h2>
+			<div class="tablewrap" id="reports"></div>
+		</section>
+
+		<section class="card span-12">
+			<h2>ログ（最新）</h2>
+			<pre id="log">–</pre>
+		</section>
+	</div>
+</main>
+<script>
+const PHASE = { queued: '待機中', loading: '読み込み中', starting: '開始処理中', training: '学習中', evaluating: '検証中', finishing: '保存中', done: '完了', failed: '失敗', unreachable: 'WSL に接続できません' };
+const $ = (id) => document.getElementById(id);
+let current = null, lastReportsKey = null;
+
+const fmtDur = (s) => {
+	if (s == null || !isFinite(s)) return '–';
+	s = Math.round(s);
+	const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+	return h ? `${h}時間${m}分` : m ? `${m}分${s % 60}秒` : `${s}秒`;
+};
+const fmt = (v, d = 3) => (v == null || isNaN(v) ? '–' : Number(v).toFixed(d));
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
+
+// Loss history: merged from the 10 s snapshot and the live stream (step -> point)
+const lossMap = new Map(), evalMap = new Map();
+function mergeLoss(list, map) {
+	for (const p of list || []) if (p && p.step != null && p.loss != null) map.set(p.step, { ...map.get(p.step), ...p });
+}
+const sorted = (map) => [...map.values()].sort((a, b) => a.step - b.step);
+function ema(points, k = 0.06) {
+	let m = null;
+	return points.map((p) => ({ step: p.step, loss: (m = m === null ? p.loss : m + k * (p.loss - m)) }));
+}
+
+let chartQueued = false;
+function drawCharts() {
+	if (chartQueued) return;
+	chartQueued = true;
+	requestAnimationFrame(() => {
+		chartQueued = false;
+		const loss = sorted(lossMap), ev = sorted(evalMap);
+		chart(loss, ev);
+		spark($('gradchart'), loss.filter((p) => p.grad_norm != null).map((p) => ({ step: p.step, v: p.grad_norm })), 'var(--warn)');
+		const ll = loss.at(-1), el = ev.at(-1), sm = ema(loss).at(-1);
+		$('lastloss').textContent = [ll ? `最新 ${ll.loss.toFixed(4)}（平均 ${sm.loss.toFixed(4)}）` : '', el ? `検証 ${el.loss.toFixed(4)}` : ''].filter(Boolean).join(' / ');
+	});
+}
+
+function spark(el, pts, color) {
+	if (!el) return;
+	if (pts.length < 2) return (el.innerHTML = '<div class="sub">まだデータがありません</div>');
+	const W = el.clientWidth || 300, H = 60;
+	const vs = pts.map((p) => p.v), lo = Math.min(...vs), hi = Math.max(...vs, lo + 1e-6);
+	const maxStep = pts.at(-1).step, minStep = pts[0].step;
+	const x = (s) => ((s - minStep) / Math.max(1, maxStep - minStep)) * (W - 4) + 2;
+	const y = (v) => H - 4 - ((v - lo) / (hi - lo)) * (H - 8);
+	el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H}"><path d="${pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.step).toFixed(1)},${y(p.v).toFixed(1)}`).join('')}" fill="none" stroke="${color}" stroke-width="1.3"/><text x="${W - 4}" y="12" text-anchor="end">${vs.at(-1).toFixed(3)}</text></svg>`;
+}
+
+function chart(loss, evalLoss) {
+	const el = $('chart');
+	const pts = [...loss, ...evalLoss];
+	if (!pts.length) return (el.innerHTML = '<div class="empty">まだ loss が記録されていません（毎ステップ記録されます）</div>');
+	const W = el.clientWidth || 800, H = 220, L = 44, R = 12, T = 10, B = 26;
+	const maxStep = Math.max(...pts.map((p) => p.step), 1);
+	const ys = pts.map((p) => p.loss);
+	let lo = Math.min(...ys), hi = Math.max(...ys);
+	if (hi - lo < 1e-6) (hi += 0.1), (lo -= 0.1);
+	lo = Math.max(0, lo - (hi - lo) * 0.08);
+	const x = (s) => L + (s / maxStep) * (W - L - R);
+	const y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+	let g = '';
+	for (let i = 0; i <= 4; i++) {
+		const v = lo + ((hi - lo) * i) / 4, yy = y(v);
+		g += `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" stroke="var(--line)"/><text x="${L - 6}" y="${yy + 4}" text-anchor="end">${v.toFixed(2)}</text>`;
+	}
+	for (let i = 0; i <= 4; i++) {
+		const s = Math.round((maxStep * i) / 4);
+		g += `<text x="${x(s)}" y="${H - 6}" text-anchor="middle">${s}</text>`;
+	}
+	const line = (list) => list.map((p, i) => `${i ? 'L' : 'M'}${x(p.step).toFixed(1)},${y(p.loss).toFixed(1)}`).join('');
+	// raw per-step loss (thin) + moving average (bold)
+	const path = `${line(loss)}" stroke-opacity="0.3" stroke-width="1"/><path fill="none" stroke="var(--accent)" stroke-width="2.4" d="${line(ema(loss))}`;
+	const head = loss.at(-1);
+	const dot = head ? `<circle cx="${x(head.step)}" cy="${y(head.loss)}" r="4" fill="var(--accent)" class="pulse"/>` : '';
+	const ev = evalLoss.map((p) => `<circle cx="${x(p.step)}" cy="${y(p.loss)}" r="4" fill="var(--eval)"><title>step ${p.step}: ${p.loss.toFixed(4)}</title></circle>`).join('');
+	const evPath = evalLoss.length > 1 ? `<path d="${evalLoss.map((p, i) => `${i ? 'L' : 'M'}${x(p.step)},${y(p.loss)}`).join('')}" fill="none" stroke="var(--eval)" stroke-width="1.5" stroke-dasharray="4 3"/>` : '';
+	el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H}" role="img" aria-label="loss chart">${g}<path fill="none" stroke="var(--accent)" d="${path}"/>${evPath}${ev}${dot}</svg>`;
+}
+
+function reports(list) {
+	const el = $('reports');
+	if (!list.length) return (el.innerHTML = '<div class="empty">評価結果はまだありません（学習完了後に作成されます）</div>');
+	const target = (label) => (/real/.test(label) ? 0.447 : 0.511);
+	const rows = list.map((r) => {
+		const t = r.summary.by_task.text2spec, e = r.summary.by_task.edit;
+		const base = r.label.startsWith('baseline/');
+		const pass = t && !base ? (t.valid_rate >= 0.9 && t.score > target(r.label) + 0.05 ? '<span class="ok">合格</span>' : '<span class="ng">未達</span>') : '–';
+		return `<tr><td>${esc(r.label)}</td><td>${t ? t.n : '–'}</td><td>${fmt(t?.valid_rate, 2)}</td><td>${fmt(t?.score)}</td><td>${fmt(t?.shape_iou)}</td><td>${e ? fmt(e.apply_rate, 2) : '–'}</td><td>${e ? fmt(e.gain) : '–'}</td><td>${e ? fmt(e.exact_rate, 2) : '–'}</td><td>${pass}</td></tr>`;
+	});
+	el.innerHTML = `<table><thead><tr><th>評価</th><th>件数</th><th>有効率</th><th>スコア</th><th>形状IoU</th><th>編集 適用率</th><th>編集 gain</th><th>編集 完全一致</th><th>判定</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
+const STAGE_INFO = {
+	data: ['① 学習データ生成', '21種の体の設計図 + 英日の説明文'],
+	train: ['② 学習（QLoRA）', '文章 → 部位リストの対応を覚える'],
+	predict: ['③ 予測', '見たことのないお題に AI が答える'],
+	eval: ['④ 採点', '形・大きさ・色・部位で 0〜1 点'],
+	judge: ['⑤ 合格判定', '有効率 ≥ 0.9 かつ 基準を上回る'],
+};
+const USE_ROW = [
+	['文章で注文', '「光る触手のクラゲ」'],
+	['AI モデル', 'Qwen 3B + 学習した LoRA'],
+	['parts JSON', '部位のリスト（形・大きさ・色）'],
+	['bbmodel-generator', 'ボーン・UV・テクスチャ・アニメ'],
+	['完成データ', '.bbmodel / .png / Java'],
+];
+function flow(p, run) {
+	const W = 1000, BW = 172, BH = 62, GAP = (W - 40 - BW * 5) / 4, Y1 = 34, Y2 = 214;
+	const X = (i) => 20 + i * (BW + GAP);
+	const node = (i, y, cls, title, detail, caption) => `
+		<g class="node ${cls}"><rect x="${X(i)}" y="${y}" width="${BW}" height="${BH}" rx="10"/>
+		<text class="t" x="${X(i) + BW / 2}" y="${y + 26}" text-anchor="middle">${esc(title)}</text>
+		<text class="d" x="${X(i) + BW / 2}" y="${y + 47}" text-anchor="middle">${esc(detail)}</text></g>
+		${caption ? `<text class="d" x="${X(i) + BW / 2}" y="${y + BH + 18}" text-anchor="middle">${esc(caption)}</text>` : ''}`;
+	const arrow = (i, y, flowing) => `<path class="arrow ${flowing ? 'flowing' : ''}" d="M${X(i) + BW + 4},${y + BH / 2} L${X(i + 1) - 6},${y + BH / 2}" marker-end="url(#ah)"/>`;
+	let svg = `<svg viewBox="0 0 ${W} 320" role="img" aria-label="pipeline"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+	svg += `<text class="row" x="20" y="20">作るとき（いまここ）</text><text class="row" x="20" y="${Y2 - 14}">使うとき（フェーズ4で実装予定）</text>`;
+	const stages = p?.stages || [];
+	stages.forEach((s, i) => {
+		let detail = s.detail;
+		if (s.id === 'train' && run?.progress && s.status === 'active') {
+			const pr = run.progress;
+			const eta = pr.sec_per_step ? (pr.total - pr.step) * pr.sec_per_step : null;
+			detail = `${run.percent.toFixed(1)}%・残り${fmtDur(eta)}`;
+		}
+		svg += node(i, Y1, s.status, STAGE_INFO[s.id][0], detail, STAGE_INFO[s.id][1]);
+		if (i < stages.length - 1) svg += arrow(i, Y1, stages[i + 1].status === 'active');
+	});
+	USE_ROW.forEach(([t, d], i) => {
+		svg += node(i, Y2, 'static', t, d, '');
+		if (i < USE_ROW.length - 1) svg += arrow(i, Y2, false);
+	});
+	// the trained adapter becomes the AI model used at run time
+	const tx = X(1) + BW / 2;
+	svg += `<path class="arrow ${stages[1]?.status === 'active' ? 'flowing' : ''}" d="M${tx},${Y1 + BH + 26} L${tx},${Y2 - 22}" marker-end="url(#ah)"/><text class="d" x="${tx + 8}" y="${(Y1 + BH + Y2) / 2 + 8}">学習結果（LoRA）がここで使われる</text>`;
+	svg += '</svg>';
+	$('flow').innerHTML = svg;
+}
+
+// ---------- flowchart ----------
+const FC = (() => {
+	const B = (id, x, y, t, s, w = 130, h = 46) => ({ id, box: true, x, y, w, h, t, s });
+	const D = (id, cx, cy, t, w = 150, h = 70) => ({ id, box: false, x: cx - w / 2, y: cy - h / 2, w, h, t, cx, cy });
+	const nodes = [
+		B('data', 20, 60, '学習データ', '28,795 件'), B('batch', 175, 60, '2 件取り出す', 'バッチ'), B('tok', 330, 60, 'トークン化', '文章 → 数字の列'),
+		B('fwd', 485, 60, '順伝播', '36 層を通す'), B('loss', 640, 60, '誤差を計算', 'loss'), B('bwd', 795, 60, '逆伝播', '勾配を求める'),
+		D('d1', 1010, 83, '8 回たまった？'),
+		B('upd', 945, 160, 'LoRA を更新', 'AdamW・ここだけ変わる', 140), B('rec', 790, 160, '記録', 'live.json → この画面'),
+		D('d2', 650, 183, '300 ステップ目？', 140), D('d3', 470, 183, '500 ステップ目？', 140), D('d4', 290, 183, '最後のステップ？', 140),
+		B('eval', 585, 240, '検証 loss', '200 件で確認'), B('save', 405, 240, 'チェックポイント保存', '→ CPU 生成が使う', 140),
+		B('fin', 225, 330, 'アダプタ保存', '学習完了'), B('pred', 380, 330, '予測', 'テスト 400 + 実在 84'), B('score', 535, 330, '採点', '形・大きさ・色・部位'), B('judge', 690, 330, '合格判定', '有効率・基準超え'),
+		B('in', 20, 470, '文章で注文', '「光る触手のクラゲ」'), B('ck', 175, 470, '最新チェックポイント', '学習の途中経過', 140),
+		D('d5', 395, 493, '新しい？', 110, 60), B('conv', 330, 548, 'GGUF に変換', 'サーバーを再起動'),
+		B('infer', 480, 470, 'CPU で推論', 'llama.cpp・JSON だけ'), D('d6', 700, 493, '生成器で検証 OK？', 150), B('retry', 635, 548, '温度を上げて再試行', '最大 2 回'),
+		B('gen', 800, 470, 'bbmodel-generator', 'ボーン・UV・テクスチャ', 140), B('out', 955, 470, '完成データ', '.bbmodel / .png / Java'),
+	];
+	const N = Object.fromEntries(nodes.map((n) => [n.id, n]));
+	const R = (id) => [N[id].x + N[id].w, N[id].y + N[id].h / 2], Lf = (id) => [N[id].x, N[id].y + N[id].h / 2];
+	const T = (id) => [N[id].x + N[id].w / 2, N[id].y], Bt = (id) => [N[id].x + N[id].w / 2, N[id].y + N[id].h];
+	const E = (id, pts, label, lx, ly, dashed) => ({ id, pts, label, lx, ly, dashed });
+	const edges = [
+		E('data-batch', [R('data'), Lf('batch')]), E('batch-tok', [R('batch'), Lf('tok')]), E('tok-fwd', [R('tok'), Lf('fwd')]),
+		E('fwd-loss', [R('fwd'), Lf('loss')]), E('loss-bwd', [R('loss'), Lf('bwd')]), E('bwd-d1', [R('bwd'), [935, 83]]),
+		E('d1-batch', [[1010, 48], [1010, 32], [240, 32], [240, 58]], 'いいえ（次の 2 件）', 620, 26),
+		E('d1-upd', [[1010, 118], [1010, 158]], 'はい', 1018, 140),
+		E('upd-rec', [Lf('upd'), R('rec')]), E('rec-d2', [Lf('rec'), [720, 183]]),
+		E('d2-d3', [[580, 183], [540, 183]], 'いいえ', 548, 176), E('d3-d4', [[400, 183], [360, 183]], 'いいえ', 368, 176),
+		E('d2-eval', [[650, 218], [650, 238]], 'はい', 656, 232), E('d3-save', [[470, 218], [470, 238]], 'はい', 476, 232),
+		E('d4-batch', [[215, 183], [150, 183], [150, 128], [240, 128], [240, 108]], 'いいえ（次のステップ）', 156, 146),
+		E('d4-fin', [[290, 218], [290, 328]], 'はい', 296, 300),
+		E('fin-pred', [R('fin'), Lf('pred')]), E('pred-score', [R('pred'), Lf('score')]), E('score-judge', [R('score'), Lf('judge')]),
+		E('in-ck', [R('in'), Lf('ck')]), E('ck-d5', [R('ck'), [340, 493]]), E('d5-infer', [[450, 493], Lf('infer')], 'いいえ', 452, 486),
+		E('d5-conv', [[395, 523], [395, 546]], 'はい', 400, 540), E('conv-infer', [R('conv'), [545, 571], [545, 518]]),
+		E('infer-d6', [R('infer'), [625, 493]]), E('d6-gen', [[775, 493], Lf('gen')], 'はい', 777, 486),
+		E('d6-retry', [[700, 528], [700, 546]], 'いいえ', 706, 540), E('retry-infer', [Lf('retry'), [560, 571], [560, 518]]),
+		E('gen-out', [R('gen'), Lf('out')]),
+	];
+	return { nodes, edges, N };
+})();
+
+function drawFlowchart() {
+	const txt = (n) => {
+		const cx = n.x + n.w / 2, cy = n.y + n.h / 2;
+		return n.s ? `<text x="${cx}" y="${cy - 3}" text-anchor="middle">${esc(n.t)}</text><text class="s" id="fcs-${n.id}" x="${cx}" y="${cy + 13}" text-anchor="middle">${esc(n.s)}</text>` : `<text x="${cx}" y="${cy + 4}" text-anchor="middle">${esc(n.t)}</text>`;
+	};
+	let s = `<svg viewBox="0 0 1100 610" role="img" aria-label="flowchart"><defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+	s += `<rect class="band" x="0" y="0" width="1100" height="400" rx="8"/><text class="lane" x="12" y="16">学習（GPU・WSL）</text>`;
+	s += `<rect class="band" x="0" y="420" width="1100" height="190" rx="8"/><text class="lane" x="12" y="440">生成（CPU・llama.cpp）— 学習と並行して使える</text>`;
+	for (const e of FC.edges) s += `<path id="fce-${e.id}" class="e" d="M${e.pts.map((p) => p.join(',')).join(' L')}" marker-end="url(#fa)"/>` + (e.label ? `<text class="lbl" x="${e.lx}" y="${e.ly}">${e.label}</text>` : '');
+	for (const n of FC.nodes) {
+		const shape = n.box ? `<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="7"/>` : `<polygon points="${n.cx},${n.y} ${n.x + n.w},${n.cy} ${n.cx},${n.y + n.h} ${n.x},${n.cy}"/>`;
+		s += `<g class="n" id="fcn-${n.id}">${shape}${txt(n)}</g>`;
+	}
+	$('fc').innerHTML = s + '</svg>';
+}
+
+// Which nodes / edges are active, from the live stream (training) and /api/gen/status (generation)
+let genStatus = null, fcSnapshot = null;
+const MICRO = [['batch', 0.08, 'd1-batch'], ['tok', 0.14, 'batch-tok'], ['fwd', 0.5, 'tok-fwd'], ['loss', 0.56, 'fwd-loss'], ['bwd', 0.94, 'loss-bwd'], ['d1', 1, 'bwd-d1']];
+function highlightFlow() {
+	if (!$('fcn-data')) return;
+	const on = new Set(), onE = new Set(), done = new Set(), bad = new Set();
+	const d = live, L = d?.live;
+	if (d && L && d.phase === 'training' && L.sec_per_step) {
+		const frac = Math.min(1, (Date.now() / 1000 - L.time) / L.sec_per_step);
+		if (frac > 0.97) (on.add('upd'), onE.add('d1-upd'));
+		else {
+			const f = (frac / 0.97) * 8, micro = Math.floor(f), g = f - micro;
+			const [id, , e] = MICRO.find(([, end]) => g <= end);
+			on.add(id);
+			onE.add(e);
+			$('fcs-batch').textContent = `バッチ ${micro + 1} / 8（ステップ ${L.step + 1}）`;
+		}
+		if (L.step && L.step % 500 === 0 && Date.now() / 1000 - L.time < 60) done.add('save');
+	}
+	if (d?.phase === 'evaluating') on.add('eval');
+	if (d?.phase === 'loading' || d?.phase === 'starting') on.add('data');
+	if (L?.step) done.add('data');
+	const st = Object.fromEntries((fcSnapshot?.pipeline?.stages || []).map((x) => [x.id, x.status]));
+	if (st.train === 'done') ['data', 'fin'].forEach((x) => done.add(x));
+	if (st.predict === 'active') on.add('pred');
+	if (st.predict === 'done') done.add('pred');
+	if (st.eval === 'active') on.add('score');
+	if (st.eval === 'done') done.add('score');
+	if (st.judge === 'done') done.add('judge');
+	if (st.judge === 'failed') bad.add('judge');
+	const g = genStatus;
+	if (g) {
+		const a = g.adapter || g.latest;
+		$('fcs-ck').textContent = a ? (a.kind === 'base' ? '未学習（ベース）' : a.kind === 'final' ? '学習完了版' : `ステップ ${a.step} の保存`) : '学習の途中経過';
+		if (g.converting) (on.add('conv'), onE.add('d5-conv'));
+		else if (g.stage === 'server') (on.add('ck'), onE.add('in-ck'));
+		if (g.stage === 'infer') (on.add('infer'), onE.add('d5-infer'));
+		if (g.stage === 'validate') (on.add('d6'), onE.add('infer-d6'));
+		if (g.stage === 'export') (on.add('gen'), onE.add('d6-gen'));
+		if (g.status === 'ready') done.add('ck');
+	}
+	for (const n of FC.nodes) {
+		const el = $(`fcn-${n.id}`);
+		el.classList.toggle('on', on.has(n.id));
+		el.classList.toggle('done', !on.has(n.id) && done.has(n.id));
+		el.classList.toggle('bad', bad.has(n.id));
+	}
+	for (const e of FC.edges) $(`fce-${e.id}`).classList.toggle('on', onE.has(e.id));
+}
+drawFlowchart();
+setInterval(highlightFlow, 250);
+async function pollGen() {
+	try {
+		genStatus = await (await fetch(`/api/gen/status${current ? `?run=${encodeURIComponent(current)}` : ''}`)).json();
+	} catch {
+		/* dashboard restarting */
+	}
+}
+pollGen();
+setInterval(pollGen, 2000);
+
+let exPage = 0, exSourcesKey = '';
+async function loadExamples() {
+	const src = $('exSource').value, task = $('exTask').value, filter = $('exFilter').value;
+	const q = new URLSearchParams({ ver: 'v1', task, filter, n: '6', page: String(exPage) });
+	if (src) q.set('source', src);
+	$('exInfo').textContent = '読み込み中…';
+	const r = await (await fetch(`/api/examples?${q}`)).json();
+	const key = (r.sources || []).join(',');
+	if (key !== exSourcesKey) {
+		exSourcesKey = key;
+		$('exSource').innerHTML = (r.sources || []).map((s) => `<option value="${esc(s)}">${esc(sourceLabel(s))}</option>`).join('');
+		$('exSource').value = r.source;
+	}
+	const isPred = r.source && r.source !== 'data';
+	const img = (id, which, label) => {
+		const url = `/api/render?ver=${encodeURIComponent(r.ver)}&source=${encodeURIComponent(r.source)}&id=${encodeURIComponent(id)}&which=${which}`;
+		return `<figure><figcaption>${label}</figcaption><img loading="lazy" src="${url}" alt="${label}" onerror="this.outerHTML='<div class=&quot;noimg&quot;>モデルにできませんでした</div>'"></figure>`;
+	};
+	const pill = (p) => {
+		if (!p) return '';
+		if (!p.parsed) return '<span class="pill bad">JSON にならず</span>';
+		if (p.applied === false) return '<span class="pill bad">適用できず</span>';
+		if (!p.valid) return '<span class="pill bad">不正なモデル</span>';
+		const cls = p.score >= 0.75 ? 'good' : p.score >= 0.5 ? 'mid' : 'bad';
+		return `<span class="pill ${cls}">スコア ${p.score.toFixed(2)}${p.exact ? '・完全一致' : ''}</span>`;
+	};
+	$('examples').innerHTML = r.items.length ? r.items.map((it) => {
+		const imgs = it.task === 'edit'
+			? [img(it.id, 'input', '編集前'), img(it.id, 'target', '正解'), isPred ? img(it.id, 'pred', 'AI の結果') : ''].join('')
+			: [img(it.id, 'target', isPred ? '正解' : 'このお題の正解モデル'), isPred ? img(it.id, 'pred', 'AI の回答') : ''].join('');
+		return `<div class="ex">
+			<div class="q">${it.task === 'edit' ? '編集: ' : ''}「${esc(it.prompt)}」${pill(it.pred)}</div>
+			<div class="meta">${esc(it.archetype)}${it.op ? ` / ${esc(it.op)}` : ''} / ${it.lang === 'ja' ? '日本語' : '英語'} / ${esc(it.id)}</div>
+			<div class="imgs">${imgs}</div>
+			${it.pred ? `<details><summary>AI の出力（そのまま）${it.pred.error ? ` — ${esc(it.pred.error.slice(0, 80))}` : ''}</summary><pre>${esc(it.pred.output)}</pre></details>` : ''}
+			<details><summary>正解の ${it.task === 'edit' ? 'パッチ' : 'parts JSON'}</summary><pre>${esc(it.target_text)}</pre></details>
+		</div>`;
+	}).join('') : '<div class="empty">該当する例がありません</div>';
+	$('exInfo').textContent = isPred ? `${r.total}件中の例（AI の回答を採点済み）` : `学習データ（テスト用）${r.total.toLocaleString()}件から`;
+}
+function sourceLabel(s) {
+	if (s === 'data') return '学習データの例（正解のみ）';
+	const m = s.match(/^pred_(.+)_(test|real|val)$/);
+	if (!m) return s;
+	const who = { keyword: '基準: キーワード方式', empty: '基準: 箱1個', smoke: '試運転（30ステップ）' }[m[1]] || `AI ${m[1]}`;
+	return `${who} の回答 — ${m[2] === 'real' ? '実在生物' : 'テスト'}`;
+}
+['exSource', 'exTask', 'exFilter'].forEach((id) => $(id).addEventListener('change', () => ((exPage = 0), loadExamples())));
+$('exMore').addEventListener('click', () => (exPage++, loadExamples()));
+
+async function refresh() {
+	try {
+		const q = current ? `?run=${encodeURIComponent(current)}` : '';
+		const s = await (await fetch(`/api/snapshot${q}`)).json();
+		const sel = $('run');
+		if (sel.options.length !== s.runs.length) sel.innerHTML = s.runs.map((r) => `<option>${esc(r)}</option>`).join('');
+		const r = s.run;
+		current = r?.name || current;
+		if (r) sel.value = r.name;
+		const phase = r ? r.phase : 'unreachable';
+		if (r && r.name !== streamRun) connectStream(r.name);
+		const p = r?.progress;
+		$('elapsed').textContent = p ? fmtDur(p.elapsed_s) : '–';
+		$('rows').textContent = r?.data ? `${r.data.rows.toLocaleString()}件` : '–';
+		// Progress numbers come from the live stream while it is fresh; this is the fallback
+		if (!liveFresh()) {
+			$('phase').textContent = PHASE[phase] || phase;
+			$('phase').className = `badge ${phase}`;
+			const active = ['training', 'evaluating', 'starting'].includes(phase);
+			const eta = !active ? null : p && p.sec_per_step ? (p.total - p.step) * p.sec_per_step : p?.eta_s;
+			showProgress(r ? r.percent : 0, p?.step, p?.total, phase === 'done' ? 0 : eta, p?.sec_per_step);
+		}
+		const alerts = [];
+		if (phase === 'failed') alerts.push(`<div class="alert bad">学習が失敗しました: ${esc(r.errors.at(-1) || `exit ${r.exit}`)}</div>`);
+		else if (phase === 'done') alerts.push(`<div class="alert good">学習完了（${r.result ? `${r.result.minutes}分、最終検証 loss ${fmt(r.result.eval_loss, 4)}` : ''}）</div>`);
+		else if (r && r.stale_min > 5 && ['training', 'starting', 'loading'].includes(phase)) alerts.push(`<div class="alert warn">ログが ${r.stale_min} 分更新されていません。プロセスが止まっている可能性があります。</div>`);
+		if (p?.evaluating) alerts.push('<div class="alert warn">いま検証（eval）を実行中です。終わると学習が再開します。</div>');
+		$('alert').innerHTML = alerts.join('');
+		const g = s.gpu;
+		$('gutil').textContent = g ? `${g.util}%` : '–';
+		$('gutilbar').style.width = `${g ? g.util : 0}%`;
+		$('gmem').textContent = g ? `${(g.mem_used_mb / 1024).toFixed(1)} / ${(g.mem_total_mb / 1024).toFixed(1)} GB` : '–';
+		$('gmembar').style.width = `${g ? (100 * g.mem_used_mb) / g.mem_total_mb : 0}%`;
+		$('gtemp').textContent = g ? `${g.temp_c}℃` : '–';
+		$('gpow').textContent = g ? `${Math.round(g.power_w)} W` : '–';
+		$('gname').textContent = g ? g.name : 'nvidia-smi が見つかりません';
+		mergeLoss(r?.loss, lossMap);
+		mergeLoss(r?.eval_loss, evalMap);
+		drawCharts();
+		reports(s.reports);
+		flow(s.pipeline, r);
+		fcSnapshot = s;
+		if (r?.data && $('fcs-data')) $('fcs-data').textContent = `${r.data.rows.toLocaleString()} 件`;
+		const srcKey = s.reports.map((x) => x.label).join(',');
+		if (srcKey !== lastReportsKey) ((lastReportsKey = srcKey), loadExamples());
+		$('log').textContent = r ? r.log_tail.join('\n') : '–';
+		if (!liveFresh()) $('updated').textContent = `更新 ${new Date(s.time).toLocaleTimeString('ja-JP')}（10秒ごと）`;
+	} catch (err) {
+		$('updated').textContent = `取得に失敗: ${err.message}`;
+	}
+}
+
+function showProgress(percent, step, total, eta, sec) {
+	$('percent').textContent = `${Number(percent || 0).toFixed(1)}%`;
+	$('pbar').style.width = `${percent || 0}%`;
+	$('steps').textContent = step != null ? `${step} / ${total}` : '–';
+	$('eta').textContent = eta === 0 ? '0' : fmtDur(eta);
+	$('finish').textContent = eta ? new Date(Date.now() + eta * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }) : '–';
+	$('rate').textContent = sec ? `${sec.toFixed(1)}秒` : '–';
+}
+
+// ---------- live stream (server-sent events, every training step) ----------
+let stream = null, streamRun = null, live = null, liveAt = 0;
+const liveFresh = () => live && Date.now() - liveAt < 30000 && live.run === current;
+function connectStream(run) {
+	if (stream) stream.close();
+	streamRun = run;
+	lossMap.clear();
+	evalMap.clear();
+	stream = new EventSource(`/api/stream?run=${encodeURIComponent(run)}`);
+	stream.onmessage = (e) => {
+		const d = JSON.parse(e.data);
+		live = d;
+		liveAt = Date.now();
+		$('phase').textContent = PHASE[d.phase] || d.phase;
+		$('phase').className = `badge ${d.phase}`;
+		const L = d.live;
+		if (L && L.total) showProgress((100 * L.step) / L.total, L.step, L.total, d.phase === 'done' ? 0 : L.eta_s, L.sec_per_step);
+		mergeLoss((d.recent || []).filter((p) => p.loss != null), lossMap);
+		mergeLoss((d.recent || []).filter((p) => p.eval_loss != null).map((p) => ({ step: p.step, loss: p.eval_loss })), evalMap);
+		drawCharts();
+		const dot = $('liveDot');
+		dot.classList.remove('beat');
+		void dot.offsetWidth; // restart the beat animation
+		dot.classList.add('beat');
+	};
+	stream.onerror = () => ($('liveDot').className = 'live off');
+	stream.onopen = () => ($('liveDot').className = 'live');
+}
+// "last update N s ago" ticks every second from the step time written by the trainer
+setInterval(() => {
+	if (!live?.live?.time) return;
+	const ago = Math.max(0, Math.round(Date.now() / 1000 - live.live.time));
+	$('updated').textContent = `ステップ ${live.live.step} を ${ago} 秒前に記録（リアルタイム）`;
+	$('liveDot').classList.toggle('stale', ago > 60);
+}, 1000);
+
+$('run').addEventListener('change', (e) => ((current = e.target.value), connectStream(current), refresh()));
+window.addEventListener('resize', () => drawCharts());
+refresh();
+setInterval(refresh, 10000);
+</script>
+</body>
+</html>

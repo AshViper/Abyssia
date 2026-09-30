@@ -1,0 +1,31 @@
+{
+  "entity": "abyssia:japanese_spider_crab",
+  "role": "passive",
+  "weight": 8,
+  "group": {
+    "min": 1,
+    "max": 2
+  },
+  "depth_m": {
+    "min": 50,
+    "core_min": 150,
+    "core_max": 350,
+    "max": 600
+  },
+  "placement": "seabed",
+  "cave_factor": 0.8,
+  "open_factor": 1.0,
+  "max_light": 15,
+  "cap": {
+    "count": 8,
+    "radius": 24
+  },
+  "habitat": [
+    {
+      "blocks": "#abyssia:fauna/rock",
+      "radius": 3,
+      "min": 3,
+      "factor": 1.5
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+{
+  "category": "geological",
+  "tier": "large",
+  "footprint_radius": 44,
+  "max_height": 60,
+  "formation": {
+    "type": "pillar",
+    "count": [
+      1,
+      4
+    ],
+    "spread": 18,
+    "height": [
+      20,
+      60
+    ],
+    "radius": [
+      3.5,
+      6.5
+    ],
+    "taper": 0.75,
+    "lean": 0.1,
+    "ledges": 0.18,
+    "erosion": 0.3,
+    "cracks": 0.1,
+    "broken_top": 0.35,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:abyssal_rock"
+        },
+        "weight": 5
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_sea_rock"
+        },
+        "weight": 2
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:manganese_ore"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:mineral_host_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent_chance": 0.12,
+    "apron": [
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "apron_height": 3
+  },
+  "conditions": {
+    "max_slope": 1.2,
+    "max_y": 90
+  },
+  "dressing": {
+    "radius": 40,
+    "density": 0.12,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sponge_plant"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:soul_coral"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:tube_plant"
+          },
+          "min_height": 3,
+          "max_height": 8
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:manganese_nodules"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:knotstalk"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:oil_bladder_weed"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:lumen_quill"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:deep_kelp"
+          },
+          "min_height": 6,
+          "max_height": 20
+        },
+        "weight": 2
+      }
+    ],
+    "minerals": [
+      {
+        "data": {
+          "Name": "abyssia:manganese_crust"
+        },
+        "weight": 1
+      }
+    ],
+    "mineral_chance": 0.1
+  },
+  "preferred_mobs": [
+    "abyssia:giant_isopod",
+    "abyssia:anglerfish"
+  ]
+}

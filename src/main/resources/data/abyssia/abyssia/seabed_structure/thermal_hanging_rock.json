@@ -1,0 +1,43 @@
+{
+  "category": "cave",
+  "tier": "small",
+  "footprint_radius": 10,
+  "max_height": 60,
+  "formation": {
+    "type": "cave",
+    "shape": "hanging",
+    "count": [
+      2,
+      5
+    ],
+    "spread": 4,
+    "radius": [
+      1.5,
+      3.5
+    ],
+    "length": [
+      0.2,
+      0.5
+    ],
+    "erosion": 0.3,
+    "rock": [
+      {
+        "data": {
+          "Name": "abyssia:thermal_cave_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:mineral_cave_rock"
+        },
+        "weight": 2
+      }
+    ]
+  },
+  "anchor": "cavern",
+  "conditions": {
+    "min_clearance": 10,
+    "max_top_y": 240
+  }
+}

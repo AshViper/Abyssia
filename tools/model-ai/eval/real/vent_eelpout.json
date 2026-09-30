@@ -1,0 +1,96 @@
+{
+	"archetype": "eel",
+	"captions": {
+		"en": [
+			"a pinkish eelpout fish with a long tapering body",
+			"vent eelpout"
+		],
+		"ja": [
+			"細長く先細りの体を持つピンクがかったゲンゲ",
+			"熱水域のゲンゲ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"texture": {
+			"pattern": "mottled"
+		},
+		"parts": [
+			{
+				"name": "body",
+				"shape": "cylinder",
+				"size": [
+					5,
+					6,
+					30
+				],
+				"axis": "z",
+				"segments": 5,
+				"taper": 0.3,
+				"color": "#c8a098"
+			},
+			{
+				"name": "head",
+				"shape": "ellipsoid",
+				"size": [
+					6,
+					6,
+					8
+				],
+				"parent": "body",
+				"at": "front",
+				"axis": "-z",
+				"color": "#c8a098"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 1,
+				"parent": "head",
+				"at": [
+					1,
+					0.7,
+					0.3
+				],
+				"mirror": true
+			},
+			{
+				"name": "pectoral_fin",
+				"shape": "plane",
+				"size": [
+					3,
+					0,
+					3
+				],
+				"parent": "body",
+				"at": [
+					1,
+					0.4,
+					0.05
+				],
+				"axis": "x",
+				"outline": "round",
+				"mirror": true,
+				"color": "#b89088"
+			},
+			{
+				"name": "dorsal_fin",
+				"shape": "plane",
+				"size": [
+					0,
+					2,
+					24
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					1,
+					0.5
+				],
+				"axis": "y",
+				"outline": "rect",
+				"color": "#b89088"
+			}
+		]
+	}
+}

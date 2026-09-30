@@ -1,0 +1,1143 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "giant_isopod",
+  "name": "Giant Isopod",
+  "template": "arthropod",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": true,
+    "size_units": [
+      24.89,
+      7.45,
+      30.13
+    ],
+    "size_blocks": [
+      1.56,
+      0.47,
+      1.88
+    ],
+    "core_size_blocks": [
+      0.63,
+      0.25,
+      1.44
+    ],
+    "cubes": 60
+  },
+  "bones": [
+    {
+      "name": "giant_isopod",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "giant_isopod",
+      "role": "body",
+      "pivot": [
+        0,
+        3.4468,
+        -9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "segment_2",
+      "parent": "body",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.4468,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "segment_3",
+      "parent": "segment_2",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.4468,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "segment_4",
+      "parent": "segment_3",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.4468,
+        -3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "segment_5",
+      "parent": "segment_4",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.4468,
+        -1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "segment_6",
+      "parent": "segment_5",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.4468,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "segment_7",
+      "parent": "segment_6",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.4468,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        3.4468,
+        -9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        3,
+        5.4468,
+        -10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        -3,
+        5.4468,
+        -10.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_antenna",
+      "parent": "head",
+      "role": "antenna",
+      "pivot": [
+        2,
+        4.4468,
+        -11
+      ],
+      "rotation": [
+        12,
+        -42,
+        0
+      ]
+    },
+    {
+      "name": "right_antenna_2",
+      "parent": "right_antenna",
+      "role": "antenna",
+      "pivot": [
+        2,
+        4.4468,
+        -17
+      ],
+      "rotation": [
+        -4,
+        -18.9,
+        0
+      ]
+    },
+    {
+      "name": "right_antenna_3",
+      "parent": "right_antenna_2",
+      "role": "antenna",
+      "pivot": [
+        2,
+        4.4468,
+        -21
+      ],
+      "rotation": [
+        -4,
+        -18.9,
+        0
+      ]
+    },
+    {
+      "name": "right_antennule",
+      "parent": "head",
+      "role": "antenna",
+      "pivot": [
+        0.5,
+        5.4468,
+        -11
+      ],
+      "rotation": [
+        20,
+        -20,
+        0
+      ]
+    },
+    {
+      "name": "left_antenna",
+      "parent": "head",
+      "role": "antenna",
+      "pivot": [
+        -2,
+        4.4468,
+        -11
+      ],
+      "rotation": [
+        12,
+        42,
+        0
+      ]
+    },
+    {
+      "name": "left_antenna_2",
+      "parent": "left_antenna",
+      "role": "antenna",
+      "pivot": [
+        -2,
+        4.4468,
+        -17
+      ],
+      "rotation": [
+        -4,
+        18.9,
+        0
+      ]
+    },
+    {
+      "name": "left_antenna_3",
+      "parent": "left_antenna_2",
+      "role": "antenna",
+      "pivot": [
+        -2,
+        4.4468,
+        -21
+      ],
+      "rotation": [
+        -4,
+        18.9,
+        0
+      ]
+    },
+    {
+      "name": "left_antennule",
+      "parent": "head",
+      "role": "antenna",
+      "pivot": [
+        -0.5,
+        5.4468,
+        -11
+      ],
+      "rotation": [
+        20,
+        20,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_1",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        3,
+        4.4468,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_1_foot",
+      "parent": "right_leg_1",
+      "role": "leg_foot",
+      "pivot": [
+        5.294,
+        3.0384,
+        -9.3244
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_1",
+      "parent": "body",
+      "role": "leg",
+      "pivot": [
+        -3,
+        4.4468,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_1_foot",
+      "parent": "left_leg_1",
+      "role": "leg_foot",
+      "pivot": [
+        -5.294,
+        3.0384,
+        -9.3244
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_2",
+      "parent": "segment_2",
+      "role": "leg",
+      "pivot": [
+        3.5,
+        4.4468,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_2_foot",
+      "parent": "right_leg_2",
+      "role": "leg_foot",
+      "pivot": [
+        5.9891,
+        3.0384,
+        -6.906
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_2",
+      "parent": "segment_2",
+      "role": "leg",
+      "pivot": [
+        -3.5,
+        4.4468,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_2_foot",
+      "parent": "left_leg_2",
+      "role": "leg_foot",
+      "pivot": [
+        -5.9891,
+        3.0384,
+        -6.906
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_3",
+      "parent": "segment_3",
+      "role": "leg",
+      "pivot": [
+        4,
+        4.4468,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_3_foot",
+      "parent": "right_leg_3",
+      "role": "leg_foot",
+      "pivot": [
+        6.6086,
+        3.0384,
+        -4.46
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_3",
+      "parent": "segment_3",
+      "role": "leg",
+      "pivot": [
+        -4,
+        4.4468,
+        -4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_3_foot",
+      "parent": "left_leg_3",
+      "role": "leg_foot",
+      "pivot": [
+        -6.6086,
+        3.0384,
+        -4.46
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_4",
+      "parent": "segment_4",
+      "role": "leg",
+      "pivot": [
+        4,
+        4.4468,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_4_foot",
+      "parent": "right_leg_4",
+      "role": "leg_foot",
+      "pivot": [
+        6.6488,
+        3.0384,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_4",
+      "parent": "segment_4",
+      "role": "leg",
+      "pivot": [
+        -4,
+        4.4468,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_4_foot",
+      "parent": "left_leg_4",
+      "role": "leg_foot",
+      "pivot": [
+        -6.6488,
+        3.0384,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_5",
+      "parent": "segment_5",
+      "role": "leg",
+      "pivot": [
+        4,
+        4.4468,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_5_foot",
+      "parent": "right_leg_5",
+      "role": "leg_foot",
+      "pivot": [
+        6.6086,
+        3.0384,
+        0.46
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_5",
+      "parent": "segment_5",
+      "role": "leg",
+      "pivot": [
+        -4,
+        4.4468,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_5_foot",
+      "parent": "left_leg_5",
+      "role": "leg_foot",
+      "pivot": [
+        -6.6086,
+        3.0384,
+        0.46
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_6",
+      "parent": "segment_6",
+      "role": "leg",
+      "pivot": [
+        3.5,
+        4.4468,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_6_foot",
+      "parent": "right_leg_6",
+      "role": "leg_foot",
+      "pivot": [
+        5.9891,
+        3.0384,
+        2.906
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_6",
+      "parent": "segment_6",
+      "role": "leg",
+      "pivot": [
+        -3.5,
+        4.4468,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_6_foot",
+      "parent": "left_leg_6",
+      "role": "leg_foot",
+      "pivot": [
+        -5.9891,
+        3.0384,
+        2.906
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_7",
+      "parent": "segment_7",
+      "role": "leg",
+      "pivot": [
+        3,
+        4.4468,
+        4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_leg_7_foot",
+      "parent": "right_leg_7",
+      "role": "leg_foot",
+      "pivot": [
+        5.294,
+        3.0384,
+        5.3244
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_7",
+      "parent": "segment_7",
+      "role": "leg",
+      "pivot": [
+        -3,
+        4.4468,
+        4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_leg_7_foot",
+      "parent": "left_leg_7",
+      "role": "leg_foot",
+      "pivot": [
+        -5.294,
+        3.0384,
+        5.3244
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pleon",
+      "parent": "segment_7",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.4468,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "pleon_2",
+      "parent": "pleon",
+      "role": "segment",
+      "pivot": [
+        0,
+        3.4468,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail",
+      "parent": "pleon_2",
+      "role": "tail",
+      "pivot": [
+        0,
+        3.4468,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_uropod",
+      "parent": "tail",
+      "role": "uropod",
+      "pivot": [
+        3,
+        4.4468,
+        7
+      ],
+      "rotation": [
+        0,
+        18,
+        0
+      ]
+    },
+    {
+      "name": "left_uropod",
+      "parent": "tail",
+      "role": "uropod",
+      "pivot": [
+        -3,
+        4.4468,
+        7
+      ],
+      "rotation": [
+        0,
+        -18,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "body",
+        "right_antenna",
+        "right_antennule",
+        "left_antenna",
+        "left_antennule",
+        "right_antenna_2",
+        "left_antenna_2",
+        "right_antenna_3",
+        "left_antenna_3",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "left_leg_6",
+        "right_leg_6",
+        "left_leg_7",
+        "right_leg_7",
+        "right_uropod",
+        "left_uropod"
+      ],
+      "description": "Resting: antennae sweep, legs shuffle, body breathes"
+    },
+    {
+      "name": "walk",
+      "loop": "loop",
+      "length": 1.25,
+      "bones": [
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "left_leg_6",
+        "right_leg_6",
+        "left_leg_7",
+        "right_leg_7",
+        "body",
+        "right_antenna",
+        "right_antennule",
+        "left_antenna",
+        "left_antennule",
+        "right_antenna_2",
+        "left_antenna_2",
+        "right_antenna_3",
+        "left_antenna_3"
+      ],
+      "description": "Walking: metachronal leg waves, alternating sides, slight body sway"
+    },
+    {
+      "name": "curl",
+      "loop": "hold",
+      "length": 1.5,
+      "bones": [
+        "segment_2",
+        "segment_3",
+        "segment_4",
+        "segment_5",
+        "segment_6",
+        "segment_7",
+        "pleon",
+        "pleon_2",
+        "tail",
+        "head",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "left_leg_6",
+        "right_leg_6",
+        "left_leg_7",
+        "right_leg_7",
+        "right_antenna",
+        "right_antennule",
+        "left_antenna",
+        "left_antennule",
+        "body"
+      ],
+      "description": "Defensive roll: segments curl the tail under the body into a ball, legs tuck in"
+    },
+    {
+      "name": "uncurl",
+      "loop": "once",
+      "length": 1.25,
+      "bones": [
+        "segment_2",
+        "segment_3",
+        "segment_4",
+        "segment_5",
+        "segment_6",
+        "segment_7",
+        "pleon",
+        "pleon_2",
+        "tail",
+        "head",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "left_leg_6",
+        "right_leg_6",
+        "left_leg_7",
+        "right_leg_7",
+        "right_antenna",
+        "right_antennule",
+        "left_antenna",
+        "left_antennule",
+        "body"
+      ],
+      "description": "Unrolls from the defensive ball"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.63,
+      "bones": [
+        "body",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "left_leg_6",
+        "right_leg_6",
+        "left_leg_7",
+        "right_leg_7"
+      ],
+      "description": "Jolt: shell twitches, legs flail"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.5,
+      "bones": [
+        "body",
+        "left_leg_1",
+        "right_leg_1",
+        "left_leg_2",
+        "right_leg_2",
+        "left_leg_3",
+        "right_leg_3",
+        "left_leg_4",
+        "right_leg_4",
+        "left_leg_5",
+        "right_leg_5",
+        "left_leg_6",
+        "right_leg_6",
+        "left_leg_7",
+        "right_leg_7",
+        "right_antenna",
+        "right_antennule",
+        "left_antenna",
+        "left_antennule",
+        "right_antenna_2",
+        "left_antenna_2",
+        "right_antenna_3",
+        "left_antenna_3"
+      ],
+      "description": "Flips onto its back, legs curl up"
+    }
+  ],
+  "definition": {
+    "template": "arthropod",
+    "category": "isopod",
+    "body": {
+      "length": 18,
+      "width": 10,
+      "height": 4,
+      "segments": 7
+    },
+    "parts": [
+      "body",
+      "head",
+      "eye",
+      "antennae",
+      "legs",
+      "tail"
+    ],
+    "params": {
+      "head": {
+        "length": 3,
+        "width": 7,
+        "height": 3
+      },
+      "eye": {
+        "size": 2,
+        "forward": 0.2
+      },
+      "antennae": {
+        "length": 12,
+        "segments": 3,
+        "spread": 42,
+        "antennules": true
+      },
+      "legs": {
+        "pairs": 7,
+        "upper": 3,
+        "lower": 3,
+        "splay": 62,
+        "fan": 30,
+        "width": 1
+      },
+      "tail": {
+        "pleon": 2,
+        "length": 4,
+        "width": 0.75,
+        "uropods": 3
+      }
+    },
+    "palette": {
+      "shell": "#9c94a8",
+      "body": "#9c94a8",
+      "belly": "#b4adbb",
+      "leg": "#8c8599",
+      "eye": "#13151b",
+      "eye_iris": "#566070",
+      "eye_ring": "#6f687c",
+      "eye_glint": "#dfe6ee",
+      "glow": "#b8d0e8",
+      "glow_eye": "#8a9cb0"
+    },
+    "texture": {
+      "pattern": "speckle",
+      "pattern_strength": 0.4,
+      "countershade": 0.5
+    },
+    "glow": [
+      {
+        "part": "eyes",
+        "intensity": 0.3,
+        "color": "glow_eye"
+      }
+    ],
+    "animations": [
+      "idle",
+      "walk",
+      "curl",
+      "uncurl",
+      "hurt",
+      "death"
+    ],
+    "animation": {
+      "speed": 0.8,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "head": 0.06,
+      "legs": 0.1,
+      "antennae": 0.12,
+      "tail": 0.1,
+      "eye": 0.1,
+      "hue": 8,
+      "lightness": 0.04
+    },
+    "id": "giant_isopod",
+    "name": "Giant Isopod",
+    "name_ja": "ダイオウグソクムシ",
+    "scientific_name": "Bathynomus giganteus",
+    "habitat": "abyssal_floor",
+    "order": 2,
+    "notes": "Flattened armoured body of overlapping plates, large dark compound eyes, long second antennae, seven pairs of walking legs, a broad tail shield with uropods; rolls up defensively."
+  }
+}

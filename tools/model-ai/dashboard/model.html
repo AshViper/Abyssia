@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>model-ai モデルの中身</title>
+<style>
+:root {
+	--bg: #f4f5f7; --card: #ffffff; --text: #1d2330; --muted: #69707d; --line: #e2e5ea;
+	--accent: #2f6fdd; --accent-soft: #dce7fb; --good: #1f8a4c; --good-soft: #dcf3e5;
+	--warn: #b7791f; --warn-soft: #fbefd6; --bad: #c0392b; --bad-soft: #f9e0dd;
+	--lora: #e07b1f; --lora-soft: #fbe6d2; --neuron: #9aa3b2; --wire: rgba(120,130,150,.16);
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #12151b; --card: #1b1f27; --text: #e6e9ef; --muted: #8d95a3; --line: #2a303b;
+		--accent: #6d9ff5; --accent-soft: #1f2d49; --good: #4cc27f; --good-soft: #173526;
+		--warn: #e0a64a; --warn-soft: #3a2e17; --bad: #ef6b5e; --bad-soft: #3d1f1c;
+		--lora: #f39a45; --lora-soft: #3d2a17; --neuron: #59616f; --wire: rgba(150,160,180,.13);
+	}
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 "Segoe UI", "Yu Gothic UI", "Hiragino Sans", system-ui, sans-serif; }
+main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 40px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 14px; }
+h1 { font-size: 20px; margin: 0; font-weight: 600; }
+nav a { color: var(--muted); text-decoration: none; margin-right: 12px; font-size: 13px; }
+nav a.on { color: var(--accent); font-weight: 600; }
+.spacer { flex: 1; }
+.sub { color: var(--muted); font-size: 12px; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--accent); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+.card h2 { font-size: 13px; font-weight: 600; margin: 0 0 10px; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px; font-size: 13px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { background: transparent; color: var(--text); border: 0; padding: 6px 12px; font: inherit; cursor: pointer; }
+.seg button.on { background: var(--accent); color: #fff; }
+button.plain { background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; font: inherit; cursor: pointer; }
+.canvaswrap { overflow-x: auto; }
+canvas { display: block; width: 100%; min-width: 900px; height: 460px; cursor: pointer; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+.steps { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+.steps li { padding: 7px 10px; border-radius: 8px; margin-bottom: 4px; color: var(--muted); display: flex; gap: 10px; }
+.steps li b { min-width: 22px; }
+.steps li.on { background: var(--accent-soft); color: var(--text); }
+.steps li.on.back { background: var(--bad-soft); }
+.steps li.on.lora { background: var(--lora-soft); }
+.steps li.hide { display: none; }
+.out { font: 12.5px/1.55 ui-monospace, "Cascadia Mono", Consolas, monospace; background: var(--bg); border-radius: 8px; padding: 10px; min-height: 150px; max-height: 220px; overflow: auto; white-space: pre-wrap; word-break: break-all; }
+.out .gen { color: var(--accent); }
+.out .cur { background: var(--accent); color: #fff; border-radius: 3px; }
+.out .ok { color: var(--good); }
+.prompt { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.meter { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin: 4px 0 2px; }
+.meter > div { height: 100%; background: var(--good); transition: width .5s; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
+.legend i.d { border-radius: 2px; transform: rotate(45deg); }
+#arch svg { display: block; width: 100%; min-width: 900px; height: auto; }
+#arch { overflow-x: auto; }
+#arch .blk rect { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+#arch .blk.frozen rect { fill: var(--card); }
+#arch .blk.lora rect { fill: var(--lora-soft); stroke: var(--lora); }
+#arch .blk.op rect { fill: var(--accent-soft); stroke: var(--accent); }
+#arch text { fill: var(--text); font-size: 12px; }
+#arch text.m { fill: var(--muted); font-size: 11px; }
+#arch text.l { fill: var(--lora); font-size: 11px; font-weight: 600; }
+#arch .wire { stroke: var(--muted); stroke-width: 1.4; fill: none; }
+#arch .res { stroke: var(--muted); stroke-width: 1.2; fill: none; stroke-dasharray: 4 4; }
+.ratio { display: flex; height: 16px; border-radius: 6px; overflow: hidden; margin: 6px 0; }
+.ratio div { height: 100%; }
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 16px; margin-top: 10px; }
+.kv .k { font-size: 12px; color: var(--muted); } .kv .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<main>
+	<header>
+		<h1>モデルの中身</h1>
+		<nav><a href="/">進捗</a><a href="/model" class="on">モデルの中身</a><a href="/generate">生成</a></nav>
+		<span class="spacer"></span>
+		<span class="badge" id="live">…</span>
+	</header>
+
+	<section class="card">
+		<h2>ニューロン図　<span class="sub">実際の構造（層の数・次元・LoRA の位置）どおりの模式図です。点の明るさは説明用のイメージで、実測値ではありません。</span></h2>
+		<div class="controls">
+			<div class="seg" id="mode"><button data-m="train" class="on">学習の様子</button><button data-m="infer">使うときの様子（1 文字ずつ生成）</button></div>
+			<label>速さ <input type="range" id="speed" min="0.25" max="3" step="0.25" value="1"></label>
+			<button class="plain" id="pause">一時停止</button>
+			<button class="plain" id="next">別のお題</button>
+			<span class="sub">列をクリックすると、その層の内部構造を下に表示します</span>
+		</div>
+		<div class="canvaswrap"><canvas id="cv"></canvas></div>
+		<div class="legend">
+			<span><i style="background:var(--neuron)"></i>ニューロン（元のモデル。4bit で固定・変わらない）</span>
+			<span><i class="d" style="background:var(--lora)"></i>LoRA（学習で変わる部分）</span>
+			<span><i style="background:var(--accent)"></i>順伝播（入力 → 出力へ信号が流れる）</span>
+			<span><i style="background:var(--bad)"></i>逆伝播（誤差を出力 → 入力へ戻す）</span>
+		</div>
+	</section>
+
+	<div class="two">
+		<section class="card">
+			<h2>いま何をしているか</h2>
+			<ol class="steps" id="steps">
+				<li data-s="tok"><b>①</b><span>文章を<strong>トークン</strong>（単語のかけら）に分ける</span></li>
+				<li data-s="emb"><b>②</b><span>各トークンを 2048 個の数字（ベクトル）に変える（埋め込み）</span></li>
+				<li data-s="layers"><b>③</b><span>36 層を順に通す。各層で Attention（他のトークンを参照）と MLP（変換）を行う</span></li>
+				<li data-s="head"><b>④</b><span>出力層で「次に来るトークン」の確率を 15 万語すべてについて計算</span></li>
+				<li data-s="emit" class="infer-only"><b>⑤</b><span>一番確率の高いトークンを出力に付け足し、①に戻る（JSON が 1 トークンずつ伸びる）</span></li>
+				<li data-s="loss" class="train-only"><b>⑤</b><span>正解のトークンと比べて<strong>誤差（loss）</strong>を計算する</span></li>
+				<li data-s="back" class="train-only back"><b>⑥</b><span>誤差を逆向きに伝え、各層でどう直せばよいかを求める（逆伝播）</span></li>
+				<li data-s="lora" class="train-only lora"><b>⑦</b><span><strong>LoRA だけ</strong>を少し直す。元のモデルの重みは変えない → 次のステップへ</span></li>
+			</ol>
+		</section>
+		<section class="card">
+			<h2 id="outTitle">お題と正解</h2>
+			<div class="prompt" id="prompt">…</div>
+			<div class="out" id="out"></div>
+			<div id="lossBox" class="train-only">
+				<div class="sub" style="margin-top:8px">正解トークンに付けた確率（実際の学習の最新 loss から: 確率 ≈ e<sup>−loss</sup>）</div>
+				<div class="meter"><div id="pbar" style="width:0%"></div></div>
+				<div class="sub" id="ptext">–</div>
+			</div>
+		</section>
+	</div>
+
+	<section class="card">
+		<h2 id="archTitle">構造図：1 つの層の中身</h2>
+		<div id="arch"></div>
+		<div class="kv" id="kv"></div>
+		<div style="margin-top:12px" class="sub">パラメータ全体のうち、学習で変わる割合</div>
+		<div class="ratio" id="ratio"></div>
+		<div class="sub" id="ratioText"></div>
+	</section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
+const num = (n) => Number(n).toLocaleString('ja-JP');
+const oku = (n) => (n >= 1e8 ? `${(n / 1e8).toFixed(1)}億` : n >= 1e4 ? `${Math.round(n / 1e4).toLocaleString()}万` : num(n));
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+let M = null;               // /api/model response
+let mode = 'train', speed = 1, paused = false, exIndex = 0, selectedLayer = 0;
+
+// ---------- tokens (approximate, for display) ----------
+function tokPrompt(s) {
+	if (/[぀-ヿ一-鿿]/.test(s)) return s.match(/[぀-ヿ一-鿿ー]{1,2}|[A-Za-z]+|\d+|[^\s]/g) || [];
+	return s.match(/[A-Za-z]+|\d+|[^\sA-Za-z\d]/g) || [];
+}
+function tokJson(s) {
+	return s.replace(/\n/g, '').match(/"[a-z_]+"|#[0-9a-f]{6}|-?\d+(?:\.\d+)?|[{}\[\],:]|"[^"]*"|\S/g) || [];
+}
+const DISTRACT = ['"', ':', ',', '{', '}', '[', ']', '"name"', '"size"', '"shape"', '"color"', '"parent"', '"at"', '"axis"', '1', '2', '4', '8', '"tip"', '"cylinder"', '"box"', '"eye"', '"ellipsoid"', '"mirror"', 'true'];
+
+// ---------- network geometry ----------
+const cv = $('cv'), ctx = cv.getContext('2d');
+let G = null; // geometry
+function layout() {
+	const dpr = window.devicePixelRatio || 1;
+	const W = cv.clientWidth, H = cv.clientHeight;
+	cv.width = W * dpr; cv.height = H * dpr;
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	const L = M?.info.layers || 36, N = 10;
+	const top = 70, bot = H - 70;
+	const cols = [];
+	const x0 = 190, x1 = W - 250;
+	cols.push({ kind: 'emb', x: x0 - 45, label: '埋め込み' });
+	for (let i = 0; i < L; i++) cols.push({ kind: 'layer', i, x: x0 + ((x1 - x0) * i) / (L - 1) });
+	cols.push({ kind: 'head', x: x1 + 45, label: '出力層' });
+	for (const c of cols) c.ys = Array.from({ length: N }, (_, k) => top + ((bot - top) * k) / (N - 1));
+	G = { W, H, top, bot, cols, N, L, x0, x1 };
+	drawStatic();
+}
+let staticCanvas = null;
+function drawStatic() {
+	const { W, H, cols, N } = G;
+	staticCanvas = document.createElement('canvas');
+	const dpr = window.devicePixelRatio || 1;
+	staticCanvas.width = W * dpr; staticCanvas.height = H * dpr;
+	const c = staticCanvas.getContext('2d');
+	c.setTransform(dpr, 0, 0, dpr, 0, 0);
+	c.strokeStyle = css('--wire'); c.lineWidth = 1;
+	for (let ci = 0; ci < cols.length - 1; ci++) {
+		const a = cols[ci], b = cols[ci + 1];
+		for (let i = 0; i < N; i++) for (const j of [(i + ci) % N, (i * 3 + 1) % N, (i + 5) % N]) {
+			c.beginPath(); c.moveTo(a.x, a.ys[i]); c.lineTo(b.x, b.ys[j]); c.stroke();
+		}
+	}
+	c.fillStyle = css('--muted'); c.font = '12px system-ui, sans-serif'; c.textAlign = 'center';
+	const lay = cols.filter((x) => x.kind === 'layer');
+	c.fillText(`Transformer 層 × ${G.L}（Attention + MLP）`, (lay[0].x + lay.at(-1).x) / 2, H - 22);
+	for (const k of [0, 11, 23, 35]) if (lay[k]) c.fillText(`${k + 1}`, lay[k].x, H - 44);
+	c.fillText('埋め込み', cols[0].x, H - 44);
+	c.fillText('出力層', cols.at(-1).x, H - 44);
+	c.fillText('入力', 70, 40);
+	c.fillText('次のトークンの候補', W - 110, 40);
+	c.fillStyle = css('--lora'); c.fillText('LoRA', lay[0].x - 26, G.top - 26);
+}
+
+// ---------- activations (deterministic pseudo-random) ----------
+function act(t, ci, k) {
+	let h = (t * 7919 + ci * 104729 + k * 1299709) >>> 0;
+	h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0; h = Math.imul(h ^ (h >>> 13), 3266489909) >>> 0;
+	const v = ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+	return v * v;
+}
+
+// ---------- animation state ----------
+const S = { phase: 'forward', t: 0, tokIdx: 0, loraHeat: [], updates: 0, prompt: [], target: [], generated: [], ex: null, cands: null };
+const DUR = { forward: 1.6, emit: 0.55, loss: 0.9, back: 1.4, lora: 0.6 };
+
+function startExample() {
+	const ex = M.examples[exIndex % M.examples.length];
+	S.ex = ex;
+	S.prompt = tokPrompt(ex.prompt);
+	S.target = tokJson(ex.target_text);
+	S.tokIdx = 0; S.generated = []; S.phase = 'forward'; S.t = 0;
+	S.loraHeat = new Array(G.L).fill(0);
+	S.cands = null;
+	$('prompt').textContent = `「${ex.prompt}」`;
+	renderOut();
+}
+function liveLoss() {
+	const l = M?.live?.loss?.at(-1)?.loss;
+	return l == null ? 1.2 : l;
+}
+function makeCands() {
+	const correct = S.target[S.tokIdx] ?? '}';
+	const pc = mode === 'train' ? Math.exp(-liveLoss()) : Math.min(0.97, Math.exp(-liveLoss()) + 0.1);
+	const others = DISTRACT.filter((x) => x !== correct).sort(() => Math.random() - 0.5).slice(0, 4);
+	let rest = 1 - pc;
+	const list = [{ tok: correct, p: pc, correct: true }];
+	others.forEach((o, i) => { const p = i === 3 ? rest : rest * (0.35 + Math.random() * 0.3); rest -= p; list.push({ tok: o, p: Math.max(0.002, p) }); });
+	return list.sort((a, b) => b.p - a.p);
+}
+
+function step(dt) {
+	if (paused) return;
+	S.t += (dt * speed) / DUR[S.phase];
+	for (let i = 0; i < S.loraHeat.length; i++) S.loraHeat[i] = Math.max(0, S.loraHeat[i] - dt * speed * 0.8);
+	if (S.phase === 'back') {
+		// LoRA of the layers the backward wave has reached light up
+		const pos = (1 - S.t) * (G.cols.length - 1);
+		G.cols.forEach((c, ci) => { if (c.kind === 'layer' && Math.abs(ci - pos) < 0.7) S.loraHeat[c.i] = 1; });
+	}
+	if (S.t < 1) return;
+	S.t = 0;
+	if (mode === 'infer') {
+		if (S.phase === 'forward') { S.phase = 'emit'; S.cands = makeCands(); }
+		else {
+			S.generated.push(S.target[S.tokIdx]);
+			S.tokIdx++;
+			if (S.tokIdx >= Math.min(S.target.length, 90)) { exIndex++; startExample(); return; }
+			S.phase = 'forward'; S.cands = null;
+		}
+	} else {
+		const order = ['forward', 'loss', 'back', 'lora'];
+		const next = order[(order.indexOf(S.phase) + 1) % order.length];
+		if (next === 'loss') S.cands = makeCands();
+		if (S.phase === 'lora') {
+			S.updates++;
+			S.tokIdx = (S.tokIdx + 1) % Math.max(1, Math.min(S.target.length, 90));
+			if (S.updates % 12 === 0) { exIndex++; startExample(); return; }
+		}
+		S.phase = next;
+	}
+	renderOut();
+	highlightStep();
+}
+
+// ---------- drawing ----------
+function draw() {
+	const { W, H, cols, N } = G;
+	ctx.clearRect(0, 0, W, H);
+	ctx.drawImage(staticCanvas, 0, 0, W, H);
+	const nC = cols.length;
+	let pos = null, color = css('--accent');
+	if (S.phase === 'forward') pos = S.t * (nC - 1);
+	if (S.phase === 'back') { pos = (1 - S.t) * (nC - 1); color = css('--bad'); }
+	const tokSeed = S.tokIdx * 31 + (mode === 'train' ? S.updates : 0);
+
+	// active wires near the wave
+	if (pos !== null) {
+		const ci = Math.max(0, Math.min(nC - 2, Math.floor(pos)));
+		const a = cols[ci], b = cols[ci + 1];
+		ctx.lineWidth = 1.4;
+		for (let i = 0; i < N; i++) for (const j of [(i + ci) % N, (i * 3 + 1) % N, (i + 5) % N]) {
+			const v = act(tokSeed, ci, i) * act(tokSeed, ci + 1, j);
+			if (v < 0.08) continue;
+			ctx.strokeStyle = color; ctx.globalAlpha = Math.min(0.9, v * 2.2);
+			ctx.beginPath(); ctx.moveTo(a.x, a.ys[i]); ctx.lineTo(b.x, b.ys[j]); ctx.stroke();
+		}
+		ctx.globalAlpha = 1;
+	}
+	// neurons
+	const neuron = css('--neuron');
+	cols.forEach((c, ci) => {
+		for (let k = 0; k < N; k++) {
+			let glow = 0;
+			if (pos !== null) glow = act(tokSeed, ci, k) * Math.exp(-((ci - pos) ** 2) / 1.2);
+			if (S.phase === 'emit' || S.phase === 'loss') glow = ci === nC - 1 ? act(tokSeed, ci, k) : 0;
+			const r = c.kind === 'layer' ? 3.2 : 4.5;
+			ctx.beginPath(); ctx.arc(c.x, c.ys[k], r + glow * 3, 0, Math.PI * 2);
+			ctx.fillStyle = glow > 0.05 ? color : neuron;
+			ctx.globalAlpha = glow > 0.05 ? 0.35 + glow * 0.65 : 0.85;
+			ctx.fill();
+			ctx.globalAlpha = 1;
+		}
+		if (c.kind === 'layer') {
+			const heat = S.loraHeat[c.i] || 0, y = G.top - 26, s = 4 + heat * 3;
+			ctx.save(); ctx.translate(c.x, y); ctx.rotate(Math.PI / 4);
+			ctx.fillStyle = css('--lora'); ctx.globalAlpha = 0.45 + heat * 0.55;
+			ctx.fillRect(-s / 2, -s / 2, s, s); ctx.restore(); ctx.globalAlpha = 1;
+			if (c.i === selectedLayer) { ctx.strokeStyle = css('--accent'); ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.strokeRect(c.x - 7, G.top - 36, 14, G.bot - G.top + 46); ctx.setLineDash([]); }
+		}
+	});
+	// input chips (prompt + generated / target)
+	ctx.font = '12px ui-monospace, Consolas, monospace'; ctx.textAlign = 'left';
+	const chips = mode === 'infer'
+		? [...S.prompt.map((t) => ({ t, k: 'p' })), ...S.generated.map((t) => ({ t, k: 'g' }))]
+		: [...S.prompt.map((t) => ({ t, k: 'p' })), ...S.target.slice(0, S.tokIdx).map((t) => ({ t, k: 'g' }))];
+	const shown = chips.slice(-13);
+	shown.forEach((c, i) => {
+		const y = G.top + i * 26 - 8, text = c.t.length > 11 ? c.t.slice(0, 10) + '…' : c.t;
+		ctx.fillStyle = c.k === 'g' ? css('--accent-soft') : css('--bg');
+		ctx.strokeStyle = c.k === 'g' ? css('--accent') : css('--line');
+		roundRect(18, y, 110, 20, 5); ctx.fill(); ctx.stroke();
+		ctx.fillStyle = css('--text'); ctx.fillText(text, 26, y + 14);
+		// wire from chip to embedding
+		const glow = S.phase === 'forward' && S.t < 0.15;
+		ctx.strokeStyle = glow ? css('--accent') : css('--wire'); ctx.globalAlpha = glow ? 0.7 : 1;
+		ctx.beginPath(); ctx.moveTo(128, y + 10); ctx.lineTo(cols[0].x - 6, cols[0].ys[i % N]); ctx.stroke(); ctx.globalAlpha = 1;
+	});
+	if (chips.length > 13) { ctx.fillStyle = css('--muted'); ctx.fillText(`…ほか ${chips.length - 13} 個`, 18, G.top - 18); }
+	// output candidates
+	const ox = W - 190;
+	if (S.cands) {
+		S.cands.forEach((c, i) => {
+			const y = G.top + 30 + i * 40;
+			ctx.fillStyle = c.correct ? (mode === 'train' ? css('--good') : css('--accent')) : css('--muted');
+			ctx.fillText(`${c.tok}`.slice(0, 14), ox, y);
+			ctx.fillStyle = css('--line'); ctx.fillRect(ox, y + 6, 150, 7);
+			ctx.fillStyle = c.correct ? (mode === 'train' ? css('--good') : css('--accent')) : css('--neuron');
+			ctx.fillRect(ox, y + 6, 150 * c.p, 7);
+			ctx.fillStyle = css('--muted'); ctx.fillText(`${(c.p * 100).toFixed(1)}%${c.correct && mode === 'train' ? '  ← 正解' : ''}`, ox + 60, y);
+		});
+		if (mode === 'train') {
+			ctx.fillStyle = css('--bad'); ctx.font = '600 13px system-ui, sans-serif';
+			ctx.fillText(`誤差 loss = ${liveLoss().toFixed(3)}`, ox, G.top + 250);
+		}
+	} else {
+		ctx.fillStyle = css('--muted'); ctx.fillText(S.phase === 'back' ? '誤差を戻しています…' : S.phase === 'lora' ? 'LoRA を更新中…' : '計算中…', ox, G.top + 30);
+	}
+	// update counter in train mode
+	if (mode === 'train') {
+		ctx.fillStyle = css('--muted'); ctx.font = '12px system-ui, sans-serif';
+		const p = M?.live?.progress;
+		ctx.textAlign = 'right';
+		ctx.fillText(`実際の学習: ${p ? `${num(p.step)} / ${num(p.total)} ステップ` : '–'}`, W - 12, H - 22);
+		ctx.textAlign = 'left';
+	}
+}
+function roundRect(x, y, w, h, r) {
+	ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+
+// ---------- side panels ----------
+function highlightStep() {
+	const map = mode === 'infer'
+		? { forward: S.t < 0.08 ? 'tok' : 'layers', emit: 'emit' }
+		: { forward: 'layers', loss: 'loss', back: 'back', lora: 'lora' };
+	let cur = map[S.phase];
+	if (S.phase === 'forward') {
+		const pos = S.t * (G.cols.length - 1);
+		cur = pos < 0.3 ? 'tok' : pos < 1.2 ? 'emb' : pos > G.cols.length - 1.6 ? 'head' : 'layers';
+	}
+	document.querySelectorAll('#steps li').forEach((li) => li.classList.toggle('on', li.dataset.s === cur));
+}
+function renderOut() {
+	const out = $('out');
+	if (mode === 'infer') {
+		$('outTitle').textContent = 'お題と AI の出力（1 トークンずつ伸びる）';
+		out.innerHTML = `<span class="gen">${esc(S.generated.join(''))}</span><span class="cur">&nbsp;</span>`;
+	} else {
+		$('outTitle').textContent = 'お題と正解（緑 = すでに学習に使ったトークン、青 = いま予測中）';
+		const done = S.target.slice(0, S.tokIdx).join(''), cur = S.target[S.tokIdx] || '', rest = S.target.slice(S.tokIdx + 1, 90).join('');
+		out.innerHTML = `<span class="ok">${esc(done)}</span><span class="cur">${esc(cur)}</span>${esc(rest)}${S.target.length > 90 ? '…' : ''}`;
+		const p = Math.exp(-liveLoss());
+		$('pbar').style.width = `${(p * 100).toFixed(1)}%`;
+		$('ptext').textContent = `最新 loss ${liveLoss().toFixed(3)} → 正解に約 ${(p * 100).toFixed(0)}% の確率。学習が進むほど 100% に近づきます。`;
+	}
+	out.scrollTop = out.scrollHeight;
+}
+function applyModeVisibility() {
+	document.querySelectorAll('.train-only').forEach((e) => e.classList.toggle('hide', mode !== 'train'));
+	document.querySelectorAll('.infer-only').forEach((e) => e.classList.toggle('hide', mode !== 'infer'));
+	document.querySelectorAll('#lossBox').forEach((e) => (e.style.display = mode === 'train' ? '' : 'none'));
+}
+
+// ---------- structure (Netron-like) ----------
+function arch() {
+	const I = M.info, r = I.lora.rank;
+	const W = 1100, H = 390;
+	const box = (x, y, w, h, cls, title, sub, lora) => `<g class="blk ${cls}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8"/><text x="${x + w / 2}" y="${y + h / 2 - 2}" text-anchor="middle">${esc(title)}</text>${sub ? `<text class="m" x="${x + w / 2}" y="${y + h / 2 + 14}" text-anchor="middle">${esc(sub)}</text>` : ''}</g>${lora ? `<g class="blk lora"><rect x="${x + 8}" y="${y - 26}" width="${w - 16}" height="20" rx="5"/><text class="l" x="${x + w / 2}" y="${y - 12}" text-anchor="middle">LoRA ${lora}</text></g>` : ''}`;
+	const ar = (x1, y1, x2, y2) => `<path class="wire" d="M${x1},${y1} L${x2},${y2}" marker-end="url(#a2)"/>`;
+	const pj = (n) => { const [a, b] = I.proj[n]; return `${a}→${b}`; };
+	const lp = (n) => { const [a, b] = I.proj[n]; return `+${oku(r * (a + b))}`; };
+	const Y = 150, h = 50;
+	let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="layer structure"><defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+	s += box(10, Y, 80, h, '', `入力`, `${I.hidden} 次元`);
+	s += ar(90, Y + h / 2, 108, Y + h / 2) + box(110, Y, 80, h, 'frozen', 'RMSNorm', '正規化');
+	// q k v
+	[['q_proj', Y - 95], ['k_proj', Y], ['v_proj', Y + 95]].forEach(([n, y]) => { s += ar(190, Y + h / 2, 218, y + h / 2) + box(220, y, 120, h, 'frozen', n, pj(n), lp(n)); });
+	s += box(380, Y, 150, h, 'op', 'Attention', `${I.heads} ヘッド（KV ${I.kv_heads}）・RoPE`);
+	[Y - 95, Y, Y + 95].forEach((y) => (s += ar(340, y + h / 2, 378, Y + h / 2)));
+	s += ar(530, Y + h / 2, 558, Y + h / 2) + box(560, Y, 110, h, 'frozen', 'o_proj', pj('o_proj'), lp('o_proj'));
+	s += `<circle cx="700" cy="${Y + h / 2}" r="11" fill="var(--card)" stroke="var(--muted)"/><text x="700" y="${Y + h / 2 + 4}" text-anchor="middle">+</text>` + ar(670, Y + h / 2, 687, Y + h / 2);
+	const resY = Y + 95 + h + 24;
+	s += `<path class="res" d="M50,${Y + h} L50,${resY} L700,${resY} L700,${Y + h / 2 + 11}"/><text class="m" x="440" y="${resY + 16}" text-anchor="middle">残差接続（層の入力をそのまま足す）</text>`;
+	s += ar(711, Y + h / 2, 728, Y + h / 2) + box(730, Y, 80, h, 'frozen', 'RMSNorm', '正規化');
+	[['gate_proj', Y - 60], ['up_proj', Y + 60]].forEach(([n, y]) => { s += ar(810, Y + h / 2, 828, y + h / 2) + box(830, y, 120, h, 'frozen', n, pj(n), lp(n)); });
+	s += box(975, 24, 110, 44, 'op', 'SiLU × 掛け算', 'MLP の活性化');
+	s += ar(950, Y - 60 + h / 2, 1022, 70) + ar(950, Y + 60 + h / 2, 1040, 70);
+	s += box(975, Y + 150, 110, h, 'frozen', 'down_proj', pj('down_proj'), lp('down_proj')) + ar(1062, 68, 1062, Y + 122);
+	s += `<text class="m" x="1030" y="${Y + 150 + h + 18}" text-anchor="middle">+ 残差 → 次の層へ</text>`;
+	s += `<text class="m" x="10" y="20">灰色 = 元のモデル（4bit で固定）　オレンジ = LoRA（ランク ${r}。この層で ${oku(I.params.lora_per_layer)} 個の数値を学習）　青 = 計算処理</text>`;
+	s += '</svg>';
+	$('arch').innerHTML = s;
+	$('archTitle').textContent = `構造図：${selectedLayer + 1} 層目の中身（${I.layers} 層すべて同じ形）`;
+	const P = I.params;
+	$('kv').innerHTML = [
+		['ベースモデル', I.model.replace('unsloth/', '')], ['層の数', `${I.layers} 層`], ['1 トークンの次元', `${num(I.hidden)}`], ['Attention', `${I.heads} ヘッド × ${I.head_dim} 次元（KV ${I.kv_heads}）`],
+		['MLP の中間次元', num(I.ffn)], ['語彙（出力の候補）', `${num(I.vocab)} 語`], ['量子化', I.quant ? `4bit（${I.quant}）` : 'なし'], ['LoRA を付けた場所', I.lora.targets.join(', ')],
+	].map(([k, v]) => `<div><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`).join('');
+	const pct = (100 * P.lora_total) / (P.total + P.lora_total);
+	$('ratio').innerHTML = `<div style="width:${100 - pct}%;background:var(--neuron)"></div><div style="width:${Math.max(pct, 0.6)}%;background:var(--lora)"></div>`;
+	$('ratioText').textContent = `元のモデル ${oku(P.total)} 個（固定）＋ LoRA ${oku(P.lora_total)} 個（学習する）＝ 学習するのは全体の ${pct.toFixed(2)}% だけ。だから 8GB の GPU でも学習できます。（出典: ${I.source}）`;
+}
+
+// ---------- wiring ----------
+cv.addEventListener('click', (e) => {
+	const r = cv.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * G.W;
+	const lay = G.cols.filter((c) => c.kind === 'layer');
+	const best = lay.reduce((a, c) => (Math.abs(c.x - x) < Math.abs(a.x - x) ? c : a));
+	if (Math.abs(best.x - x) < 20) { selectedLayer = best.i; arch(); document.getElementById('archTitle').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+});
+document.querySelectorAll('#mode button').forEach((b) => b.addEventListener('click', () => {
+	mode = b.dataset.m;
+	document.querySelectorAll('#mode button').forEach((x) => x.classList.toggle('on', x === b));
+	applyModeVisibility(); startExample();
+}));
+$('speed').addEventListener('input', (e) => (speed = Number(e.target.value)));
+$('pause').addEventListener('click', () => { paused = !paused; $('pause').textContent = paused ? '再生' : '一時停止'; });
+$('next').addEventListener('click', () => { exIndex++; startExample(); });
+window.addEventListener('resize', () => M && layout());
+
+async function load() {
+	M = await (await fetch('/api/model')).json();
+	const lv = M.live;
+	const PH = { training: '学習中', evaluating: '検証中', done: '学習完了', failed: '失敗', starting: '開始処理中', loading: '読み込み中' };
+	$('live').textContent = lv ? `${PH[lv.phase] || lv.phase}${lv.progress ? `・${lv.percent.toFixed(1)}%` : ''}${lv.loss?.length ? `・loss ${lv.loss.at(-1).loss.toFixed(3)}` : ''}` : '学習データなし';
+}
+(async () => {
+	await load();
+	layout(); arch(); applyModeVisibility(); startExample(); highlightStep();
+	let last = performance.now();
+	// 30 fps and nothing while hidden: the GPU is busy training
+	const loop = (now) => {
+		requestAnimationFrame(loop);
+		if (document.hidden || now - last < 33) return;
+		const dt = Math.min(0.1, (now - last) / 1000); last = now;
+		step(dt); draw(); if (!paused) highlightStep();
+	};
+	requestAnimationFrame(loop);
+	setInterval(load, 60000);
+	// live loss / step from the training stream (every step)
+	const es = new EventSource(`/api/stream?run=${encodeURIComponent(M.run || '')}`);
+	es.onmessage = (e) => {
+		const d = JSON.parse(e.data), L = d.live;
+		if (!M.live || !L) return;
+		M.live.phase = d.phase;
+		if (L.total) M.live.progress = { ...(M.live.progress || {}), step: L.step, total: L.total, sec_per_step: L.sec_per_step };
+		if (L.total) M.live.percent = (100 * L.step) / L.total;
+		if (L.loss != null) M.live.loss = [...(M.live.loss || []), { step: L.step, loss: L.loss }].slice(-40);
+		const PH = { training: '学習中', evaluating: '検証中', done: '学習完了', failed: '失敗', starting: '開始処理中', loading: '読み込み中' };
+		$('live').textContent = `${PH[d.phase] || d.phase}・${M.live.percent.toFixed(1)}%${L.loss != null ? `・loss ${L.loss.toFixed(3)}` : ''}（毎ステップ更新）`;
+		if (mode === 'train') renderOut();
+	};
+})();
+</script>
+</body>
+</html>

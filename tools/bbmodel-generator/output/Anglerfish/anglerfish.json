@@ -1,0 +1,627 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "anglerfish",
+  "name": "Anglerfish",
+  "template": "fish",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": true,
+    "size_units": [
+      10.91,
+      14.33,
+      22.42
+    ],
+    "size_blocks": [
+      0.68,
+      0.9,
+      1.4
+    ],
+    "core_size_blocks": [
+      0.56,
+      0.62,
+      0.87
+    ],
+    "cubes": 32
+  },
+  "bones": [
+    {
+      "name": "anglerfish",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "anglerfish",
+      "role": "body",
+      "pivot": [
+        0,
+        5,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        5,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mouth",
+      "parent": "head",
+      "role": "jaw",
+      "pivot": [
+        0,
+        4,
+        -1
+      ],
+      "rotation": [
+        -10,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper_teeth",
+      "parent": "head",
+      "role": "teeth",
+      "pivot": [
+        0,
+        4,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lower_teeth",
+      "parent": "mouth",
+      "role": "teeth",
+      "pivot": [
+        0,
+        4,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        4.5,
+        7.5,
+        -4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        -4.5,
+        7.5,
+        -4.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "illicium",
+      "parent": "head",
+      "role": "lure",
+      "pivot": [
+        0,
+        10,
+        -5.5
+      ],
+      "rotation": [
+        -10,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "illicium_2",
+      "parent": "illicium",
+      "role": "lure",
+      "pivot": [
+        0,
+        13,
+        -5.5
+      ],
+      "rotation": [
+        -62.5,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "illicium_3",
+      "parent": "illicium_2",
+      "role": "lure",
+      "pivot": [
+        0,
+        16,
+        -5.5
+      ],
+      "rotation": [
+        -62.5,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "esca",
+      "parent": "illicium_3",
+      "role": "esca",
+      "pivot": [
+        0,
+        18,
+        -5.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        3.5,
+        4.5,
+        1
+      ],
+      "rotation": [
+        0,
+        35,
+        -10
+      ]
+    },
+    {
+      "name": "left_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        -3.5,
+        4.5,
+        1
+      ],
+      "rotation": [
+        0,
+        -35,
+        10
+      ]
+    },
+    {
+      "name": "dorsal_fin",
+      "parent": "body",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        9,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin",
+      "parent": "body",
+      "role": "anal",
+      "pivot": [
+        0,
+        2,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail",
+      "parent": "body",
+      "role": "tail",
+      "pivot": [
+        0,
+        5,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_fin",
+      "parent": "tail",
+      "role": "tail_fin",
+      "pivot": [
+        0,
+        5,
+        6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 3,
+      "bones": [
+        "body",
+        "tail",
+        "tail_fin",
+        "right_fin",
+        "left_fin",
+        "dorsal_fin",
+        "mouth",
+        "illicium",
+        "illicium_2",
+        "illicium_3",
+        "esca"
+      ],
+      "description": "Hovering: slow bob, breathing jaw, fluttering fins, swaying lure"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 1.2,
+      "bones": [
+        "body",
+        "head",
+        "tail",
+        "tail_fin",
+        "right_fin",
+        "left_fin",
+        "dorsal_fin",
+        "anal_fin",
+        "mouth",
+        "illicium",
+        "illicium_2",
+        "illicium_3"
+      ],
+      "description": "Swimming: tail beat with body counter-sway, paddling fins, lure dragging back"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.5,
+      "bones": [
+        "body",
+        "mouth",
+        "tail",
+        "right_fin",
+        "left_fin"
+      ],
+      "description": "Flinch: twist, jolt and snap"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 1.6,
+      "bones": [
+        "body",
+        "mouth",
+        "tail",
+        "right_fin",
+        "left_fin",
+        "illicium",
+        "illicium_2",
+        "illicium_3",
+        "esca"
+      ],
+      "description": "Rolls onto its side and sinks, jaw slack, lure drooping, light fading"
+    },
+    {
+      "name": "mouth_open",
+      "loop": "hold",
+      "length": 0.5,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Opens the jaw to full gape and holds"
+    },
+    {
+      "name": "mouth_close",
+      "loop": "once",
+      "length": 0.35,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Snaps the jaw shut from full gape"
+    },
+    {
+      "name": "glow",
+      "loop": "loop",
+      "length": 2,
+      "bones": [
+        "esca",
+        "illicium",
+        "illicium_2",
+        "illicium_3"
+      ],
+      "description": "Lure display: pulsing esca and twitching illicium"
+    }
+  ],
+  "definition": {
+    "template": "fish",
+    "category": "deep_sea_fish",
+    "body": {
+      "length": 5,
+      "width": 7,
+      "height": 7,
+      "round": 1
+    },
+    "parts": [
+      "body",
+      "head",
+      "mouth",
+      "teeth",
+      "eye",
+      "illicium",
+      "esca",
+      "fin",
+      "tail"
+    ],
+    "params": {
+      "head": {
+        "length": 7,
+        "width": 9,
+        "height": 9,
+        "drop": 0,
+        "round": 1
+      },
+      "snout": {
+        "length": 0,
+        "width": 3,
+        "height": 1
+      },
+      "mouth": {
+        "enabled": true,
+        "jaw_height": 3,
+        "underbite": 1,
+        "gape": 38,
+        "rest_gape": 10,
+        "width": 1,
+        "protrude": 0,
+        "round": 1
+      },
+      "teeth": {
+        "count": 5,
+        "length": 2,
+        "vary": 1,
+        "side": 1,
+        "upper": true,
+        "lower": true,
+        "fangs": 0,
+        "fang_length": 3
+      },
+      "eye": {
+        "size": 1,
+        "height": 0.62,
+        "forward": 0.3,
+        "protrude": 0.5,
+        "tubular": 0
+      },
+      "lure": {
+        "enabled": true,
+        "base": "head",
+        "position": 0.2,
+        "length": 8,
+        "segments": 3,
+        "lean": 10,
+        "arc": 135,
+        "esca": 2
+      },
+      "dome": {
+        "enabled": false,
+        "height": 3
+      },
+      "tail": {
+        "segments": 1,
+        "length": 3,
+        "width": 3,
+        "height": 5,
+        "taper": 0.8
+      },
+      "caudal": {
+        "length": 4,
+        "height": 7,
+        "shape": "round"
+      },
+      "pectoral": {
+        "enabled": true,
+        "length": 3,
+        "height": 3,
+        "angle": 35,
+        "droop": 10,
+        "position": 0.3
+      },
+      "pelvic": {
+        "enabled": false,
+        "length": 2,
+        "height": 2,
+        "position": 0.6
+      },
+      "dorsal": {
+        "count": 1,
+        "length": 3,
+        "height": 2,
+        "position": 0.7,
+        "apex": 0.8,
+        "second_position": 0.9
+      },
+      "anal": {
+        "enabled": true,
+        "length": 2,
+        "height": 2,
+        "position": 0.75
+      },
+      "photophores": {
+        "enabled": false,
+        "spacing": 2,
+        "radius": 0.6,
+        "rows": 1,
+        "head": true
+      },
+      "gills": {
+        "slits": 0
+      }
+    },
+    "palette": {
+      "body": "#3e4a5e",
+      "belly": "#4d596d",
+      "fin": "#4a5670",
+      "lure": "#4a566a",
+      "mouth": "#5a2a3c",
+      "lip": "#323b4c",
+      "teeth": "#e2dccb",
+      "eye": "#0c0e14",
+      "eye_iris": "#6a8a94",
+      "eye_ring": "#2c3442",
+      "glow": "#7cf2e4",
+      "glow_eye": "#8fb5bd"
+    },
+    "texture": {
+      "pattern": "speckle",
+      "pattern_strength": 0.55,
+      "countershade": 1
+    },
+    "glow": [
+      {
+        "part": "esca",
+        "intensity": 1
+      },
+      {
+        "part": "eyes",
+        "intensity": 0.4,
+        "color": "glow_eye"
+      }
+    ],
+    "animations": [
+      "idle",
+      "swim",
+      "hurt",
+      "death",
+      "mouth_open",
+      "mouth_close",
+      "glow"
+    ],
+    "animation": {
+      "speed": 1,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "head": 0.08,
+      "fin": 0.15,
+      "tail": 0.1,
+      "eye": 0.15,
+      "glow": 0.25,
+      "lure": 0.12,
+      "hue": 8,
+      "lightness": 0.03
+    },
+    "id": "anglerfish",
+    "name": "Anglerfish",
+    "name_ja": "チョウチンアンコウ",
+    "scientific_name": "Melanocetus johnsonii",
+    "habitat": "bathypelagic",
+    "order": 1,
+    "notes": "Huge head and gaping underbite jaw with needle teeth, tiny eyes, an illicium arching forward from the snout with a glowing esca, small globular body and a rounded tail fan."
+  }
+}

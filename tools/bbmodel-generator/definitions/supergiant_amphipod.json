@@ -1,0 +1,102 @@
+{
+	"id": "supergiant_amphipod",
+	"name": "Supergiant Amphipod",
+	"name_ja": "ダイダラボッチ",
+	"scientific_name": "Alicella gigantea",
+	"category": "crustacean",
+	"template": "crustacean",
+	"plan": "shrimp",
+	"habitat": "abyssal_floor",
+	"order": 67,
+	"notes": "The largest amphipod (up to ~34 cm): a pale cream-brown, sideways-flattened, smoothly curved body of plated segments with deep side plates, short antennae, small yellowish eyes, many short legs underneath and swimming legs under the tail.",
+	"body": {
+		"length": 9,
+		"width": 5,
+		"height": 7
+	},
+	"parts": [
+		"body",
+		"eye",
+		"antennae",
+		"legs",
+		"abdomen",
+		"tail"
+	],
+	"params": {
+		"eye": {
+			"size": 1,
+			"stalk": 0
+		},
+		"rostrum": {
+			"length": 0,
+			"angle": 0
+		},
+		"antennae": {
+			"length": 7,
+			"segments": 2,
+			"sweep": 40,
+			"lift": 20
+		},
+		"claws": {
+			"enabled": false
+		},
+		"legs": {
+			"pairs": 5,
+			"upper": 2,
+			"lower": 3,
+			"splay": 20,
+			"fan": 35,
+			"width": 1
+		},
+		"abdomen": {
+			"segments": 6,
+			"length": 16,
+			"width": 5,
+			"height": 7,
+			"taper": 0.5,
+			"curve": 16,
+			"swimmerets": true
+		},
+		"tail_fan": {
+			"length": 3,
+			"width": 3
+		}
+	},
+	"palette": {
+		"shell": "#cdbb9e",
+		"body": "#cdbb9e",
+		"belly": "#e2d6c2",
+		"leg": "#c4b193",
+		"membrane": "#d8cab2",
+		"fin": "#c9b699",
+		"eye": "#8a7a2a",
+		"eye_iris": "#c8b24a",
+		"eye_ring": "#a89478"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.3,
+		"countershade": 0.5
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"walk",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"legs": 0.1,
+		"antennae": 0.12,
+		"abdomen": 0.08,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

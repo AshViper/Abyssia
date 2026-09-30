@@ -1,0 +1,112 @@
+{
+	"id": "snipe_eel",
+	"name": "Slender Snipe Eel",
+	"name_ja": "シギウナギ",
+	"scientific_name": "Nemichthys scolopaceus",
+	"category": "eel",
+	"template": "eel",
+	"habitat": "mesopelagic",
+	"order": 52,
+	"notes": "Thread-thin body up to ~1.4 m that ends in a long filament; very long bird-beak jaws that bow apart toward the tips and cannot close, lined with tiny hooked teeth; large eyes; low dorsal and anal fins running most of the body. Grey-brown back, darker belly. Drifts head-up or head-down and snags shrimp antennae on its jaws.",
+	"body": {
+		"length": 64,
+		"width": 1,
+		"height": 2,
+		"segments": 12,
+		"taper": 0.2
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin"
+	],
+	"params": {
+		"head": {
+			"length": 3,
+			"width": 2,
+			"height": 3,
+			"round": 0
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"jaw_length": 13,
+			"upper_length": 14,
+			"width": 0.5,
+			"gape": 30,
+			"rest_gape": 14,
+			"pouch": 0
+		},
+		"teeth": {
+			"count": 0
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.55,
+			"forward": 0.3,
+			"protrude": 0.4
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 1,
+			"height": 1,
+			"angle": 40
+		},
+		"dorsal": {
+			"enabled": true,
+			"start": 0.05,
+			"end": 0.9,
+			"height": 1
+		},
+		"anal": {
+			"enabled": true,
+			"start": 0.08,
+			"end": 0.9,
+			"height": 1
+		},
+		"caudal": {
+			"enabled": false
+		},
+		"tail_tip": {
+			"enabled": false
+		}
+	},
+	"palette": {
+		"body": "#6b5f55",
+		"belly": "#2b2426",
+		"fin": "#7a6c60",
+		"mouth": "#3a2c2e",
+		"lip": "#5a4f47",
+		"eye": "#0a0b10",
+		"eye_iris": "#5a7c9a",
+		"eye_ring": "#3b3530"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.3,
+		"countershade": 0.2
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 0.9
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"mouth": 0.1,
+		"fin": 0.12,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

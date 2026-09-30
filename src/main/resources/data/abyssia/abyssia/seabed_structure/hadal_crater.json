@@ -1,0 +1,118 @@
+{
+  "category": "geological",
+  "tier": "large",
+  "footprint_radius": 60,
+  "max_height": 6,
+  "formation": {
+    "type": "crater",
+    "radius": [
+      22,
+      34
+    ],
+    "depth": [
+      6,
+      12
+    ],
+    "rim_height": [
+      2,
+      4
+    ],
+    "rim_width": 0.35,
+    "roughness": 0.4,
+    "floor": [
+      {
+        "data": {
+          "Name": "abyssia:deep_mud"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 1
+      }
+    ],
+    "rim": [
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 1
+      }
+    ],
+    "ejecta": [
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "ejecta_density": 0.04
+  },
+  "conditions": {
+    "min_y": -105,
+    "max_slope": 0.3
+  },
+  "dressing": {
+    "radius": 48,
+    "density": 0.03,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:hadal_bloom"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_crystal_cluster"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:silt_comb"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:pressure_gourd"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

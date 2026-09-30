@@ -1,0 +1,37 @@
+{
+	"id": "giant_sea_spider",
+	"name": "Giant Sea Spider",
+	"name_ja": "ベニオオウミグモ",
+	"scientific_name": "Colossendeis colossea",
+	"category": "arthropod",
+	"template": "parts",
+	"habitat": "continental_slope",
+	"order": 71,
+	"notes": "The largest pycnogonid: a tiny, pencil-thin segmented trunk (with proboscis and abdomen about 7 cm) carrying four pairs of very long, thin, jointed legs up to 70 cm across, knees held high above the body like stilts; a long cylindrical proboscis at the front with a pair of slender palps, a small eye tubercle, a stub of an abdomen. Orange-red to crimson. Walks slowly over the slope floor and sucks the tissues of anemones, hydroids and jellies. No bioluminescence.",
+	"params": {
+		"orientation": "upright",
+		"scale": 1,
+		"parts": [
+			{ "name": "trunk", "shape": "cylinder", "axis": "-z", "size": [2, 2, 8], "color": "#a8452c", "role": "body" },
+			{ "name": "proboscis", "shape": "cylinder", "parent": "trunk", "at": "front", "axis": "-z", "size": [2, 2, 7], "taper": 0.7, "color": "#b4543a", "role": "head" },
+			{ "name": "eye_tubercle", "shape": "box", "parent": "trunk", "at": [0.5, 1, 0.1], "size": [1, 1, 1], "color": "#7a2e20", "detail": 3 },
+			{ "name": "palp", "shape": "cylinder", "parent": "trunk", "at": [0.8, 0.5, 0.02], "axis": "-z", "size": [1, 1, 8], "rotate": [20, -20, 0],
+				"segments": 2, "curl": 25, "mirror": true, "color": "#b85a40", "role": "tentacle", "detail": 2 },
+			{ "name": "abdomen", "shape": "cylinder", "parent": "trunk", "at": "back", "axis": "z", "size": [1, 1, 3], "rotate": [-20, 0, 0], "color": "#983a26", "detail": 2 },
+			{ "name": "leg_front", "shape": "cylinder", "parent": "trunk", "at": [1, 0.5, 0.15], "axis": "x", "size": [30, 1, 1], "rotate": [0, 40, 55],
+				"segments": 3, "curl": -55, "mirror": true, "color": "#a8452c", "color_to": "#c46a48", "role": "tentacle" },
+			{ "name": "leg_mid", "shape": "cylinder", "parent": "trunk", "at": [1, 0.5, 0.38], "axis": "x", "size": [30, 1, 1], "rotate": [0, 13, 55],
+				"segments": 3, "curl": -55, "mirror": true, "color": "#a8452c", "color_to": "#c46a48", "role": "tentacle" },
+			{ "name": "leg_rear", "shape": "cylinder", "parent": "trunk", "at": [1, 0.5, 0.62], "axis": "x", "size": [30, 1, 1], "rotate": [0, -13, 55],
+				"segments": 3, "curl": -55, "mirror": true, "color": "#a8452c", "color_to": "#c46a48", "role": "tentacle" },
+			{ "name": "leg_hind", "shape": "cylinder", "parent": "trunk", "at": [1, 0.5, 0.85], "axis": "x", "size": [30, 1, 1], "rotate": [0, -40, 55],
+				"segments": 3, "curl": -55, "mirror": true, "color": "#a8452c", "color_to": "#c46a48", "role": "tentacle" }
+		]
+	},
+	"palette": {},
+	"texture": { "pattern": "bands", "pattern_strength": 0.25 },
+	"glow": [],
+	"animations": ["idle", "tentacle_move", "hurt", "death"],
+	"animation": { "speed": 0.6, "amplitude": 0.7 },
+	"variation": { "body": 0.06, "hue": 6, "lightness": 0.04 }
+}

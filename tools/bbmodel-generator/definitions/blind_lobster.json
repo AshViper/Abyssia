@@ -1,0 +1,97 @@
+{
+	"id": "blind_lobster",
+	"name": "Blind Deep-sea Lobster",
+	"name_ja": "センジュエビ",
+	"scientific_name": "Polycheles typhlops",
+	"category": "crustacean",
+	"template": "crustacean",
+	"plan": "crab",
+	"habitat": "continental_slope",
+	"order": 66,
+	"notes": "Eyeless polychelid lobster of the muddy slope: a broad, flattened, spiny-edged carapace, a straight flattened abdomen with a tail fan, and a very long, slender first pair of claws held out in front; pale orange-pink.",
+	"body": {
+		"length": 10,
+		"width": 11,
+		"height": 4
+	},
+	"parts": [
+		"body",
+		"antennae",
+		"claws",
+		"legs",
+		"abdomen",
+		"tail"
+	],
+	"params": {
+		"antennae": {
+			"length": 5,
+			"segments": 2,
+			"sweep": 40,
+			"lift": 6
+		},
+		"claws": {
+			"enabled": true,
+			"arm": 11,
+			"hand": 6,
+			"hand_size": 1,
+			"finger": 4,
+			"spread": 18
+		},
+		"legs": {
+			"pairs": 4,
+			"upper": 5,
+			"lower": 5,
+			"splay": 65,
+			"fan": 40,
+			"width": 1
+		},
+		"abdomen": {
+			"segments": 5,
+			"length": 10,
+			"width": 7,
+			"height": 3,
+			"taper": 0.6,
+			"curve": 0,
+			"swimmerets": false
+		},
+		"tail_fan": {
+			"length": 3,
+			"width": 8
+		}
+	},
+	"palette": {
+		"shell": "#d9a48a",
+		"body": "#d9a48a",
+		"belly": "#ead0bf",
+		"leg": "#d49a80",
+		"claw": "#dca88e",
+		"claw_tip": "#b06e55",
+		"fin": "#d8a890"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.5,
+		"countershade": 0.4
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"walk",
+		"claw_snap",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 0.9,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"claws": 0.12,
+		"legs": 0.1,
+		"antennae": 0.12,
+		"abdomen": 0.08,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

@@ -1,0 +1,71 @@
+{
+	"id": "giant_phantom_jelly",
+	"name": "Giant Phantom Jelly",
+	"name_ja": "ダイオウクラゲ",
+	"scientific_name": "Stygiomedusa gigantea",
+	"category": "jellyfish",
+	"template": "medusa",
+	"habitat": "bathypelagic",
+	"order": 21,
+	"notes": "Giant jellyfish: a broad dark crimson bell over a metre wide, no marginal tentacles, and four broad ribbon-like oral arms more than ten metres long. No bioluminescence known.",
+	"body": {
+		"width": 24,
+		"height": 12
+	},
+	"parts": [
+		"bell",
+		"stomach",
+		"oral_arms"
+	],
+	"params": {
+		"bell": {
+			"profile": "dome",
+			"tiers": 3,
+			"alpha": 215
+		},
+		"stomach": {
+			"enabled": true,
+			"width": 10,
+			"height": 5
+		},
+		"tentacles": {
+			"count": 0
+		},
+		"oral_arms": {
+			"count": 4,
+			"length": 72,
+			"width": 6,
+			"segments": 4
+		}
+	},
+	"palette": {
+		"dome": "#5c1622",
+		"body": "#4a121c",
+		"flesh": "#360a12",
+		"membrane": "#621a26"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.25,
+		"countershade": 0.2
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"pulse",
+		"spread",
+		"hurt",
+		"death"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1
+	},
+	"variation": {
+		"bell": 0.08,
+		"tentacles": 0.1,
+		"hue": 5,
+		"lightness": 0.03
+	}
+}

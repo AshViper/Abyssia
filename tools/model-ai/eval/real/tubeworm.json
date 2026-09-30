@@ -1,0 +1,49 @@
+{
+	"archetype": "tubeworm",
+	"captions": {
+		"en": [
+			"giant tubeworms: tall white tubes with bright red plumes",
+			"hydrothermal vent tubeworm cluster"
+		],
+		"ja": [
+			"鮮やかな赤い鰓冠を持つ背の高い白いチューブワーム",
+			"熱水噴出孔のジャイアントチューブワーム"
+		]
+	},
+	"spec": {
+		"orientation": "upright",
+		"parts": [
+			{
+				"name": "tube",
+				"shape": "cylinder",
+				"size": [
+					3,
+					26,
+					3
+				],
+				"count": 4,
+				"arrange": "ring",
+				"radius": 3,
+				"tilt": 5,
+				"segments": 3,
+				"color": "#e0dcd4"
+			},
+			{
+				"name": "plume",
+				"shape": "cylinder",
+				"size": [
+					1,
+					4,
+					1
+				],
+				"parent": "tube",
+				"at": "tip",
+				"count": 6,
+				"arrange": "ring",
+				"radius": 1,
+				"tilt": 25,
+				"color": "#c02a2a"
+			}
+		]
+	}
+}

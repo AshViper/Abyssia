@@ -1,0 +1,133 @@
+{
+	"id": "black_swallower",
+	"name": "Black Swallower",
+	"name_ja": "オニボウズギス",
+	"scientific_name": "Chiasmodon niger",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "bathypelagic",
+	"order": 25,
+	"notes": "Small slender dark brown-black fish with a long head, big gape (lower jaw projecting) and sharp teeth with enlarged canines, shown with its stomach stretched into a huge pale translucent bag holding a swallowed fish longer than itself. No photophores. Approximation: the distended belly is a deep, wide trunk with a pale belly colour (the fish template's trunk is one box, so it bulges up as well as down).",
+	"body": {
+		"length": 8,
+		"width": 7,
+		"height": 9,
+		"round": 2
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 5,
+			"width": 4,
+			"height": 4,
+			"drop": 0,
+			"round": 0
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": 1,
+			"gape": 70,
+			"rest_gape": 6,
+			"width": 1,
+			"round": 0
+		},
+		"teeth": {
+			"count": 4,
+			"length": 1,
+			"vary": 1,
+			"side": 1,
+			"upper": true,
+			"lower": true
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.65,
+			"forward": 0.3,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 2,
+			"length": 7,
+			"width": 2,
+			"height": 3,
+			"taper": 0.6
+		},
+		"caudal": {
+			"length": 3,
+			"height": 5,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 30,
+			"droop": 15,
+			"position": 0.1
+		},
+		"pelvic": {
+			"enabled": false
+		},
+		"dorsal": {
+			"count": 2,
+			"length": 3,
+			"height": 2,
+			"position": 0.2,
+			"second_position": 0.95,
+			"apex": 0.6
+		},
+		"anal": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 1
+		}
+	},
+	"palette": {
+		"body": "#1f1b1d",
+		"belly": "#b3a39c",
+		"fin": "#2a2426",
+		"mouth": "#3a1e26",
+		"lip": "#191517",
+		"teeth": "#dcd8cc",
+		"eye": "#0a0b0e",
+		"eye_iris": "#4a5058",
+		"eye_ring": "#161214"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.2,
+		"countershade": 1.6
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite"
+	],
+	"animation": {
+		"speed": 0.9,
+		"amplitude": 0.9
+	},
+	"variation": {
+		"body": 0.1,
+		"head": 0.06,
+		"fin": 0.1,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

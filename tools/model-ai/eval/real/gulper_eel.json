@@ -1,0 +1,93 @@
+{
+	"archetype": "eel",
+	"captions": {
+		"en": [
+			"a black gulper eel with a gigantic mouth and a glowing pink tail tip",
+			"pelican eel"
+		],
+		"ja": [
+			"巨大な口と光るピンクの尾の先を持つ黒いフクロウナギ",
+			"フクロウナギ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "body",
+				"shape": "cylinder",
+				"size": [
+					3,
+					4,
+					40
+				],
+				"axis": "z",
+				"segments": 6,
+				"taper": 0.2,
+				"color": "#1e1e24"
+			},
+			{
+				"name": "head",
+				"shape": "box",
+				"size": [
+					4,
+					4,
+					4
+				],
+				"parent": "body",
+				"at": "front",
+				"axis": "-z",
+				"color": "#1e1e24"
+			},
+			{
+				"name": "jaw",
+				"shape": "box",
+				"size": [
+					8,
+					3,
+					14
+				],
+				"parent": "head",
+				"at": [
+					0.5,
+					0,
+					0.5
+				],
+				"axis": "-z",
+				"rotate": [
+					10,
+					0,
+					0
+				],
+				"color": "#2a2a32"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 1,
+				"parent": "head",
+				"at": [
+					1,
+					0.8,
+					0.1
+				],
+				"mirror": true
+			},
+			{
+				"name": "light",
+				"shape": "ellipsoid",
+				"size": [
+					2,
+					2,
+					2
+				],
+				"parent": "body",
+				"at": "tip",
+				"center": true,
+				"color": "#ff5a8c",
+				"glow": 1.5,
+				"glow_color": "#ff5a8c"
+			}
+		]
+	}
+}

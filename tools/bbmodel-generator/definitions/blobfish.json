@@ -1,0 +1,117 @@
+{
+	"id": "blobfish",
+	"name": "Blobfish",
+	"name_ja": "ニュウドウカジカ",
+	"scientific_name": "Psychrolutes phrictus",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "continental_slope",
+	"order": 23,
+	"notes": "Gelatinous sculpin: huge soft bulbous head, a droopy fleshy 'nose' over a wide down-turned mouth with fleshy lips, small eyes, fan-like pectoral fins and a short body tapering to a small tail; pinkish grey. The blob look is the famous surface (decompressed) look, kept for recognisability; alive it is a greyer tadpole-shaped fish. The nose is the snout box at the front of the head.",
+	"body": {
+		"length": 6,
+		"width": 7,
+		"height": 6,
+		"round": 2
+	},
+	"parts": [
+		"body",
+		"head",
+		"snout",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 8,
+			"width": 10,
+			"height": 9,
+			"drop": 0,
+			"round": 2
+		},
+		"snout": {
+			"length": 2,
+			"width": 4,
+			"height": 6
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": 0,
+			"gape": 20,
+			"rest_gape": 0,
+			"width": 0.9,
+			"round": 1
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.65,
+			"forward": 0.25,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 2,
+			"length": 6,
+			"width": 4,
+			"height": 4,
+			"taper": 0.45
+		},
+		"caudal": {
+			"length": 3,
+			"height": 4,
+			"shape": "round"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 4,
+			"height": 4,
+			"angle": 35,
+			"droop": 35,
+			"position": 0.1
+		},
+		"dorsal": {
+			"count": 0
+		},
+		"anal": {
+			"enabled": false
+		}
+	},
+	"palette": {
+		"body": "#c4a09e",
+		"belly": "#d6b8b2",
+		"fin": "#a88482",
+		"mouth": "#7a4a50",
+		"lip": "#b08486",
+		"eye": "#101216",
+		"eye_iris": "#4a4448",
+		"eye_ring": "#8a6e70"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.12,
+		"countershade": 0.5
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.6,
+		"amplitude": 0.6
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.08,
+		"fin": 0.1,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 5,
+		"lightness": 0.04
+	}
+}

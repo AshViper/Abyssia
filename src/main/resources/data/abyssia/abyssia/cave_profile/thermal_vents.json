@@ -1,0 +1,149 @@
+{
+  "biomes": [
+    "abyssia:thermal_vents",
+    "abyssia:brine_lakes"
+  ],
+  "system_chance": 0.8,
+  "minor_cave_chance": 0.3,
+  "connection_chance": 0.45,
+  "cave_types": [
+    {
+      "data": "thermal_cave",
+      "weight": 35
+    },
+    {
+      "data": "medium_sea_cave",
+      "weight": 15
+    },
+    {
+      "data": "small_sea_cave",
+      "weight": 15
+    },
+    {
+      "data": "mineral_cave",
+      "weight": 10
+    },
+    {
+      "data": "large_abyssal_cave",
+      "weight": 6
+    },
+    {
+      "data": "massive_cavern",
+      "weight": 2
+    }
+  ],
+  "minor_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 6
+    },
+    {
+      "data": "sea_arch",
+      "weight": 1
+    }
+  ],
+  "landmark_chance": 0.035,
+  "landmarks": [
+    {
+      "data": "thermal_cathedral",
+      "weight": 4
+    }
+  ],
+  "environment": "abyssia:thermal",
+  "luminous_chance": 0.0,
+  "strata": [
+    {
+      "depth": 0,
+      "state": {
+        "Name": "abyssia:mineral_sediment"
+      }
+    },
+    {
+      "depth": 4,
+      "state": {
+        "Name": "abyssia:thermal_cave_rock"
+      }
+    },
+    {
+      "depth": 25,
+      "state": {
+        "Name": "abyssia:mineral_cave_rock"
+      }
+    },
+    {
+      "depth": 60,
+      "state": {
+        "Name": "abyssia:dark_cave_rock"
+      }
+    }
+  ],
+  "ores": [
+    {
+      "data": {
+        "Name": "abyssia:sulfur_ore"
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "Name": "abyssia:deep_copper_ore"
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "Name": "abyssia:thermal_crystal_ore"
+      },
+      "weight": 1
+    }
+  ],
+  "cavern_templates": [
+    {
+      "data": "abyssia:thermal",
+      "weight": 6
+    },
+    {
+      "data": "abyssia:mineral",
+      "weight": 3
+    },
+    {
+      "data": "abyssia:mixed",
+      "weight": 1
+    }
+  ],
+  "crystal_colors": [
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:amber_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:thermal_crystal_cluster"
+        }
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:green_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:nickel_cluster"
+        }
+      },
+      "weight": 1
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:pale_crystal_cluster"
+        }
+      },
+      "weight": 1
+    }
+  ]
+}

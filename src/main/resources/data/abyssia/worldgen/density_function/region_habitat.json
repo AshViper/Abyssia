@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:shifted_noise",
+    "noise": "abyssia:region_habitat",
+    "xz_scale": 0.1111111111111111,
+    "y_scale": 0,
+    "shift_x": {
+      "type": "minecraft:mul",
+      "argument1": 0.4444444444444444,
+      "argument2": "minecraft:shift_x"
+    },
+    "shift_y": 0,
+    "shift_z": {
+      "type": "minecraft:mul",
+      "argument1": 0.4444444444444444,
+      "argument2": "minecraft:shift_z"
+    }
+  }
+}

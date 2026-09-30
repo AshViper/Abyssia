@@ -1,0 +1,176 @@
+{
+	"id": "black_dragonfish",
+	"name": "Black dragonfish",
+	"name_ja": "ミツマタヤリウオ",
+	"scientific_name": "Idiacanthus atlanticus",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "mesopelagic",
+	"order": 42,
+	"notes": "Female: very long, eel-like scaleless black body with a small head, fang-like teeth, no pectoral fins, a chin barbel about twice the head length ending in a glowing tip, a small postorbital light organ and two rows of ventral photophores. The Japanese name belongs to the Pacific congener I. antrostomus.",
+	"body": {
+		"length": 14,
+		"width": 2,
+		"height": 3,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"lure",
+		"esca",
+		"fin",
+		"tail",
+		"photophores"
+	],
+	"params": {
+		"head": {
+			"length": 4,
+			"width": 3,
+			"height": 3,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"underbite": 0,
+			"gape": 60,
+			"rest_gape": 6,
+			"width": 1,
+			"round": 0
+		},
+		"teeth": {
+			"count": 3,
+			"length": 1,
+			"vary": 1,
+			"side": 1,
+			"upper": true,
+			"lower": true,
+			"fangs": 1,
+			"fang_length": 2
+		},
+		"eye": {
+			"size": 1,
+			"height": 0.7,
+			"forward": 0.3,
+			"protrude": 0.5
+		},
+		"lure": {
+			"enabled": true,
+			"base": "head",
+			"position": 0,
+			"length": 9,
+			"segments": 2,
+			"lean": 172,
+			"arc": 225,
+			"esca": 1
+		},
+		"tail": {
+			"segments": 3,
+			"length": 14,
+			"width": 2,
+			"height": 3,
+			"taper": 0.75
+		},
+		"caudal": {
+			"length": 3,
+			"height": 4,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": false
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"position": 0.9
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 6,
+			"height": 1,
+			"position": 0.8,
+			"apex": 0.5
+		},
+		"anal": {
+			"enabled": true,
+			"length": 6,
+			"height": 1,
+			"position": 0.8
+		},
+		"photophores": {
+			"enabled": true,
+			"spacing": 3,
+			"radius": 0.5,
+			"rows": 1,
+			"head": false
+		}
+	},
+	"palette": {
+		"body": "#0f1115",
+		"belly": "#15181e",
+		"fin": "#1a1d24",
+		"lure": "#1a1d24",
+		"mouth": "#3a1a24",
+		"lip": "#0f1115",
+		"teeth": "#d8d8d0",
+		"eye": "#08090c",
+		"eye_iris": "#5a6a76",
+		"eye_ring": "#16191f",
+		"glow": "#7fb8ff",
+		"glow_tip": "#bfe2ff"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.25,
+		"pattern_scale": 1,
+		"countershade": 0.3
+	},
+	"glow": [
+		{
+			"part": "esca",
+			"intensity": 1.0,
+			"color": "glow_tip"
+		},
+		{
+			"part": "head",
+			"anchor": [
+				1,
+				0.7,
+				0.55
+			],
+			"radius": 0.5,
+			"mirror": true,
+			"intensity": 0.6
+		}
+	],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close",
+		"bite",
+		"glow"
+	],
+	"animation": {
+		"speed": 1,
+		"amplitude": 1.1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.07,
+		"fin": 0.12,
+		"tail": 0.1,
+		"eye": 0.1,
+		"glow": 0.2,
+		"lure": 0.15,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

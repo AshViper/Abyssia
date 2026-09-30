@@ -1,0 +1,139 @@
+{
+	"archetype": "shrimp",
+	"captions": {
+		"en": [
+			"a red deep-sea shrimp with extremely long antennae",
+			"long-legged red shrimp"
+		],
+		"ja": [
+			"とても長い触角を持つ赤い深海エビ",
+			"脚の長い赤いエビ"
+		]
+	},
+	"spec": {
+		"orientation": "horizontal",
+		"parts": [
+			{
+				"name": "body",
+				"shape": "profile",
+				"size": [
+					6,
+					7,
+					22
+				],
+				"axis": "z",
+				"segments": 4,
+				"profile": [
+					0.9,
+					1,
+					0.9,
+					0.7,
+					0.5,
+					0.35
+				],
+				"curl": 8,
+				"color": "#b83a2a"
+			},
+			{
+				"name": "tail_fin",
+				"shape": "plane",
+				"size": [
+					8,
+					0,
+					5
+				],
+				"parent": "body",
+				"at": "tip",
+				"axis": "z",
+				"outline": "fan",
+				"color": "#b83a2a"
+			},
+			{
+				"name": "rostrum",
+				"shape": "cone",
+				"size": [
+					1,
+					1,
+					6
+				],
+				"parent": "body",
+				"at": [
+					0.5,
+					0.8,
+					0
+				],
+				"axis": "-z",
+				"tip": 0.2,
+				"color": "#b83a2a"
+			},
+			{
+				"name": "antenna",
+				"shape": "cylinder",
+				"size": [
+					1,
+					1,
+					26
+				],
+				"parent": "body",
+				"at": [
+					0.65,
+					0.7,
+					0
+				],
+				"axis": "-z",
+				"rotate": [
+					10,
+					40,
+					0
+				],
+				"segments": 3,
+				"curl": -6,
+				"mirror": true,
+				"color": "#c04a3a"
+			},
+			{
+				"name": "leg",
+				"shape": "cylinder",
+				"size": [
+					1,
+					8,
+					1
+				],
+				"parent": "body",
+				"at": [
+					0.85,
+					0.1,
+					0.2
+				],
+				"axis": "-y",
+				"count": 5,
+				"arrange": "row",
+				"spacing": [
+					0,
+					0,
+					2
+				],
+				"rotate": [
+					0,
+					0,
+					-15
+				],
+				"segments": 2,
+				"mirror": true,
+				"color": "#c04a3a"
+			},
+			{
+				"name": "eye",
+				"shape": "eye",
+				"size": 1.5,
+				"parent": "body",
+				"at": [
+					0.85,
+					0.8,
+					0.05
+				],
+				"mirror": true
+			}
+		]
+	}
+}
