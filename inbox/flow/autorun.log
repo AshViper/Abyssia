@@ -36503,3 +36503,24 @@ ERROR: You’ve hit your usage limit. Upgrade to Plus to continue using Codex (h
 ERROR: You’ve hit your usage limit. Upgrade to Plus to continue using Codex (https://chatgpt.com/explore/plus), or try again at Oct 30th, 2026 4:54 PM.
 tokens used
 53,459
+
+=== 2026-09-30 10:49:59 autorun start ===
+依頼 `20260930-173739`(blockテクスチャの作り直し、rock 系を含む)は、ChatGPT ImageGen の画像待ちで止まっています。まだ完了していないので、`done` にも `flow.py finish` にもしていません。
+
+**実行したこと**
+- status=new の依頼はこの1件だけでした。対応する仕様は `T01` です。
+- `flow.py add T01 --tier standard --files ... --model codex` を実行し、`set T01 running` と依頼の `running` も済ませました。
+- 画像生成プロンプトは `inbox/prompts/20260930-173739-textures.md` に、24ID分がすでにありました。出力先はブロックIDごとに `inbox/textures/<block_id>.png` です。
+- `flow.py stage chatgpt running --note "画像生成待ち"` を実行しました。
+
+**なぜ止まっているか**
+- `inbox/textures/` にある rock 系5枚(`ancient_masonry`、`fossil_rock`、`frozen_rock`、`lumen_rock`、`salt_rock`)は、`tools/texture_locks` や `src/main/resources` の既存画像とバイト単位で同一でした。作り直した新画像ではありません。
+- 24ID分の新規画像は0枚で、Codex では画像を生成しないため、ここから先は進めません。
+- 取り込み、rock の texture_locks 更新、ビルド、検証は、画像が届いてから行います。
+
+**指示と違う点**
+- `flow.py stage texture queued` は、CLI が `idle/running/done/failed` しか受け付けず失敗しました。代わりに `stage texture idle --note "queued: ImageGen画像の取り込み待ち"` を使っています。
+
+**次の手順**
+1. ChatGPT ImageGen で24枚を `inbox/textures/<block_id>.png` に保存します。
+2. その後、もう一度この処理を実行してもらえれば、texture_studio / forge_textures での取り込み、rock ロックの更新、検証、`set T01 done`、依頼の `done`、`flow.py finish` まで続けます。
