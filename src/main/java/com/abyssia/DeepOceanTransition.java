@@ -13,7 +13,6 @@ import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.network.DepthSettingsPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
@@ -32,16 +31,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * Moves players between the ocean world (overworld) and the deep ocean dimension based on depth,
  * keeping X/Z, rotation and velocity so the switch feels like continuing the dive.
  * <p>
- * The default transition depth lies inside the ocean world's bedrock floor, so the way down is an abyssal rift
- * (abyssia:abyssal_rift, a shaft through the bedrock); the way back up works anywhere.
+ * Going down needs water at the transition depth: deep trenches and basins (seabed down to Y -50) or an abyssal
+ * rift's shaft; the way back up works anywhere.
  */
 @Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class DeepOceanTransition
 {
     public static final ResourceKey<Level> OCEAN_WORLD = Level.OVERWORLD;
     public static final ResourceKey<Level> DEEP_OCEAN = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "deep_ocean"));
-    /** Ocean world biome of the shafts through the bedrock floor: the only place the default transition depth is reachable. */
-    public static final ResourceKey<Biome> ABYSSAL_RIFT = ResourceKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "abyssal_rift"));
 
     // Server tick until which a player may not transition again. Transient on purpose: losing it on restart is harmless.
     private static final Map<UUID, Integer> COOLDOWN_UNTIL = new ConcurrentHashMap<>();
@@ -65,7 +62,7 @@ public final class DeepOceanTransition
         if (player.server.getTickCount() < COOLDOWN_UNTIL.getOrDefault(player.getUUID(), 0)) return;
 
         int offset = Config.DEEP_OCEAN_COORDINATE_OFFSET_Y.get();
-        if (dim == OCEAN_WORLD && player.getY() <= Config.DEEP_OCEAN_TRANSITION_Y.get())
+        if (dim == OCEAN_WORLD && player.getY() <= Config.DEEP_OCEAN_TRANSITION_Y.get() && player.isInWater())
         {
             transition(player, DEEP_OCEAN, player.getY() + offset, true);
         }
@@ -79,7 +76,7 @@ public final class DeepOceanTransition
     {
         int distance = Config.DEEP_OCEAN_PRELOAD_DISTANCE.get();
         ResourceKey<Level> targetKey;
-        if (dim == OCEAN_WORLD && player.getY() - Config.DEEP_OCEAN_TRANSITION_Y.get() <= distance) targetKey = DEEP_OCEAN;
+        if (dim == OCEAN_WORLD && player.getY() - Config.DEEP_OCEAN_TRANSITION_Y.get() <= distance && player.isInWater()) targetKey = DEEP_OCEAN;
         else if (dim == DEEP_OCEAN && Config.DEEP_OCEAN_RETURN_Y.get() - player.getY() <= distance) targetKey = OCEAN_WORLD;
         else return;
 
