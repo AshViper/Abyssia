@@ -34,6 +34,8 @@ def blobs(rgb: np.ndarray, min_area: int = 800, merge: int = 1, clean: bool = Fa
     a = rgb.astype(int)
     mag = (a[..., 0] > 180) & (a[..., 1] < 110) & (a[..., 2] > 180)
     fg = ~mag & ~(a.min(axis=2) > 225)
+    # white highlights inside an icon are part of it: only white touching the outside is background
+    fg = ndi.binary_fill_holes(fg) & ~mag
     if clean:
         fg = drop_text(a, fg)
     lab, n = ndi.label(ndi.binary_dilation(fg, iterations=merge))
