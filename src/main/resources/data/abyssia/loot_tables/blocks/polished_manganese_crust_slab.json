@@ -7,12 +7,26 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "abyssia:polished_manganese_crust_slab"
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
+          "name": "abyssia:polished_manganese_crust_slab",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "add": false,
+              "count": 2,
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "abyssia:polished_manganese_crust_slab",
+                  "properties": {
+                    "type": "double"
+                  }
+                }
+              ]
+            },
+            {
+              "function": "minecraft:explosion_decay"
+            }
+          ]
         }
       ]
     }

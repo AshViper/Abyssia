@@ -63,6 +63,12 @@ SIMPLE_STONES = {
     "eroded_cave_rock": ("Eroded Cave Rock", "侵食洞窟岩"),
 }
 
+# Metal crusts: polished (crust art reused) and bricks (crust art with brick joints), each with stairs / slab / wall.
+CRUSTS = {"manganese_crust": ("Manganese", "マンガン"), "cobalt_crust": ("Cobalt", "コバルト"),
+          "nickel_crust": ("Nickel", "ニッケル"), "iron_crust": ("Iron", "鉄"), "copper_crust": ("Copper", "銅")}
+CRUST_POLISHED = [f"polished_{c}" for c in CRUSTS]
+CRUST_BRICKS = [f"{c}_bricks" for c in CRUSTS]
+
 # The ancient deep-sea plant's wood (colours shared with forge_textures.py)
 WOOD = {"name": "ancient", "wood": "#627c69", "bark": "#2c5c62", "fittings": "copper", "en": "Ancient",
         "ja": "古代植物"}
@@ -90,6 +96,13 @@ def _names():
                              (f.brick, f"{f.en} Brick", f"{f.ja}レンガ")):
             st, sl, wa = shape_names(stem)
             n[st], n[sl], n[wa] = (f"{en} Stairs", f"{ja}の階段"), (f"{en} Slab", f"{ja}のハーフブロック"), (f"{en} Wall", f"{ja}の塀")
+    for crust, (en, ja) in CRUSTS.items():
+        n[f"polished_{crust}"] = (f"Polished {en} Crust", f"磨かれた{ja}クラスト")
+        n[f"{crust}_bricks"] = (f"{en} Crust Bricks", f"{ja}クラストレンガ")
+        for stem, e, j in ((f"polished_{crust}", f"Polished {en} Crust", f"磨かれた{ja}クラスト"),
+                           (f"{crust}_brick", f"{en} Crust Brick", f"{ja}クラストレンガ")):
+            st, sl, wa = shape_names(stem)
+            n[st], n[sl], n[wa] = (f"{e} Stairs", f"{j}の階段"), (f"{e} Slab", f"{j}のハーフブロック"), (f"{e} Wall", f"{j}の塀")
     for rock, (en, ja) in SIMPLE_STONES.items():
         st, sl, wa = shape_names(rock)
         n[st], n[sl], n[wa] = (f"{en} Stairs", f"{ja}の階段"), (f"{en} Slab", f"{ja}のハーフブロック"), (f"{en} Wall", f"{ja}の塀")
@@ -120,13 +133,14 @@ def stone_cubes():
     out = []
     for f in STONE_FAMILIES:
         out += [f.polished, f.bricks, f.cracked_bricks, f.chiseled]
-    return out
+    return out + CRUST_POLISHED + CRUST_BRICKS
 
 
 def stone_shapes():
     """(stairs, slabs, walls) of every stone shape."""
     stairs, slabs, walls = [], [], []
     stems = [s for f in STONE_FAMILIES for s in (f.rock, f.polished, f.brick)] + list(SIMPLE_STONES)
+    stems += [s for c in CRUSTS for s in (f"polished_{c}", f"{c}_brick")]
     for stem in stems:
         st, sl, wa = shape_names(stem)
         stairs.append(st)
@@ -302,6 +316,12 @@ def generate(write, bs, bm, im, data_dir):
         shapes(f.brick, f.bricks, ref(f.bricks))
     for rock in SIMPLE_STONES:
         shapes(rock, rock, ref(rock))
+    for crust in CRUSTS:
+        polished, bricks = f"polished_{crust}", f"{crust}_bricks"
+        cube_block(polished)
+        cube_block(bricks)
+        shapes(polished, polished, ref(polished))
+        shapes(f"{crust}_brick", bricks, ref(bricks))
 
     # ---- wood
     def log(name, side, end):
@@ -436,6 +456,15 @@ def recipes(write, data_dir):
         shape_recipes(f.brick, f.bricks, [f.rock, f.polished, f.bricks])
     for rock in SIMPLE_STONES:
         shape_recipes(rock, rock, [rock])
+    for crust in CRUSTS:
+        polished, bricks = f"polished_{crust}", f"{crust}_bricks"
+        shaped(polished, polished, ["##", "##"], {"#": item(crust)}, 4)
+        shaped(bricks, bricks, ["##", "##"], {"#": item(polished)}, 4)
+        cutting(crust, polished)
+        cutting(crust, bricks)
+        cutting(polished, bricks)
+        shape_recipes(polished, polished, [crust, polished])
+        shape_recipes(f"{crust}_brick", bricks, [crust, polished, bricks])
 
     # ---- wood
     stems = {"tag": f"{MOD}:{W}_stems"}
