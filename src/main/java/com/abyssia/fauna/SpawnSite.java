@@ -1,5 +1,6 @@
 package com.abyssia.fauna;
 
+import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -24,6 +25,9 @@ public final class SpawnSite
     private final BlockPos pos;
     private final int floorY;
     private final int ceilingY;
+    /** Last column {@link #covered} looked up in the deep layer, whose seabed scan is long. */
+    private long deepColumn = Long.MIN_VALUE;
+    private int deepTop;
 
     private SpawnSite(ServerLevel level, BlockPos pos, int floorY, int ceilingY)
     {
@@ -139,13 +143,29 @@ public final class SpawnSite
 
         public boolean covered(BlockPos p)
     {
-        BlockPos.MutableBlockPos top = new BlockPos.MutableBlockPos(p.getX(), this.level.getHeight(Heightmap.Types.OCEAN_FLOOR, p.getX(), p.getZ()) - 1, p.getZ());
+        BlockPos.MutableBlockPos top = new BlockPos.MutableBlockPos(p.getX(), this.seabedTop(p), p.getZ());
         while (top.getY() > p.getY() && this.level.getBlockState(top).is(BlockTags.ICE))
         {
             top.move(Direction.DOWN);
             while (top.getY() > p.getY() && isWater(this.level, top)) top.move(Direction.DOWN);
         }
         return p.getY() < top.getY();
+    }
+
+    /**
+     * The top solid block of the seabed in p's column. In the deep layer the heightmap would find the ocean world's
+     * seabed above the bedrock band, so the deep seabed is scanned from under the rock ceiling instead.
+     */
+    private int seabedTop(BlockPos p)
+    {
+        if (!DeepLayer.isDeep(this.level, p.getY())) return this.level.getHeight(Heightmap.Types.OCEAN_FLOOR, p.getX(), p.getZ()) - 1;
+        long column = BlockPos.asLong(p.getX(), 0, p.getZ());
+        if (column != this.deepColumn)
+        {
+            this.deepColumn = column;
+            this.deepTop = DeepLayer.floorY(this.level, p.getX(), p.getZ());
+        }
+        return this.deepTop;
     }
 
     @Nullable

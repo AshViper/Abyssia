@@ -12,8 +12,7 @@ POST /api/texgen/preview {gen, params, seeds} | /api/texgen/add {gen, params, se
 /api/texgen/apply {items:[{batch,name,as?}], lock, force_locked, dry_run} | /api/texgen/undo {dry_run} |
 /api/texgen/profile {category}.
 
-Auto-run: a new request starts the selected headless runner in the project root. Set
-`runner` to `codex` or `claude` in tools/agentflow/autorun.json (or use the UI).
+Auto-run: a new request starts a headless `claude -p` in the project root (tools/agentflow/autorun.json).
 """
 import hashlib, http.server, json, os, shutil, subprocess, sys, threading, time
 from pathlib import Path
@@ -38,12 +37,8 @@ CHATGPT = ROOT / "inbox" / "textures"
 
 DEFAULT_CFG = {
     "enabled": False,  # unattended `claude -p` runs stay off until the user turns them on (checkbox in the UI or here)
-    "runner": "claude",
-    "codex_sandbox": "workspace-write",
-    "codex_approval": "never",
-    "codex_model": "",
     "max_workers": 3,
-    "model": "sonnet",
+    "model": "opus",
     "permission_mode": "acceptEdits",
     "allowed_tools": ["Read", "Write", "Edit", "Glob", "Grep", "Bash", "Agent", "Skill", "ToolSearch",
                       "mcp__claude-in-chrome__*"],
@@ -117,12 +112,11 @@ class AutoRun:
             tail = RUNLOG.read_text(encoding="utf-8", errors="replace").splitlines()[-14:]
         except OSError:
             pass
-        runner = cfg.get("runner", "claude")
         active = {rid: p for rid, p in self.workers.items() if p.poll() is None}
         return {"enabled": cfg["enabled"], "running": bool(active), "workers": len(active),
                 "started": self.started, "last_exit": self.last_exit, "last_end": self.last_end,
-                "pending": self.pending(), "runner": runner, "model": cfg["model"],
-                "claude": bool(shutil.which("claude")), "codex": bool(shutil.which("codex")), "tail": tail}
+                "pending": self.pending(), "model": cfg["model"],
+                "claude": bool(shutil.which("claude")), "tail": tail}
 
     def trigger(self, force=False):
         cfg = load_cfg()
@@ -181,43 +175,14 @@ class AutoRun:
                 continue
             self.last_exit, self.last_end = result, time.time()
             st = flow.load()
-            flow.logev(st, rid, f"Codex worker 終了 (exit={result})", "status" if result == 0 else "error", "codex")
+            flow.logev(st, rid, f"worker 終了 (exit={result})", "status" if result == 0 else "error", "claude")
             flow.save(st)
             del self.workers[rid]
 
     def _start_worker(self, request):
-        cfg = load_cfg()
-        runner = cfg.get("runner", "claude")
-        exe = shutil.which(runner)
-        rid = request["id"]
-        if not exe:
+        if not shutil.which("claude"):
             return
-        if runner != "codex":
-            return self._run_once()
-        cmd = [exe, "--sandbox", cfg.get("codex_sandbox", "workspace-write"),
-               "--ask-for-approval", cfg.get("codex_approval", "never"),
-               "exec", "-C", str(ROOT), "--skip-git-repo-check"]
-        if cfg.get("codex_model"):
-            cmd.extend(["--model", cfg["codex_model"]])
-        request_path = REQ / f"{rid}.json"
-        request["status"] = "running"
-        request_path.write_text(json.dumps(request, ensure_ascii=False, indent=1), encoding="utf-8")
-        st = flow.load()
-        flow.logev(st, rid, "Codex worker を開始", "tool", "codex")
-        flow.save(st)
-        prompt = (cfg["prompt"] + f"\n\n対象は依頼 {rid} のみ。{request_path.as_posix()} を読み、"
-                  "その依頼だけを処理する。他の worker の編集対象には触れない。")
-        RUNLOG.parent.mkdir(parents=True, exist_ok=True)
-        with open(RUNLOG, "a", encoding="utf-8") as log:
-            log.write(f"\n=== {time.strftime('%F %T')} worker {rid} start ===\n")
-            log.flush()
-            proc = subprocess.Popen(cmd, cwd=str(ROOT), stdin=subprocess.PIPE, stdout=log, stderr=subprocess.STDOUT,
-                                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
-            proc.stdin.write(prompt.encode("utf-8")); proc.stdin.close()
-        self.proc = proc
-        self.workers[rid] = proc
-        self.had_workers = True
-        self.started, self.last_exit = time.time(), None
+        return self._run_once()
 
     @staticmethod
     def _set_stage(stage, status, note):
@@ -254,24 +219,16 @@ class AutoRun:
 
     def _run_once(self):
         cfg = load_cfg()
-        runner = cfg.get("runner", "claude")
-        exe = shutil.which(runner)
+        exe = shutil.which("claude")
         RUNLOG.parent.mkdir(parents=True, exist_ok=True)
         st = flow.load()
         if not exe:
-            flow.logev(st, "main", f"自動実行できません: {runner} CLI が見つかりません", "error"); flow.save(st)
+            flow.logev(st, "main", "自動実行できません: claude CLI が見つかりません", "error"); flow.save(st)
             return
-        if runner == "codex":
-            cmd = [exe, "--sandbox", cfg.get("codex_sandbox", "workspace-write"),
-                   "--ask-for-approval", cfg.get("codex_approval", "never"),
-                   "exec", "-C", str(ROOT), "--skip-git-repo-check"]
-            if cfg.get("codex_model"):
-                cmd.extend(["--model", cfg["codex_model"]])
-        else:
-            cmd = [exe, "-p", "--model", cfg["model"], "--permission-mode", cfg["permission_mode"],
-                   "--allowedTools", *cfg["allowed_tools"]]
+        cmd = [exe, "-p", "--model", cfg["model"], "--permission-mode", cfg["permission_mode"],
+               "--allowedTools", *cfg["allowed_tools"]]
         env = {k: v for k, v in os.environ.items() if not k.startswith("CLAUDE_CODE") and k != "CLAUDECODE"}
-        flow.logev(st, "main", f"自動実行を開始 (runner={runner}, 依頼 {self.pending()} 件)", "tool", cfg.get("codex_model") or cfg["model"])
+        flow.logev(st, "main", f"自動実行を開始 (claude, 依頼 {self.pending()} 件)", "tool", cfg["model"])
         st["stages"]["router"] = {"status": "running", "note": "自動実行を起動", "t": time.time()}
         flow.save(st)
         self.started, self.last_exit = time.time(), None
@@ -506,8 +463,6 @@ class H(http.server.SimpleHTTPRequestHandler):
             cfg = load_cfg()
             if "enabled" in d:
                 cfg["enabled"] = bool(d["enabled"])
-            if d.get("runner") in ("claude", "codex"):
-                cfg["runner"] = d["runner"]
             CFG.write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding="utf-8")
             if cfg["enabled"]:
                 AUTO.trigger()
@@ -529,7 +484,7 @@ class H(http.server.SimpleHTTPRequestHandler):
             rid += "x"
         r = {"id": rid, "title": title, "body": body, "files": str(d.get("files", "")).strip(),
              "tier": d.get("tier") if d.get("tier") in ("auto", "light", "standard", "heavy") else "auto",
-             "via": d.get("via") if d.get("via") in ("claude", "codex", "chatgpt") else "claude",
+             "via": d.get("via") if d.get("via") in ("claude", "chatgpt") else "claude",
              "status": "new", "created": time.time()}
         (REQ / f"{rid}.json").write_text(json.dumps(r, ensure_ascii=False, indent=1), encoding="utf-8")
         st = flow.load()

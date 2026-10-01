@@ -4,6 +4,9 @@ import com.abyssia.Config;
 import com.abyssia.block.StackingPlantBlock;
 import com.abyssia.block.ThermalVentBlock;
 import com.abyssia.registry.ModBlocks;
+import com.abyssia.worldgen.DeepFloorPlacement;
+import com.abyssia.worldgen.DeepLayer;
+import com.abyssia.worldgen.OceanChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.QuartPos;
@@ -36,7 +39,10 @@ import java.util.List;
  */
 public class ThermalVentGenerator extends Feature<NoneFeatureConfiguration>
 {
-    private static final int CEILING_MARGIN = 16;
+    /** Blocks kept between a chimney's core and the deep layer's rock ceiling. */
+    private static final int CEILING_MARGIN = 4;
+    /** Biomes are sampled in the deep layer (old deep-ocean Y 0), as ThermalVentManager does. */
+    private static final int BIOME_QUART_Y = QuartPos.fromBlock((int) DeepLayer.fromDeepY(0));
 
     public ThermalVentGenerator()
     {
@@ -54,7 +60,7 @@ public class ThermalVentGenerator extends Feature<NoneFeatureConfiguration>
         ChunkPos chunk = new ChunkPos(context.origin());
 
         List<ThermalVentField> fields = ThermalVentField.near(level.getSeed(), chunk.getMinBlockX(), chunk.getMinBlockZ(), chunk.getMaxBlockX(), chunk.getMaxBlockZ(),
-                (x, z) -> biomes.getNoiseBiome(QuartPos.fromBlock(x), 0, QuartPos.fromBlock(z), randomState.sampler()).unwrapKey().orElse(null));
+                (x, z) -> biomes.getNoiseBiome(QuartPos.fromBlock(x), BIOME_QUART_Y, QuartPos.fromBlock(z), randomState.sampler()).unwrapKey().orElse(null));
         for (ThermalVentField field : fields) new Painter(level, generator, randomState, field, chunk).paint();
         return !fields.isEmpty();
     }
@@ -127,13 +133,18 @@ public class ThermalVentGenerator extends Feature<NoneFeatureConfiguration>
             return (h >>> 11) * 0x1.0p-53;
         }
 
-        /** Terrain height at a vent from the generator's noise, identical from every chunk. */
+        /**
+         * Deep seabed height at a vent from the terrain's density (the cave network's search), identical from every
+         * chunk. The heightmap and getBaseHeight would find the ocean world's seabed above the bedrock band.
+         */
         private int baseY(int index)
         {
             if (baseHeights[index] == Integer.MIN_VALUE)
             {
                 ThermalVentField.Vent v = field.vents().get(index);
-                baseHeights[index] = generator.getBaseHeight(v.x(), v.z(), Heightmap.Types.OCEAN_FLOOR_WG, level, randomState);
+                baseHeights[index] = generator instanceof OceanChunkGenerator ocean
+                        ? ocean.caveNetwork(randomState, level.registryAccess(), level.getSeed()).seabed(v.x(), v.z())
+                        : generator.getBaseHeight(v.x(), v.z(), Heightmap.Types.OCEAN_FLOOR_WG, level, randomState);
             }
             return baseHeights[index];
         }
@@ -169,7 +180,7 @@ public class ThermalVentGenerator extends Feature<NoneFeatureConfiguration>
                 {
                     double distCenter = Math.sqrt(Mth.square(x - field.centerX()) + Mth.square(z - field.centerZ()));
                     if (distCenter > field.radius() + 6) continue;
-                    int floor = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z);
+                    int floor = DeepFloorPlacement.surface(level, x, z);
                     if (!isWater(pos.set(x, floor, z))) continue;
 
                     // Mineral zoning follows the hottest vent's footprint, independent of its current activity:
@@ -313,10 +324,10 @@ public class ThermalVentGenerator extends Feature<NoneFeatureConfiguration>
             if (!near(v.x(), v.z(), reach)) return;
 
             int base = baseY(index) + Math.max(0, Math.round(v.moundHeight()) - 1);
-            // Seabed right under the world ceiling (unreachable: divers surface back to the ocean world there)
-            // has no room for a chimney and its core.
-            if (base + v.height() + 1 >= level.getMaxBuildHeight() - CEILING_MARGIN) return;
-            int standing = Math.max(1, Math.round(v.height() * (1f - v.age().collapse * (0.6f + 0.4f * (float) hash(v.x(), 0, v.z(), 4)))));
+            // Chimneys stop under the deep layer's rock ceiling (the core on top included); no room, no chimney.
+            int room = DeepLayer.CEILING_BOTTOM_Y - CEILING_MARGIN - base - 1;
+            if (room < 3) return;
+            int standing = Math.min(room, Math.max(1, Math.round(v.height() * (1f - v.age().collapse * (0.6f + 0.4f * (float) hash(v.x(), 0, v.z(), 4))))));
             double cx = v.x() + 0.5, cz = v.z() + 0.5;
             // Start slightly below the base so the chimney is always rooted in the mound, never floating.
             for (int h = -2; h < standing; h++)
@@ -355,7 +366,7 @@ public class ThermalVentGenerator extends Feature<NoneFeatureConfiguration>
                 double dist = v.width() + 1 + hash(v.x(), i, v.z(), 6) * 4;
                 int rx = Mth.floor(v.x() + Math.cos(angle) * dist), rz = Mth.floor(v.z() + Math.sin(angle) * dist);
                 if (!inChunk(rx, rz)) continue;
-                int y = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, rx, rz);
+                int y = DeepFloorPlacement.surface(level, rx, rz);
                 if (isWater(pos.set(rx, y, rz))) set(pos, chimneyBlock(v, 0, standing, rx, y, rz));
             }
         }

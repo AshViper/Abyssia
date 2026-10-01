@@ -2,6 +2,7 @@ package com.abyssia.environment;
 
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
+import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * A cheap, deterministic ocean current field: horizontal direction and strength come from smooth noise that
  * drifts slowly over game time, biomes scale the strength, and separate noise creates up/downwelling zones.
  * <p>
- * Seeds depend only on the dimension (clients do not know the world seed), so every player sees the same flow.
+ * Seeds depend only on the dimension and layer (clients do not know the world seed), so every player sees the same
+ * flow; the deep layer below the bedrock band flows on its own, keeping the former deep ocean dimension's seed.
  * It is side-agnostic so it can later push players, boats or items; today only particles use it.
  */
 public final class OceanCurrentManager
@@ -52,7 +54,13 @@ public final class OceanCurrentManager
     /** Extra downward pull inside trenches: water pours down the trench walls. */
     private static final double TRENCH_SINK = 0.004;
 
-    private static final Map<ResourceKey<Level>, Noises> NOISES = new ConcurrentHashMap<>();
+    /** Seed name of the deep layer's flow: the former deep ocean dimension's id, so its currents are unchanged. */
+    private static final String DEEP_LAYER_SEED = Abyssia.MODID + ":deep_ocean";
+
+    /** Noise cache key: a level's dimension, and whether it is the deep layer (no string built per call). */
+    private record NoiseKey(ResourceKey<Level> dimension, boolean deep) {}
+
+    private static final Map<NoiseKey, Noises> NOISES = new ConcurrentHashMap<>();
 
     private OceanCurrentManager() {}
 
@@ -63,18 +71,19 @@ public final class OceanCurrentManager
 
     private record Noises(SimplexNoise direction, SimplexNoise strength, SimplexNoise vertical)
     {
-        static Noises forDimension(ResourceKey<Level> dimension)
+        static Noises forName(String name)
         {
-            long seed = dimension.location().toString().hashCode() * 0x9E3779B97F4A7C15L;
+            long seed = name.hashCode() * 0x9E3779B97F4A7C15L;
             return new Noises(new SimplexNoise(new XoroshiroRandomSource(seed)),
                     new SimplexNoise(new XoroshiroRandomSource(seed + 1)),
                     new SimplexNoise(new XoroshiroRandomSource(seed + 2)));
         }
     }
 
-    private static Noises noises(Level level)
+    private static Noises noises(Level level, BlockPos pos)
     {
-        return NOISES.computeIfAbsent(level.dimension(), Noises::forDimension);
+        return NOISES.computeIfAbsent(new NoiseKey(level.dimension(), DeepLayer.isDeep(level, pos.getY())),
+                k -> Noises.forName(k.deep() ? DEEP_LAYER_SEED : k.dimension().location().toString()));
     }
 
     private static double time(Level level)
@@ -86,19 +95,19 @@ public final class OceanCurrentManager
     public static double getCurrentStrength(Level level, BlockPos pos)
     {
         double biome = level.getBiome(pos).unwrapKey().map(k -> BIOME_STRENGTH.getOrDefault(k, DEFAULT_BIOME_STRENGTH)).orElse(DEFAULT_BIOME_STRENGTH);
-        double local = 0.6 + 0.4 * noises(level).strength().getValue(pos.getX() * STRENGTH_SCALE, pos.getZ() * STRENGTH_SCALE, time(level));
+        double local = 0.6 + 0.4 * noises(level, pos).strength().getValue(pos.getX() * STRENGTH_SCALE, pos.getZ() * STRENGTH_SCALE, time(level));
         return biome * local * (Config.CURRENT_STRENGTH.get() / DEFAULT_CONFIG_STRENGTH);
     }
 
     /** Horizontal flow direction in radians (0 = +X). */
     public static double getCurrentDirection(Level level, BlockPos pos)
     {
-        return noises(level).direction().getValue(pos.getX() * DIRECTION_SCALE, pos.getZ() * DIRECTION_SCALE, time(level) * 0.5) * Math.PI * 2.0;
+        return noises(level, pos).direction().getValue(pos.getX() * DIRECTION_SCALE, pos.getZ() * DIRECTION_SCALE, time(level) * 0.5) * Math.PI * 2.0;
     }
 
     private static double welling(Level level, BlockPos pos)
     {
-        return noises(level).vertical().getValue(pos.getX() * VERTICAL_SCALE, pos.getZ() * VERTICAL_SCALE, time(level));
+        return noises(level, pos).vertical().getValue(pos.getX() * VERTICAL_SCALE, pos.getZ() * VERTICAL_SCALE, time(level));
     }
 
     public static Zone getZone(Level level, BlockPos pos)

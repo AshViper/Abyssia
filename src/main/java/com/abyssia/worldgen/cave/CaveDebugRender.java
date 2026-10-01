@@ -1,6 +1,8 @@
 package com.abyssia.worldgen.cave;
 
 import com.abyssia.Abyssia;
+import com.abyssia.worldgen.DeepLayer;
+import com.abyssia.worldgen.OceanChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.server.level.ServerLevel;
@@ -116,13 +118,16 @@ final class CaveDebugRender
     /**
      * Top-down map of the biomes and the seabed around the centre, sampled every {@code step} blocks straight from the
      * generator (no chunk is generated): biome colours hill-shaded by the seabed, plus a CSV of every sample. Returns
-     * the image path and each biome's share of the map.
+     * the image path and each biome's share of the map. Below the bedrock band it maps the deep layer: its biomes and
+     * the deep seabed from the cave network's density search (the heightmap would find the ocean world's seabed).
      */
     static String map(ServerLevel level, BlockPos centre, int radius, int step) throws IOException
     {
         ChunkGenerator generator = level.getChunkSource().getGenerator();
         RandomState random = level.getChunkSource().randomState();
         BiomeSource biomes = generator.getBiomeSource();
+        CaveNetwork deep = DeepLayer.isDeep(level, centre.getY()) && generator instanceof OceanChunkGenerator ocean
+                ? ocean.caveNetwork(random, level.registryAccess(), level.getSeed()) : null;
         int n = radius * 2 / step + 1;
         int[] seabed = new int[n * n];
         String[] biome = new String[n * n];
@@ -134,7 +139,7 @@ final class CaveDebugRender
                 int x = centre.getX() - radius + i * step, z = centre.getZ() - radius + j * step, k = j * n + i;
                 biome[k] = biomes.getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(centre.getY()), QuartPos.fromBlock(z), random.sampler())
                         .unwrapKey().map(key -> key.location().toString()).orElse("?");
-                seabed[k] = generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, level, random);
+                seabed[k] = deep != null ? deep.seabed(x, z) : generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, level, random);
                 csv.append(x).append(',').append(z).append(',').append(biome[k]).append(',').append(seabed[k]).append('\n');
             }
         }
@@ -152,7 +157,7 @@ final class CaveDebugRender
                 image.setRGB(i, j, shade(rgb, 1 + Math.max(-0.45, Math.min(0.45, slope * 0.6 / step))));
             }
         }
-        String name = "map_" + level.dimension().location().getPath() + "_" + centre.getX() + "_" + centre.getZ() + "_r" + radius + "_s" + step;
+        String name = "map_" + level.dimension().location().getPath() + (deep != null ? "_deep" : "") + "_" + centre.getX() + "_" + centre.getZ() + "_r" + radius + "_s" + step;
         ImageIO.write(image, "png", output(level, name + ".png"));
         java.nio.file.Files.writeString(output(level, name + ".csv").toPath(), csv);
         StringBuilder shares = new StringBuilder(output(level, name + ".png").getAbsolutePath());

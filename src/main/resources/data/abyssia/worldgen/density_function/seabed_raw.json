@@ -8,13 +8,30 @@
         "type": "minecraft:add",
         "argument1": {
           "type": "minecraft:add",
-          "argument1": "abyssia:base",
-          "argument2": "abyssia:mountains"
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": "abyssia:base",
+            "argument2": "abyssia:mountains"
+          },
+          "argument2": "abyssia:trenches"
         },
-        "argument2": "abyssia:trenches"
+        "argument2": "abyssia:canyons"
       },
-      "argument2": "abyssia:canyons"
+      "argument2": "abyssia:detail"
     },
-    "argument2": "abyssia:detail"
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": -3.0,
+      "argument2": {
+        "type": "minecraft:clamp",
+        "input": {
+          "type": "minecraft:mul",
+          "argument1": 3.0,
+          "argument2": "abyssia:fissure"
+        },
+        "min": 0.0,
+        "max": 1.0
+      }
+    }
   }
 }

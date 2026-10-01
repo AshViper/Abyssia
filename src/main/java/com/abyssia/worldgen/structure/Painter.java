@@ -4,6 +4,7 @@ import com.abyssia.block.SeafloorCarpetBlock;
 import com.abyssia.block.StackingPlantBlock;
 import com.abyssia.block.ThermalVentBlock;
 import com.abyssia.registry.ModTags;
+import com.abyssia.worldgen.DeepLayer;
 import com.abyssia.worldgen.cave.CaveEnvironment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomSupport;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.levelgen.synth.SimplexNoise;
@@ -51,7 +51,8 @@ public final class Painter
         this.radiusSq = r * r;
         this.noise = new SimplexNoise(new XoroshiroRandomSource(site.seed ^ 0x5EABEDL));
         this.minY = level.getMinBuildHeight() + 1;
-        this.maxY = level.getMaxBuildHeight() - 1;
+        // Structures belong to the deep layer: never into its rock ceiling or the ocean world above.
+        this.maxY = Math.min(level.getMaxBuildHeight() - 1, DeepLayer.CEILING_BOTTOM_Y);
     }
 
     // ---------------------------------------------------------------- bounds
@@ -155,7 +156,8 @@ public final class Painter
      */
     public int floor(int x, int z)
     {
-        if (site.cavern == null) return level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z);
+        // A full scan, not DeepFloorPlacement's cache: the structure's own overhangs (arches, hanging rock) count.
+        if (site.cavern == null) return DeepLayer.floorY(level, x, z) + 1;
         int y = Math.min(site.ceilingAt(x, z) - 1, site.baseAt(x, z) + 12);
         int guard = 0;
         while (!open(x, y, z) && y < maxY && guard++ < 16) y++;

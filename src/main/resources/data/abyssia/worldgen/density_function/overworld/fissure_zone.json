@@ -1,0 +1,98 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:mul",
+      "argument1": 2.0,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:clamp",
+          "input": {
+            "type": "minecraft:mul",
+            "argument1": 3.0,
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": {
+                  "type": "minecraft:square",
+                  "argument": {
+                    "type": "minecraft:clamp",
+                    "input": {
+                      "type": "minecraft:mul",
+                      "argument1": 6.666666666666666,
+                      "argument2": {
+                        "type": "minecraft:add",
+                        "argument1": "abyssia:fissure_region",
+                        "argument2": -0.05
+                      }
+                    },
+                    "min": 0.0,
+                    "max": 1.0
+                  }
+                },
+                "argument2": {
+                  "type": "minecraft:add",
+                  "argument1": 3.0,
+                  "argument2": {
+                    "type": "minecraft:mul",
+                    "argument1": -2.0,
+                    "argument2": {
+                      "type": "minecraft:clamp",
+                      "input": {
+                        "type": "minecraft:mul",
+                        "argument1": 6.666666666666666,
+                        "argument2": {
+                          "type": "minecraft:add",
+                          "argument1": "abyssia:fissure_region",
+                          "argument2": -0.05
+                        }
+                      },
+                      "min": 0.0,
+                      "max": 1.0
+                    }
+                  }
+                }
+              },
+              "argument2": "abyssia:overworld/ocean_gate"
+            }
+          },
+          "min": 0.0,
+          "max": 1.0
+        },
+        "argument2": {
+          "type": "minecraft:clamp",
+          "input": {
+            "type": "minecraft:mul",
+            "argument1": 27.72807295689818,
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": 0.1962258652247693,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": -1,
+                "argument2": {
+                  "type": "minecraft:abs",
+                  "argument": {
+                    "type": "minecraft:shifted_noise",
+                    "noise": "abyssia:fissure",
+                    "xz_scale": 0.3,
+                    "y_scale": 0,
+                    "shift_x": "minecraft:shift_x",
+                    "shift_y": 0,
+                    "shift_z": "minecraft:shift_z"
+                  }
+                }
+              }
+            }
+          },
+          "min": 0.0,
+          "max": 1.0
+        }
+      }
+    },
+    "argument2": -1.0
+  }
+}

@@ -2,6 +2,7 @@ package com.abyssia.worldgen.structure;
 
 import com.abyssia.Config;
 import com.abyssia.thermal.ThermalVentField;
+import com.abyssia.worldgen.DeepLayer;
 import com.abyssia.worldgen.OceanChunkGenerator;
 import com.abyssia.worldgen.cave.CaveEnvironment;
 import com.abyssia.worldgen.cave.CaveNetwork;
@@ -248,7 +249,7 @@ public final class SeabedStructures
                 return new Candidate(slot, cellX, cellZ, x, z, chance, Status.TERRAIN, "cavern centrepiece " + cavern.center().getSerializedName(), rank, null);
             }
             // Roofs vary across the footprint; formations follow Site.ceilingAt, this only bounds the writes.
-            int top = Math.min(cond.maxTopY(), Mth.floor(ceiling) + 16);
+            int top = Math.min(maxTop(cond), Mth.floor(ceiling) + 16);
             site = new Site(slot.id, def, x, z, base, top, structureSeed, cavern, network);
         }
         else
@@ -265,19 +266,26 @@ public final class SeabedStructures
             }
             double slope = slopeRise / reach;
             if (slope < cond.minSlope() || slope > cond.maxSlope()) return new Candidate(slot, cellX, cellZ, x, z, chance, Status.TERRAIN, "slope " + fmt(slope) + " outside " + fmt(cond.minSlope()) + ".." + fmt(cond.maxSlope()), rank, null);
-            if (cond.maxTopY() - base < 4) return new Candidate(slot, cellX, cellZ, x, z, chance, Status.TERRAIN, "no room under max_top_y " + cond.maxTopY(), rank, null);
+            if (maxTop(cond) - base < 4) return new Candidate(slot, cellX, cellZ, x, z, chance, Status.TERRAIN, "no room under max_top_y " + maxTop(cond), rank, null);
             terrainNanos.addAndGet(System.nanoTime() - t0);
             if (def.tier() != SeabedStructure.Tier.SMALL && cond.avoidVentFields() && Config.THERMAL_VENTS.get()
                     && !ThermalVentField.near(seed, x - r, z - r, x + r, z + r, this::pointBiome).isEmpty())
             {
                 return new Candidate(slot, cellX, cellZ, x, z, chance, Status.VENT_FIELD, "vent field in the footprint", rank, null);
             }
-            site = new Site(slot.id, def, x, z, base, cond.maxTopY(), structureSeed, null, network);
+            site = new Site(slot.id, def, x, z, base, maxTop(cond), structureSeed, null, network);
         }
         return new Candidate(slot, cellX, cellZ, x, z, chance, Status.PLACED, "", rank, site);
     }
 
     private static final int COARSE = 64;
+    /** Blocks kept between any structure top and the deep layer's rock ceiling (tools/gen_worldgen.py uses the same). */
+    private static final int TOP_MARGIN = 4;
+
+    private static int maxTop(SeabedStructure.Conditions cond)
+    {
+        return Math.min(cond.maxTopY(), DeepLayer.CEILING_BOTTOM_Y - TOP_MARGIN);
+    }
 
     /** Why caves rule a viable seabed candidate out ("" if they do not), computed once per candidate. */
     private String caveVerdict(Candidate c)

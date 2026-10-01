@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:min",
+  "argument1": {
+    "type": "minecraft:squeeze",
+    "argument": {
+      "type": "minecraft:mul",
+      "argument1": 0.64,
+      "argument2": {
+        "type": "minecraft:interpolated",
+        "argument": {
+          "type": "minecraft:range_choice",
+          "input": {
+            "type": "minecraft:y_clamped_gradient",
+            "from_y": -368,
+            "to_y": 320,
+            "from_value": -368,
+            "to_value": 320
+          },
+          "min_inclusive": -369,
+          "max_exclusive": -66,
+          "when_in_range": "abyssia:overworld/deep_density_nr",
+          "when_out_of_range": {
+            "type": "minecraft:range_choice",
+            "input": "abyssia:overworld/fissure_v",
+            "min_inclusive": -1.0,
+            "max_exclusive": 1e-06,
+            "when_in_range": "abyssia:overworld/surface_density",
+            "when_out_of_range": {
+              "type": "minecraft:min",
+              "argument1": "abyssia:overworld/surface_density",
+              "argument2": "abyssia:overworld/crack_carve"
+            }
+          }
+        }
+      }
+    }
+  },
+  "argument2": "minecraft:overworld/caves/noodle"
+}

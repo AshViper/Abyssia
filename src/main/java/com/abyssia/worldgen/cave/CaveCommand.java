@@ -1,6 +1,7 @@
 package com.abyssia.worldgen.cave;
 
 import com.abyssia.Abyssia;
+import com.abyssia.worldgen.DeepLayer;
 import com.abyssia.worldgen.OceanChunkGenerator;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -22,14 +23,15 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Testing aid (ops only), run in the deep ocean:
+ * Testing aid (ops only), run in the overworld's deep layer (below the bedrock band):
  * <ul>
  *     <li>{@code /abyssia caves list [range]}: cave systems near you, with their type, rarity and route</li>
  *     <li>{@code /abyssia caves locate <type or landmark>}: the nearest system of that type or landmark</li>
  *     <li>{@code /abyssia caves here}: which cave space you are in and its environment</li>
  *     <li>{@code /abyssia caves stats}: cave generation time per chunk so far</li>
  * </ul>
- * and in any dimension {@code /abyssia map <radius> <step>}: a biome and seabed map around you (PNG + CSV).
+ * and in any dimension {@code /abyssia map <radius> <step>}: a biome and seabed map around you (PNG + CSV) of the layer
+ * you are in (run it below Y -64 for the deep layer).
  */
 @Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class CaveCommand
@@ -101,7 +103,7 @@ public final class CaveCommand
             CaveNetwork network = generator.caveNetwork(level.getChunkSource().randomState(), level.registryAccess(), level.getSeed());
             if (!network.isEmpty()) return network;
         }
-        ctx.getSource().sendFailure(Component.literal("No cave network in this dimension (use it in abyssia:deep_ocean)"));
+        ctx.getSource().sendFailure(Component.literal("No cave network in this dimension (use it in the overworld's deep layer, below Y " + DeepLayer.TOP_Y + ")"));
         return null;
     }
 

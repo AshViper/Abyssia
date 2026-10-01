@@ -24,7 +24,7 @@ import org.joml.Matrix4f;
 import java.io.IOException;
 
 /**
- * The depth fog of the ocean world and deep ocean, redrawn for Iris / Oculus shader packs. A pack replaces vanilla fog
+ * The depth fog of the ocean world and its deep layer, redrawn for Iris / Oculus shader packs. A pack replaces vanilla fog
  * with its own fixed water fog, so the mod's fog distance and colour (depth, marine snow, vents, caverns) are lost.
  * Iris has finished its final pass by {@link RenderLevelStageEvent.Stage#AFTER_LEVEL}, and the main depth buffer still
  * holds the scene, so the same spherical fog is rebuilt from depth and laid over the pack's image: first into a

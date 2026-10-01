@@ -2,8 +2,8 @@ package com.abyssia.fauna;
 
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
-import com.abyssia.DeepOceanTransition;
 import com.abyssia.fauna.external.ExternalSpawnProvider;
+import com.abyssia.worldgen.DeepLayer;
 import com.abyssia.worldgen.OceanChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -41,6 +41,9 @@ import java.util.function.Predicate;
  * within 24 blocks of their height is analysed ({@link SpawnSite}), every rule proposes its own spot there and a
  * weight, and one is picked (or nothing, which keeps sparse habitats sparse). Per-species caps and a per-player limit
  * bound the population; animals despawn the vanilla way when players leave.
+ * <p>
+ * The ocean world and the deep layer below its bedrock band are kept apart: attempts stay in the player's layer, and
+ * the per-player limit and species caps only count animals in the same layer, as when they were two dimensions.
  */
 @Mod.EventBusSubscriber(modid = Abyssia.MODID)
 public final class FaunaSpawner
@@ -58,10 +61,9 @@ public final class FaunaSpawner
 
     private FaunaSpawner() {}
 
-    /** The deep ocean, and the ocean world when it is Abyssia's (its upper waters are the shallow end of the same depth scale). */
+    /** The ocean world when it is Abyssia's: its waters and the deep layer below the bedrock band share one depth scale. */
     public static boolean isFaunaLevel(ServerLevel level)
     {
-        if (level.dimension() == DeepOceanTransition.DEEP_OCEAN) return true;
         return level.dimension() == Level.OVERWORLD && level.getChunkSource().getGenerator() instanceof OceanChunkGenerator;
     }
 
@@ -81,14 +83,14 @@ public final class FaunaSpawner
     }
 
     /**
-     * The deep ocean has no drowned (its biomes spawn none since the fauna took over): ones saved in chunks from before
+     * The deep layer has no drowned (its biomes spawn none since the fauna took over): ones saved in chunks from before
      * are cleared when their chunk loads. A named drowned is left alone.
      */
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent event)
     {
         if (event.loadedFromDisk() && event.getEntity() instanceof Drowned drowned && !drowned.hasCustomName()
-                && event.getLevel().dimension() == DeepOceanTransition.DEEP_OCEAN)
+                && DeepLayer.isDeep(event.getLevel(), drowned.getY()))
         {
             event.setCanceled(true);
         }
@@ -107,7 +109,13 @@ public final class FaunaSpawner
         }
         double angle = random.nextDouble() * Math.PI * 2;
         double distance = MIN_DISTANCE + random.nextDouble() * (MAX_DISTANCE - MIN_DISTANCE);
-        int y = Mth.clamp(Mth.floor(centre.y) + random.nextInt(VERTICAL * 2 + 1) - VERTICAL, level.getMinBuildHeight() + 1, level.getMaxBuildHeight() - 2);
+        // stay in the centre's layer: the ocean world above the bedrock band or the deep layer below it
+        boolean deep = DeepLayer.isDeep(level, centre.y);
+        int minY = level.getMinBuildHeight() + 1;
+        int maxY = level.getMaxBuildHeight() - 2;
+        if (deep) maxY = DeepLayer.TOP_Y - 1;
+        else if (level.dimension() == Level.OVERWORLD) minY = Math.max(minY, DeepLayer.TOP_Y);
+        int y = Mth.clamp(Mth.floor(centre.y) + random.nextInt(VERTICAL * 2 + 1) - VERTICAL, minY, maxY);
         BlockPos pos = BlockPos.containing(centre.x + Math.cos(angle) * distance, y, centre.z + Math.sin(angle) * distance);
         return spawnAt(level, pos, random, log);
     }
@@ -146,6 +154,12 @@ public final class FaunaSpawner
     private static int spawnAt(ServerLevel level, BlockPos pos, RandomSource random, @Nullable List<String> log, Predicate<FaunaSpawnRule> rules)
     {
         if (!level.isPositionEntityTicking(pos)) return 0;
+        // outside the ocean world (the vanilla-style world) Abyssia fauna lives in the deep layer only
+        if (!DeepLayer.OCEAN_WORLD_EFFECTS.equals(level.dimensionType().effectsLocation()) && !DeepLayer.isDeep(level, pos.getY()))
+        {
+            if (log != null) log.add("surface layer of a vanilla-style world at " + pos.toShortString());
+            return 0;
+        }
         SpawnSite site = SpawnSite.at(level, pos);
         if (site == null)
         {
@@ -211,7 +225,9 @@ public final class FaunaSpawner
     private static int spawnGroup(ServerLevel level, FaunaSpawnProvider provider, FaunaSpawnRule rule, BlockPos spot, RandomSource random, @Nullable List<String> log)
     {
         int radius = rule.cap().radius();
-        int present = level.getEntities(rule.entity(), new AABB(spot).inflate(radius), e -> e.isAlive() && !(e instanceof PartEntity<?>)).size();
+        boolean deep = DeepLayer.isDeep(level, spot.getY());
+        int present = level.getEntities(rule.entity(), new AABB(spot).inflate(radius), e -> e.isAlive() && !(e instanceof PartEntity<?>)
+                && DeepLayer.isDeep(level, e.getY()) == deep).size();
         if (present >= rule.cap().count())
         {
             if (log != null) log.add(key(rule) + ": cap reached (" + present + " within " + radius + ")");
@@ -259,10 +275,12 @@ public final class FaunaSpawner
         return true;
     }
 
+    /** Fauna counting toward the per-player limit around a point, in the same layer (ocean world or deep layer) only. */
     public static int countFauna(ServerLevel level, BlockPos around, int radius)
     {
+        boolean deep = DeepLayer.isDeep(level, around.getY());
         return level.getEntities((Entity) null, new AABB(around).inflate(radius), e -> e.isAlive() && !(e instanceof PartEntity<?>)
-                && FaunaSpawnRules.countsTowardLimit(e.getType())).size();
+                && FaunaSpawnRules.countsTowardLimit(e.getType()) && DeepLayer.isDeep(level, e.getY()) == deep).size();
     }
 
     private static String key(FaunaSpawnRule rule)

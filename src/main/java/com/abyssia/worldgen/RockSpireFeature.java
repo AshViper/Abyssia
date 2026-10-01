@@ -9,7 +9,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -38,9 +37,12 @@ public class RockSpireFeature extends Feature<RockSpireFeature.Config>
         RandomSource random = context.random();
         Config config = context.config();
         BlockPos origin = context.origin();
-        int base = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, origin.getX(), origin.getZ());
+        int base = DeepFloorPlacement.surface(level, origin.getX(), origin.getZ(), origin.getY());
         int height = Mth.randomBetweenInclusive(random, config.minHeight(), config.maxHeight());
-        if (base + height >= level.getMaxBuildHeight() - 12) return false;
+        // In the deep layer, spires stop under its rock ceiling.
+        int ceiling = DeepLayer.isDeep(base) ? DeepLayer.CEILING_BOTTOM_Y : level.getMaxBuildHeight();
+        if (base + height >= ceiling - 4) height = ceiling - 4 - base - 1;
+        if (height < config.minHeight() / 2) return false;
 
         double baseRadius = config.minRadius() + random.nextDouble() * (config.maxRadius() - config.minRadius());
         double leanX = (random.nextDouble() - 0.5) * 2 * MAX_LEAN, leanZ = (random.nextDouble() - 0.5) * 2 * MAX_LEAN;

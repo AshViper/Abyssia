@@ -1,17 +1,20 @@
 package com.abyssia.fauna.external;
 
 import com.abyssia.Abyssia;
-import com.abyssia.DeepOceanTransition;
 import com.abyssia.fauna.FaunaSpawnProvider;
 import com.abyssia.fauna.FaunaSpawnRule;
 import com.abyssia.fauna.FaunaSpawnRules;
+import com.abyssia.worldgen.DeepLayer;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
@@ -22,7 +25,9 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.NaturalSpawner;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -238,15 +243,15 @@ public final class ExternalSpawnProvider implements FaunaSpawnProvider
         return null;
     }
 
-    /** Per deep-ocean biome: the profiles its biome rule allows, best-scoring first, as spawn rules. */
+    /** Per deep-layer biome: the profiles its biome rule allows, best-scoring first, as spawn rules. */
     private static Map<ResourceKey<Biome>, List<FaunaSpawnRule>> indexBiomes(MinecraftServer server, Map<EntityType<?>, DeepSeaSpawnProfile> profiles)
     {
-        ServerLevel deep = server.getLevel(DeepOceanTransition.DEEP_OCEAN);
-        if (deep == null || profiles.isEmpty()) return Map.of();
+        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+        if (overworld == null || profiles.isEmpty()) return Map.of();
         Map<ResourceLocation, Double> biomeMultipliers = ExternalFaunaConfig.biomeMultipliers();
         int maxSpecies = ExternalFaunaConfig.MAX_PER_BIOME.get();
         Map<ResourceKey<Biome>, List<FaunaSpawnRule>> index = new HashMap<>();
-        for (Holder<Biome> biome : deep.getChunkSource().getGenerator().getBiomeSource().possibleBiomes())
+        for (Holder<Biome> biome : deepLayerBiomes(server, overworld.getChunkSource().getGenerator().getBiomeSource()))
         {
             Optional<ResourceKey<Biome>> key = biome.unwrapKey();
             if (key.isEmpty()) continue;
@@ -270,6 +275,18 @@ public final class ExternalSpawnProvider implements FaunaSpawnProvider
             index.put(key.get(), fits.stream().limit(maxSpecies).map(f -> f.profile().toRule(f.multiplier())).toList());
         }
         return Map.copyOf(index);
+    }
+
+    /** The deep layer's biomes, listed in data/abyssia/tags/worldgen/biome/deep_layer.json. */
+    private static final TagKey<Biome> DEEP_LAYER_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "deep_layer"));
+
+    /** The biomes of the deep layer below the bedrock band: the {@code #abyssia:deep_layer} tag; every biome of the source if it is missing. */
+    private static Iterable<Holder<Biome>> deepLayerBiomes(MinecraftServer server, BiomeSource source)
+    {
+        Optional<HolderSet.Named<Biome>> tag = server.registryAccess().registryOrThrow(Registries.BIOME).getTag(DEEP_LAYER_BIOMES);
+        if (tag.isPresent() && tag.get().size() > 0) return tag.get();
+        LOGGER.warn("External fauna: biome tag #{} is missing or empty, using every biome of the overworld source", DEEP_LAYER_BIOMES.location());
+        return source.possibleBiomes();
     }
 
     private static void logDetails(Snapshot s)
@@ -304,7 +321,7 @@ public final class ExternalSpawnProvider implements FaunaSpawnProvider
     @Override
     public List<FaunaSpawnRule> rules(ServerLevel level, BlockPos pos)
     {
-        if (!ExternalFaunaConfig.ENABLED.get() || level.dimension() != DeepOceanTransition.DEEP_OCEAN) return List.of();
+        if (!ExternalFaunaConfig.ENABLED.get() || !DeepLayer.isDeep(level, pos.getY())) return List.of();
         Snapshot s = snapshot(level.getServer());
         if (s.byBiome().isEmpty()) return List.of();
         List<FaunaSpawnRule> rules = level.getBiome(pos).unwrapKey().map(s.byBiome()::get).orElse(null);

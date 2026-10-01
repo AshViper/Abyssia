@@ -90,7 +90,7 @@ public final class MarineSnowClientManager
         return smoothedDensity;
     }
 
-    /** Blocks below the ocean surface, continuous across the ocean world / deep ocean boundary. */
+    /** Blocks below the ocean surface, from the ocean world down through the deep layer (see {@link DepthZone}). */
     public static double depthBelowSurface(Level level, double y)
     {
         return DepthZone.blocksBelowSurface(level, y);

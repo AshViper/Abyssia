@@ -1,5 +1,6 @@
 package com.abyssia.entity.ai;
 
+import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.util.GoalUtils;
@@ -13,6 +14,7 @@ import javax.annotation.Nullable;
  * LandRandomPos for the seabed. Vanilla's movePosUpOutOfSolid turns down every spot whose block holds water, so under
  * water LandRandomPos always returns null and a walker never strolls or backs off. These keep its other rules (a
  * standable spot inside the mob's limits and restriction, lifted out of rock, no path malus) and drop that one.
+ * In the deep layer a spot is never lifted through the rock ceiling into the ocean world above.
  */
 public final class SeabedRandomPos
 {
@@ -45,7 +47,8 @@ public final class SeabedRandomPos
     private static BlockPos liftOutOfSolid(PathfinderMob mob, @Nullable BlockPos pos)
     {
         if (pos == null) return null;
-        pos = RandomPos.moveUpOutOfSolid(pos, mob.level().getMaxBuildHeight(), p -> GoalUtils.isSolid(mob, p));
-        return GoalUtils.hasMalus(mob, pos) ? null : pos;
+        int maxY = HomeLayer.of(mob) ?DeepLayer.TOP_Y - 1 : mob.level().getMaxBuildHeight();
+        pos = RandomPos.moveUpOutOfSolid(pos, maxY, p -> GoalUtils.isSolid(mob, p));
+        return GoalUtils.hasMalus(mob, pos) || !ScoredSwimGoal.sameLayer(mob, pos) ? null : pos;
     }
 }

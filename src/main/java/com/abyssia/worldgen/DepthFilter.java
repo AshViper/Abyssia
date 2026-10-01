@@ -11,9 +11,9 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 /**
  * Keeps a deep-ocean placement inside a depth band in metres ({@code {"type": "abyssia:depth", "min_depth": 1000,
- * "max_depth": 6200}}), so plant species change with depth inside one biome. Must come after the heightmap step:
- * it reads the Y of the position it is given. Metres follow {@link DepthZone} (the coordinate offset is a config
- * value, so absolute heights cannot be written into the JSON).
+ * "max_depth": 6200}}), so plant species change with depth inside one biome. Must come after the floor step
+ * ({@code abyssia:deep_floor}): it reads the Y of the position it is given. Metres follow {@link DepthZone}, whose
+ * tables count in the old deep-ocean Y.
  */
 public class DepthFilter extends PlacementFilter
 {
@@ -34,7 +34,7 @@ public class DepthFilter extends PlacementFilter
     @Override
     protected boolean shouldPlace(PlacementContext context, RandomSource random, BlockPos pos)
     {
-        double metres = DepthZone.deepOceanMetres(pos.getY());
+        double metres = DepthZone.deepOceanMetres(DeepLayer.toDeepY(pos.getY()));
         return metres >= minDepth && metres <= maxDepth;
     }
 

@@ -5,6 +5,7 @@ import com.abyssia.thermal.ThermalVentGenerator;
 import com.abyssia.worldgen.structure.SeabedStructureFeature;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -21,8 +22,10 @@ public final class ModWorldgen
     public static final DeferredRegister<Codec<? extends ChunkGenerator>> CHUNK_GENERATORS = DeferredRegister.create(Registries.CHUNK_GENERATOR, Abyssia.MODID);
     public static final DeferredRegister<PlacementModifierType<?>> PLACEMENTS = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, Abyssia.MODID);
     public static final DeferredRegister<Codec<? extends DensityFunction>> DENSITY_FUNCTIONS = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Abyssia.MODID);
+    public static final DeferredRegister<Codec<? extends BiomeSource>> BIOME_SOURCES = DeferredRegister.create(Registries.BIOME_SOURCE, Abyssia.MODID);
 
     public static final RegistryObject<Codec<OceanChunkGenerator>> OCEAN_NOISE = CHUNK_GENERATORS.register("ocean_noise", () -> OceanChunkGenerator.CODEC);
+    public static final RegistryObject<Codec<LayeredBiomeSource>> LAYERED = BIOME_SOURCES.register("layered", () -> LayeredBiomeSource.CODEC);
     public static final RegistryObject<Codec<RiftDensityFunction>> RIFT = DENSITY_FUNCTIONS.register("rift", RiftDensityFunction.CODEC::codec);
 
     public static final RegistryObject<Feature<ColumnPlantFeature.Config>> COLUMN_PLANT = FEATURES.register("column_plant", ColumnPlantFeature::new);
@@ -36,6 +39,7 @@ public final class ModWorldgen
 
     public static final RegistryObject<PlacementModifierType<ConfigPlacement>> CONFIG_PLACEMENT = PLACEMENTS.register("config", () -> () -> ConfigPlacement.CODEC);
     public static final RegistryObject<PlacementModifierType<DepthFilter>> DEPTH_FILTER = PLACEMENTS.register("depth", () -> () -> DepthFilter.CODEC);
+    public static final RegistryObject<PlacementModifierType<DeepFloorPlacement>> DEEP_FLOOR = PLACEMENTS.register("deep_floor", () -> () -> DeepFloorPlacement.CODEC);
 
     private ModWorldgen() {}
 
@@ -45,5 +49,6 @@ public final class ModWorldgen
         PLACEMENTS.register(modBus);
         CHUNK_GENERATORS.register(modBus);
         DENSITY_FUNCTIONS.register(modBus);
+        BIOME_SOURCES.register(modBus);
     }
 }

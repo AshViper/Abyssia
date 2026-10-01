@@ -13,7 +13,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -97,7 +96,7 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
         double[] dir = direction(shape, random);
 
         // Exposed veins straddle the seabed; buried ones sit a few blocks under it.
-        int floor = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, origin.getX(), origin.getZ());
+        int floor = DeepFloorPlacement.surface(level, origin.getX(), origin.getZ(), origin.getY());
         double cy = exposed ? floor - 0.5 : floor - r - 2 - random.nextInt(6);
         if (cy - r < level.getMinBuildHeight() + 3) return false;
         double cx = origin.getX() + 0.5, cz = origin.getZ() + 0.5;
@@ -165,12 +164,12 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
             level.setBlock(pos, state, 2);
         }
 
-        decorateSurface(level, random, config, cx, cz, r, exposed);
+        decorateSurface(level, random, config, cx, cz, r, exposed, floor);
         return ores > 0;
     }
 
     /** Mineral crust and nodules on the seabed around (exposed) or above (buried) the vein. */
-    private void decorateSurface(WorldGenLevel level, RandomSource random, VeinConfig config, double cx, double cz, double r, boolean exposed)
+    private void decorateSurface(WorldGenLevel level, RandomSource random, VeinConfig config, double cx, double cz, double r, boolean exposed, int floorY)
     {
         if (config.crust().isEmpty() && config.cluster().isEmpty()) return;
         double radius = exposed ? r + 4 : r + 1;
@@ -184,7 +183,7 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
                 double d = Math.sqrt(dx * dx + dz * dz) / radius;
                 if (d > 1 || random.nextDouble() > coverage * (1 - d * d)) continue;
                 int x = Mth.floor(cx) + dx, z = Mth.floor(cz) + dz;
-                int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z);
+                int top = DeepFloorPlacement.surface(level, x, z, floorY);
                 pos.set(x, top - 1, z);
                 BlockState ground = level.getBlockState(pos);
                 if (config.crust().isPresent() && ground.is(ModTags.VEIN_REPLACEABLE)) level.setBlock(pos, config.crust().get(), 2);
