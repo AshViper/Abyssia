@@ -102,13 +102,12 @@ public final class ShaderFogPass
     private static void drawFullScreen(ShaderInstance shader)
     {
         RenderSystem.setShader(() -> shader);
-        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
-        buffer.vertex(-1, -1, 0).endVertex();
-        buffer.vertex(1, -1, 0).endVertex();
-        buffer.vertex(1, 1, 0).endVertex();
-        buffer.vertex(-1, 1, 0).endVertex();
-        BufferUploader.drawWithShader(buffer.end());
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+        buffer.addVertex(-1, -1, 0);
+        buffer.addVertex(1, -1, 0);
+        buffer.addVertex(1, 1, 0);
+        buffer.addVertex(-1, 1, 0);
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
     @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

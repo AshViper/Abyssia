@@ -1,5 +1,6 @@
 package com.abyssia.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -32,6 +33,7 @@ import javax.annotation.Nullable;
  */
 public class SpeleothemBlock extends Block implements SimpleWaterloggedBlock
 {
+    public static final MapCodec<SpeleothemBlock> CODEC = simpleCodec(SpeleothemBlock::new);
     public static final DirectionProperty TIP_DIRECTION = BlockStateProperties.VERTICAL_DIRECTION;
     public static final EnumProperty<DripstoneThickness> THICKNESS = BlockStateProperties.DRIPSTONE_THICKNESS;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -48,6 +50,12 @@ public class SpeleothemBlock extends Block implements SimpleWaterloggedBlock
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(TIP_DIRECTION, Direction.UP).setValue(THICKNESS, DripstoneThickness.TIP)
                 .setValue(WATERLOGGED, false));
+    }
+
+    @Override
+    protected MapCodec<SpeleothemBlock> codec()
+    {
+        return CODEC;
     }
 
     @Override
@@ -138,7 +146,7 @@ public class SpeleothemBlock extends Block implements SimpleWaterloggedBlock
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type)
+    protected boolean isPathfindable(BlockState state, PathComputationType type)
     {
         return false;
     }

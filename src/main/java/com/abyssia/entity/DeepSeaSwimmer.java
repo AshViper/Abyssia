@@ -199,7 +199,7 @@ public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimate
     {
         super.readAdditionalSaveData(tag);
         this.homeLayer.load(tag);
-        if (tag.contains("Home")) this.setHome(NbtUtils.readBlockPos(tag.getCompound("Home")), Math.max(4, tag.getInt("HomeRadius")));
+        if (tag.contains("Home")) HomeLayer.readHome(tag).ifPresent(home -> this.setHome(home, Math.max(4, tag.getInt("HomeRadius"))));
     }
 
     /** Share of its velocity the fish keeps each tick in water. */

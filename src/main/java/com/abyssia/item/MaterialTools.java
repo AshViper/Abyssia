@@ -2,16 +2,17 @@ package com.abyssia.item;
 
 import com.abyssia.registry.ModItems;
 import com.abyssia.registry.ModTags;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import net.minecraft.sounds.SoundEvent;
+import com.abyssia.Abyssia;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +28,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -40,7 +42,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -60,13 +62,14 @@ public final class MaterialTools
     private static final Tier CUTTER = tier(1500, 7.0F, 1.5F, 20, () -> ModItems.TUNGSTEN_TIP.get());
 
     // Durabilities are the spec's per-piece totals.
-    private static final ArmorMaterial DIVING = new Material("abyssia:diving_alloy", new int[]{0, 420, 448, 0},
-            new int[]{0, 5, 6, 0}, 1.5F, 0.0F, 12, () -> ModItems.CORROSION_ALLOY_INGOT.get());
-    private static final ArmorMaterial PRESSURE = new Material("abyssia:pressure_alloy", new int[]{0, 0, 0, 462},
-            new int[]{0, 0, 0, 4}, 3.0F, 0.1F, 15, () -> ModItems.PRESSURE_SHELL.get());
+    // (the per-piece durability is set on the item's Properties, see register)
+    private static final Holder<ArmorMaterial> DIVING = material("diving_alloy",
+            Map.of(ArmorItem.Type.LEGGINGS, 5, ArmorItem.Type.CHESTPLATE, 6), 1.5F, 0.0F, 12, () -> ModItems.CORROSION_ALLOY_INGOT.get());
+    private static final Holder<ArmorMaterial> PRESSURE = material("pressure_alloy",
+            Map.of(ArmorItem.Type.HELMET, 4), 3.0F, 0.1F, 15, () -> ModItems.PRESSURE_SHELL.get());
 
-    private static final UUID SUIT_SPEED = UUID.fromString("0f4f1c8e-6a52-4c0b-9d0e-2b7a31c5e7a1");
-    private static final UUID SET_SPEED = UUID.fromString("7c1d2e44-3b9a-4f6e-8a15-5d9c0b2f6e83");
+    private static final ResourceLocation SUIT_SPEED = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "diving_suit_swim_speed");
+    private static final ResourceLocation SET_SPEED = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "diving_set_swim_speed");
 
     public static DeferredItem<Item> CRUSHING_HAMMER, COBALT_PICKAXE, COBALT_SHOVEL, MANGANESE_AXE, MANGANESE_SWORD,
             MOLYBDENUM_PICKAXE, TUNGSTEN_PICKAXE, TUNGSTEN_AXE, CRYSTAL_PICKAXE, ABYSSAL_DRILL, ABYSSAL_CUTTER,
@@ -77,22 +80,22 @@ public final class MaterialTools
     public static void register(DeferredRegister.Items items, List<DeferredItem<? extends Item>> tab)
     {
         CRUSHING_HAMMER = add(items, tab, "crushing_hammer", () -> new CrushingHammerItem(props(Rarity.COMMON).durability(250), 2, -3.0));
-        COBALT_PICKAXE = add(items, tab, "cobalt_pickaxe", () -> new PickaxeItem(COBALT, 1, -2.6F, props(Rarity.UNCOMMON)));
-        COBALT_SHOVEL = add(items, tab, "cobalt_shovel", () -> new ShovelItem(COBALT, 1.5F, -3.0F, props(Rarity.UNCOMMON)));
-        MANGANESE_AXE = add(items, tab, "manganese_axe", () -> new AxeItem(MANGANESE, 5.5F, -3.0F, props(Rarity.UNCOMMON)));
-        MANGANESE_SWORD = add(items, tab, "manganese_sword", () -> new SwordItem(MANGANESE, 3, -2.4F, props(Rarity.UNCOMMON)));
+        COBALT_PICKAXE = add(items, tab, "cobalt_pickaxe", () -> new PickaxeItem(COBALT, props(Rarity.UNCOMMON).attributes(PickaxeItem.createAttributes(COBALT, 1, -2.6F))));
+        COBALT_SHOVEL = add(items, tab, "cobalt_shovel", () -> new ShovelItem(COBALT, props(Rarity.UNCOMMON).attributes(ShovelItem.createAttributes(COBALT, 1.5F, -3.0F))));
+        MANGANESE_AXE = add(items, tab, "manganese_axe", () -> new AxeItem(MANGANESE, props(Rarity.UNCOMMON).attributes(AxeItem.createAttributes(MANGANESE, 5.5F, -3.0F))));
+        MANGANESE_SWORD = add(items, tab, "manganese_sword", () -> new SwordItem(MANGANESE, props(Rarity.UNCOMMON).attributes(SwordItem.createAttributes(MANGANESE, 3, -2.4F))));
         // heat_guard: the item itself survives lava/fire; the damage reduction is in hurt() below.
-        MOLYBDENUM_PICKAXE = add(items, tab, "molybdenum_pickaxe", () -> new PickaxeItem(MOLYBDENUM, 1, -2.8F, props(Rarity.RARE).fireResistant()));
-        TUNGSTEN_PICKAXE = add(items, tab, "tungsten_pickaxe", () -> new PickaxeItem(TUNGSTEN, 1, -3.1F, props(Rarity.RARE)));
-        TUNGSTEN_AXE = add(items, tab, "tungsten_axe", () -> new AxeItem(TUNGSTEN, 6.5F, -3.3F, props(Rarity.RARE)));
-        CRYSTAL_PICKAXE = add(items, tab, "crystal_pickaxe", () -> new PickaxeItem(CRYSTAL, 1, -2.8F, props(Rarity.RARE)));
-        ABYSSAL_DRILL = add(items, tab, "abyssal_drill", () -> new PickaxeItem(DRILL, 1, -3.0F, props(Rarity.EPIC)));
-        ABYSSAL_CUTTER = add(items, tab, "abyssal_cutter", () -> new SwordItem(CUTTER, 2, -1.8F, props(Rarity.EPIC)));
-        DIVE_TANK = add(items, tab, "dive_tank", () -> new DiveTank(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON)));
-        DIVING_SUIT_LEGGINGS = add(items, tab, "diving_suit_leggings", () -> new SuitLeggings(DIVING, ArmorItem.Type.LEGGINGS, props(Rarity.UNCOMMON)));
+        MOLYBDENUM_PICKAXE = add(items, tab, "molybdenum_pickaxe", () -> new PickaxeItem(MOLYBDENUM, props(Rarity.RARE).fireResistant().attributes(PickaxeItem.createAttributes(MOLYBDENUM, 1, -2.8F))));
+        TUNGSTEN_PICKAXE = add(items, tab, "tungsten_pickaxe", () -> new PickaxeItem(TUNGSTEN, props(Rarity.RARE).attributes(PickaxeItem.createAttributes(TUNGSTEN, 1, -3.1F))));
+        TUNGSTEN_AXE = add(items, tab, "tungsten_axe", () -> new AxeItem(TUNGSTEN, props(Rarity.RARE).attributes(AxeItem.createAttributes(TUNGSTEN, 6.5F, -3.3F))));
+        CRYSTAL_PICKAXE = add(items, tab, "crystal_pickaxe", () -> new PickaxeItem(CRYSTAL, props(Rarity.RARE).attributes(PickaxeItem.createAttributes(CRYSTAL, 1, -2.8F))));
+        ABYSSAL_DRILL = add(items, tab, "abyssal_drill", () -> new PickaxeItem(DRILL, props(Rarity.EPIC).attributes(PickaxeItem.createAttributes(DRILL, 1, -3.0F))));
+        ABYSSAL_CUTTER = add(items, tab, "abyssal_cutter", () -> new SwordItem(CUTTER, props(Rarity.EPIC).attributes(SwordItem.createAttributes(CUTTER, 2, -1.8F))));
+        DIVE_TANK = add(items, tab, "dive_tank", () -> new DiveTank(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON).durability(448)));
+        DIVING_SUIT_LEGGINGS = add(items, tab, "diving_suit_leggings", () -> new SuitLeggings(DIVING, ArmorItem.Type.LEGGINGS, props(Rarity.UNCOMMON).durability(420)));
         // Smithing upgrade of deep_diver_helmet: same breathing / night vision; tag abyssia:pressure_proof marks it for
         // the future hadal pressure damage.
-        PRESSURE_DIVER_HELMET = add(items, tab, "pressure_diver_helmet", () -> new ModTools.DiverHelmet(PRESSURE, ArmorItem.Type.HELMET, props(Rarity.EPIC)));
+        PRESSURE_DIVER_HELMET = add(items, tab, "pressure_diver_helmet", () -> new ModTools.DiverHelmet(PRESSURE, ArmorItem.Type.HELMET, props(Rarity.EPIC).durability(462)));
         NeoForge.EVENT_BUS.register(MaterialTools.class);
     }
 
@@ -109,6 +112,14 @@ public final class MaterialTools
         return result;
     }
 
+    private static Holder<ArmorMaterial> material(String name, Map<ArmorItem.Type, Integer> defense, float toughness,
+                                                   float knockback, int enchant, Supplier<Item> repair)
+    {
+        return ModItems.ARMOR_MATERIALS.register(name, () -> new ArmorMaterial(defense, enchant, SoundEvents.ARMOR_EQUIP_IRON,
+                () -> Ingredient.of(repair.get()),
+                List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, name))), toughness, knockback));
+    }
+
     /** Mining level and harvest tag match the abyssal alloy tier (spec: minecraft:needs_diamond_tool). */
     private static Tier tier(int uses, float speed, float bonus, int enchant, Supplier<Item> repair)
     {
@@ -117,9 +128,8 @@ public final class MaterialTools
             public int getUses() { return uses; }
             public float getSpeed() { return speed; }
             public float getAttackDamageBonus() { return bonus; }
-            public int getLevel() { return 4; }
             public int getEnchantmentValue() { return enchant; }
-            public TagKey<Block> getTag() { return BlockTags.NEEDS_DIAMOND_TOOL; }
+            public TagKey<Block> getIncorrectBlocksForDrops() { return BlockTags.INCORRECT_FOR_DIAMOND_TOOL; }
             public Ingredient getRepairIngredient() { return Ingredient.of(repair.get()); }
         };
     }
@@ -167,7 +177,7 @@ public final class MaterialTools
                 && player.getItemBySlot(EquipmentSlot.FEET).is(ModTools.FLIPPERS.get());
         boolean has = swim.getModifier(SET_SPEED) != null;
         if (full && !has)
-            swim.addTransientModifier(new AttributeModifier(SET_SPEED, "Abyssia diving set swim speed", 0.10, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+            swim.addTransientModifier(new AttributeModifier(SET_SPEED, 0.10, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         else if (!full && has)
             swim.removeModifier(SET_SPEED);
     }
@@ -175,12 +185,12 @@ public final class MaterialTools
     /** tank_breathing: water breathing while worn under water (no night vision, unlike the helmets). */
     private static final class DiveTank extends ArmorItem
     {
-        DiveTank(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
+        DiveTank(Holder<ArmorMaterial> material, Type type, Properties props) { super(material, type, props); }
 
         @Override
-        public void onInventoryTick(ItemStack stack, Level level, Player player, int slot, int selected)
+        public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected)
         {
-            if (stack != player.getItemBySlot(EquipmentSlot.CHEST)) return;
+            if (!(entity instanceof Player player) || stack != player.getItemBySlot(EquipmentSlot.CHEST)) return;
             if (player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()))
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 220, 0, true, false));
         }
@@ -189,32 +199,13 @@ public final class MaterialTools
     /** suit_swim: +5% swim speed (the armor's own defense/toughness modifiers are kept). */
     private static final class SuitLeggings extends ArmorItem
     {
-        SuitLeggings(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
+        SuitLeggings(Holder<ArmorMaterial> material, Type type, Properties props) { super(material, type, props); }
 
         @Override
-        @SuppressWarnings("deprecation")
-        public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot)
+        public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack)
         {
-            Multimap<Attribute, AttributeModifier> base = super.getDefaultAttributeModifiers(slot);
-            if (slot != EquipmentSlot.LEGS) return base;
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> b = ImmutableMultimap.builder();
-            b.putAll(base);
-            b.put(NeoForgeMod.SWIM_SPEED, new AttributeModifier(SUIT_SPEED, "Diving suit swim speed", 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-            return b.build();
+            return super.getDefaultAttributeModifiers(stack).withModifierAdded(NeoForgeMod.SWIM_SPEED,
+                    new AttributeModifier(SUIT_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL), EquipmentSlotGroup.LEGS);
         }
-    }
-
-    /** Per-piece armor values indexed by EquipmentSlot.getIndex() (boots, legs, chest, head), as in ModTools. */
-    private record Material(String name, int[] durability, int[] defense, float toughness, float knockback,
-                            int enchant, Supplier<Item> repair) implements ArmorMaterial
-    {
-        public int getDurabilityForType(ArmorItem.Type type) { return durability[type.getSlot().getIndex()]; }
-        public int getDefenseForType(ArmorItem.Type type) { return defense[type.getSlot().getIndex()]; }
-        public int getEnchantmentValue() { return enchant; }
-        public SoundEvent getEquipSound() { return SoundEvents.ARMOR_EQUIP_IRON; }
-        public Ingredient getRepairIngredient() { return Ingredient.of(repair.get()); }
-        public String getName() { return name; }
-        public float getToughness() { return toughness; }
-        public float getKnockbackResistance() { return knockback; }
     }
 }

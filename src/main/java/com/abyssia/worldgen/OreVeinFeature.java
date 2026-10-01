@@ -224,10 +224,10 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
         public static final Codec<VeinConfig> CODEC = RecordCodecBuilder.create(i -> i.group(
                 BlockState.CODEC.fieldOf("ore").forGetter(VeinConfig::ore),
                 BlockState.CODEC.fieldOf("host").forGetter(VeinConfig::host),
-                BlockState.CODEC.optionalFieldOf("crust").forGetter(VeinConfig::crust),
-                BlockState.CODEC.optionalFieldOf("cluster").forGetter(VeinConfig::cluster),
+                BlockState.CODEC.lenientOptionalFieldOf("crust").forGetter(VeinConfig::crust),
+                BlockState.CODEC.lenientOptionalFieldOf("cluster").forGetter(VeinConfig::cluster),
                 SIZE_CODEC.fieldOf("size").forGetter(VeinConfig::size),
-                Codec.floatRange(0f, 10f).optionalFieldOf("exposure", 1f).forGetter(VeinConfig::exposure)
+                Codec.floatRange(0f, 10f).lenientOptionalFieldOf("exposure", 1f).forGetter(VeinConfig::exposure)
         ).apply(i, VeinConfig::new));
     }
 }

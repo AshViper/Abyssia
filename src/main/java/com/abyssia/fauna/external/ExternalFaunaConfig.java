@@ -46,7 +46,7 @@ public final class ExternalFaunaConfig
     public static final ModConfigSpec.ConfigValue<List<? extends String>> BLACKLIST = BUILDER
             .comment("Entities never spawned, even when whitelisted. Same formats as the whitelist.",
                     "Defaults: the elder guardian (its mining fatigue would cover the whole dimension), the drowned (the deep ocean has none)")
-            .defineListAllowEmpty("blacklist", List.of("minecraft:elder_guardian", "minecraft:drowned", "#forge:bosses"), ExternalFaunaConfig::isString);
+            .defineListAllowEmpty("blacklist", List.of("minecraft:elder_guardian", "minecraft:drowned", "#c:bosses"), ExternalFaunaConfig::isString);
     public static final ModConfigSpec.BooleanValue RESPECT_SPAWN_PREDICATES = BUILDER
             .comment("Also require each entity's own spawn predicate (SpawnPlacements). Most sea animals only accept the top",
                     "13 blocks of water there (vanilla fish do), so this keeps nearly all of them out of the deep ocean")

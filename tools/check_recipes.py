@@ -1,12 +1,12 @@
 """Checks that every item a recipe names actually exists (read-only).
 
-Walks data/abyssia/recipes/*.json and resolves every item id (ingredients, results, smithing template/base/addition):
+Walks data/abyssia/recipe/*.json and resolves every item id (ingredients, results, smithing template/base/addition):
 
 * ``abyssia:`` ids must be registered: a string literal in a Java registration call (ModItems / ModTools /
   MaterialTools / ModPlants / ModBlocks ...) or, for block items generated in Java loops (stone families etc.),
   an item model in assets/abyssia/models/item/.
 * ``minecraft:`` ids must be on the VANILLA allow-list below (extend it when a recipe uses a new vanilla item).
-* ``abyssia:`` tags must have a tag file; ``minecraft:`` / ``forge:`` tags are listed as unchecked.
+* ``abyssia:`` tags must have a tag file; ``minecraft:`` / ``c:`` tags are listed as unchecked.
 
 It also cross-checks tools/material_spec.json: every spec item registered in Java with an item model, every spec
 recipe generated.  Exit code 1 on any problem.
@@ -26,7 +26,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, ".."))
 RES = os.path.join(ROOT, "src", "main", "resources")
 JAVA = os.path.join(ROOT, "src", "main", "java", "com", "abyssia")
-RECIPES = os.path.join(RES, "data", "abyssia", "recipes")
+RECIPES = os.path.join(RES, "data", "abyssia", "recipe")   # 1.21 folder name
 ITEM_MODELS = os.path.join(RES, "assets", "abyssia", "models", "item")
 SPEC = os.path.join(HERE, "material_spec.json")
 
@@ -65,13 +65,13 @@ def model_ids() -> set[str]:
 def refs(node, out: list):
     """Collect ("item"|"tag", id) pairs from a recipe (ingredient objects, results, plain-string results)."""
     if isinstance(node, dict):
-        for key in ("item", "tag"):
+        for key in ("item", "tag", "id"):           # 1.21 results are {"id", "count"}
             if isinstance(node.get(key), str):
-                out.append((key, node[key]))
+                out.append(("item" if key == "id" else key, node[key]))
         for key, value in node.items():
             if key == "result" and isinstance(value, str):
                 out.append(("item", value))
-            elif key not in ("item", "tag"):
+            elif key not in ("item", "tag", "id"):
                 refs(value, out)
     elif isinstance(node, list):
         for value in node:
@@ -81,7 +81,7 @@ def refs(node, out: list):
 
 def tag_exists(full: str) -> bool:
     ns, _, path = full.partition(":")
-    return os.path.isfile(os.path.join(RES, "data", ns, "tags", "items", *path.split("/")) + ".json")
+    return os.path.isfile(os.path.join(RES, "data", ns, "tags", "item", *path.split("/")) + ".json")
 
 
 def check() -> dict:

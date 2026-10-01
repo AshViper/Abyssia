@@ -12,6 +12,7 @@ import com.abyssia.worldgen.structure.formation.VentFormation;
 import com.abyssia.worldgen.structure.formation.VolcanoFormation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 
 /**
  * A generic structure template (pillar, rock, crystal, vent, volcano, crater, trench, sediment, vegetation, cave),
@@ -25,9 +26,9 @@ public interface Formation
 {
     Codec<Formation> CODEC = Codec.STRING.partialDispatch("type", f -> DataResult.success(f.type()), Formation::codec);
 
-    private static DataResult<Codec<? extends Formation>> codec(String type)
+    private static DataResult<MapCodec<? extends Formation>> codec(String type)
     {
-        Codec<? extends Formation> codec = switch (type)
+        MapCodec<? extends Formation> codec = switch (type)
         {
             case PillarFormation.TYPE -> PillarFormation.CODEC;
             case RockFormation.TYPE -> RockFormation.CODEC;

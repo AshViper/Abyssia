@@ -1,5 +1,6 @@
 package com.abyssia.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -23,11 +24,18 @@ import javax.annotation.Nullable;
  */
 public class CaveMossBlock extends MultifaceBlock implements LiquidBlockContainer
 {
+    public static final MapCodec<CaveMossBlock> CODEC = simpleCodec(CaveMossBlock::new);
     private final MultifaceSpreader spreader = new MultifaceSpreader(this);
 
     public CaveMossBlock(Properties properties)
     {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<CaveMossBlock> codec()
+    {
+        return CODEC;
     }
 
     @Override

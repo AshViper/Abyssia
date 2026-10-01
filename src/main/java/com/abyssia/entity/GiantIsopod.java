@@ -6,6 +6,7 @@ import com.abyssia.fauna.CarrionScent;
 import com.abyssia.registry.ModSounds;
 import com.abyssia.registry.ModTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +39,6 @@ import net.neoforged.neoforge.fluids.FluidType;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * ダイオウグソクムシ: the giant isopod Bathynomus giganteus, a slow scavenger of the continental slope.
@@ -55,7 +55,7 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated, HomeLayer
 
     private static final EntityDataAccessor<Boolean> CURLED = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FEEDING = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.BOOLEAN);
-    private static final UUID CURL_ARMOR = UUID.fromString("5b1b0c52-7f32-4c55-9d2c-3f7c1a2e9b41");
+    private static final ResourceLocation CURL_ARMOR = ResourceLocation.fromNamespaceAndPath("abyssia", "curled_up");
     private static final float CURLED_DAMAGE = 0.35F;
 
     private int curlTicks;
@@ -72,7 +72,7 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated, HomeLayer
     public GiantIsopod(EntityType<? extends GiantIsopod> type, Level level)
     {
         super(type, level);
-        this.setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0);
         this.setPathfindingMalus(PathType.WATER_BORDER, 0.0F);
     }
 
@@ -315,7 +315,7 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated, HomeLayer
             AttributeInstance armor = self.getAttribute(Attributes.ARMOR);
             if (armor != null && armor.getModifier(CURL_ARMOR) == null)
             {
-                armor.addTransientModifier(new AttributeModifier(CURL_ARMOR, "Curled up", 6.0, AttributeModifier.Operation.ADD_VALUE));
+                armor.addTransientModifier(new AttributeModifier(CURL_ARMOR, 6.0, AttributeModifier.Operation.ADD_VALUE));
             }
         }
 

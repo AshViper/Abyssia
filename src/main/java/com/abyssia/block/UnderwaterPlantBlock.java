@@ -1,6 +1,7 @@
 package com.abyssia.block;
 
 import com.abyssia.registry.ModTags;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -29,6 +30,7 @@ import javax.annotation.Nullable;
  */
 public class UnderwaterPlantBlock extends BushBlock implements LiquidBlockContainer
 {
+    public static final MapCodec<UnderwaterPlantBlock> CODEC = simpleCodec(UnderwaterPlantBlock::new);
     private static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
     private final SporeEmitter spores;
 
@@ -41,6 +43,12 @@ public class UnderwaterPlantBlock extends BushBlock implements LiquidBlockContai
     {
         super(properties);
         this.spores = spores;
+    }
+
+    @Override
+    protected MapCodec<? extends UnderwaterPlantBlock> codec()
+    {
+        return CODEC;
     }
 
     @Override

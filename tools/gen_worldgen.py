@@ -10,6 +10,7 @@ The few vanilla files it builds on (warm ocean features) are read straight from 
 Biome, feature, density function and noise folders are regenerated from scratch.
 """
 import copy
+import glob
 import json
 import os
 import re
@@ -21,7 +22,12 @@ import seabed_structures
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src", "main", "resources", "data")
 WG = os.path.join(ROOT, "abyssia", "worldgen")
-VANILLA_JAR = os.path.join(os.path.expanduser("~"), ".gradle", "caches", "forge_gradle", "minecraft_repo", "versions", "1.20.1", "client-extra.jar")
+# Vanilla 1.21.1 data: the client jar ModDevGradle's NeoForm runtime caches (it holds data/minecraft/ too), else the
+# worktree's client-extra resources jar (build/moddev, after any gradle run).
+VANILLA_JARS = [os.path.join(os.path.expanduser("~"), ".gradle", "caches", "neoformruntime", "artifacts", "minecraft_1.21.1_client.jar"),
+                *glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "build", "moddev", "artifacts",
+                                        "neoforge-*-client-extra-aka-minecraft-resources.jar"))]
+VANILLA_JAR = next((j for j in VANILLA_JARS if os.path.isfile(j)), VANILLA_JARS[0])
 
 
 def write(rel, obj):
@@ -714,7 +720,7 @@ def vegetation():
     # Floating plants hang 4-12 blocks above the seabed.
     feature("floating_blooms", patch(single("floating_bloom"), 8, 8, 6),
             [V, clustered(1), {"type": "minecraft:in_square"}, DEEP_FLOOR,
-             {"type": "minecraft:random_offset", "xz_spread": 0, "y_spread": {"type": "minecraft:uniform", "value": {"min_inclusive": 4, "max_inclusive": 12}}},
+             {"type": "minecraft:random_offset", "xz_spread": 0, "y_spread": {"type": "minecraft:uniform", "min_inclusive": 4, "max_inclusive": 12}},
              {"type": "minecraft:biome"}])
     feature("seafloor_pebbles", patch(single("seafloor_pebbles"), 16, 6), on_floor(clustered(1)))
 

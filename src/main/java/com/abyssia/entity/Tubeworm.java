@@ -152,7 +152,7 @@ public class Tubeworm extends WaterAnimal implements FaunaAnimated
     }
 
     @Override
-    public boolean canBeLeashed(Player player)
+    public boolean canBeLeashed()
     {
         return false;
     }

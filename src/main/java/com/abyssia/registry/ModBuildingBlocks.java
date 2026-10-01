@@ -79,23 +79,23 @@ public final class ModBuildingBlocks
     public static final DeferredBlock<Block> ANCIENT_PLANKS = ModBlocks.block("ancient_planks",
             () -> new Block(wood().strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
     public static final DeferredBlock<Block> ANCIENT_STAIRS = ModBlocks.block("ancient_stairs",
-            () -> new StairBlock(() -> ANCIENT_PLANKS.get().defaultBlockState(), copy(ANCIENT_PLANKS)));
+            () -> new StairBlock(ANCIENT_PLANKS.get().defaultBlockState(), copy(ANCIENT_PLANKS)));
     public static final DeferredBlock<Block> ANCIENT_SLAB = ModBlocks.block("ancient_slab", () -> new SlabBlock(copy(ANCIENT_PLANKS)));
     public static final DeferredBlock<Block> ANCIENT_FENCE = ModBlocks.block("ancient_fence",
             () -> new FenceBlock(copy(ANCIENT_PLANKS).forceSolidOn()));
     public static final DeferredBlock<Block> ANCIENT_FENCE_GATE = ModBlocks.block("ancient_fence_gate",
-            () -> new FenceGateBlock(copy(ANCIENT_PLANKS).forceSolidOn(), WoodType.CRIMSON));
+            () -> new FenceGateBlock(WoodType.CRIMSON, copy(ANCIENT_PLANKS).forceSolidOn()));
     public static final DeferredBlock<Block> ANCIENT_DOOR = door("ancient_door",
-            () -> new DoorBlock(wood().strength(3.0f).noOcclusion().pushReaction(PushReaction.DESTROY), BlockSetType.CRIMSON));
+            () -> new DoorBlock(BlockSetType.CRIMSON, wood().strength(3.0f).noOcclusion().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Block> ANCIENT_TRAPDOOR = ModBlocks.block("ancient_trapdoor",
-            () -> new TrapDoorBlock(wood().strength(3.0f).noOcclusion().isValidSpawn((state, level, pos, type) -> false),
-                    BlockSetType.CRIMSON));
+            () -> new TrapDoorBlock(BlockSetType.CRIMSON,
+                    wood().strength(3.0f).noOcclusion().isValidSpawn((state, level, pos, type) -> false)));
     public static final DeferredBlock<Block> ANCIENT_PRESSURE_PLATE = ModBlocks.block("ancient_pressure_plate",
-            () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, wood().forceSolidOn().noCollission()
-                    .strength(0.5f).pushReaction(PushReaction.DESTROY), BlockSetType.CRIMSON));
+            () -> new PressurePlateBlock(BlockSetType.CRIMSON, wood().forceSolidOn().noCollission()
+                    .strength(0.5f).pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<Block> ANCIENT_BUTTON = ModBlocks.block("ancient_button",
-            () -> new ButtonBlock(BlockBehaviour.Properties.of().noCollission().strength(0.5f).pushReaction(PushReaction.DESTROY),
-                    BlockSetType.CRIMSON, 30, true));
+            () -> new ButtonBlock(BlockSetType.CRIMSON, 30,
+                    BlockBehaviour.Properties.of().noCollission().strength(0.5f).pushReaction(PushReaction.DESTROY)));
 
     private ModBuildingBlocks() {}
 
@@ -124,7 +124,7 @@ public final class ModBuildingBlocks
     private static Shapes shapes(String name, DeferredBlock<Block> base)
     {
         return new Shapes(
-                ModBlocks.block(name + "_stairs", () -> new StairBlock(() -> base.get().defaultBlockState(), copy(base))),
+                ModBlocks.block(name + "_stairs", () -> new StairBlock(base.get().defaultBlockState(), copy(base))),
                 ModBlocks.block(name + "_slab", () -> new SlabBlock(copy(base))),
                 ModBlocks.block(name + "_wall", () -> new WallBlock(copy(base).forceSolidOn())));
     }

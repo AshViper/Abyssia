@@ -226,7 +226,7 @@ public final class StructureCommand
                     .append((int) Math.hypot(c.x() - pos.getX(), c.z() - pos.getZ())).append(',').append(SeabedStructures.fmt(c.chance())).append(',')
                     .append('"').append(c.reason().replace('"', '\'')).append("\"\n");
         }
-        File dir = new File(level.getServer().getServerDirectory().toFile(), Abyssia.MODID + "_debug");
+        File dir = new File(level.getServer().getServerDirectory().toAbsolutePath().toFile(), Abyssia.MODID + "_debug");
         if (!dir.isDirectory() && !dir.mkdirs()) throw new IOException("cannot create " + dir);
         File file = new File(dir, "structures_" + pos.getX() + "_" + pos.getZ() + ".csv");
         Files.writeString(file.toPath(), out);

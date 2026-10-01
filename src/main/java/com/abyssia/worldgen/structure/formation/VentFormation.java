@@ -6,6 +6,7 @@ import com.abyssia.worldgen.structure.Painter;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,20 +21,20 @@ public record VentFormation(Span count, float spread, Span height, Span width, f
                             Mix core, Mix mound, float moundRadius, float moundHeight, float flanges) implements Formation
 {
     public static final String TYPE = "vent";
-    public static final Codec<VentFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<VentFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Span.CODEC.fieldOf("count").forGetter(VentFormation::count),
-            Codec.floatRange(0, 100).optionalFieldOf("spread", 8f).forGetter(VentFormation::spread),
+            Codec.floatRange(0, 100).lenientOptionalFieldOf("spread", 8f).forGetter(VentFormation::spread),
             Span.CODEC.fieldOf("height").forGetter(VentFormation::height),
             Span.CODEC.fieldOf("width").forGetter(VentFormation::width),
-            Codec.floatRange(0, 0.5f).optionalFieldOf("lean", 0.1f).forGetter(VentFormation::lean),
+            Codec.floatRange(0, 0.5f).lenientOptionalFieldOf("lean", 0.1f).forGetter(VentFormation::lean),
             Mix.CODEC.fieldOf("chimney").forGetter(VentFormation::chimney),
-            Mix.CODEC.optionalFieldOf("accent", Mix.EMPTY).forGetter(VentFormation::accent),
-            Codec.floatRange(0, 1).optionalFieldOf("accent_chance", 0f).forGetter(VentFormation::accentChance),
-            Mix.CODEC.optionalFieldOf("core", Mix.EMPTY).forGetter(VentFormation::core),
+            Mix.CODEC.lenientOptionalFieldOf("accent", Mix.EMPTY).forGetter(VentFormation::accent),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("accent_chance", 0f).forGetter(VentFormation::accentChance),
+            Mix.CODEC.lenientOptionalFieldOf("core", Mix.EMPTY).forGetter(VentFormation::core),
             Mix.CODEC.fieldOf("mound").forGetter(VentFormation::mound),
-            Codec.floatRange(0, 60).optionalFieldOf("mound_radius", 5f).forGetter(VentFormation::moundRadius),
-            Codec.floatRange(0, 20).optionalFieldOf("mound_height", 2f).forGetter(VentFormation::moundHeight),
-            Codec.floatRange(0, 1).optionalFieldOf("flanges", 0.4f).forGetter(VentFormation::flanges)
+            Codec.floatRange(0, 60).lenientOptionalFieldOf("mound_radius", 5f).forGetter(VentFormation::moundRadius),
+            Codec.floatRange(0, 20).lenientOptionalFieldOf("mound_height", 2f).forGetter(VentFormation::moundHeight),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("flanges", 0.4f).forGetter(VentFormation::flanges)
     ).apply(i, VentFormation::new));
 
     private record Chimney(double x, double z, int height, float width, double lx, double lz, float scale, int[] flangeAt, boolean cored) {}

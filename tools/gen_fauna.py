@@ -31,6 +31,7 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
 import fauna  # noqa: E402
+import mc_format  # noqa: E402
 
 MAIN = os.path.join(HERE, "..", "src", "main")
 ASSETS = os.path.join(MAIN, "resources", "assets", "abyssia")
@@ -40,6 +41,9 @@ GENERATOR_OUTPUT = os.path.join(HERE, "bbmodel-generator", "output")
 
 
 def write_json(path, obj):
+    # NeoForge 1.21.1: data files go to the 1.21 folders and formats (tools/mc_format.py); assets pass through.
+    path = mc_format.upgrade(path)
+    obj = mc_format.upgrade_json(path, obj)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, indent=2, ensure_ascii=False)

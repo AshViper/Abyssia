@@ -6,6 +6,7 @@ import com.abyssia.worldgen.structure.Painter;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,22 +21,22 @@ public record PillarFormation(Span count, float spread, Span height, Span radius
                               float cracks, float brokenTop, Mix rock, Mix accent, float accentChance, Mix apron, float apronHeight) implements Formation
 {
     public static final String TYPE = "pillar";
-    public static final Codec<PillarFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Span.CODEC.optionalFieldOf("count", Span.of(1, 1)).forGetter(PillarFormation::count),
-            Codec.floatRange(0, 120).optionalFieldOf("spread", 0f).forGetter(PillarFormation::spread),
+    public static final MapCodec<PillarFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Span.CODEC.lenientOptionalFieldOf("count", Span.of(1, 1)).forGetter(PillarFormation::count),
+            Codec.floatRange(0, 120).lenientOptionalFieldOf("spread", 0f).forGetter(PillarFormation::spread),
             Span.CODEC.fieldOf("height").forGetter(PillarFormation::height),
             Span.CODEC.fieldOf("radius").forGetter(PillarFormation::radius),
-            Codec.floatRange(0.1f, 3f).optionalFieldOf("taper", 0.8f).forGetter(PillarFormation::taper),
-            Codec.floatRange(0, 0.6f).optionalFieldOf("lean", 0.12f).forGetter(PillarFormation::lean),
-            Codec.floatRange(0, 0.6f).optionalFieldOf("ledges", 0.15f).forGetter(PillarFormation::ledges),
-            Codec.floatRange(0, 0.8f).optionalFieldOf("erosion", 0.25f).forGetter(PillarFormation::erosion),
-            Codec.floatRange(0, 0.5f).optionalFieldOf("cracks", 0.08f).forGetter(PillarFormation::cracks),
-            Codec.floatRange(0, 1).optionalFieldOf("broken_top", 0.3f).forGetter(PillarFormation::brokenTop),
+            Codec.floatRange(0.1f, 3f).lenientOptionalFieldOf("taper", 0.8f).forGetter(PillarFormation::taper),
+            Codec.floatRange(0, 0.6f).lenientOptionalFieldOf("lean", 0.12f).forGetter(PillarFormation::lean),
+            Codec.floatRange(0, 0.6f).lenientOptionalFieldOf("ledges", 0.15f).forGetter(PillarFormation::ledges),
+            Codec.floatRange(0, 0.8f).lenientOptionalFieldOf("erosion", 0.25f).forGetter(PillarFormation::erosion),
+            Codec.floatRange(0, 0.5f).lenientOptionalFieldOf("cracks", 0.08f).forGetter(PillarFormation::cracks),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("broken_top", 0.3f).forGetter(PillarFormation::brokenTop),
             Mix.CODEC.fieldOf("rock").forGetter(PillarFormation::rock),
-            Mix.CODEC.optionalFieldOf("accent", Mix.EMPTY).forGetter(PillarFormation::accent),
-            Codec.floatRange(0, 1).optionalFieldOf("accent_chance", 0f).forGetter(PillarFormation::accentChance),
-            Mix.CODEC.optionalFieldOf("apron", Mix.EMPTY).forGetter(PillarFormation::apron),
-            Codec.floatRange(0, 12).optionalFieldOf("apron_height", 2f).forGetter(PillarFormation::apronHeight)
+            Mix.CODEC.lenientOptionalFieldOf("accent", Mix.EMPTY).forGetter(PillarFormation::accent),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("accent_chance", 0f).forGetter(PillarFormation::accentChance),
+            Mix.CODEC.lenientOptionalFieldOf("apron", Mix.EMPTY).forGetter(PillarFormation::apron),
+            Codec.floatRange(0, 12).lenientOptionalFieldOf("apron_height", 2f).forGetter(PillarFormation::apronHeight)
     ).apply(i, PillarFormation::new));
 
     private static final int ROOT = 3;

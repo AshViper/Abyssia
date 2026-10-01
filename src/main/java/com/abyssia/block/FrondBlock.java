@@ -1,5 +1,6 @@
 package com.abyssia.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -23,12 +24,19 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class FrondBlock extends Block implements SimpleWaterloggedBlock
 {
+    public static final MapCodec<FrondBlock> CODEC = simpleCodec(FrondBlock::new);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public FrondBlock(Properties properties)
     {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(WATERLOGGED, false));
+    }
+
+    @Override
+    protected MapCodec<FrondBlock> codec()
+    {
+        return CODEC;
     }
 
     @Override

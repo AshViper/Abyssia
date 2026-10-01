@@ -12,6 +12,8 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import org.joml.Vector3f;
 
@@ -81,7 +83,9 @@ public class FaunaGlowLayer<T extends Mob, M extends HierarchicalModel<T>> exten
         // a bone's rotated cubes live in sub-parts: draw the whole subtree of each glowing bone
         this.parts.forEach(p -> p.getAllParts().forEach(q -> q.skipDraw = false));
         VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucentEmissive(this.texture));
-        model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, c[0], c[1], c[2], alpha);
+        // 1.21 takes one packed ARGB tint; clamped so an out-of-range channel cannot spill into its neighbours
+        model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY,
+                FastColor.ARGB32.colorFromFloat(Mth.clamp(alpha, 0.0F, 1.0F), Mth.clamp(c[0], 0.0F, 1.0F), Mth.clamp(c[1], 0.0F, 1.0F), Mth.clamp(c[2], 0.0F, 1.0F)));
         all.forEach(p -> p.skipDraw = false);
 
         if (this.halos.isEmpty() || this.mode != Mode.BIOLUMINESCENT) return;
@@ -118,7 +122,7 @@ public class FaunaGlowLayer<T extends Mob, M extends HierarchicalModel<T>> exten
 
     private static void vertex(VertexConsumer consumer, Vector3f c, float dx, float dy, float u, float v, float r, float g, float b)
     {
-        consumer.vertex(c.x() + dx, c.y() + dy, c.z()).color(r, g, b, 1.0F).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY)
-                .uv2(LightTexture.FULL_BRIGHT).normal(0.0F, 0.0F, 1.0F).endVertex();
+        consumer.addVertex(c.x() + dx, c.y() + dy, c.z()).setColor(r, g, b, 1.0F).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(LightTexture.FULL_BRIGHT).setNormal(0.0F, 0.0F, 1.0F);
     }
 }

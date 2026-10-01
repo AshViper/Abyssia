@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DoubleHighBlockItem;
@@ -30,6 +31,8 @@ public final class ModItems
 {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Abyssia.MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Abyssia.MODID);
+    /** Armor materials are a registry in 1.21 (used by com.abyssia.item.ModTools / MaterialTools). */
+    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, Abyssia.MODID);
     private static final List<DeferredItem<? extends Item>> TAB_ITEMS = new ArrayList<>();
 
     // Deep-sea metals and minerals
@@ -147,6 +150,7 @@ public final class ModItems
 
     public static void register(IEventBus modBus)
     {
+        ARMOR_MATERIALS.register(modBus);
         ITEMS.register(modBus);
         ModTools.register(ITEMS, TAB_ITEMS);
         MaterialTools.register(ITEMS, TAB_ITEMS);

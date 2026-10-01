@@ -8,6 +8,7 @@ import com.abyssia.worldgen.structure.Painter;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -30,19 +31,19 @@ public record VegetationFormation(Shape shape, Span radius, Span width, float de
     private static final Codec<SimpleWeightedRandomList<CaveEnvironment.PlantEntry>> PLANTS =
             SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CaveEnvironment.PlantEntry.CODEC);
     public static final String TYPE = "vegetation";
-    public static final Codec<VegetationFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Shape.CODEC.optionalFieldOf("shape", Shape.GROVE).forGetter(VegetationFormation::shape),
+    public static final MapCodec<VegetationFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Shape.CODEC.lenientOptionalFieldOf("shape", Shape.GROVE).forGetter(VegetationFormation::shape),
             Span.CODEC.fieldOf("radius").forGetter(VegetationFormation::radius),
-            Span.CODEC.optionalFieldOf("width", Span.of(6, 10)).forGetter(VegetationFormation::width),
+            Span.CODEC.lenientOptionalFieldOf("width", Span.of(6, 10)).forGetter(VegetationFormation::width),
             Codec.floatRange(0, 1).fieldOf("density").forGetter(VegetationFormation::density),
-            Codec.floatRange(0, 1).optionalFieldOf("clearings", 0.2f).forGetter(VegetationFormation::clearings),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("clearings", 0.2f).forGetter(VegetationFormation::clearings),
             PLANTS.fieldOf("plants").forGetter(VegetationFormation::plants),
-            PLANTS.optionalFieldOf("understory", SimpleWeightedRandomList.empty()).forGetter(VegetationFormation::understory),
-            Codec.floatRange(0, 1).optionalFieldOf("understory_density", 0f).forGetter(VegetationFormation::understoryDensity),
-            Mix.CODEC.optionalFieldOf("mound", Mix.EMPTY).forGetter(VegetationFormation::mound),
-            Span.CODEC.optionalFieldOf("mound_height", Span.of(0, 0)).forGetter(VegetationFormation::moundHeight),
-            Mix.CODEC.optionalFieldOf("soil", Mix.EMPTY).forGetter(VegetationFormation::soil),
-            Codec.floatRange(0, 1).optionalFieldOf("soil_chance", 0f).forGetter(VegetationFormation::soilChance)
+            PLANTS.lenientOptionalFieldOf("understory", SimpleWeightedRandomList.empty()).forGetter(VegetationFormation::understory),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("understory_density", 0f).forGetter(VegetationFormation::understoryDensity),
+            Mix.CODEC.lenientOptionalFieldOf("mound", Mix.EMPTY).forGetter(VegetationFormation::mound),
+            Span.CODEC.lenientOptionalFieldOf("mound_height", Span.of(0, 0)).forGetter(VegetationFormation::moundHeight),
+            Mix.CODEC.lenientOptionalFieldOf("soil", Mix.EMPTY).forGetter(VegetationFormation::soil),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("soil_chance", 0f).forGetter(VegetationFormation::soilChance)
     ).apply(i, VegetationFormation::new));
 
     public enum Shape implements StringRepresentable

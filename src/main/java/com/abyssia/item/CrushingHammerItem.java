@@ -1,14 +1,12 @@
 package com.abyssia.item;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 /**
  * Crushing hammer (material system): an ingredient of every crushing recipe that is not consumed. The crafting
@@ -17,16 +15,13 @@ import net.minecraft.world.item.Items;
  */
 public class CrushingHammerItem extends Item
 {
-    private final Multimap<Attribute, AttributeModifier> modifiers;
-
     public CrushingHammerItem(Properties properties, double attackDamage, double attackSpeed)
     {
-        super(properties);
         // Same convention as the vanilla tool constructors (player base damage 1 / speed 4 are added on top).
-        modifiers = ImmutableMultimap.<Attribute, AttributeModifier>builder()
-                .put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", attackDamage, AttributeModifier.Operation.ADD_VALUE))
-                .put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", attackSpeed, AttributeModifier.Operation.ADD_VALUE))
-                .build();
+        super(properties.attributes(ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, attackDamage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeed, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .build()));
     }
 
     @Override
@@ -55,12 +50,5 @@ public class CrushingHammerItem extends Item
     public boolean isValidRepairItem(ItemStack stack, ItemStack repair)
     {
         return repair.is(Items.IRON_INGOT);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot)
-    {
-        return slot == EquipmentSlot.MAINHAND ? modifiers : super.getDefaultAttributeModifiers(slot);
     }
 }

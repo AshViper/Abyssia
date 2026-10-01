@@ -75,9 +75,9 @@ public class FaunaRenderer<T extends Mob & FaunaAnimated> extends MobRenderer<T,
     }
 
     @Override
-    protected void setupRotations(T entity, PoseStack pose, float ageInTicks, float rotationYaw, float partialTicks)
+    protected void setupRotations(T entity, PoseStack pose, float ageInTicks, float rotationYaw, float partialTicks, float entityScale)
     {
-        super.setupRotations(entity, pose, ageInTicks, rotationYaw, partialTicks);
+        super.setupRotations(entity, pose, ageInTicks, rotationYaw, partialTicks, entityScale);
         if (this.strandedOnSide && !entity.isInWater() && !entity.isDeadOrDying())
         {
             pose.translate(0.1F, 0.1F, -0.1F);
@@ -108,7 +108,7 @@ public class FaunaRenderer<T extends Mob & FaunaAnimated> extends MobRenderer<T,
             all.forEach(p -> p.skipDraw = true);
             this.parts.forEach(p -> p.skipDraw = false);
             VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucent(this.texture));
-            model.renderToBuffer(pose, consumer, packedLight, LivingEntityRenderer.getOverlayCoords(entity, 0.0F), 1.0F, 1.0F, 1.0F, 1.0F);
+            model.renderToBuffer(pose, consumer, packedLight, LivingEntityRenderer.getOverlayCoords(entity, 0.0F));
             all.forEach(p -> p.skipDraw = false);
         }
     }

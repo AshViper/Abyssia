@@ -29,12 +29,12 @@ public final class CavernTemplate
     public record Forest(float density, float clearings, float lean, int minHeight, int maxHeight, SimpleWeightedRandomList<CaveEnvironment.PlantEntry> plants)
     {
         public static final Codec<Forest> CODEC = RecordCodecBuilder.create(i -> i.group(
-                Codec.floatRange(0, 4).optionalFieldOf("density", 0.5f).forGetter(Forest::density),
-                Codec.floatRange(0, 1).optionalFieldOf("clearings", 0.3f).forGetter(Forest::clearings),
-                Codec.floatRange(0, 1).optionalFieldOf("lean", 0.3f).forGetter(Forest::lean),
-                Codec.intRange(2, 120).optionalFieldOf("min_height", 10).forGetter(Forest::minHeight),
-                Codec.intRange(2, 120).optionalFieldOf("max_height", 50).forGetter(Forest::maxHeight),
-                PLANTS.optionalFieldOf("plants", SimpleWeightedRandomList.empty()).forGetter(Forest::plants)
+                Codec.floatRange(0, 4).lenientOptionalFieldOf("density", 0.5f).forGetter(Forest::density),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("clearings", 0.3f).forGetter(Forest::clearings),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("lean", 0.3f).forGetter(Forest::lean),
+                Codec.intRange(2, 120).lenientOptionalFieldOf("min_height", 10).forGetter(Forest::minHeight),
+                Codec.intRange(2, 120).lenientOptionalFieldOf("max_height", 50).forGetter(Forest::maxHeight),
+                PLANTS.lenientOptionalFieldOf("plants", SimpleWeightedRandomList.empty()).forGetter(Forest::plants)
         ).apply(i, Forest::new));
     }
 
@@ -42,9 +42,9 @@ public final class CavernTemplate
     public record Hanging(float density, float reachFloor, SimpleWeightedRandomList<CaveEnvironment.PlantEntry> plants)
     {
         public static final Codec<Hanging> CODEC = RecordCodecBuilder.create(i -> i.group(
-                Codec.floatRange(0, 4).optionalFieldOf("density", 0.4f).forGetter(Hanging::density),
-                Codec.floatRange(0, 1).optionalFieldOf("reach_floor", 0.1f).forGetter(Hanging::reachFloor),
-                PLANTS.optionalFieldOf("plants", SimpleWeightedRandomList.empty()).forGetter(Hanging::plants)
+                Codec.floatRange(0, 4).lenientOptionalFieldOf("density", 0.4f).forGetter(Hanging::density),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("reach_floor", 0.1f).forGetter(Hanging::reachFloor),
+                PLANTS.lenientOptionalFieldOf("plants", SimpleWeightedRandomList.empty()).forGetter(Hanging::plants)
         ).apply(i, Hanging::new));
     }
 
@@ -59,14 +59,14 @@ public final class CavernTemplate
 
     public static final Codec<CavernTemplate> CODEC = RecordCodecBuilder.create(i -> i.group(
             PATCHES.fieldOf("patches").forGetter(t -> t.patchList),
-            PATCHES.optionalFieldOf("deep_patches", SimpleWeightedRandomList.empty()).forGetter(t -> t.deepPatchList),
-            Codec.unboundedMap(CavernStructure.CODEC, Codec.floatRange(0, 20)).optionalFieldOf("structures", Map.of()).forGetter(t -> t.structures),
-            Forest.CODEC.optionalFieldOf("kelp_forest", new Forest(0, 0, 0, 10, 50, SimpleWeightedRandomList.empty())).forGetter(t -> t.forest),
-            Hanging.CODEC.optionalFieldOf("hanging", new Hanging(0, 0, SimpleWeightedRandomList.empty())).forGetter(t -> t.hanging),
-            Codec.floatRange(0, 1).optionalFieldOf("ceiling_glow", 0.02f).forGetter(t -> t.ceilingGlow),
-            Codec.floatRange(0, 8).optionalFieldOf("wall_relief", 1.5f).forGetter(t -> t.wallRelief),
-            Codec.floatRange(0, 1).optionalFieldOf("center_chance", 0.4f).forGetter(t -> t.centerChance),
-            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CavernCenter.CODEC).optionalFieldOf("centers", SimpleWeightedRandomList.empty()).forGetter(t -> t.centerList)
+            PATCHES.lenientOptionalFieldOf("deep_patches", SimpleWeightedRandomList.empty()).forGetter(t -> t.deepPatchList),
+            Codec.unboundedMap(CavernStructure.CODEC, Codec.floatRange(0, 20)).lenientOptionalFieldOf("structures", Map.of()).forGetter(t -> t.structures),
+            Forest.CODEC.lenientOptionalFieldOf("kelp_forest", new Forest(0, 0, 0, 10, 50, SimpleWeightedRandomList.empty())).forGetter(t -> t.forest),
+            Hanging.CODEC.lenientOptionalFieldOf("hanging", new Hanging(0, 0, SimpleWeightedRandomList.empty())).forGetter(t -> t.hanging),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("ceiling_glow", 0.02f).forGetter(t -> t.ceilingGlow),
+            Codec.floatRange(0, 8).lenientOptionalFieldOf("wall_relief", 1.5f).forGetter(t -> t.wallRelief),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("center_chance", 0.4f).forGetter(t -> t.centerChance),
+            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CavernCenter.CODEC).lenientOptionalFieldOf("centers", SimpleWeightedRandomList.empty()).forGetter(t -> t.centerList)
     ).apply(i, CavernTemplate::new));
 
     private final SimpleWeightedRandomList<CavernPatch> patchList, deepPatchList;

@@ -50,7 +50,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 /**
@@ -74,8 +73,8 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
     public static final MapCodec<OceanChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource),
             NoiseGeneratorSettings.CODEC.fieldOf("settings").forGetter(NoiseBasedChunkGenerator::generatorSettings),
-            Codec.BOOL.optionalFieldOf("vanilla_fluids", false).forGetter(g -> g.vanillaFluids),
-            DensityFunction.CODEC.optionalFieldOf("fluid_zone").forGetter(g -> g.fluidZone)
+            Codec.BOOL.lenientOptionalFieldOf("vanilla_fluids", false).forGetter(g -> g.vanillaFluids),
+            DensityFunction.CODEC.lenientOptionalFieldOf("fluid_zone").forGetter(g -> g.fluidZone)
     ).apply(i, i.stable(OceanChunkGenerator::new)));
 
     private volatile CaveNetwork caveNetwork;
@@ -193,10 +192,10 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> createBiomes(Executor executor, RandomState randomState, Blender blender, StructureManager structureManager, ChunkAccess chunk)
+    public CompletableFuture<ChunkAccess> createBiomes(RandomState randomState, Blender blender, StructureManager structureManager, ChunkAccess chunk)
     {
         bindFluidZone(randomState);
-        return super.createBiomes(executor, randomState, blender, structureManager, chunk);
+        return super.createBiomes(randomState, blender, structureManager, chunk);
     }
 
     /**
@@ -204,11 +203,11 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
      * body of still water, so those marks (sections below the bedrock band) are dropped once the noise is filled.
      */
     @Override
-    public CompletableFuture<ChunkAccess> fillFromNoise(Executor executor, Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunk)
+    public CompletableFuture<ChunkAccess> fillFromNoise(Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunk)
     {
-        if (!vanillaFluids) return super.fillFromNoise(executor, blender, randomState, structureManager, chunk);
+        if (!vanillaFluids) return super.fillFromNoise(blender, randomState, structureManager, chunk);
         bindFluidZone(randomState);
-        return super.fillFromNoise(executor, blender, randomState, structureManager, chunk).thenApply(OceanChunkGenerator::clearDeepPostProcessing);
+        return super.fillFromNoise(blender, randomState, structureManager, chunk).thenApply(OceanChunkGenerator::clearDeepPostProcessing);
     }
 
     private static ChunkAccess clearDeepPostProcessing(ChunkAccess chunk)

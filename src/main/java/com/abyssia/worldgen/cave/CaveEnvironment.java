@@ -39,8 +39,8 @@ public final class CaveEnvironment
                 STATES.fieldOf("wall").forGetter(Geology::wall),
                 STATES.fieldOf("floor").forGetter(Geology::floor),
                 STATES.fieldOf("ceiling").forGetter(Geology::ceiling),
-                STATES.optionalFieldOf("accents", SimpleWeightedRandomList.empty()).forGetter(Geology::accents),
-                Codec.floatRange(0, 1).optionalFieldOf("accent_chance", 0f).forGetter(Geology::accentChance)
+                STATES.lenientOptionalFieldOf("accents", SimpleWeightedRandomList.empty()).forGetter(Geology::accents),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("accent_chance", 0f).forGetter(Geology::accentChance)
         ).apply(i, Geology::new));
     }
 
@@ -56,17 +56,17 @@ public final class CaveEnvironment
                         float density, float glowRatio, float brightRatio, float giantDensity, float moss)
     {
         public static final Codec<Flora> CODEC = RecordCodecBuilder.create(i -> i.group(
-                PLANTS.optionalFieldOf("floor", SimpleWeightedRandomList.empty()).forGetter(Flora::floor),
-                PLANTS.optionalFieldOf("wall", SimpleWeightedRandomList.empty()).forGetter(Flora::wall),
-                PLANTS.optionalFieldOf("ceiling", SimpleWeightedRandomList.empty()).forGetter(Flora::ceiling),
-                PLANTS.optionalFieldOf("glow", SimpleWeightedRandomList.empty()).forGetter(Flora::glow),
-                PLANTS.optionalFieldOf("bright", SimpleWeightedRandomList.empty()).forGetter(Flora::bright),
-                PLANTS.optionalFieldOf("giant", SimpleWeightedRandomList.empty()).forGetter(Flora::giant),
-                Codec.floatRange(0, 4).optionalFieldOf("density", 0.3f).forGetter(Flora::density),
-                Codec.floatRange(0, 1).optionalFieldOf("glow_ratio", 0.12f).forGetter(Flora::glowRatio),
-                Codec.floatRange(0, 1).optionalFieldOf("bright_ratio", 0.02f).forGetter(Flora::brightRatio),
-                Codec.floatRange(0, 1).optionalFieldOf("giant_density", 0f).forGetter(Flora::giantDensity),
-                Codec.floatRange(0, 1).optionalFieldOf("moss", 0f).forGetter(Flora::moss)
+                PLANTS.lenientOptionalFieldOf("floor", SimpleWeightedRandomList.empty()).forGetter(Flora::floor),
+                PLANTS.lenientOptionalFieldOf("wall", SimpleWeightedRandomList.empty()).forGetter(Flora::wall),
+                PLANTS.lenientOptionalFieldOf("ceiling", SimpleWeightedRandomList.empty()).forGetter(Flora::ceiling),
+                PLANTS.lenientOptionalFieldOf("glow", SimpleWeightedRandomList.empty()).forGetter(Flora::glow),
+                PLANTS.lenientOptionalFieldOf("bright", SimpleWeightedRandomList.empty()).forGetter(Flora::bright),
+                PLANTS.lenientOptionalFieldOf("giant", SimpleWeightedRandomList.empty()).forGetter(Flora::giant),
+                Codec.floatRange(0, 4).lenientOptionalFieldOf("density", 0.3f).forGetter(Flora::density),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("glow_ratio", 0.12f).forGetter(Flora::glowRatio),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("bright_ratio", 0.02f).forGetter(Flora::brightRatio),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("giant_density", 0f).forGetter(Flora::giantDensity),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("moss", 0f).forGetter(Flora::moss)
         ).apply(i, Flora::new));
     }
 
@@ -78,11 +78,11 @@ public final class CaveEnvironment
                              float crystalDensity, SimpleWeightedRandomList<BlockState> debris)
     {
         public static final Codec<Formations> CODEC = RecordCodecBuilder.create(i -> i.group(
-                BlockState.CODEC.optionalFieldOf("speleothem").forGetter(Formations::speleothem),
-                Codec.floatRange(0, 1).optionalFieldOf("speleothem_density", 0.05f).forGetter(Formations::speleothemDensity),
-                STATES.optionalFieldOf("crystals", SimpleWeightedRandomList.empty()).forGetter(Formations::crystals),
-                Codec.floatRange(0, 1).optionalFieldOf("crystal_density", 0f).forGetter(Formations::crystalDensity),
-                STATES.optionalFieldOf("debris", SimpleWeightedRandomList.empty()).forGetter(Formations::debris)
+                BlockState.CODEC.lenientOptionalFieldOf("speleothem").forGetter(Formations::speleothem),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("speleothem_density", 0.05f).forGetter(Formations::speleothemDensity),
+                STATES.lenientOptionalFieldOf("crystals", SimpleWeightedRandomList.empty()).forGetter(Formations::crystals),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("crystal_density", 0f).forGetter(Formations::crystalDensity),
+                STATES.lenientOptionalFieldOf("debris", SimpleWeightedRandomList.empty()).forGetter(Formations::debris)
         ).apply(i, Formations::new));
     }
 
@@ -91,8 +91,8 @@ public final class CaveEnvironment
     {
         public static final Codec<PlantEntry> CODEC = RecordCodecBuilder.create(i -> i.group(
                 BlockState.CODEC.fieldOf("state").forGetter(PlantEntry::state),
-                Codec.intRange(1, 200).optionalFieldOf("min_height", 1).forGetter(PlantEntry::minHeight),
-                Codec.intRange(1, 200).optionalFieldOf("max_height", 1).forGetter(PlantEntry::maxHeight)
+                Codec.intRange(1, 200).lenientOptionalFieldOf("min_height", 1).forGetter(PlantEntry::minHeight),
+                Codec.intRange(1, 200).lenientOptionalFieldOf("max_height", 1).forGetter(PlantEntry::maxHeight)
         ).apply(i, PlantEntry::new));
     }
 

@@ -73,16 +73,16 @@ public final class ExternalSpawnRules extends SimpleJsonResourceReloadListener
         {
             static final Codec<Data> CODEC = RecordCodecBuilder.create(i -> i.group(
                     Codec.STRING.listOf().fieldOf("entities").forGetter(Data::entities),
-                    Codec.BOOL.optionalFieldOf("enabled").forGetter(Data::enabled),
-                    DeepSeaSpawnCategory.CODEC.optionalFieldOf("category").forGetter(Data::category),
-                    DepthAffinity.CODEC.optionalFieldOf("depth").forGetter(Data::depth),
-                    FaunaSpawnRule.Depth.CODEC.optionalFieldOf("depth_m").forGetter(Data::depthMetres),
-                    FaunaSpawnRule.Placement.CODEC.optionalFieldOf("placement").forGetter(Data::placement),
-                    Codec.floatRange(0.0F, 100.0F).optionalFieldOf("weight_multiplier", 1.0F).forGetter(Data::weightMultiplier),
-                    FaunaSpawnRule.Range.CODEC.optionalFieldOf("group").forGetter(Data::group),
-                    FaunaSpawnRule.Cap.CODEC.optionalFieldOf("cap").forGetter(Data::cap),
-                    Codec.STRING.listOf().optionalFieldOf("biomes", List.of()).forGetter(Data::biomes),
-                    Codec.intRange(0, 128).optionalFieldOf("min_player_distance").forGetter(Data::minPlayerDistance)
+                    Codec.BOOL.lenientOptionalFieldOf("enabled").forGetter(Data::enabled),
+                    DeepSeaSpawnCategory.CODEC.lenientOptionalFieldOf("category").forGetter(Data::category),
+                    DepthAffinity.CODEC.lenientOptionalFieldOf("depth").forGetter(Data::depth),
+                    FaunaSpawnRule.Depth.CODEC.lenientOptionalFieldOf("depth_m").forGetter(Data::depthMetres),
+                    FaunaSpawnRule.Placement.CODEC.lenientOptionalFieldOf("placement").forGetter(Data::placement),
+                    Codec.floatRange(0.0F, 100.0F).lenientOptionalFieldOf("weight_multiplier", 1.0F).forGetter(Data::weightMultiplier),
+                    FaunaSpawnRule.Range.CODEC.lenientOptionalFieldOf("group").forGetter(Data::group),
+                    FaunaSpawnRule.Cap.CODEC.lenientOptionalFieldOf("cap").forGetter(Data::cap),
+                    Codec.STRING.listOf().lenientOptionalFieldOf("biomes", List.of()).forGetter(Data::biomes),
+                    Codec.intRange(0, 128).lenientOptionalFieldOf("min_player_distance").forGetter(Data::minPlayerDistance)
             ).apply(i, Data::new));
 
             EntityRule toRule(ResourceLocation file)
@@ -103,9 +103,9 @@ public final class ExternalSpawnRules extends SimpleJsonResourceReloadListener
                             Map<DeepSeaSpawnCategory, Float> categories)
     {
         static final Codec<BiomeRule> CODEC = RecordCodecBuilder.create(i -> i.group(
-                Codec.STRING.listOf().optionalFieldOf("biomes", List.of()).forGetter(BiomeRule::biomes),
-                Codec.BOOL.optionalFieldOf("fallback", false).forGetter(BiomeRule::fallback),
-                Codec.floatRange(0.0F, 100.0F).optionalFieldOf("weight_multiplier", 1.0F).forGetter(BiomeRule::weightMultiplier),
+                Codec.STRING.listOf().lenientOptionalFieldOf("biomes", List.of()).forGetter(BiomeRule::biomes),
+                Codec.BOOL.lenientOptionalFieldOf("fallback", false).forGetter(BiomeRule::fallback),
+                Codec.floatRange(0.0F, 100.0F).lenientOptionalFieldOf("weight_multiplier", 1.0F).forGetter(BiomeRule::weightMultiplier),
                 Codec.unboundedMap(DeepSeaSpawnCategory.CODEC, Codec.floatRange(0.0F, 100.0F)).fieldOf("categories").forGetter(BiomeRule::categories)
         ).apply(i, (biomes, fallback, weight, categories) -> new BiomeRule(ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "unnamed"), biomes, fallback, weight, categories)));
 

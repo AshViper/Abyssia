@@ -92,7 +92,7 @@ public final class OceanMobClassifier
         if (evidence.landListings() > 0) score += add(reasons, LAND_SPAWNS, "land spawn lists");
 
         String exclusion = preExclusion;
-        if (exclusion == null && type.is(Tags.EntityTypes.BOSSES)) exclusion = "boss (#forge:bosses)";
+        if (exclusion == null && type.is(Tags.EntityTypes.BOSSES)) exclusion = "boss (#c:bosses)";
         if (exclusion == null && placement == SpawnPlacementTypes.IN_LAVA) exclusion = "lava placement";
 
         boolean hostile = mobCategory == MobCategory.MONSTER;

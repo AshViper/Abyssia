@@ -103,13 +103,13 @@ public final class AbyssiaDimensionEffects
     static final class OceanWorldEffects extends DimensionSpecialEffects.OverworldEffects
     {
         @Override
-        public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+        public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
         {
             return deepUnderwater(camera);
         }
 
         @Override
-        public boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f projectionMatrix)
+        public boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f modelViewMatrix, Matrix4f projectionMatrix)
         {
             return deepUnderwater(camera());
         }
@@ -132,13 +132,13 @@ public final class AbyssiaDimensionEffects
     static final class OverworldDeepEffects extends DimensionSpecialEffects.OverworldEffects
     {
         @Override
-        public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+        public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
         {
             return DeepLayer.isDeep(camera.getPosition().y);
         }
 
         @Override
-        public boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f projectionMatrix)
+        public boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f modelViewMatrix, Matrix4f projectionMatrix)
         {
             return DeepLayer.isDeep(camY);
         }

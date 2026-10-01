@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
@@ -90,7 +90,7 @@ public record MobProbe(boolean mob, @Nullable String exclusion, boolean waterBod
         String exclusion = null;
         if (entity instanceof Projectile) exclusion = "projectile";
         else if (entity instanceof Npc || entity instanceof Merchant) exclusion = "npc";
-        else if (!entity.canChangeDimensions()) exclusion = "boss-like (cannot change dimensions)";
+        else if (!entity.canChangeDimensions(entity.level(), entity.level())) exclusion = "boss-like (cannot change dimensions)";
         if (!(entity instanceof Mob mob))
         {
             return new MobProbe(false, exclusion != null ? exclusion : "not a mob", false, false, Navigation.OTHER, 0, false, false, false, 0, 0, false, false);
@@ -99,7 +99,7 @@ public record MobProbe(boolean mob, @Nullable String exclusion, boolean waterBod
         if (exclusion == null && waterMalus < 0) exclusion = "avoids water (pathfinding)";
         double attack = mob.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE) ? mob.getAttributeValue(Attributes.ATTACK_DAMAGE) : 0.0;
         return new MobProbe(true, exclusion,
-                mob instanceof WaterAnimal || mob.getMobType() == MobType.WATER,
+                mob instanceof WaterAnimal || mob.getType().is(EntityTypeTags.AQUATIC),
                 mob.canBreatheUnderwater(),
                 navigation(mob.getNavigation()),
                 waterMalus,

@@ -6,6 +6,7 @@ import com.abyssia.worldgen.structure.Painter;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.RandomSource;
 
@@ -18,16 +19,16 @@ public record SedimentFormation(Span count, float spread, Span radius, Span heig
                                 float organicChance) implements Formation
 {
     public static final String TYPE = "sediment";
-    public static final Codec<SedimentFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Span.CODEC.optionalFieldOf("count", Span.of(1, 1)).forGetter(SedimentFormation::count),
-            Codec.floatRange(0, 120).optionalFieldOf("spread", 0f).forGetter(SedimentFormation::spread),
+    public static final MapCodec<SedimentFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Span.CODEC.lenientOptionalFieldOf("count", Span.of(1, 1)).forGetter(SedimentFormation::count),
+            Codec.floatRange(0, 120).lenientOptionalFieldOf("spread", 0f).forGetter(SedimentFormation::spread),
             Span.CODEC.fieldOf("radius").forGetter(SedimentFormation::radius),
             Span.CODEC.fieldOf("height").forGetter(SedimentFormation::height),
             Mix.CODEC.fieldOf("surface").forGetter(SedimentFormation::surface),
             Mix.CODEC.fieldOf("core").forGetter(SedimentFormation::core),
-            Codec.intRange(0, 16).optionalFieldOf("layers", 0).forGetter(SedimentFormation::layers),
-            Mix.CODEC.optionalFieldOf("organic", Mix.EMPTY).forGetter(SedimentFormation::organic),
-            Codec.floatRange(0, 1).optionalFieldOf("organic_chance", 0f).forGetter(SedimentFormation::organicChance)
+            Codec.intRange(0, 16).lenientOptionalFieldOf("layers", 0).forGetter(SedimentFormation::layers),
+            Mix.CODEC.lenientOptionalFieldOf("organic", Mix.EMPTY).forGetter(SedimentFormation::organic),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("organic_chance", 0f).forGetter(SedimentFormation::organicChance)
     ).apply(i, SedimentFormation::new));
 
     private record Mound(double x, double z, double r, double h, double el, double cos, double sin) {}

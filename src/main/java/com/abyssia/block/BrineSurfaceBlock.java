@@ -1,5 +1,6 @@
 package com.abyssia.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -26,11 +27,18 @@ import javax.annotation.Nullable;
  */
 public class BrineSurfaceBlock extends Block implements LiquidBlockContainer
 {
+    public static final MapCodec<BrineSurfaceBlock> CODEC = simpleCodec(BrineSurfaceBlock::new);
     private static final VoxelShape SHAPE = Block.box(0, 14, 0, 16, 15, 16);
 
     public BrineSurfaceBlock(Properties properties)
     {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<BrineSurfaceBlock> codec()
+    {
+        return CODEC;
     }
 
     @Override

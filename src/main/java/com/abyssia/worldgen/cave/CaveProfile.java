@@ -34,18 +34,18 @@ public final class CaveProfile
     public static final Codec<CaveProfile> CODEC = RecordCodecBuilder.create(i -> i.group(
             RegistryCodecs.homogeneousList(Registries.BIOME).fieldOf("biomes").forGetter(p -> p.biomes),
             Codec.floatRange(0, 1).fieldOf("system_chance").forGetter(p -> p.systemChance),
-            Codec.floatRange(0, 1).optionalFieldOf("minor_cave_chance", 0.3f).forGetter(p -> p.minorCaveChance),
-            Codec.floatRange(0, 1).optionalFieldOf("connection_chance", 0.4f).forGetter(p -> p.connectionChance),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("minor_cave_chance", 0.3f).forGetter(p -> p.minorCaveChance),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("connection_chance", 0.4f).forGetter(p -> p.connectionChance),
             SimpleWeightedRandomList.wrappedCodec(CaveType.CODEC).fieldOf("cave_types").forGetter(p -> p.caveTypeList),
-            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CaveType.CODEC).optionalFieldOf("minor_types", SimpleWeightedRandomList.empty()).forGetter(p -> p.minorTypeList),
-            Codec.floatRange(0, 1).optionalFieldOf("landmark_chance", 0f).forGetter(p -> p.landmarkChance),
-            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CaveLandmark.CODEC).optionalFieldOf("landmarks", SimpleWeightedRandomList.empty()).forGetter(p -> p.landmarkList),
+            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CaveType.CODEC).lenientOptionalFieldOf("minor_types", SimpleWeightedRandomList.empty()).forGetter(p -> p.minorTypeList),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("landmark_chance", 0f).forGetter(p -> p.landmarkChance),
+            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CaveLandmark.CODEC).lenientOptionalFieldOf("landmarks", SimpleWeightedRandomList.empty()).forGetter(p -> p.landmarkList),
             ResourceLocation.CODEC.fieldOf("environment").forGetter(p -> p.environment),
-            Codec.floatRange(0, 1).optionalFieldOf("luminous_chance", 0f).forGetter(p -> p.luminousChance),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("luminous_chance", 0f).forGetter(p -> p.luminousChance),
             Stratum.CODEC.listOf().fieldOf("strata").forGetter(p -> p.strata),
-            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC).optionalFieldOf("ores", SimpleWeightedRandomList.empty()).forGetter(p -> p.oreList),
-            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(ResourceLocation.CODEC).optionalFieldOf("cavern_templates", SimpleWeightedRandomList.empty()).forGetter(p -> p.templateList),
-            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CavernTemplate.CrystalColor.CODEC).optionalFieldOf("crystal_colors", SimpleWeightedRandomList.empty()).forGetter(p -> p.crystalList)
+            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC).lenientOptionalFieldOf("ores", SimpleWeightedRandomList.empty()).forGetter(p -> p.oreList),
+            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(ResourceLocation.CODEC).lenientOptionalFieldOf("cavern_templates", SimpleWeightedRandomList.empty()).forGetter(p -> p.templateList),
+            SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CavernTemplate.CrystalColor.CODEC).lenientOptionalFieldOf("crystal_colors", SimpleWeightedRandomList.empty()).forGetter(p -> p.crystalList)
     ).apply(i, CaveProfile::new));
 
     public final HolderSet<Biome> biomes;

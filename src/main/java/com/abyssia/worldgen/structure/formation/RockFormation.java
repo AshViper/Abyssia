@@ -6,6 +6,7 @@ import com.abyssia.worldgen.structure.Painter;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,19 +21,19 @@ public record RockFormation(Span count, float spread, Span size, float heightRat
                             int layers, Mix rock, Mix accent, float accentChance) implements Formation
 {
     public static final String TYPE = "rock";
-    public static final Codec<RockFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Span.CODEC.optionalFieldOf("count", Span.of(1, 1)).forGetter(RockFormation::count),
-            Codec.floatRange(0, 120).optionalFieldOf("spread", 0f).forGetter(RockFormation::spread),
+    public static final MapCodec<RockFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Span.CODEC.lenientOptionalFieldOf("count", Span.of(1, 1)).forGetter(RockFormation::count),
+            Codec.floatRange(0, 120).lenientOptionalFieldOf("spread", 0f).forGetter(RockFormation::spread),
             Span.CODEC.fieldOf("size").forGetter(RockFormation::size),
-            Codec.floatRange(0.1f, 4f).optionalFieldOf("height_ratio", 0.8f).forGetter(RockFormation::heightRatio),
-            Span.CODEC.optionalFieldOf("elongation", Span.of(1, 1.4f)).forGetter(RockFormation::elongation),
-            Codec.floatRange(0, 1).optionalFieldOf("sink", 0.35f).forGetter(RockFormation::sink),
-            Codec.floatRange(0, 1.2f).optionalFieldOf("tilt", 0.2f).forGetter(RockFormation::tilt),
-            Codec.floatRange(0, 0.8f).optionalFieldOf("erosion", 0.3f).forGetter(RockFormation::erosion),
-            Codec.intRange(0, 16).optionalFieldOf("layers", 0).forGetter(RockFormation::layers),
+            Codec.floatRange(0.1f, 4f).lenientOptionalFieldOf("height_ratio", 0.8f).forGetter(RockFormation::heightRatio),
+            Span.CODEC.lenientOptionalFieldOf("elongation", Span.of(1, 1.4f)).forGetter(RockFormation::elongation),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("sink", 0.35f).forGetter(RockFormation::sink),
+            Codec.floatRange(0, 1.2f).lenientOptionalFieldOf("tilt", 0.2f).forGetter(RockFormation::tilt),
+            Codec.floatRange(0, 0.8f).lenientOptionalFieldOf("erosion", 0.3f).forGetter(RockFormation::erosion),
+            Codec.intRange(0, 16).lenientOptionalFieldOf("layers", 0).forGetter(RockFormation::layers),
             Mix.CODEC.fieldOf("rock").forGetter(RockFormation::rock),
-            Mix.CODEC.optionalFieldOf("accent", Mix.EMPTY).forGetter(RockFormation::accent),
-            Codec.floatRange(0, 1).optionalFieldOf("accent_chance", 0f).forGetter(RockFormation::accentChance)
+            Mix.CODEC.lenientOptionalFieldOf("accent", Mix.EMPTY).forGetter(RockFormation::accent),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("accent_chance", 0f).forGetter(RockFormation::accentChance)
     ).apply(i, RockFormation::new));
 
     @Override

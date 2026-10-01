@@ -1,0 +1,64 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "abyssia:iron_crust"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "abyssia:raw_yttrium"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "predicates": {
+                "minecraft:enchantments": [
+                  {
+                    "enchantments": "minecraft:silk_touch",
+                    "levels": {
+                      "min": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "condition": "minecraft:table_bonus",
+          "enchantment": "minecraft:fortune",
+          "chances": [
+            0.005,
+            0.0075,
+            0.01,
+            0.0125
+          ]
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "abyssia:blocks/iron_crust"
+}

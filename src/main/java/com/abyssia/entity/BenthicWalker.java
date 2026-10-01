@@ -53,7 +53,7 @@ public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
     {
         super(type, level);
         this.moveClip = moveClip;
-        this.setMaxUpStep(1.0F);
+        this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0);
         this.setPathfindingMalus(PathType.WATER_BORDER, 0.0F);
     }
 
@@ -195,6 +195,6 @@ public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
     {
         super.readAdditionalSaveData(tag);
         this.homeLayer.load(tag);
-        if (tag.contains("Home")) this.setHome(NbtUtils.readBlockPos(tag.getCompound("Home")), Math.max(4, tag.getInt("HomeRadius")));
+        if (tag.contains("Home")) HomeLayer.readHome(tag).ifPresent(home -> this.setHome(home, Math.max(4, tag.getInt("HomeRadius"))));
     }
 }

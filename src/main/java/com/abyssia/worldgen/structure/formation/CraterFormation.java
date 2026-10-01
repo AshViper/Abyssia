@@ -7,6 +7,7 @@ import com.abyssia.worldgen.structure.SeabedStructure;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.RandomSource;
 
@@ -19,17 +20,17 @@ public record CraterFormation(Span radius, Span depth, Span rimHeight, float rim
                               Mix ejecta, float ejectaDensity) implements Formation
 {
     public static final String TYPE = "crater";
-    public static final Codec<CraterFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<CraterFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Span.CODEC.fieldOf("radius").forGetter(CraterFormation::radius),
             Span.CODEC.fieldOf("depth").forGetter(CraterFormation::depth),
-            Span.CODEC.optionalFieldOf("rim_height", Span.of(1, 3)).forGetter(CraterFormation::rimHeight),
-            Codec.floatRange(0.05f, 2f).optionalFieldOf("rim_width", 0.35f).forGetter(CraterFormation::rimWidth),
-            Codec.floatRange(0, 1).optionalFieldOf("peak", 0f).forGetter(CraterFormation::peak),
-            Codec.floatRange(0, 1).optionalFieldOf("roughness", 0.3f).forGetter(CraterFormation::roughness),
+            Span.CODEC.lenientOptionalFieldOf("rim_height", Span.of(1, 3)).forGetter(CraterFormation::rimHeight),
+            Codec.floatRange(0.05f, 2f).lenientOptionalFieldOf("rim_width", 0.35f).forGetter(CraterFormation::rimWidth),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("peak", 0f).forGetter(CraterFormation::peak),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("roughness", 0.3f).forGetter(CraterFormation::roughness),
             Mix.CODEC.fieldOf("floor").forGetter(CraterFormation::floor),
             Mix.CODEC.fieldOf("rim").forGetter(CraterFormation::rim),
-            Mix.CODEC.optionalFieldOf("ejecta", Mix.EMPTY).forGetter(CraterFormation::ejecta),
-            Codec.floatRange(0, 1).optionalFieldOf("ejecta_density", 0.05f).forGetter(CraterFormation::ejectaDensity)
+            Mix.CODEC.lenientOptionalFieldOf("ejecta", Mix.EMPTY).forGetter(CraterFormation::ejecta),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("ejecta_density", 0.05f).forGetter(CraterFormation::ejectaDensity)
     ).apply(i, CraterFormation::new));
 
     @Override

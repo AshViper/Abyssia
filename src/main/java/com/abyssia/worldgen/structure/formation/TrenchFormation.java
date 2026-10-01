@@ -7,6 +7,7 @@ import com.abyssia.worldgen.structure.SeabedStructure;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -24,19 +25,19 @@ public record TrenchFormation(Shape shape, Span length, Span width, Span depth, 
                               Mix wall, Mix floor, Mix debris, Span debrisCount, Span shaft) implements Formation
 {
     public static final String TYPE = "trench";
-    public static final Codec<TrenchFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Shape.CODEC.optionalFieldOf("shape", Shape.FISSURE).forGetter(TrenchFormation::shape),
+    public static final MapCodec<TrenchFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Shape.CODEC.lenientOptionalFieldOf("shape", Shape.FISSURE).forGetter(TrenchFormation::shape),
             Span.CODEC.fieldOf("length").forGetter(TrenchFormation::length),
             Span.CODEC.fieldOf("width").forGetter(TrenchFormation::width),
             Span.CODEC.fieldOf("depth").forGetter(TrenchFormation::depth),
-            Codec.floatRange(0, 2).optionalFieldOf("meander", 0.5f).forGetter(TrenchFormation::meander),
-            Codec.floatRange(0, 1).optionalFieldOf("roughness", 0.4f).forGetter(TrenchFormation::roughness),
-            Codec.floatRange(0, 10).optionalFieldOf("rim_height", 1.5f).forGetter(TrenchFormation::rimHeight),
+            Codec.floatRange(0, 2).lenientOptionalFieldOf("meander", 0.5f).forGetter(TrenchFormation::meander),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("roughness", 0.4f).forGetter(TrenchFormation::roughness),
+            Codec.floatRange(0, 10).lenientOptionalFieldOf("rim_height", 1.5f).forGetter(TrenchFormation::rimHeight),
             Mix.CODEC.fieldOf("wall").forGetter(TrenchFormation::wall),
             Mix.CODEC.fieldOf("floor").forGetter(TrenchFormation::floor),
-            Mix.CODEC.optionalFieldOf("debris", Mix.EMPTY).forGetter(TrenchFormation::debris),
-            Span.CODEC.optionalFieldOf("debris_count", Span.of(0, 0)).forGetter(TrenchFormation::debrisCount),
-            Span.CODEC.optionalFieldOf("shaft", Span.of(0, 0)).forGetter(TrenchFormation::shaft)
+            Mix.CODEC.lenientOptionalFieldOf("debris", Mix.EMPTY).forGetter(TrenchFormation::debris),
+            Span.CODEC.lenientOptionalFieldOf("debris_count", Span.of(0, 0)).forGetter(TrenchFormation::debrisCount),
+            Span.CODEC.lenientOptionalFieldOf("shaft", Span.of(0, 0)).forGetter(TrenchFormation::shaft)
     ).apply(i, TrenchFormation::new));
 
     public enum Shape implements StringRepresentable

@@ -6,6 +6,7 @@ import com.abyssia.worldgen.structure.Painter;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -24,17 +25,17 @@ public record CaveFormation(Shape shape, Span count, float spread, Span radius, 
                             float accentChance) implements Formation
 {
     public static final String TYPE = "cave";
-    public static final Codec<CaveFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<CaveFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Shape.CODEC.fieldOf("shape").forGetter(CaveFormation::shape),
-            Span.CODEC.optionalFieldOf("count", Span.of(1, 1)).forGetter(CaveFormation::count),
-            Codec.floatRange(0, 60).optionalFieldOf("spread", 0f).forGetter(CaveFormation::spread),
+            Span.CODEC.lenientOptionalFieldOf("count", Span.of(1, 1)).forGetter(CaveFormation::count),
+            Codec.floatRange(0, 60).lenientOptionalFieldOf("spread", 0f).forGetter(CaveFormation::spread),
             Span.CODEC.fieldOf("radius").forGetter(CaveFormation::radius),
-            Span.CODEC.optionalFieldOf("length", Span.of(0.3f, 0.6f)).forGetter(CaveFormation::length),
-            Codec.floatRange(0, 0.8f).optionalFieldOf("waist", 0.4f).forGetter(CaveFormation::waist),
-            Codec.floatRange(0, 0.8f).optionalFieldOf("erosion", 0.25f).forGetter(CaveFormation::erosion),
+            Span.CODEC.lenientOptionalFieldOf("length", Span.of(0.3f, 0.6f)).forGetter(CaveFormation::length),
+            Codec.floatRange(0, 0.8f).lenientOptionalFieldOf("waist", 0.4f).forGetter(CaveFormation::waist),
+            Codec.floatRange(0, 0.8f).lenientOptionalFieldOf("erosion", 0.25f).forGetter(CaveFormation::erosion),
             Mix.CODEC.fieldOf("rock").forGetter(CaveFormation::rock),
-            Mix.CODEC.optionalFieldOf("accent", Mix.EMPTY).forGetter(CaveFormation::accent),
-            Codec.floatRange(0, 1).optionalFieldOf("accent_chance", 0f).forGetter(CaveFormation::accentChance)
+            Mix.CODEC.lenientOptionalFieldOf("accent", Mix.EMPTY).forGetter(CaveFormation::accent),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("accent_chance", 0f).forGetter(CaveFormation::accentChance)
     ).apply(i, CaveFormation::new));
 
     public enum Shape implements StringRepresentable

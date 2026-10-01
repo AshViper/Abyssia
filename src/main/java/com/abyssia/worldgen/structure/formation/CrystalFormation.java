@@ -6,6 +6,7 @@ import com.abyssia.worldgen.structure.Painter;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -19,19 +20,19 @@ public record CrystalFormation(Span count, float spread, Span length, Span radiu
                                Mix base, float baseRadius, float baseHeight, float hanging) implements Formation
 {
     public static final String TYPE = "crystal";
-    public static final Codec<CrystalFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<CrystalFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Span.CODEC.fieldOf("count").forGetter(CrystalFormation::count),
-            Codec.floatRange(0, 100).optionalFieldOf("spread", 4f).forGetter(CrystalFormation::spread),
+            Codec.floatRange(0, 100).lenientOptionalFieldOf("spread", 4f).forGetter(CrystalFormation::spread),
             Span.CODEC.fieldOf("length").forGetter(CrystalFormation::length),
             Span.CODEC.fieldOf("radius").forGetter(CrystalFormation::radius),
-            Codec.floatRange(0, 1.5f).optionalFieldOf("tilt", 0.5f).forGetter(CrystalFormation::tilt),
-            Codec.floatRange(0.2f, 4f).optionalFieldOf("center_scale", 1.5f).forGetter(CrystalFormation::centerScale),
+            Codec.floatRange(0, 1.5f).lenientOptionalFieldOf("tilt", 0.5f).forGetter(CrystalFormation::tilt),
+            Codec.floatRange(0.2f, 4f).lenientOptionalFieldOf("center_scale", 1.5f).forGetter(CrystalFormation::centerScale),
             Mix.CODEC.fieldOf("crystal").forGetter(CrystalFormation::crystal),
-            Mix.CODEC.optionalFieldOf("core", Mix.EMPTY).forGetter(CrystalFormation::core),
-            Mix.CODEC.optionalFieldOf("base", Mix.EMPTY).forGetter(CrystalFormation::base),
-            Codec.floatRange(0, 100).optionalFieldOf("base_radius", 0f).forGetter(CrystalFormation::baseRadius),
-            Codec.floatRange(0, 30).optionalFieldOf("base_height", 0f).forGetter(CrystalFormation::baseHeight),
-            Codec.floatRange(0, 1).optionalFieldOf("hanging", 0f).forGetter(CrystalFormation::hanging)
+            Mix.CODEC.lenientOptionalFieldOf("core", Mix.EMPTY).forGetter(CrystalFormation::core),
+            Mix.CODEC.lenientOptionalFieldOf("base", Mix.EMPTY).forGetter(CrystalFormation::base),
+            Codec.floatRange(0, 100).lenientOptionalFieldOf("base_radius", 0f).forGetter(CrystalFormation::baseRadius),
+            Codec.floatRange(0, 30).lenientOptionalFieldOf("base_height", 0f).forGetter(CrystalFormation::baseHeight),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("hanging", 0f).forGetter(CrystalFormation::hanging)
     ).apply(i, CrystalFormation::new));
 
     private static final double SIN60 = Math.sqrt(3) / 2;

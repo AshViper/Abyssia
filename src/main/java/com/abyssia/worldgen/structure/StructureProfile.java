@@ -24,7 +24,7 @@ public record StructureProfile(HolderSet<Biome> biomes, float density, List<Entr
 {
     public static final Codec<StructureProfile> CODEC = RecordCodecBuilder.create(i -> i.group(
             RegistryCodecs.homogeneousList(Registries.BIOME).fieldOf("biomes").forGetter(StructureProfile::biomes),
-            Codec.floatRange(0, 16).optionalFieldOf("density", 1f).forGetter(StructureProfile::density),
+            Codec.floatRange(0, 16).lenientOptionalFieldOf("density", 1f).forGetter(StructureProfile::density),
             Entry.CODEC.listOf().fieldOf("structures").forGetter(StructureProfile::structures)
     ).apply(i, StructureProfile::new));
 

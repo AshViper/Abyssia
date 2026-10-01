@@ -24,6 +24,7 @@ import building_assets
 import cave_assets
 import gen_fauna
 import material_system
+import mc_format
 import mineral_textures
 import plant_assets
 import texture_locks
@@ -49,6 +50,9 @@ def _emit(make, path):
 
 
 def write(path, obj):
+    # NeoForge 1.21.1: data files go to the 1.21 folders and formats (tools/mc_format.py); assets pass through.
+    path = mc_format.upgrade(path)
+    obj = mc_format.upgrade_json(path, obj)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, indent=2, ensure_ascii=False)
@@ -830,6 +834,7 @@ def reset_dirs():
     for d in (os.path.join(ASSETS, "blockstates"), os.path.join(ASSETS, "models"),
               os.path.join(DATA, "abyssia", "loot_tables", "blocks"), os.path.join(DATA, "abyssia", "loot_tables", "harvest"),
               os.path.join(DATA, "abyssia", "recipes")):
+        d = mc_format.upgrade(d)
         shutil.rmtree(d, ignore_errors=True)
         os.makedirs(d, exist_ok=True)
 
@@ -1119,7 +1124,7 @@ def material_recipes():
     """Material system recipes (tools/material_spec.json).  Runs last so a clash with any other generated recipe
     fails loudly instead of silently replacing it."""
     for rid, recipe in material_system.recipes().items():
-        path = os.path.join(DATA, "abyssia", "recipes", rid + ".json")
+        path = mc_format.upgrade(os.path.join(DATA, "abyssia", "recipes", rid + ".json"))
         if os.path.exists(path):
             raise SystemExit(f"material_spec recipe id clashes with an existing recipe: {rid}")
         write(path, recipe)

@@ -7,6 +7,7 @@ import com.abyssia.worldgen.structure.SeabedStructure;
 import com.abyssia.worldgen.structure.Site;
 import com.abyssia.worldgen.structure.Span;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -21,21 +22,21 @@ public record VolcanoFormation(Span radius, Span height, Span crater, Span crate
                                Mix craterFloor, Mix core, Mix ash, float ashRadius, float lava, Mix lavaMix) implements Formation
 {
     public static final String TYPE = "volcano";
-    public static final Codec<VolcanoFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<VolcanoFormation> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Span.CODEC.fieldOf("radius").forGetter(VolcanoFormation::radius),
             Span.CODEC.fieldOf("height").forGetter(VolcanoFormation::height),
-            Span.CODEC.optionalFieldOf("crater", Span.of(0.2f, 0.3f)).forGetter(VolcanoFormation::crater),
-            Span.CODEC.optionalFieldOf("crater_depth", Span.of(0.2f, 0.35f)).forGetter(VolcanoFormation::craterDepth),
-            Codec.floatRange(0, 1).optionalFieldOf("gullies", 0.4f).forGetter(VolcanoFormation::gullies),
-            Span.CODEC.optionalFieldOf("cones", Span.of(0, 0)).forGetter(VolcanoFormation::cones),
+            Span.CODEC.lenientOptionalFieldOf("crater", Span.of(0.2f, 0.3f)).forGetter(VolcanoFormation::crater),
+            Span.CODEC.lenientOptionalFieldOf("crater_depth", Span.of(0.2f, 0.35f)).forGetter(VolcanoFormation::craterDepth),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("gullies", 0.4f).forGetter(VolcanoFormation::gullies),
+            Span.CODEC.lenientOptionalFieldOf("cones", Span.of(0, 0)).forGetter(VolcanoFormation::cones),
             Mix.CODEC.fieldOf("rock").forGetter(VolcanoFormation::rock),
             Mix.CODEC.fieldOf("rim").forGetter(VolcanoFormation::rim),
             Mix.CODEC.fieldOf("crater_floor").forGetter(VolcanoFormation::craterFloor),
-            Mix.CODEC.optionalFieldOf("core", Mix.EMPTY).forGetter(VolcanoFormation::core),
-            Mix.CODEC.optionalFieldOf("ash", Mix.EMPTY).forGetter(VolcanoFormation::ash),
-            Codec.floatRange(1, 4).optionalFieldOf("ash_radius", 1.5f).forGetter(VolcanoFormation::ashRadius),
-            Codec.floatRange(0, 1).optionalFieldOf("lava", 0.3f).forGetter(VolcanoFormation::lava),
-            Mix.CODEC.optionalFieldOf("lava_mix", Mix.EMPTY).forGetter(VolcanoFormation::lavaMix)
+            Mix.CODEC.lenientOptionalFieldOf("core", Mix.EMPTY).forGetter(VolcanoFormation::core),
+            Mix.CODEC.lenientOptionalFieldOf("ash", Mix.EMPTY).forGetter(VolcanoFormation::ash),
+            Codec.floatRange(1, 4).lenientOptionalFieldOf("ash_radius", 1.5f).forGetter(VolcanoFormation::ashRadius),
+            Codec.floatRange(0, 1).lenientOptionalFieldOf("lava", 0.3f).forGetter(VolcanoFormation::lava),
+            Mix.CODEC.lenientOptionalFieldOf("lava_mix", Mix.EMPTY).forGetter(VolcanoFormation::lavaMix)
     ).apply(i, VolcanoFormation::new));
 
     private record Cone(double x, double z, double r, double h, double crater) {}

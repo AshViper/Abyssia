@@ -277,8 +277,8 @@ public final class ModBlocks
 
     private static DeferredBlock<Block> ore(String name, int minXp, int maxXp, int light)
     {
-        return block(name, () -> new DropExperienceBlock(props(MapColor.COLOR_BLACK).strength(3.0f, 3.0f).requiresCorrectToolForDrops()
-                .sound(SoundType.DEEPSLATE).lightLevel(s -> light), UniformInt.of(minXp, maxXp)));
+        return block(name, () -> new DropExperienceBlock(UniformInt.of(minXp, maxXp), props(MapColor.COLOR_BLACK).strength(3.0f, 3.0f).requiresCorrectToolForDrops()
+                .sound(SoundType.DEEPSLATE).lightLevel(s -> light)));
     }
 
     private static DeferredBlock<Block> crust(String name, MapColor color)

@@ -99,10 +99,10 @@ public record FaunaSpawnRule(EntityType<?> entity, String role, int weight, Rang
     {
         static final Codec<Habitat> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.STRING.fieldOf("blocks").forGetter(Habitat::blocks),
-                Codec.intRange(1, 8).optionalFieldOf("radius", 2).forGetter(Habitat::radius),
-                Codec.intRange(1, 27).optionalFieldOf("min", 1).forGetter(Habitat::min),
+                Codec.intRange(1, 8).lenientOptionalFieldOf("radius", 2).forGetter(Habitat::radius),
+                Codec.intRange(1, 27).lenientOptionalFieldOf("min", 1).forGetter(Habitat::min),
                 Codec.FLOAT.fieldOf("factor").forGetter(Habitat::factor),
-                Codec.BOOL.optionalFieldOf("required", false).forGetter(Habitat::required)
+                Codec.BOOL.lenientOptionalFieldOf("required", false).forGetter(Habitat::required)
         ).apply(i, Habitat::new));
     }
 
@@ -124,18 +124,18 @@ public record FaunaSpawnRule(EntityType<?> entity, String role, int weight, Rang
 
     public static final Codec<FaunaSpawnRule> CODEC = RecordCodecBuilder.create(i -> i.group(
             BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("entity").forGetter(FaunaSpawnRule::entity),
-            Codec.STRING.optionalFieldOf("role", "passive").forGetter(FaunaSpawnRule::role),
+            Codec.STRING.lenientOptionalFieldOf("role", "passive").forGetter(FaunaSpawnRule::role),
             Codec.intRange(0, 10000).fieldOf("weight").forGetter(FaunaSpawnRule::weight),
-            Range.CODEC.optionalFieldOf("group", new Range(1, 1)).forGetter(FaunaSpawnRule::group),
+            Range.CODEC.lenientOptionalFieldOf("group", new Range(1, 1)).forGetter(FaunaSpawnRule::group),
             Depth.CODEC.fieldOf("depth_m").forGetter(FaunaSpawnRule::depth),
             Placement.CODEC.fieldOf("placement").forGetter(FaunaSpawnRule::placement),
-            Codec.FLOAT.optionalFieldOf("cave_factor", 1.0F).forGetter(FaunaSpawnRule::caveFactor),
-            Codec.FLOAT.optionalFieldOf("open_factor", 1.0F).forGetter(FaunaSpawnRule::openFactor),
-            Codec.intRange(0, 15).optionalFieldOf("max_light", 15).forGetter(FaunaSpawnRule::maxLight),
-            Codec.STRING.listOf().optionalFieldOf("biomes", List.of()).forGetter(FaunaSpawnRule::biomes),
-            Habitat.CODEC.listOf().optionalFieldOf("habitat", List.of()).forGetter(FaunaSpawnRule::habitat),
-            Substrate.CODEC.listOf().optionalFieldOf("substrate", List.of()).forGetter(FaunaSpawnRule::substrate),
-            Codec.intRange(0, 16).optionalFieldOf("clearance", 0).forGetter(FaunaSpawnRule::clearance),
+            Codec.FLOAT.lenientOptionalFieldOf("cave_factor", 1.0F).forGetter(FaunaSpawnRule::caveFactor),
+            Codec.FLOAT.lenientOptionalFieldOf("open_factor", 1.0F).forGetter(FaunaSpawnRule::openFactor),
+            Codec.intRange(0, 15).lenientOptionalFieldOf("max_light", 15).forGetter(FaunaSpawnRule::maxLight),
+            Codec.STRING.listOf().lenientOptionalFieldOf("biomes", List.of()).forGetter(FaunaSpawnRule::biomes),
+            Habitat.CODEC.listOf().lenientOptionalFieldOf("habitat", List.of()).forGetter(FaunaSpawnRule::habitat),
+            Substrate.CODEC.listOf().lenientOptionalFieldOf("substrate", List.of()).forGetter(FaunaSpawnRule::substrate),
+            Codec.intRange(0, 16).lenientOptionalFieldOf("clearance", 0).forGetter(FaunaSpawnRule::clearance),
             Cap.CODEC.fieldOf("cap").forGetter(FaunaSpawnRule::cap)
     ).apply(i, FaunaSpawnRule::new));
 

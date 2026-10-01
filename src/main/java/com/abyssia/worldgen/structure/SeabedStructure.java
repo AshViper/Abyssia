@@ -28,13 +28,13 @@ public record SeabedStructure(Category category, Tier tier, Anchor anchor, int f
     public static final Codec<SeabedStructure> CODEC = RecordCodecBuilder.create(i -> i.group(
             Category.CODEC.fieldOf("category").forGetter(SeabedStructure::category),
             Tier.CODEC.fieldOf("tier").forGetter(SeabedStructure::tier),
-            Anchor.CODEC.optionalFieldOf("anchor", Anchor.SEABED).forGetter(SeabedStructure::anchor),
+            Anchor.CODEC.lenientOptionalFieldOf("anchor", Anchor.SEABED).forGetter(SeabedStructure::anchor),
             Codec.intRange(4, 160).fieldOf("footprint_radius").forGetter(SeabedStructure::footprintRadius),
             Codec.intRange(1, 200).fieldOf("max_height").forGetter(SeabedStructure::maxHeight),
             Formation.CODEC.fieldOf("formation").forGetter(SeabedStructure::formation),
-            Conditions.CODEC.optionalFieldOf("conditions", Conditions.DEFAULT).forGetter(SeabedStructure::conditions),
-            Dressing.CODEC.optionalFieldOf("dressing", Dressing.NONE).forGetter(SeabedStructure::dressing),
-            ResourceLocation.CODEC.listOf().optionalFieldOf("preferred_mobs", List.of()).forGetter(SeabedStructure::preferredMobs)
+            Conditions.CODEC.lenientOptionalFieldOf("conditions", Conditions.DEFAULT).forGetter(SeabedStructure::conditions),
+            Dressing.CODEC.lenientOptionalFieldOf("dressing", Dressing.NONE).forGetter(SeabedStructure::dressing),
+            ResourceLocation.CODEC.listOf().lenientOptionalFieldOf("preferred_mobs", List.of()).forGetter(SeabedStructure::preferredMobs)
     ).apply(i, SeabedStructure::new));
 
     /** What the structure is, geologically; {@code LANDMARK} marks the rare, memorable ones (config multiplier). */
@@ -96,14 +96,14 @@ public record SeabedStructure(Category category, Tier tier, Anchor anchor, int f
     {
         public static final Conditions DEFAULT = new Conditions(DeepLayer.MIN_Y, DeepLayer.TOP_Y, 0f, 10f, (int) DeepLayer.fromDeepY(110), 12, true, true);
         public static final Codec<Conditions> CODEC = RecordCodecBuilder.create(i -> i.group(
-                Codec.INT.optionalFieldOf("min_y", DEFAULT.minY).forGetter(Conditions::minY),
-                Codec.INT.optionalFieldOf("max_y", DEFAULT.maxY).forGetter(Conditions::maxY),
-                Codec.floatRange(0, 10).optionalFieldOf("min_slope", DEFAULT.minSlope).forGetter(Conditions::minSlope),
-                Codec.floatRange(0, 10).optionalFieldOf("max_slope", DEFAULT.maxSlope).forGetter(Conditions::maxSlope),
-                Codec.INT.optionalFieldOf("max_top_y", DEFAULT.maxTopY).forGetter(Conditions::maxTopY),
-                Codec.intRange(4, 200).optionalFieldOf("min_clearance", DEFAULT.minClearance).forGetter(Conditions::minClearance),
-                Codec.BOOL.optionalFieldOf("avoid_caves", DEFAULT.avoidCaves).forGetter(Conditions::avoidCaves),
-                Codec.BOOL.optionalFieldOf("avoid_vent_fields", DEFAULT.avoidVentFields).forGetter(Conditions::avoidVentFields)
+                Codec.INT.lenientOptionalFieldOf("min_y", DEFAULT.minY).forGetter(Conditions::minY),
+                Codec.INT.lenientOptionalFieldOf("max_y", DEFAULT.maxY).forGetter(Conditions::maxY),
+                Codec.floatRange(0, 10).lenientOptionalFieldOf("min_slope", DEFAULT.minSlope).forGetter(Conditions::minSlope),
+                Codec.floatRange(0, 10).lenientOptionalFieldOf("max_slope", DEFAULT.maxSlope).forGetter(Conditions::maxSlope),
+                Codec.INT.lenientOptionalFieldOf("max_top_y", DEFAULT.maxTopY).forGetter(Conditions::maxTopY),
+                Codec.intRange(4, 200).lenientOptionalFieldOf("min_clearance", DEFAULT.minClearance).forGetter(Conditions::minClearance),
+                Codec.BOOL.lenientOptionalFieldOf("avoid_caves", DEFAULT.avoidCaves).forGetter(Conditions::avoidCaves),
+                Codec.BOOL.lenientOptionalFieldOf("avoid_vent_fields", DEFAULT.avoidVentFields).forGetter(Conditions::avoidVentFields)
         ).apply(i, Conditions::new));
     }
 
@@ -121,9 +121,9 @@ public record SeabedStructure(Category category, Tier tier, Anchor anchor, int f
         public static final Codec<Dressing> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.floatRange(0, 160).fieldOf("radius").forGetter(Dressing::radius),
                 Codec.floatRange(0, 1).fieldOf("density").forGetter(Dressing::density),
-                PLANTS.optionalFieldOf("plants", SimpleWeightedRandomList.empty()).forGetter(Dressing::plants),
-                SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC).optionalFieldOf("minerals", SimpleWeightedRandomList.empty()).forGetter(Dressing::minerals),
-                Codec.floatRange(0, 1).optionalFieldOf("mineral_chance", 0f).forGetter(Dressing::mineralChance)
+                PLANTS.lenientOptionalFieldOf("plants", SimpleWeightedRandomList.empty()).forGetter(Dressing::plants),
+                SimpleWeightedRandomList.wrappedCodecAllowingEmpty(BlockState.CODEC).lenientOptionalFieldOf("minerals", SimpleWeightedRandomList.empty()).forGetter(Dressing::minerals),
+                Codec.floatRange(0, 1).lenientOptionalFieldOf("mineral_chance", 0f).forGetter(Dressing::mineralChance)
         ).apply(i, Dressing::new));
 
         public Palette<CaveEnvironment.PlantEntry> plantPalette()

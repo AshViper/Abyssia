@@ -36,7 +36,7 @@ final class CaveDebugRender
 
     private static File output(ServerLevel level, String name) throws IOException
     {
-        File dir = new File(level.getServer().getServerDirectory().toFile(), Abyssia.MODID + "_debug");
+        File dir = new File(level.getServer().getServerDirectory().toAbsolutePath().toFile(), Abyssia.MODID + "_debug");
         if (!dir.isDirectory() && !dir.mkdirs()) throw new IOException("Cannot create " + dir);
         return new File(dir, name);
     }

@@ -168,8 +168,12 @@ def cond_tags(conds):
         kind = c.get("condition", "").split(":")[-1]
         pred = c.get("predicate", {})
         if kind == "match_tool":
-            if any(e.get("enchantment", "").endswith("silk_touch") for e in pred.get("enchantments", [])): tags.append("シルクタッチ")
-            elif any(i.endswith("shears") for i in pred.get("items", [])): tags.append("ハサミ")
+            # 1.21: enchantments under predicates."minecraft:enchantments" ("enchantments": id), items a list or one id
+            ench = pred.get("enchantments", []) + pred.get("predicates", {}).get("minecraft:enchantments", [])
+            items = pred.get("items", [])
+            items = [items] if isinstance(items, str) else items
+            if any(str(e.get("enchantment", e.get("enchantments", ""))).endswith("silk_touch") for e in ench): tags.append("シルクタッチ")
+            elif any(i.endswith("shears") for i in items): tags.append("ハサミ")
             else: tags.append("道具指定")
         elif kind == "inverted":
             inner = cond_tags([c.get("term", {})])
@@ -178,6 +182,7 @@ def cond_tags(conds):
             tags.append(" / ".join(cond_tags(c.get("terms", []))) or "いずれか")
         elif kind == "random_chance": tags.append(f"{c['chance'] * 100:g}%")
         elif kind == "random_chance_with_looting": tags.append(f"{c['chance'] * 100:g}%（ドロップ増加）")
+        elif kind == "random_chance_with_enchanted_bonus": tags.append(f"{c['unenchanted_chance'] * 100:g}%（ドロップ増加）")
         elif kind == "table_bonus":
             ch = c.get("chances", [])
             tags.append(f"{ch[0] * 100:g}%（幸運で上昇）" if ch else "幸運")
@@ -194,7 +199,7 @@ def fn_tags(funcs):
     for f in funcs or []:
         fn = f.get("function", "").split(":")[-1]
         if fn == "apply_bonus": tags.append("幸運")
-        elif fn == "looting_enchant": tags.append("ドロップ増加")
+        elif fn in ("looting_enchant", "enchanted_count_increase"): tags.append("ドロップ増加")
     return tags
 
 def walk_entries(entries, inherited, out):
@@ -211,7 +216,7 @@ def walk_entries(entries, inherited, out):
 
 def parse_loot():
     tables = []
-    base = os.path.join(RES, "data", NS, "loot_tables")
+    base = os.path.join(RES, "data", NS, "loot_table")      # 1.21 folder name
     for f in sorted(glob.glob(os.path.join(base, "**", "*.json"), recursive=True)):
         rel = os.path.relpath(f, base).replace(os.sep, "/")[:-5]
         kind, name = rel.split("/", 1)
@@ -232,11 +237,11 @@ def ingredient_ids(ing):
 
 def parse_recipes():
     recipes = []
-    for f in sorted(glob.glob(os.path.join(RES, "data", NS, "recipes", "*.json"))):
+    for f in sorted(glob.glob(os.path.join(RES, "data", NS, "recipe", "*.json"))):
         r = json.load(open(f, encoding="utf-8"))
         t = r["type"].split(":")[-1]
         res = r.get("result")
-        out = res if isinstance(res, str) else (res or {}).get("item")
+        out = res if isinstance(res, str) else (res or {}).get("id", (res or {}).get("item"))   # 1.21: {"id", "count"}
         cnt = r.get("count", 1) if isinstance(res, str) else (res or {}).get("count", 1)
         inputs = []
         if "key" in r:
