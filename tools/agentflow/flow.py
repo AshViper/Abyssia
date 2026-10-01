@@ -22,8 +22,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 STATE = Path(os.environ.get("AGENTFLOW_STATE", ROOT / "inbox" / "flow" / "state.json"))
 TIERS = ["light", "standard", "heavy"]
-# すべての作業 tier は Codex が実行する。tier は作業量の目安として残す。
-MODEL = {"light": "codex", "standard": "codex", "heavy": "codex"}
+# 管理(main)は Opus 5.5。作業 tier: light/standard は Sonnet 5.5、heavy は Opus 5.5 のサブエージェントが実行する。
+MODEL = {"light": "sonnet-5.5", "standard": "sonnet-5.5", "heavy": "opus-5.5"}
 REQ = Path(os.environ.get("AGENTFLOW_REQUESTS", ROOT / "inbox" / "requests"))
 APR = Path(os.environ.get("AGENTFLOW_APPROVALS", ROOT / "inbox" / "approvals"))
 REQ_ST = ["new", "specced", "running", "done"]

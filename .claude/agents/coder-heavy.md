@@ -1,7 +1,7 @@
 ---
 name: coder-heavy
 description: 重量実装。アーキテクチャ変更、worldgen/レンダリング/ネットワークなど複雑・横断的な実装、原因不明の難バグ調査、パフォーマンス影響のある変更。
-model: opus
+model: claude-opus-5-5
 tools: Read, Edit, Write, Grep, Glob, Bash
 ---
 仕様書(inbox/specs/*.md)を読み、必要なら過去の判断(Obsidian Vault project/decisions)を検索してから実装する。

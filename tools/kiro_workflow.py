@@ -6,7 +6,6 @@ ChatGPT → KiroCrew 並列実行ワークフロー
 Usage:
     python tools/kiro_workflow.py process-specs
     python tools/kiro_workflow.py process-request <request_id>
-    python tools/kiro_workflow.py codex-plan
 """
 
 import json
@@ -347,11 +346,6 @@ def process_request(request_id):
         print("   1. ChatGPT でこのリクエストを処理")
         print("   2. 生成された仕様書を inbox/specs/ に配置")
         print("   3. このスクリプトを再実行")
-    elif via == 'codex':
-        print("\n→ Codex で処理します")
-        print("   1. python tools/kiro_workflow.py codex-plan")
-        print("   2. inbox/flow/pending_tasks.json の順序で仕様を実装")
-        print("   3. 最後に gradlew build と検証を実行")
     else:
         print("\n→ 直接仕様書化を推奨")
         print("   tier を判定して inbox/specs/ に仕様書を作成してください")
@@ -362,12 +356,11 @@ def main():
         print("Usage:")
         print("  python tools/kiro_workflow.py process-specs")
         print("  python tools/kiro_workflow.py process-request <request_id>")
-        print("  python tools/kiro_workflow.py codex-plan")
         sys.exit(1)
     
     command = sys.argv[1]
     
-    if command in ("process-specs", "codex-plan"):
+    if command == "process-specs":
         process_specs()
     elif command == "process-request":
         if len(sys.argv) < 3:

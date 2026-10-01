@@ -1,6 +1,6 @@
 # クラスト・結晶ブロック テクスチャ 再生成プロンプト (ChatGPT ImageGen 用)
 
-1枚のシート(14個 / 5列)として生成し `inbox/textures/sheets/CRUST_CRYSTALBLOCK.png` に保存。Claude/Codex は画像を生成しない。
+1枚のシート(14個 / 5列)として生成し `inbox/textures/sheets/CRUST_CRYSTALBLOCK.png` に保存。Claude は画像を生成しない。
 取込後、研磨/レンガ版はクラストの絵から自動再生成し、結晶ブロックの glow は新しい絵から導出する。
 
 ## シート CRUSTBLOCK (14個 / 5列)

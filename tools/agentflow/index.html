@@ -135,7 +135,6 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
   <span class="chip" id="counts"></span>
   <span class="chip" id="upd">-</span>
     <span class="chip" style="margin-left:auto">
-    <label>実行主体<select id="runnerSel"><option value="codex">Codexのみ</option><option value="claude">Claude</option></select></label>
     <label style="display:inline-flex;flex-direction:row;align-items:center;gap:4px;color:var(--fg)"><input type="checkbox" id="autoOn" style="width:auto"> 自動実行</label>
     <span id="autoSt"></span>
     <button class="b sub" id="autoRun">今すぐ</button>
@@ -167,8 +166,8 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
         <label>タイトル<input id="rt" required maxlength="120" placeholder="例: 深海クラゲの新種を追加"></label>
         <label>内容・希望<textarea id="rb" placeholder="どんな挙動/見た目/制約か。ざっくりでOK"></textarea></label>
         <label>関係しそうなファイル(任意)<input id="rfiles" placeholder="例: src/main/java/.../fauna"></label>
-        <label>仕様化<select id="rvia"><option value="codex">Codexがそのまま仕様化</option><option value="claude">Claudeがそのまま仕様化</option><option value="chatgpt">ChatGPTに仕様書/テクスチャを依頼</option></select></label>
-        <label>重さ<select id="rtier"><option value="auto">おまかせ</option><option value="light">light (Codex)</option><option value="standard">standard (Codex)</option><option value="heavy">heavy (Codex)</option></select></label>
+        <label>仕様化<select id="rvia"><option value="claude">Claudeがそのまま仕様化</option><option value="chatgpt">ChatGPTに仕様書/テクスチャを依頼</option></select></label>
+        <label>重さ<select id="rtier"><option value="auto">おまかせ</option><option value="light">light (Sonnet 5.5)</option><option value="standard">standard (Sonnet 5.5)</option><option value="heavy">heavy (Opus 5.5)</option></select></label>
         <button class="b" id="rsend">送信して開始</button>
         <span id="rmsg" class="chip"></span>
       </form>
@@ -268,7 +267,7 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
 const NS="http://www.w3.org/2000/svg";
 const COL={queued:"var(--queued)",running:"var(--running)",done:"var(--done)",failed:"var(--failed)",escalated:"var(--escalated)",idle:"var(--idle)"};
 const LABEL={queued:"待機",running:"実行中",done:"完了",failed:"失敗",escalated:"格上げ",idle:"待機"};
-const TIERS=[["light","codex"],["standard","codex"],["heavy","codex"]];
+const TIERS=[["light","sonnet-5.5"],["standard","sonnet-5.5"],["heavy","opus-5.5"]];
 // stage: [key, title, default sub, band, x]
 const STAGES=[["request","依頼","フォーム/CLI","top",30],["router","Main Agent","tier振り分け・統合","top",290],["chatgpt","ChatGPT","仕様書/テクスチャ","top",550],["texture","Texture Pipeline","Forge/Studio/取込","top",810],
   ["verify","Verification","検証","bot",290],["build","Build/Test","gradle(メインのみ)","bot",550],["memory","Memory","Obsidian更新","bot",810]];
@@ -442,16 +441,14 @@ async function aprs(){
 async function autoPoll(){
   try{auto=await (await fetch("autorun.json",{cache:"no-store"})).json();
     $("autoOn").checked=auto.enabled;
-    $("runnerSel").value=auto.runner||"claude";
-    const available=auto.runner==="codex"?auto.codex:auto.claude;
-    $("autoSt").textContent=!available?`${auto.runner||"runner"} CLIなし`:auto.running?`Codex worker ${auto.workers||1}件`:auto.pending?`待機(依頼${auto.pending}件)`:"待機";
+    const available=auto.claude;
+    $("autoSt").textContent=!available?"claude CLIなし":auto.running?`Claude 実行中 ${auto.workers||1}件`:auto.pending?`待機(依頼${auto.pending}件)`:"待機";
     $("autoSt").style.color=auto.running?"var(--running)":"var(--mut)";
     $("alog").textContent=(auto.tail||[]).join("\n");
   }catch(e){}
 }
 const post=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})}).then(r=>r.json());
 $("autoOn").onchange=e=>post("/api/autorun",{enabled:e.target.checked}).then(autoPoll);
-$("runnerSel").onchange=e=>post("/api/autorun",{runner:e.target.value}).then(autoPoll);
 $("autoRun").onclick=()=>post("/api/autorun/run").then(autoPoll);
 $("autoStop").onclick=()=>post("/api/autorun/stop").then(autoPoll);
 $("resetBtn").onclick=async()=>{await post("/api/reset");lastJson="";poll()};

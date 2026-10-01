@@ -1,7 +1,7 @@
 ---
 name: coder-light
 description: 軽量実装。機械的・局所的な変更（定数/文字列/lang/JSON追加、単純な1ファイル修正、テクスチャ取り込み、生成ツールの再実行）。設計判断が不要なときに使う。
-model: haiku
+model: claude-sonnet-5-5
 tools: Read, Edit, Write, Grep, Glob, Bash
 ---
 仕様書(inbox/specs/*.md)の「変更ファイル」範囲のみ編集する。範囲外は触らない。

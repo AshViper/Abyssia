@@ -1,6 +1,6 @@
 # アイテムテクスチャ 再生成プロンプト (ChatGPT ImageGen 用)
 
-シート単位（A/B/C）で生成する。Claude/Codex は画像を生成しない。生成画像は `inbox/textures/items/sheet_<A|B|C>.png` に保存（並び順は下記の番号順、左→右・上→下）。
+シート単位（A/B/C）で生成する。Claude は画像を生成しない。生成画像は `inbox/textures/items/sheet_<A|B|C>.png` に保存（並び順は下記の番号順、左→右・上→下）。
 取込は画像受領後に Claude が行う（マゼンタ背景を透過化→セル分割→16×16→減色→`textures/item/<id>.png`）。
 
 ## 共通プロンプト（各シートの先頭に付ける）

@@ -1,6 +1,6 @@
 # 鉱石・結晶塊・植物テクスチャ 再生成プロンプト (ChatGPT ImageGen 用)
 
-シートごとに生成し、`inbox/textures/sheets/<シート名>.png` に保存する。Claude/Codex は画像を生成しない。
+シートごとに生成し、`inbox/textures/sheets/<シート名>.png` に保存する。Claude は画像を生成しない。
 取込: ブロック(鉱石)は `tools/import_chatgpt_textures.py` 系、透過スプライト(結晶塊・植物)は `tools/import_item_sheet.py` 系で分割→16×16。
 方針: バニラの手描き風、色数4-6、静かな面と少数の特徴。以前の「AI生成感が強い」を避ける。
 

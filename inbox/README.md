@@ -8,9 +8,9 @@ ChatGPT の成果物をここに置く。Claude Code/KiroCrew は inbox/ 以外�
 
 ## テクスチャ画像の生成
 
-新規テクスチャや作り直しが必要な場合、Codex は画像を直接生成しない。Codex はブロックID・色・質感・
+新規テクスチャや作り直しが必要な場合、Claude は画像を直接生成しない。Claude はブロックID・色・質感・
 出力先を含むプロンプトを `inbox/prompts/<task>-textures.md` に作り、ChatGPT ImageGen が
-`inbox/textures/<block_id>.png` を生成する。画像の取込後に Codex が texture_studio または
+`inbox/textures/<block_id>.png` を生成する。画像の取込後に Claude が texture_studio または
 forge_textures を実行する。rock 系は texture_locks を必ず維持する。
 
 ### シート画像の取込 (Agent Flow「画像生成」タブ / `tools/agentflow/sheets.py`)
@@ -63,24 +63,9 @@ python tools/kiro_workflow.py process-specs
 Claude Code に「inbox/specs の未処理を tier 別に並列実行して」と指示 → メインが tier で
 coder-light/standard/heavy に振り分け、結果を統合してビルド・検証する。
 
-### Codex の場合
+### 実行モデル
 
-Codex で受け渡しを処理する場合は、リポジトリのルートで次を実行する。
-
-```bash
-# 仕様を解析し、ファイル競合を避けた実行バッチを作る
-python tools/kiro_workflow.py codex-plan
-```
-
-出力された `inbox/flow/pending_tasks.json` を読み、各バッチを上から順に実装する。同じ `files:` を持つ
-仕様は直列に扱い、最後にメインの Codex が `gradlew build` と検証を実行する。仕様書の指示は作業範囲・
-制約として扱い、チャット上の依頼が優先される。
-
-依頼 JSON の `via` は `codex` にできる。これはルーティング情報であり、仕様書の編集対象や受け入れ条件を
-変更しない。
-
-AgentFlow の light / standard / heavy の作業エージェントも Codex に統一される。tier は作業量の目安であり、
-実行 CLI はすべて `codex exec` である。
+AgentFlow の tier はすべて Claude のサブエージェントが実行する。管理(main)は Opus 5.5、light / standard (coder-light / coder-standard) は Sonnet 5.5、heavy (coder-heavy) は Opus 5.5。tier は作業量の目安。依頼 JSON の `via` は `claude` または `chatgpt`。
 
 ## 可視化 (tools/agentflow)
 フローチャートUI。状態は `inbox/flow/state.json`、CLI で更新、UI は1.5秒ごとに自動反映。
