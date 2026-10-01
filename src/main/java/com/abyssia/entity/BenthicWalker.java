@@ -1,5 +1,6 @@
 package com.abyssia.entity;
 
+import com.abyssia.entity.ai.HomeLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -27,8 +28,9 @@ import javax.annotation.Nullable;
  * A seabed walker (crab, squat lobster, snail): it walks, never swims off the bottom, clambers over rock, and plays its
  * walking clip while it moves. Vent animals are bound to their vent field ({@link #setHome}).
  */
-public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
+public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated, HomeLayer.Bound
 {
+    private final HomeLayer homeLayer = new HomeLayer();
     protected static final int DEATH_TICKS = 44;
     /**
      * Entity events 100..103: a species' own one-shot actions (a bite, a flick...), played by its model. Kept far above
@@ -59,6 +61,12 @@ public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
     public FaunaAnimations animations()
     {
         return this.animations;
+    }
+
+    @Override
+    public HomeLayer homeLayer()
+    {
+        return this.homeLayer;
     }
 
     /** Whether the walking clip plays (not while withdrawn or feeding in place). */
@@ -124,6 +132,7 @@ public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData data,
                                         @Nullable CompoundTag tag)
     {
+        this.homeLayer.isDeep(this);
         if (this.homeRadius() > 0) this.setHome(this.blockPosition(), this.homeRadius());
         return super.finalizeSpawn(level, difficulty, reason, data, tag);
     }
@@ -174,6 +183,7 @@ public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
     public void addAdditionalSaveData(CompoundTag tag)
     {
         super.addAdditionalSaveData(tag);
+        this.homeLayer.save(tag);
         if (this.home != null)
         {
             tag.put("Home", NbtUtils.writeBlockPos(this.home));
@@ -185,6 +195,7 @@ public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
     public void readAdditionalSaveData(CompoundTag tag)
     {
         super.readAdditionalSaveData(tag);
+        this.homeLayer.load(tag);
         if (tag.contains("Home")) this.setHome(NbtUtils.readBlockPos(tag.getCompound("Home")), Math.max(4, tag.getInt("HomeRadius")));
     }
 }

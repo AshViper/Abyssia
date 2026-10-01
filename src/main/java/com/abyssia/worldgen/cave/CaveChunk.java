@@ -1,5 +1,6 @@
 package com.abyssia.worldgen.cave;
 
+import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.ChunkPos;
@@ -174,7 +175,7 @@ public final class CaveChunk
         }
         for (int lz = 0; lz < 16; lz++)
         {
-            for (int lx = 0; lx < 16; lx++) ctx.seabed[lz * 16 + lx] = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, lx, lz);
+            for (int lx = 0; lx < 16; lx++) ctx.seabed[lz * 16 + lx] = deepFloor(ctx.sections, ctx.minBuildY, lx, lz);
         }
         for (int lz = -PAD; lz < 16 + PAD; lz++)
         {
@@ -200,7 +201,7 @@ public final class CaveChunk
         int top = Integer.MIN_VALUE;
         for (int i = 0; i < 256; i++)
         {
-            seabed[i] = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, i & 15, i >> 4);
+            seabed[i] = deepFloor(sections, minBuildY, i & 15, i >> 4);
             top = Math.max(top, seabed[i] - 2);
         }
         int bottom = network.minY() + 6;
@@ -564,6 +565,23 @@ public final class CaveChunk
                 }
             }
         }
+    }
+
+    /**
+     * First open block above the deep layer's seabed in a column ({@link DeepLayer#floorY} + 1, read straight from the
+     * sections): scans down from under the ceiling, past its rock, to the first motion-blocking block below open water
+     * or a gas pocket. The OCEAN_FLOOR_WG heightmap would find the ocean world's seabed above the bedrock band.
+     */
+    static int deepFloor(LevelChunkSection[] sections, int minBuildY, int lx, int lz)
+    {
+        boolean open = false;
+        for (int y = DeepLayer.CEILING_BOTTOM_Y + 24; y > minBuildY; y--)
+        {
+            boolean solid = sections[(y - minBuildY) >> 4].getBlockState(lx, y & 15, lz).blocksMotion();
+            if (!solid) open = true;
+            else if (open) return y + 1;
+        }
+        return minBuildY;
     }
 
     /** Refresh the ocean floor heightmap after entrances were cut through the seabed and formations raised on it. */

@@ -1,5 +1,6 @@
 package com.abyssia.worldgen.structure;
 
+import com.abyssia.worldgen.DeepLayer;
 import com.abyssia.worldgen.cave.CaveEnvironment;
 import com.abyssia.worldgen.cave.Palette;
 import com.mojang.serialization.Codec;
@@ -82,9 +83,10 @@ public record SeabedStructure(Category category, Tier tier, Anchor anchor, int f
     }
 
     /**
-     * Terrain requirements at the centre. {@code min_y}/{@code max_y} bound the seabed (or cavern floor) height, i.e.
-     * the depth; slope is the steepest rise per block over the footprint (0 flat, 1 = 45 degrees); nothing is built
-     * above {@code max_top_y} (keeps the water above Y 100 open); cavern structures need {@code min_clearance}
+     * Terrain requirements at the centre, heights in overworld Y (tools/seabed_structures.py writes them from the old
+     * deep-ocean Y). {@code min_y}/{@code max_y} bound the seabed (or cavern floor) height, i.e. the depth; slope is the
+     * steepest rise per block over the footprint (0 flat, 1 = 45 degrees); nothing is built above {@code max_top_y}
+     * (keeps the water above deep-ocean Y 100 open, and always stays under the ceiling); cavern structures need {@code min_clearance}
      * blocks between floor and roof. {@code avoid_caves} rejects spots over cave entrances and shafts;
      * {@code avoid_vent_fields} keeps medium and larger structures out of hydrothermal vent fields (whose chimneys
      * are painted later and would cut through them) - volcanoes and chimney groups may share ground with them.
@@ -92,7 +94,7 @@ public record SeabedStructure(Category category, Tier tier, Anchor anchor, int f
     public record Conditions(int minY, int maxY, float minSlope, float maxSlope, int maxTopY, int minClearance, boolean avoidCaves,
                              boolean avoidVentFields)
     {
-        public static final Conditions DEFAULT = new Conditions(-128, 256, 0f, 10f, 110, 12, true, true);
+        public static final Conditions DEFAULT = new Conditions(DeepLayer.MIN_Y, DeepLayer.TOP_Y, 0f, 10f, (int) DeepLayer.fromDeepY(110), 12, true, true);
         public static final Codec<Conditions> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.INT.optionalFieldOf("min_y", DEFAULT.minY).forGetter(Conditions::minY),
                 Codec.INT.optionalFieldOf("max_y", DEFAULT.maxY).forGetter(Conditions::maxY),

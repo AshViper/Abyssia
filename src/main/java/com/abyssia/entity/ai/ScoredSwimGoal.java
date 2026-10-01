@@ -1,5 +1,6 @@
 package com.abyssia.entity.ai;
 
+import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -15,7 +16,8 @@ import java.util.function.ToDoubleFunction;
 
 /**
  * Wandering with a preference: now and then a few random water spots nearby are scored (darkness for an ambush
- * predator, enclosure for a cave dweller, depth for a migrator...) and the animal swims to the best one.
+ * predator, enclosure for a cave dweller, depth for a migrator...) and the animal swims to the best one. Spots stay in
+ * the animal's layer, so deep animals never wander up a shaft into the ocean world (or surface ones down into the deep).
  */
 public class ScoredSwimGoal extends Goal
 {
@@ -60,7 +62,7 @@ public class ScoredSwimGoal extends Goal
             Vec3 p = BehaviorUtils.getRandomSwimmablePos(this.mob, this.horizontal, this.vertical);
             if (p == null) continue;
             BlockPos pos = BlockPos.containing(p);
-            if (!this.mob.level().getFluidState(pos).is(FluidTags.WATER)) continue;
+            if (!this.mob.level().getFluidState(pos).is(FluidTags.WATER) || !sameLayer(this.mob, pos)) continue;
             double s = this.score.applyAsDouble(pos) + this.mob.getRandom().nextDouble() * 2.0;
             if (s > bestScore)
             {
@@ -83,6 +85,12 @@ public class ScoredSwimGoal extends Goal
     public void stop()
     {
         this.mob.getNavigation().stop();
+    }
+
+    /** Whether pos is in the mob's layer: the ocean world, or the deep layer below the bedrock band. */
+    public static boolean sameLayer(PathfinderMob mob, BlockPos pos)
+    {
+        return DeepLayer.isDeep(mob.level(), pos.getY()) == HomeLayer.of(mob);
     }
 
     /** How many of the six directions hit rock within 6 blocks: a cave passage scores high, open water 0. */

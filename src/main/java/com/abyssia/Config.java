@@ -12,54 +12,20 @@ public class Config
         BUILDER.push("deep_ocean");
     }
 
-    public static final ForgeConfigSpec.BooleanValue DEEP_OCEAN_ENABLED = BUILDER
-            .comment("Whether diving below transition_y (in water) moves players into the deep ocean dimension")
-            .define("enabled", true);
-
-    public static final ForgeConfigSpec.IntValue DEEP_OCEAN_TRANSITION_Y = BUILDER
-            .comment("Ocean world Y at or below which players in water are moved into the deep ocean.",
-                    "Default -40: deep trenches and basins (seabed down to Y -50) and abyssal rifts reach it")
-            .defineInRange("transition_y", -40, -64, 319);
-
     public static final ForgeConfigSpec.IntValue CONFIG_VERSION = BUILDER
-            .comment("Internal: used to upgrade old defaults (transition_y / coordinate_offset_y 0 / 200 or -61 / 261 -> -40 / 240). Do not edit.")
+            .comment("Internal: config file version, used to upgrade old files. Do not edit.")
             .defineInRange("config_version", 1, 1, 100);
 
-    public static final ForgeConfigSpec.IntValue DEEP_OCEAN_RETURN_Y = BUILDER
-            .comment("Deep ocean Y at or above which players are moved back to the ocean world")
-            .defineInRange("return_y", 240, -128, 255);
-
-    public static final ForgeConfigSpec.IntValue DEEP_OCEAN_COORDINATE_OFFSET_Y = BUILDER
-            .comment("deepY = oceanY + coordinate_offset_y. Deep ocean terrain is generated assuming divers arrive",
-                    "at deep Y 200, i.e. transition_y + coordinate_offset_y = 200 (default -40 + 240)")
-            .defineInRange("coordinate_offset_y", 240, -512, 512);
-
-    public static final ForgeConfigSpec.IntValue DEEP_OCEAN_TRANSITION_COOLDOWN = BUILDER
-            .comment("Ticks after a transition during which no further transition happens")
-            .defineInRange("transition_cooldown", 40, 0, 72000);
-
-    public static final ForgeConfigSpec.BooleanValue DEEP_OCEAN_RESPAWN_IN_OCEAN_WORLD = BUILDER
-            .comment("If false, players who die in the deep ocean without a respawn point respawn in the deep ocean")
-            .define("deep_ocean_respawn_in_ocean_world", false);
-
-    public static final ForgeConfigSpec.IntValue DEEP_OCEAN_PRELOAD_DISTANCE = BUILDER
-            .comment("Blocks before a transition boundary at which destination chunks start generating in advance")
-            .defineInRange("preload_distance", 64, 0, 512);
-
     public static final ForgeConfigSpec.BooleanValue DEEP_OCEAN_ENABLE_FOG = BUILDER
-            .comment("Client: thicken and darken underwater fog with depth")
+            .comment("Client: thicken and darken underwater fog with depth, down through the deep layer below the bedrock band")
             .define("enable_fog", true);
-
-    public static final ForgeConfigSpec.BooleanValue DEEP_OCEAN_ENABLE_TRANSITION_EFFECT = BUILDER
-            .comment("Client: fade, particles and sounds around a transition, and hide the terrain loading screen")
-            .define("enable_transition_effect", true);
 
     static {
         BUILDER.pop();
     }
 
     static {
-        BUILDER.comment("Deep ocean dimension terrain. Generation options take effect for newly generated chunks.").push("terrain");
+        BUILDER.comment("Deep layer terrain (below the bedrock band). Generation options take effect for newly generated chunks.").push("terrain");
     }
 
     public static final ForgeConfigSpec.BooleanValue CUSTOM_BLOCKS_ONLY = BUILDER
@@ -321,26 +287,16 @@ public class Config
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    private static final int CURRENT_CONFIG_VERSION = 3;
-    /** Earlier default (transition_y, coordinate_offset_y) pairs: Y 0 / 200 (version 1) and below the bedrock, -61 / 261 (version 2). */
-    private static final int[][] OLD_TRANSITION_DEFAULTS = {{0, 200}, {-61, 261}};
-
     /**
-     * Config files written by older versions keep their old defaults, so a new transition depth would never take
-     * effect. Files that still hold exactly an old default pair are upgraded once; customised values are left alone.
+     * 4: the deep ocean dimension became the overworld's deep layer; its transition options (enabled, transition_y,
+     * return_y, coordinate_offset_y, transition_cooldown, deep_ocean_respawn_in_ocean_world, preload_distance,
+     * enable_transition_effect) were removed. Forge drops the stale keys from old files when it corrects them.
      */
+    private static final int CURRENT_CONFIG_VERSION = 4;
+
     static void migrate(ModConfigEvent event)
     {
         if (event.getConfig().getSpec() != SPEC || CONFIG_VERSION.get() >= CURRENT_CONFIG_VERSION) return;
-        for (int[] old : OLD_TRANSITION_DEFAULTS)
-        {
-            if (DEEP_OCEAN_TRANSITION_Y.get() == old[0] && DEEP_OCEAN_COORDINATE_OFFSET_Y.get() == old[1])
-            {
-                DEEP_OCEAN_TRANSITION_Y.set(-40);
-                DEEP_OCEAN_COORDINATE_OFFSET_Y.set(240);
-                break;
-            }
-        }
         CONFIG_VERSION.set(CURRENT_CONFIG_VERSION);
         SPEC.save();
     }

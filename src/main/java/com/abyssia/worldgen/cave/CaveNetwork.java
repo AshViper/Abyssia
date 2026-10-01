@@ -3,6 +3,7 @@ package com.abyssia.worldgen.cave;
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
 import com.abyssia.thermal.ThermalVentField;
+import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.Registry;
@@ -32,7 +33,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 /**
- * The deep ocean's cave network for one world: the generation context shared by every chunk.
+ * The deep layer's cave network for one world: the generation context shared by every chunk.
  * <p>
  * Systems sit on a coarse grid (at most one per cell) plus a finer grid of minor caves and sea arches. A system's
  * layout depends only on the world seed, its cell, the biome at its anchor and the seabed height (sampled from the
@@ -46,6 +47,10 @@ public final class CaveNetwork
     public static final int MINOR_CELL = 72;
     public static final int MINOR_REACH = 56;
     private static final int CACHE_LIMIT = 4096;
+    /** Blocks between the highest entrance and the ceiling's lowest underside (seabeds reach SEABED_MAX_Y, 12 below it). */
+    private static final int ENTRANCE_MARGIN = 8;
+    /** Biomes are sampled in the deep layer (old deep-ocean Y 0), the same height ThermalVentManager uses. */
+    public static final int BIOME_QUART_Y = QuartPos.fromBlock((int) DeepLayer.fromDeepY(0));
     /** Luminous stretches: region cell size, and how far (blocks) and how coarsely their borders are warped. */
     private static final int LUMINOUS_REGION = 640;
     private static final double LUMINOUS_WARP = 240, LUMINOUS_WARP_FREQ = 1.0 / 360;
@@ -78,8 +83,10 @@ public final class CaveNetwork
         this.biomeSource = biomeSource;
         this.sampler = randomState.sampler();
         this.seabedDensity = randomState.router().initialDensityWithoutJaggedness();
+        // The deep layer: from the world bottom up to its rock ceiling (no cave ever cuts into the ceiling or the
+        // ocean world above it).
         this.minY = noise.minY();
-        this.maxY = noise.minY() + noise.height();
+        this.maxY = Math.min(noise.minY() + noise.height(), DeepLayer.CEILING_BOTTOM_Y);
         this.cellSize = Config.CAVE_SYSTEM_SPACING.get();
         this.profiles = profiles;
         this.environments = environments;
@@ -160,17 +167,18 @@ public final class CaveNetwork
         return cellSize;
     }
 
-    /** Highest seabed an entrance may open into: below the ceiling and the return-to-surface boundary. */
+    /** Highest seabed an entrance may open into (or an arch rise to): a margin under the deep layer's rock ceiling. */
     public int maxEntranceY()
     {
-        return Math.min(maxY - 16, Config.DEEP_OCEAN_RETURN_Y.get() - 10);
+        return maxY - ENTRANCE_MARGIN;
     }
 
     // ---------------------------------------------------------------- terrain and biome sampling
 
     /**
      * Seabed height (first non-solid block) of the undisturbed terrain, from the terrain's own density function:
-     * a binary search along the column, the same answer on every thread and before the chunk exists.
+     * a binary search along the column, the same answer on every thread and before the chunk exists. Searches the deep
+     * layer under the ceiling, where the router's initial density is the deep seabed alone (falling with Y).
      */
     public int seabed(int x, int z)
     {
@@ -216,7 +224,7 @@ public final class CaveNetwork
     @Nullable
     public ResourceKey<Biome> biome(int x, int z)
     {
-        return biomeSource.getNoiseBiome(QuartPos.fromBlock(x), 0, QuartPos.fromBlock(z), sampler).unwrapKey().orElse(null);
+        return biomeSource.getNoiseBiome(QuartPos.fromBlock(x), BIOME_QUART_Y, QuartPos.fromBlock(z), sampler).unwrapKey().orElse(null);
     }
 
     @Nullable

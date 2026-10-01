@@ -30,7 +30,7 @@ import java.util.TreeMap;
  *     <li>{@code /abyssia fauna list [radius]}: each deep-sea animal around, with what it is doing</li>
  *     <li>{@code /abyssia fauna spawn [attempts]}: run spawn attempts around you (or the command position) now,
  *     with the reasoning</li>
- *     <li>{@code /abyssia fauna depth <metres>}: where a real depth lies in each dimension</li>
+ *     <li>{@code /abyssia fauna depth <metres>}: where a real depth lies (ocean world or deep layer Y)</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = Abyssia.MODID)
@@ -179,9 +179,12 @@ public final class FaunaCommand
     {
         double blocks = DepthZone.blocks(metres);
         int oceanY = (int) Math.round(DepthZone.OCEAN_SURFACE_Y - blocks);
-        int deepY = oceanY + DepthZone.deepOceanOffset();
-        say(ctx, String.format("%d m = %.0f blocks below the surface (%s): ocean world y %d, deep ocean y %d", metres, blocks,
-                DepthZone.Zone.of(metres).name().toLowerCase(), oceanY, deepY));
+        int deepY = (int) Math.round(com.abyssia.worldgen.DeepLayer.fromDeepY(DepthZone.deepY(blocks)));
+        // Ocean world water reads at most 63 blocks deep; anything deeper lies in the deep layer below the bedrock band.
+        String where = oceanY >= 0 ? "ocean world y " + oceanY
+                : com.abyssia.worldgen.DeepLayer.isDeep(deepY) ? "deep layer y " + deepY : "deep layer, above its ceiling (y " + deepY + ")";
+        say(ctx, String.format("%d m = %.0f blocks below the surface (%s): %s", metres, blocks,
+                DepthZone.Zone.of(metres).name().toLowerCase(), where));
         return 1;
     }
 }

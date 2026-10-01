@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:clamp",
+    "input": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:min",
+        "argument1": "abyssia:overworld/deep_seabed_raw_nr",
+        "argument2": 1.796875
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 0.5,
+        "argument2": {
+          "type": "minecraft:max",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": "abyssia:overworld/deep_seabed_raw_nr",
+            "argument2": -1.796875
+          },
+          "argument2": 0
+        }
+      }
+    },
+    "min": -1.9,
+    "max": 2.1875
+  }
+}

@@ -1,6 +1,7 @@
 package com.abyssia.worldgen.structure;
 
 import com.abyssia.Abyssia;
+import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -35,7 +36,7 @@ final class StructureRender
             {
                 int x = centre.getX() - radius + i, z = centre.getZ() - radius + j;
                 // Topmost solid block: plants are skipped (they would hide the landforms) unless asked for.
-                int y = level.getMaxBuildHeight() - 1;
+                int y = Math.min(level.getMaxBuildHeight(), DeepLayer.CEILING_BOTTOM_Y) - 1;  // the deep layer's floor, under its ceiling
                 var chunk = level.getChunk(x >> 4, z >> 4);
                 while (y > level.getMinBuildHeight())
                 {

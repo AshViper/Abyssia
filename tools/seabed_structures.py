@@ -14,8 +14,9 @@ Tiers and spacing (the grid cell is max_distance; one candidate per cell, realis
   colossal  100+ blocks     cell 1024+    -> rare landmarks (category "landmark"), one per several thousand chunks
 Most of the seabed stays plain on purpose: open, empty expanses are part of the deep sea.
 
-Heights: structures stop under max_top_y (110 by default) so the water above Y 100 stays open; only colossal
-landmarks may reach Y 125.
+Heights are written here in the old deep-ocean Y (the deep layer is that dimension moved down by DeepLayer.SHIFT):
+structures stop under max_top_y (110 by default) so the water above Y 100 stays open; only colossal landmarks may
+reach Y 125. write() converts min_y / max_y / max_top_y to overworld Y and keeps every top under the layer's ceiling.
 """
 import json
 import os
@@ -464,8 +465,27 @@ PROFILES = {
 }
 
 
-def write(root, deep_biomes):
-    """Writes the registries under root (data/abyssia/abyssia); returns (structures, profiles)."""
+# Terrain condition heights given in the old deep-ocean Y (converted by write()).
+Y_CONDITIONS = ("min_y", "max_y", "max_top_y")
+
+
+def overworld(d, dy, top_limit):
+    """A structure definition with its condition heights in overworld Y, tops kept at or under top_limit."""
+    cond = d.get("conditions")
+    if not cond or not any(k in cond for k in Y_CONDITIONS):
+        return d
+    cond = dict(cond)
+    for k in Y_CONDITIONS:
+        if k in cond:
+            cond[k] = dy(cond[k])
+    if "max_top_y" in cond:
+        cond["max_top_y"] = min(cond["max_top_y"], top_limit)
+    return {**d, "conditions": cond}
+
+
+def write(root, deep_biomes, dy, top_limit):
+    """Writes the registries under root (data/abyssia/abyssia); returns (structures, profiles). dy() maps old
+    deep-ocean Y to overworld Y; top_limit is the highest max_top_y (under the deep layer's ceiling)."""
     covered = {b for biomes, _, _ in PROFILES.values() for b in biomes}
     assert covered == set(deep_biomes), f"structure profiles vs deep biomes: {covered ^ set(deep_biomes)}"
     used = {entry["structure"] for _, _, entries in PROFILES.values() for entry in entries}
@@ -477,7 +497,7 @@ def write(root, deep_biomes):
     for sub in ("seabed_structure", "seabed_structure_profile"):
         shutil.rmtree(os.path.join(root, sub), ignore_errors=True)
     for name, d in STRUCTURES.items():
-        _write(os.path.join(root, "seabed_structure", name + ".json"), d)
+        _write(os.path.join(root, "seabed_structure", name + ".json"), overworld(d, dy, top_limit))
     for name, (biomes, density, entries) in PROFILES.items():
         _write(os.path.join(root, "seabed_structure_profile", name + ".json"),
                {"biomes": [A(b) for b in biomes], "density": density, "structures": entries})

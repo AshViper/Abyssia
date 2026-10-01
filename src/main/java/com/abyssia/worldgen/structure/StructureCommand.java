@@ -2,6 +2,7 @@ package com.abyssia.worldgen.structure;
 
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
+import com.abyssia.worldgen.DeepLayer;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -30,7 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Seabed structure debugging (run in abyssia:deep_ocean, e.g. via {@code execute in abyssia:deep_ocean positioned ...}):
+ * Seabed structure debugging (run in the overworld's deep layer, below the bedrock band at Y -64, e.g. via
+ * {@code execute positioned <x> -200 <z> run ...}):
  * <ul>
  *     <li>{@code /abyssia structures here}: biome, its profile entries with their odds, and the structures covering this spot
  *     (with their preferred fauna)</li>
@@ -81,8 +83,8 @@ public final class StructureCommand
                                 .then(Commands.literal("section")
                                         .then(Commands.argument("axis", StringArgumentType.word()).suggests((c, b) -> SharedSuggestionProvider.suggest(List.of("x", "z"), b))
                                                 .then(Commands.argument("radius", IntegerArgumentType.integer(8, 256))
-                                                        .then(Commands.argument("y0", IntegerArgumentType.integer(-128, 256))
-                                                                .then(Commands.argument("y1", IntegerArgumentType.integer(-128, 256))
+                                                        .then(Commands.argument("y0", IntegerArgumentType.integer(DeepLayer.MIN_Y, DeepLayer.TOP_Y))
+                                                                .then(Commands.argument("y1", IntegerArgumentType.integer(DeepLayer.MIN_Y, DeepLayer.TOP_Y))
                                                                         .executes(ctx -> render(ctx, s -> StructureRender.section(ctx.getSource().getLevel(), origin(ctx),
                                                                                 StringArgumentType.getString(ctx, "axis").equals("x"), IntegerArgumentType.getInteger(ctx, "radius"),
                                                                                 IntegerArgumentType.getInteger(ctx, "y0"), IntegerArgumentType.getInteger(ctx, "y1"))))))))))
@@ -125,7 +127,7 @@ public final class StructureCommand
     private static SeabedStructures structures(CommandContext<CommandSourceStack> ctx)
     {
         SeabedStructures s = SeabedStructures.of(ctx.getSource().getLevel());
-        if (s == null) ctx.getSource().sendFailure(Component.literal("No seabed structures in this dimension (use it in abyssia:deep_ocean)"));
+        if (s == null) ctx.getSource().sendFailure(Component.literal("No seabed structures in this dimension (use it in the overworld's deep layer)"));
         else if (!Config.STRUCTURES_ENABLED.get()) ctx.getSource().sendSuccess(() -> Component.literal("Note: seabed_structures.enabled is false in the config").withStyle(ChatFormatting.YELLOW), false);
         return s;
     }

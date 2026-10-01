@@ -1,5 +1,6 @@
 package com.abyssia.entity;
 
+import com.abyssia.entity.ai.HomeLayer;
 import com.abyssia.entity.ai.SeabedRandomPos;
 import com.abyssia.fauna.CarrionScent;
 import com.abyssia.registry.ModSounds;
@@ -47,8 +48,9 @@ import java.util.UUID;
  * up it gorges, then rests for minutes (the real animal can fast for years). Hurt or crowded, it curls up behind its
  * calcareous armour. It never attacks.
  */
-public class GiantIsopod extends WaterAnimal implements FaunaAnimated
+public class GiantIsopod extends WaterAnimal implements FaunaAnimated, HomeLayer.Bound
 {
+    private final HomeLayer homeLayer = new HomeLayer();
     private static final int DEATH_TICKS = 44;
 
     private static final EntityDataAccessor<Boolean> CURLED = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.BOOLEAN);
@@ -111,6 +113,12 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated
     public FaunaAnimations animations()
     {
         return this.animations;
+    }
+
+    @Override
+    public HomeLayer homeLayer()
+    {
+        return this.homeLayer;
     }
 
     /** Long enough for the model's own death clip (vanilla removes the body after 20 ticks). */
@@ -218,6 +226,7 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated
     public void addAdditionalSaveData(CompoundTag tag)
     {
         super.addAdditionalSaveData(tag);
+        this.homeLayer.save(tag);
         tag.putInt("RestTicks", this.restTicks);
     }
 
@@ -225,6 +234,7 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated
     public void readAdditionalSaveData(CompoundTag tag)
     {
         super.readAdditionalSaveData(tag);
+        this.homeLayer.load(tag);
         this.restTicks = tag.getInt("RestTicks");
     }
 

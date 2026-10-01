@@ -1,6 +1,7 @@
 package com.abyssia.entity;
 
 import com.abyssia.entity.ai.FishLookControl;
+import com.abyssia.entity.ai.HomeLayer;
 import com.abyssia.entity.ai.SwimMoveControl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -32,8 +33,10 @@ import javax.annotation.Nullable;
  * A deep-sea fish: neutrally buoyant (it hangs in the water without sinking, as the watery, low-density bodies of
  * bathypelagic fishes do), steers by turning its whole body, and flops and slowly suffocates out of water.
  */
-public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimated
+public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimated, HomeLayer.Bound
 {
+    private final HomeLayer homeLayer = new HomeLayer();
+
     protected static final int DEATH_TICKS = 44;
     /**
      * Entity events 100..103: a species' own one-shot actions (a bite, a flick...), played by its model. Kept far above
@@ -65,6 +68,12 @@ public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimate
     public FaunaAnimations animations()
     {
         return this.animations;
+    }
+
+    @Override
+    public HomeLayer homeLayer()
+    {
+        return this.homeLayer;
     }
 
     /** Swimming rather than hanging still (drives the swim / idle clips). */
@@ -112,7 +121,7 @@ public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimate
     }
 
     /**
-     * Night at the surface (the deep ocean keeps the overworld's clock): migrators rise toward the shallow end of
+     * Night at the surface (the deep layer shares the overworld's clock): migrators rise toward the shallow end of
      * their range to feed and sink back by day.
      */
     public boolean isNightAbove()
@@ -137,6 +146,7 @@ public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimate
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData data,
                                         @Nullable CompoundTag tag)
     {
+        this.homeLayer.isDeep(this);
         if (this.homeRadius() > 0) this.setHome(this.blockPosition(), this.homeRadius());
         return super.finalizeSpawn(level, difficulty, reason, data, tag);
     }
@@ -177,6 +187,7 @@ public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimate
     public void addAdditionalSaveData(CompoundTag tag)
     {
         super.addAdditionalSaveData(tag);
+        this.homeLayer.save(tag);
         if (this.home != null)
         {
             tag.put("Home", NbtUtils.writeBlockPos(this.home));
@@ -188,6 +199,7 @@ public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimate
     public void readAdditionalSaveData(CompoundTag tag)
     {
         super.readAdditionalSaveData(tag);
+        this.homeLayer.load(tag);
         if (tag.contains("Home")) this.setHome(NbtUtils.readBlockPos(tag.getCompound("Home")), Math.max(4, tag.getInt("HomeRadius")));
     }
 
