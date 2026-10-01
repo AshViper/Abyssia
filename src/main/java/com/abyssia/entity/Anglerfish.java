@@ -69,11 +69,11 @@ public class Anglerfish extends DeepSeaSwimmer implements LureBearer
     }
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
     {
-        super.defineSynchedData();
-        this.entityData.define(MOOD, IDLE);
-        this.entityData.define(DIGESTING, false);
+        super.defineSynchedData(builder);
+        builder.define(MOOD, IDLE);
+        builder.define(DIGESTING, false);
     }
 
     @Override

@@ -17,10 +17,10 @@ import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import javax.annotation.Nullable;
 
@@ -54,7 +54,7 @@ public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
         super(type, level);
         this.moveClip = moveClip;
         this.setMaxUpStep(1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 0.0F);
+        this.setPathfindingMalus(PathType.WATER_BORDER, 0.0F);
     }
 
     @Override
@@ -129,12 +129,11 @@ public abstract class BenthicWalker extends WaterAnimal implements FaunaAnimated
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData data,
-                                        @Nullable CompoundTag tag)
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData data)
     {
         this.homeLayer.isDeep(this);
         if (this.homeRadius() > 0) this.setHome(this.blockPosition(), this.homeRadius());
-        return super.finalizeSpawn(level, difficulty, reason, data, tag);
+        return super.finalizeSpawn(level, difficulty, reason, data);
     }
 
 

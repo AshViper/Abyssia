@@ -17,9 +17,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -45,7 +46,7 @@ import java.util.Map;
  *     <li>{@code /abyssia structures stats}: painting time per chunk so far</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class StructureCommand
 {
     private static final int CHAT_LINES = 24;
@@ -225,7 +226,7 @@ public final class StructureCommand
                     .append((int) Math.hypot(c.x() - pos.getX(), c.z() - pos.getZ())).append(',').append(SeabedStructures.fmt(c.chance())).append(',')
                     .append('"').append(c.reason().replace('"', '\'')).append("\"\n");
         }
-        File dir = new File(level.getServer().getServerDirectory(), Abyssia.MODID + "_debug");
+        File dir = new File(level.getServer().getServerDirectory().toFile(), Abyssia.MODID + "_debug");
         if (!dir.isDirectory() && !dir.mkdirs()) throw new IOException("cannot create " + dir);
         File file = new File(dir, "structures_" + pos.getX() + "_" + pos.getZ() + ".csv");
         Files.writeString(file.toPath(), out);

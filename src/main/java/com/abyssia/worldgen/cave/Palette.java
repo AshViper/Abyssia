@@ -26,13 +26,13 @@ public final class Palette<T>
         double total = 0;
         for (int i = 0; i < entries.size(); i++)
         {
-            weights[i] = Math.max(0, entries.get(i).getWeight().asInt() * scale.applyAsDouble(entries.get(i).getData()));
+            weights[i] = Math.max(0, entries.get(i).getWeight().asInt() * scale.applyAsDouble(entries.get(i).data()));
             total += weights[i];
         }
         double sum = 0;
         for (int i = 0; i < entries.size(); i++)
         {
-            items[i] = entries.get(i).getData();
+            items[i] = entries.get(i).data();
             sum += weights[i];
             cumulative[i] = total > 0 ? sum / total : 1;
         }

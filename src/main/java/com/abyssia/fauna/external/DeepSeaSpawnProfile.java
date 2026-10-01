@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementType;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public record DeepSeaSpawnProfile(EntityType<?> entityType, ResourceLocation id,
                                   double weight, int minCount, int maxCount, FaunaSpawnRule.Depth depth, String depthLabel,
                                   FaunaSpawnRule.Placement placement, float caveFactor, int capCount, int capRadius,
                                   int clearance, int minPlayerDistance, boolean hostile,
-                                  SpawnPlacements.Type spawnPlacement, List<String> biomes, String source)
+                                  SpawnPlacementType spawnPlacement, List<String> biomes, String source)
 {
     private static final int MAX_CLEARANCE = 6;
 

@@ -9,9 +9,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -22,7 +23,7 @@ import java.util.List;
  * (an anglerfish's esca, a viperfish's dorsal ray), where the predator strikes. Not every fish takes the bait, and one that gave up ignores lures for
  * a while, so a lure thins a school rather than emptying the sea.
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class LureAttraction
 {
     private LureAttraction() {}

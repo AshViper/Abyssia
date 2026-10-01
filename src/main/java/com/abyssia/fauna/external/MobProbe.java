@@ -19,7 +19,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.trading.Merchant;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
@@ -95,7 +95,7 @@ public record MobProbe(boolean mob, @Nullable String exclusion, boolean waterBod
         {
             return new MobProbe(false, exclusion != null ? exclusion : "not a mob", false, false, Navigation.OTHER, 0, false, false, false, 0, 0, false, false);
         }
-        float waterMalus = mob.getPathfindingMalus(BlockPathTypes.WATER);
+        float waterMalus = mob.getPathfindingMalus(PathType.WATER);
         if (exclusion == null && waterMalus < 0) exclusion = "avoids water (pathfinding)";
         double attack = mob.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE) ? mob.getAttributeValue(Attributes.ATTACK_DAMAGE) : 0.0;
         return new MobProbe(true, exclusion,

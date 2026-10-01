@@ -64,11 +64,11 @@ public abstract class DriftingMedusa extends DeepSeaSwimmer
     }
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
     {
-        super.defineSynchedData();
-        this.entityData.define(STATE, (byte) 0);
-        this.entityData.define(FLASHES, (byte) 0);
+        super.defineSynchedData(builder);
+        builder.define(STATE, (byte) 0);
+        builder.define(FLASHES, (byte) 0);
     }
 
     @Override

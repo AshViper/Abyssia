@@ -51,10 +51,10 @@ public class Tubeworm extends WaterAnimal implements FaunaAnimated
     }
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
     {
-        super.defineSynchedData();
-        this.entityData.define(RETRACTED, false);
+        super.defineSynchedData(builder);
+        builder.define(RETRACTED, false);
     }
 
     public boolean isRetracted()

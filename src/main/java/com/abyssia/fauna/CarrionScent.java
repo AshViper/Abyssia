@@ -12,12 +12,13 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.Map;
  * (tag {@code abyssia:isopod_food}) sink to the seabed instead of floating up the whole water column as vanilla items
  * do. Server-side and transient: nothing is saved, a restart simply clears the tables.
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class CarrionScent
 {
     private static final int LIFETIME = 20 * 60 * 4;
@@ -106,9 +107,9 @@ public final class CarrionScent
 
     /** Runs after the entities have ticked: overrides the items' buoyancy with a slow sink. */
     @SubscribeEvent
-    public static void onLevelTick(TickEvent.LevelTickEvent event)
+    public static void onLevelTick(LevelTickEvent.Post event)
     {
-        if (event.phase != TickEvent.Phase.END || !(event.level instanceof ServerLevel level)) return;
+        if (!(event.getLevel() instanceof ServerLevel level)) return;
         List<ItemEntity> list = SINKING.get(level.dimension());
         if (list == null || list.isEmpty()) return;
         for (Iterator<ItemEntity> it = list.iterator(); it.hasNext(); )

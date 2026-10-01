@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredBlock;
 
 import java.util.List;
 
@@ -25,10 +25,10 @@ import java.util.List;
 final class CaveDecorationGenerator
 {
     private static final Direction[] HORIZONTAL = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
-    private static final List<RegistryObject<Block>> MINERAL_CLUSTER_LIST = List.of(ModBlocks.COBALT_CLUSTER, ModBlocks.NICKEL_CLUSTER,
+    private static final List<DeferredBlock<Block>> MINERAL_CLUSTER_LIST = List.of(ModBlocks.COBALT_CLUSTER, ModBlocks.NICKEL_CLUSTER,
             ModBlocks.MANGANESE_NODULES, ModBlocks.SULFUR_CLUSTER);
     @SuppressWarnings("unchecked")
-    private static final RegistryObject<Block>[] MINERAL_CLUSTERS = MINERAL_CLUSTER_LIST.toArray(new RegistryObject[0]);
+    private static final DeferredBlock<Block>[] MINERAL_CLUSTERS = MINERAL_CLUSTER_LIST.toArray(new DeferredBlock[0]);
 
     private CaveDecorationGenerator() {}
 

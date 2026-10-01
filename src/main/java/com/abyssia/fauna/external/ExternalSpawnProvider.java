@@ -23,19 +23,21 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -54,7 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link com.abyssia.fauna.FaunaSpawner}. Nothing here names another mod; everything comes from the registries.
  * <pre>
  * server start / datapack reload / config change
- *   -> every EntityType in ForgeRegistries.ENTITY_TYPES (minus Abyssia's own)
+ *   -> every EntityType in BuiltInRegistries.ENTITY_TYPE (minus Abyssia's own)
  *   -> probe instance + registry data + natural spawn evidence -> {@link OceanMobClassifier} (score, category)
  *   -> whitelist / blacklist / data rules -> {@link DeepSeaSpawnProfile}
  *   -> per deep-ocean biome: biome rule x category -> FaunaSpawnRule list          (one immutable snapshot)
@@ -65,7 +67,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * The snapshot is rebuilt as a whole and swapped in, never appended to, so repeated or overlapping triggers cannot
  * register an animal twice; the expensive part (probe instances) is cached for the game session.
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class ExternalSpawnProvider implements FaunaSpawnProvider
 {
     public static final ExternalSpawnProvider INSTANCE = new ExternalSpawnProvider();
@@ -185,13 +187,13 @@ public final class ExternalSpawnProvider implements FaunaSpawnProvider
         int minScore = ExternalFaunaConfig.MIN_SCORE.get();
         double weightMultiplier = ExternalFaunaConfig.WEIGHT_MULTIPLIER.get();
         int largeDistance = ExternalFaunaConfig.LARGE_MIN_DISTANCE.get();
-        if (ExternalFaunaConfig.DEBUG_LOG.get()) LOGGER.info("External fauna: scanning {} entity types", ForgeRegistries.ENTITY_TYPES.getKeys().size());
+        if (ExternalFaunaConfig.DEBUG_LOG.get()) LOGGER.info("External fauna: scanning {} entity types", BuiltInRegistries.ENTITY_TYPE.keySet().size());
 
         Map<EntityType<?>, OceanMobClassification> classifications = new LinkedHashMap<>();
         Map<EntityType<?>, DeepSeaSpawnProfile> profiles = new LinkedHashMap<>();
         Map<EntityType<?>, String> dropped = new LinkedHashMap<>();
         int detected = 0;
-        List<Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>>> entries = new ArrayList<>(ForgeRegistries.ENTITY_TYPES.getEntries());
+        List<Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>>> entries = new ArrayList<>(BuiltInRegistries.ENTITY_TYPE.entrySet());
         entries.sort(Comparator.comparing(e -> e.getKey().location()));
         for (Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : entries)
         {
@@ -346,7 +348,7 @@ public final class ExternalSpawnProvider implements FaunaSpawnProvider
         if (p.minPlayerDistance() > 0 && level.hasNearbyAlivePlayer(mob.getX(), mob.getY(), mob.getZ(), p.minPlayerDistance())) return false;
         BlockPos pos = mob.blockPosition();
         // swimmers registered for water spawns get vanilla's water placement check; seabed walkers are placed by the rule
-        if (p.spawnPlacement() == SpawnPlacements.Type.IN_WATER && !NaturalSpawner.isSpawnPositionOk(SpawnPlacements.Type.IN_WATER, level, pos, rule.entity()))
+        if (p.spawnPlacement() == SpawnPlacementTypes.IN_WATER && !SpawnPlacementTypes.IN_WATER.isSpawnPositionOk(level, pos, rule.entity()))
         {
             recordCheck(rule.entity(), false);
             return false;

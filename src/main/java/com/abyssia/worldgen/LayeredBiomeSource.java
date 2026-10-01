@@ -1,6 +1,7 @@
 package com.abyssia.worldgen;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -33,7 +34,7 @@ public class LayeredBiomeSource extends BiomeSource
                     : DataResult.error(() -> "abyssia:layered needs a minecraft:multi_noise biome source, got " + source),
             source -> source);
 
-    public static final Codec<LayeredBiomeSource> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<LayeredBiomeSource> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             MULTI_NOISE.fieldOf("upper").forGetter(s -> s.upper),
             MULTI_NOISE.fieldOf("lower").forGetter(s -> s.lower),
             Biome.CODEC.fieldOf("fissure_biome").forGetter(s -> s.fissureBiome),
@@ -74,7 +75,7 @@ public class LayeredBiomeSource extends BiomeSource
     }
 
     @Override
-    protected Codec<? extends BiomeSource> codec()
+    protected MapCodec<? extends BiomeSource> codec()
     {
         return CODEC;
     }

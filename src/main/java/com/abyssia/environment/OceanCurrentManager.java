@@ -12,6 +12,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.registries.Registries;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

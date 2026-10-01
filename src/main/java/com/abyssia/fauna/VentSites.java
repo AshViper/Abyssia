@@ -10,9 +10,10 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.WeakHashMap;
  * Where the vent cores are in a chunk, for the vent fauna's spawn attempts. Only sections whose block palette can
  * hold a vent core are scanned, and the answer is cached for a few minutes, so asking is cheap.
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class VentSites
 {
     private static final long FRESH_TICKS = 6000;

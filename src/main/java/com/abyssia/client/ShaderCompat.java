@@ -2,11 +2,12 @@ package com.abyssia.client;
 
 import com.abyssia.Abyssia;
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.lang.reflect.Method;
 
@@ -15,7 +16,7 @@ import java.lang.reflect.Method;
  * and read once per frame, since particles ask for every one of them. A shader pack replaces the vanilla fog and
  * lighting maths with its own, so effects that rely on them need a fallback.
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public final class ShaderCompat
 {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -32,9 +33,9 @@ public final class ShaderCompat
     }
 
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event)
+    public static void onRenderTick(RenderFrameEvent.Pre event)
     {
-        if (event.phase == TickEvent.Phase.START) active = query();
+        active = query();
     }
 
     private static boolean query()

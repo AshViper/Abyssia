@@ -17,10 +17,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ import java.util.TreeMap;
  * </pre>
  * Entity ids of mods that are not installed are ignored, so one datapack can cover many optional mods.
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class ExternalSpawnRules extends SimpleJsonResourceReloadListener
 {
     private static final Logger LOGGER = LogUtils.getLogger();

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -101,7 +101,7 @@ public record SpawnEvidence(int oceanListings, int deepOceanListings, int inland
         {
             boolean deep = biome.is(BiomeTags.IS_DEEP_OCEAN);
             boolean ocean = deep || biome.is(BiomeTags.IS_OCEAN);
-            return new Habitat(ocean, deep, ocean || biome.is(BiomeTags.IS_RIVER) || biome.is(Tags.Biomes.IS_WATER));
+            return new Habitat(ocean, deep, ocean || biome.is(BiomeTags.IS_RIVER) || biome.is(Tags.Biomes.IS_AQUATIC));
         }
 
         /** A structure's biomes: oceanic when any is, deep when every oceanic one is deep. */

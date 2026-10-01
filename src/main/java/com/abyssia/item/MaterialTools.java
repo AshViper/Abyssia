@@ -30,14 +30,14 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import java.util.List;
 import java.util.UUID;
@@ -68,13 +68,13 @@ public final class MaterialTools
     private static final UUID SUIT_SPEED = UUID.fromString("0f4f1c8e-6a52-4c0b-9d0e-2b7a31c5e7a1");
     private static final UUID SET_SPEED = UUID.fromString("7c1d2e44-3b9a-4f6e-8a15-5d9c0b2f6e83");
 
-    public static RegistryObject<Item> CRUSHING_HAMMER, COBALT_PICKAXE, COBALT_SHOVEL, MANGANESE_AXE, MANGANESE_SWORD,
+    public static DeferredItem<Item> CRUSHING_HAMMER, COBALT_PICKAXE, COBALT_SHOVEL, MANGANESE_AXE, MANGANESE_SWORD,
             MOLYBDENUM_PICKAXE, TUNGSTEN_PICKAXE, TUNGSTEN_AXE, CRYSTAL_PICKAXE, ABYSSAL_DRILL, ABYSSAL_CUTTER,
             DIVE_TANK, DIVING_SUIT_LEGGINGS, PRESSURE_DIVER_HELMET;
 
     private MaterialTools() {}
 
-    public static void register(DeferredRegister<Item> items, List<RegistryObject<? extends Item>> tab)
+    public static void register(DeferredRegister.Items items, List<DeferredItem<? extends Item>> tab)
     {
         CRUSHING_HAMMER = add(items, tab, "crushing_hammer", () -> new CrushingHammerItem(props(Rarity.COMMON).durability(250), 2, -3.0));
         COBALT_PICKAXE = add(items, tab, "cobalt_pickaxe", () -> new PickaxeItem(COBALT, 1, -2.6F, props(Rarity.UNCOMMON)));
@@ -93,7 +93,7 @@ public final class MaterialTools
         // Smithing upgrade of deep_diver_helmet: same breathing / night vision; tag abyssia:pressure_proof marks it for
         // the future hadal pressure damage.
         PRESSURE_DIVER_HELMET = add(items, tab, "pressure_diver_helmet", () -> new ModTools.DiverHelmet(PRESSURE, ArmorItem.Type.HELMET, props(Rarity.EPIC)));
-        MinecraftForge.EVENT_BUS.register(MaterialTools.class);
+        NeoForge.EVENT_BUS.register(MaterialTools.class);
     }
 
     private static Item.Properties props(Rarity rarity)
@@ -101,10 +101,10 @@ public final class MaterialTools
         return new Item.Properties().rarity(rarity);
     }
 
-    private static RegistryObject<Item> add(DeferredRegister<Item> items, List<RegistryObject<? extends Item>> tab,
+    private static DeferredItem<Item> add(DeferredRegister.Items items, List<DeferredItem<? extends Item>> tab,
                                             String id, Supplier<Item> factory)
     {
-        RegistryObject<Item> result = items.register(id, factory);
+        DeferredItem<Item> result = items.register(id, factory);
         tab.add(result);
         return result;
     }
@@ -144,7 +144,7 @@ public final class MaterialTools
 
     /** heat_guard: fire, lava, magma / hot floor (and vents) hurt half as much while a molybdenum pickaxe is held. */
     @SubscribeEvent
-    public static void hurt(LivingHurtEvent event)
+    public static void hurt(LivingIncomingDamageEvent event)
     {
         if (!event.getSource().is(DamageTypeTags.IS_FIRE)) return;
         LivingEntity entity = event.getEntity();
@@ -154,11 +154,11 @@ public final class MaterialTools
 
     /** Diving set (any diver helmet + tank + suit leggings + abyssal flippers): +10% swim speed while worn. */
     @SubscribeEvent
-    public static void playerTick(TickEvent.PlayerTickEvent event)
+    public static void playerTick(PlayerTickEvent.Post event)
     {
-        if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
-        Player player = event.player;
-        AttributeInstance swim = player.getAttribute(ForgeMod.SWIM_SPEED.get());
+        Player player = event.getEntity();
+        if (player.level().isClientSide) return;
+        AttributeInstance swim = player.getAttribute(NeoForgeMod.SWIM_SPEED);
         if (swim == null) return;
         ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
         boolean full = (head.is(ModTools.DIVER_HELMET.get()) || head.is(PRESSURE_DIVER_HELMET.get()))
@@ -167,7 +167,7 @@ public final class MaterialTools
                 && player.getItemBySlot(EquipmentSlot.FEET).is(ModTools.FLIPPERS.get());
         boolean has = swim.getModifier(SET_SPEED) != null;
         if (full && !has)
-            swim.addTransientModifier(new AttributeModifier(SET_SPEED, "Abyssia diving set swim speed", 0.10, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            swim.addTransientModifier(new AttributeModifier(SET_SPEED, "Abyssia diving set swim speed", 0.10, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         else if (!full && has)
             swim.removeModifier(SET_SPEED);
     }
@@ -181,7 +181,7 @@ public final class MaterialTools
         public void onInventoryTick(ItemStack stack, Level level, Player player, int slot, int selected)
         {
             if (stack != player.getItemBySlot(EquipmentSlot.CHEST)) return;
-            if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()))
+            if (player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()))
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 220, 0, true, false));
         }
     }
@@ -199,7 +199,7 @@ public final class MaterialTools
             if (slot != EquipmentSlot.LEGS) return base;
             ImmutableMultimap.Builder<Attribute, AttributeModifier> b = ImmutableMultimap.builder();
             b.putAll(base);
-            b.put(ForgeMod.SWIM_SPEED.get(), new AttributeModifier(SUIT_SPEED, "Diving suit swim speed", 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            b.put(NeoForgeMod.SWIM_SPEED, new AttributeModifier(SUIT_SPEED, "Diving suit swim speed", 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
             return b.build();
         }
     }

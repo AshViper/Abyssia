@@ -76,7 +76,7 @@ import java.util.Set;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 /** Model layers and renderers of the species in {@link GeneratedFauna}. Client only: called from ModEntityRenderers. */
 public final class GeneratedFaunaRenderers

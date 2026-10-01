@@ -48,10 +48,10 @@ public class SwimmingSeaCucumber extends DeepSeaSwimmer
     }
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
     {
-        super.defineSynchedData();
-        this.entityData.define(PHASE, SETTLED);
+        super.defineSynchedData(builder);
+        builder.define(PHASE, SETTLED);
     }
 
     public byte phase()

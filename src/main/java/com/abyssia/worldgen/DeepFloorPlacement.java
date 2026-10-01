@@ -1,6 +1,7 @@
 package com.abyssia.worldgen;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.WorldGenRegion;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 public class DeepFloorPlacement extends PlacementModifier
 {
     public static final DeepFloorPlacement INSTANCE = new DeepFloorPlacement();
-    public static final Codec<DeepFloorPlacement> CODEC = Codec.unit(() -> INSTANCE);
+    public static final MapCodec<DeepFloorPlacement> CODEC = MapCodec.unit(() -> INSTANCE);
 
     private static final int UNKNOWN = Integer.MIN_VALUE;
     private static final ThreadLocal<Cache> CACHE = ThreadLocal.withInitial(Cache::new);

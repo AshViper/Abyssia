@@ -143,12 +143,11 @@ public abstract class DeepSeaSwimmer extends WaterAnimal implements FaunaAnimate
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData data,
-                                        @Nullable CompoundTag tag)
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData data)
     {
         this.homeLayer.isDeep(this);
         if (this.homeRadius() > 0) this.setHome(this.blockPosition(), this.homeRadius());
-        return super.finalizeSpawn(level, difficulty, reason, data, tag);
+        return super.finalizeSpawn(level, difficulty, reason, data);
     }
 
 

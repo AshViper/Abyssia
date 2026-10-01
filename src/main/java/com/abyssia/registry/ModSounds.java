@@ -3,10 +3,10 @@ package com.abyssia.registry;
 import com.abyssia.Abyssia;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,29 +17,29 @@ import java.util.Map;
  */
 public final class ModSounds
 {
-    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Abyssia.MODID);
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, Abyssia.MODID);
 
-    public static final RegistryObject<SoundEvent> ANGLERFISH_AMBIENT = sound("entity.anglerfish.ambient");
-    public static final RegistryObject<SoundEvent> ANGLERFISH_HURT = sound("entity.anglerfish.hurt");
-    public static final RegistryObject<SoundEvent> ANGLERFISH_DEATH = sound("entity.anglerfish.death");
-    public static final RegistryObject<SoundEvent> ANGLERFISH_THREAT = sound("entity.anglerfish.threat");
-    public static final RegistryObject<SoundEvent> ANGLERFISH_SNAP = sound("entity.anglerfish.snap");
-    public static final RegistryObject<SoundEvent> ANGLERFISH_FLOP = sound("entity.anglerfish.flop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANGLERFISH_AMBIENT = sound("entity.anglerfish.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANGLERFISH_HURT = sound("entity.anglerfish.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANGLERFISH_DEATH = sound("entity.anglerfish.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANGLERFISH_THREAT = sound("entity.anglerfish.threat");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANGLERFISH_SNAP = sound("entity.anglerfish.snap");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANGLERFISH_FLOP = sound("entity.anglerfish.flop");
 
-    public static final RegistryObject<SoundEvent> GIANT_ISOPOD_AMBIENT = sound("entity.giant_isopod.ambient");
-    public static final RegistryObject<SoundEvent> GIANT_ISOPOD_STEP = sound("entity.giant_isopod.step");
-    public static final RegistryObject<SoundEvent> GIANT_ISOPOD_HURT = sound("entity.giant_isopod.hurt");
-    public static final RegistryObject<SoundEvent> GIANT_ISOPOD_DEATH = sound("entity.giant_isopod.death");
-    public static final RegistryObject<SoundEvent> GIANT_ISOPOD_CURL = sound("entity.giant_isopod.curl");
-    public static final RegistryObject<SoundEvent> GIANT_ISOPOD_EAT = sound("entity.giant_isopod.eat");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GIANT_ISOPOD_AMBIENT = sound("entity.giant_isopod.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GIANT_ISOPOD_STEP = sound("entity.giant_isopod.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GIANT_ISOPOD_HURT = sound("entity.giant_isopod.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GIANT_ISOPOD_DEATH = sound("entity.giant_isopod.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GIANT_ISOPOD_CURL = sound("entity.giant_isopod.curl");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GIANT_ISOPOD_EAT = sound("entity.giant_isopod.eat");
 
-    public static final RegistryObject<SoundEvent> GULPER_EEL_AMBIENT = sound("entity.gulper_eel.ambient");
-    public static final RegistryObject<SoundEvent> GULPER_EEL_GULP = sound("entity.gulper_eel.gulp");
-    public static final RegistryObject<SoundEvent> GULPER_EEL_INFLATE = sound("entity.gulper_eel.inflate");
-    public static final RegistryObject<SoundEvent> GULPER_EEL_DEFLATE = sound("entity.gulper_eel.deflate");
-    public static final RegistryObject<SoundEvent> GULPER_EEL_HURT = sound("entity.gulper_eel.hurt");
-    public static final RegistryObject<SoundEvent> GULPER_EEL_DEATH = sound("entity.gulper_eel.death");
-    public static final RegistryObject<SoundEvent> GULPER_EEL_FLOP = sound("entity.gulper_eel.flop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GULPER_EEL_AMBIENT = sound("entity.gulper_eel.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GULPER_EEL_GULP = sound("entity.gulper_eel.gulp");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GULPER_EEL_INFLATE = sound("entity.gulper_eel.inflate");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GULPER_EEL_DEFLATE = sound("entity.gulper_eel.deflate");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GULPER_EEL_HURT = sound("entity.gulper_eel.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GULPER_EEL_DEATH = sound("entity.gulper_eel.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GULPER_EEL_FLOP = sound("entity.gulper_eel.flop");
 
     public static final Voice VIPERFISH = voice("viperfish", "ambient", "hurt", "death", "flop", "snap");
     public static final Voice GOBLIN_SHARK = voice("goblin_shark", "ambient", "hurt", "death", "flop", "bite");
@@ -65,7 +65,7 @@ public final class ModSounds
     /** The sound events of one animal by kind: entity.&lt;animal&gt;.&lt;kind&gt;. */
     public static final class Voice
     {
-        private final Map<String, RegistryObject<SoundEvent>> events = new HashMap<>();
+        private final Map<String, DeferredHolder<SoundEvent, SoundEvent>> events = new HashMap<>();
 
         public SoundEvent get(String kind)
         {
@@ -90,7 +90,7 @@ public final class ModSounds
         SOUNDS.register(modBus);
     }
 
-    private static RegistryObject<SoundEvent> sound(String name)
+    private static DeferredHolder<SoundEvent, SoundEvent> sound(String name)
     {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, name)));
     }

@@ -14,10 +14,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ import java.util.List;
  *     spawn checks)</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class ExternalFaunaCommand
 {
     private ExternalFaunaCommand() {}
@@ -45,7 +46,7 @@ public final class ExternalFaunaCommand
                         .executes(ExternalFaunaCommand::summary)
                         .then(Commands.literal("entity")
                                 .then(Commands.argument("id", ResourceLocationArgument.id())
-                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITY_TYPES.getKeys(), builder))
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(BuiltInRegistries.ENTITY_TYPE.keySet(), builder))
                                         .executes(ExternalFaunaCommand::entity)))
                         .then(Commands.literal("here").executes(ExternalFaunaCommand::here))
                         .then(Commands.literal("rescan").executes(ExternalFaunaCommand::rescan)))));
@@ -69,8 +70,8 @@ public final class ExternalFaunaCommand
     private static int entity(CommandContext<CommandSourceStack> ctx)
     {
         ResourceLocation id = ResourceLocationArgument.getId(ctx, "id");
-        EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(id);
-        if (type == null || !ForgeRegistries.ENTITY_TYPES.containsKey(id))
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(id);
+        if (type == null || !BuiltInRegistries.ENTITY_TYPE.containsKey(id))
         {
             say(ctx, "No entity type " + id);
             return 0;

@@ -13,7 +13,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -36,7 +36,7 @@ final class CaveDebugRender
 
     private static File output(ServerLevel level, String name) throws IOException
     {
-        File dir = new File(level.getServer().getServerDirectory(), Abyssia.MODID + "_debug");
+        File dir = new File(level.getServer().getServerDirectory().toFile(), Abyssia.MODID + "_debug");
         if (!dir.isDirectory() && !dir.mkdirs()) throw new IOException("Cannot create " + dir);
         return new File(dir, name);
     }
@@ -192,7 +192,7 @@ final class CaveDebugRender
                     else if (state.is(Blocks.WATER)) key = "water";
                     else
                     {
-                        var id = ForgeRegistries.BLOCKS.getKey(state.getBlock());
+                        var id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
                         if (id == null || !id.getNamespace().equals(Abyssia.MODID)) key = id == null ? "?" : id.toString();
                         else key = id.getPath();
                     }

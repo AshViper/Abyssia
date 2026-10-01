@@ -109,7 +109,7 @@ final class StructureRender
 
     private static String write(ServerLevel level, BufferedImage img, String name) throws IOException
     {
-        File dir = new File(level.getServer().getServerDirectory(), Abyssia.MODID + "_debug");
+        File dir = new File(level.getServer().getServerDirectory().toFile(), Abyssia.MODID + "_debug");
         if (!dir.isDirectory() && !dir.mkdirs()) throw new IOException("cannot create " + dir);
         File file = new File(dir, name + ".png");
         ImageIO.write(img, "png", file);

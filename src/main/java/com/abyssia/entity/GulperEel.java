@@ -65,10 +65,10 @@ public class GulperEel extends DeepSeaSwimmer
     }
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
     {
-        super.defineSynchedData();
-        this.entityData.define(MOOD, CRUISE);
+        super.defineSynchedData(builder);
+        builder.define(MOOD, CRUISE);
     }
 
     @Override

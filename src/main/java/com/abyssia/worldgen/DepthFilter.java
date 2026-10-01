@@ -2,6 +2,7 @@ package com.abyssia.worldgen;
 
 import com.abyssia.fauna.DepthZone;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
  */
 public class DepthFilter extends PlacementFilter
 {
-    public static final Codec<DepthFilter> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<DepthFilter> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Codec.INT.fieldOf("min_depth").forGetter(f -> f.minDepth),
             Codec.INT.fieldOf("max_depth").forGetter(f -> f.maxDepth)
     ).apply(i, DepthFilter::new));

@@ -3,32 +3,32 @@ package com.abyssia.registry;
 import com.abyssia.Abyssia;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 /** Particle types are registered on both sides; their rendering lives in the client package. */
 public final class ModParticles
 {
-    public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, Abyssia.MODID);
+    public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(Registries.PARTICLE_TYPE, Abyssia.MODID);
 
-    public static final RegistryObject<SimpleParticleType> MARINE_SNOW = simple("marine_snow");
-    public static final RegistryObject<SimpleParticleType> DEEP_MARINE_SNOW = simple("deep_marine_snow");
-    public static final RegistryObject<SimpleParticleType> ABYSSAL_MARINE_SNOW = simple("abyssal_marine_snow");
-    public static final RegistryObject<SimpleParticleType> BIOLUMINESCENT_SNOW = simple("bioluminescent_snow");
-    public static final RegistryObject<SimpleParticleType> SEDIMENT = simple("sediment");
-    public static final RegistryObject<SimpleParticleType> THERMAL_VENT = simple("thermal_vent");
-    public static final RegistryObject<SimpleParticleType> VOLCANIC_ASH = simple("volcanic_ash");
-    public static final RegistryObject<SimpleParticleType> BLACK_SMOKE = simple("black_smoke");
-    public static final RegistryObject<SimpleParticleType> WHITE_SMOKE = simple("white_smoke");
-    public static final RegistryObject<SimpleParticleType> MINERAL_PARTICLE = simple("mineral_particle");
-    public static final RegistryObject<SimpleParticleType> SPORE = simple("spore");
-    public static final RegistryObject<SimpleParticleType> GLOW_DUST = simple("glow_dust");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> MARINE_SNOW = simple("marine_snow");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DEEP_MARINE_SNOW = simple("deep_marine_snow");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> ABYSSAL_MARINE_SNOW = simple("abyssal_marine_snow");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BIOLUMINESCENT_SNOW = simple("bioluminescent_snow");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> SEDIMENT = simple("sediment");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> THERMAL_VENT = simple("thermal_vent");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> VOLCANIC_ASH = simple("volcanic_ash");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLACK_SMOKE = simple("black_smoke");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> WHITE_SMOKE = simple("white_smoke");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> MINERAL_PARTICLE = simple("mineral_particle");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> SPORE = simple("spore");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> GLOW_DUST = simple("glow_dust");
 
     private ModParticles() {}
 
-    private static RegistryObject<SimpleParticleType> simple(String name)
+    private static DeferredHolder<ParticleType<?>, SimpleParticleType> simple(String name)
     {
         return PARTICLES.register(name, () -> new SimpleParticleType(false));
     }

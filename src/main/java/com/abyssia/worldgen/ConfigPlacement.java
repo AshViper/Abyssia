@@ -2,6 +2,7 @@ package com.abyssia.worldgen;
 
 import com.abyssia.Config;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -28,11 +29,11 @@ public class ConfigPlacement extends PlacementModifier
             "crystals", () -> Config.CRYSTAL_FIELDS.get() ? 1 : 0,
             "thermal_vents", () -> Config.THERMAL_VENTS.get() ? 1 : 0);
 
-    public static final Codec<ConfigPlacement> CODEC = Codec.STRING.comapFlatMap(
+    public static final MapCodec<ConfigPlacement> CODEC = Codec.STRING.comapFlatMap(
             option -> OPTIONS.containsKey(option)
                     ? DataResult.success(new ConfigPlacement(option))
                     : DataResult.error(() -> "Unknown abyssia config option: " + option),
-            p -> p.option).fieldOf("option").codec();
+            p -> p.option).fieldOf("option");
 
     private final String option;
 

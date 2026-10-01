@@ -12,17 +12,18 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredItem;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,11 +41,11 @@ public final class ModTools {
         public Ingredient getRepairIngredient() { return Ingredient.of(com.abyssia.registry.ModItems.VANADIUM_INGOT.get()); }
     };
     private static final ArmorMaterial ARMOR = new AlloyArmor();
-    public static RegistryObject<Item> PICKAXE, AXE, SHOVEL, HOE, SWORD, DIVER_HELMET, FLIPPERS;
+    public static DeferredItem<Item> PICKAXE, AXE, SHOVEL, HOE, SWORD, DIVER_HELMET, FLIPPERS;
     private static final UUID FLIPPER_SPEED = UUID.fromString("5a263d78-60c7-4a32-aeeb-44c859a4682c");
     private ModTools() {}
 
-    public static void register(DeferredRegister<Item> items, List<RegistryObject<? extends Item>> tab) {
+    public static void register(DeferredRegister.Items items, List<DeferredItem<? extends Item>> tab) {
         PICKAXE = add(items, tab, "abyssal_alloy_pickaxe", () -> new PickaxeItem(ALLOY, 1, -2.8F, new Item.Properties()));
         AXE = add(items, tab, "abyssal_alloy_axe", () -> new AxeItem(ALLOY, 5.5F, -3.0F, new Item.Properties()));
         SHOVEL = add(items, tab, "abyssal_alloy_shovel", () -> new ShovelItem(ALLOY, 1.5F, -3.0F, new Item.Properties()));
@@ -52,12 +53,12 @@ public final class ModTools {
         SWORD = add(items, tab, "abyssal_alloy_sword", () -> new SwordItem(ALLOY, 3, -2.4F, new Item.Properties()));
         DIVER_HELMET = add(items, tab, "deep_diver_helmet", () -> new DiverHelmet(ARMOR, ArmorItem.Type.HELMET, new Item.Properties()));
         FLIPPERS = add(items, tab, "abyssal_flippers", () -> new Flippers(ARMOR, ArmorItem.Type.BOOTS, new Item.Properties()));
-        MinecraftForge.EVENT_BUS.register(ModTools.class);
+        NeoForge.EVENT_BUS.register(ModTools.class);
     }
 
-    private static RegistryObject<Item> add(DeferredRegister<Item> items, List<RegistryObject<? extends Item>> tab,
+    private static DeferredItem<Item> add(DeferredRegister.Items items, List<DeferredItem<? extends Item>> tab,
                                              String id, java.util.function.Supplier<Item> factory) {
-        RegistryObject<Item> result = items.register(id, factory); tab.add(result); return result;
+        DeferredItem<Item> result = items.register(id, factory); tab.add(result); return result;
     }
 
     @SubscribeEvent public static void breakSpeed(PlayerEvent.BreakSpeed event) {
@@ -67,7 +68,7 @@ public final class ModTools {
         // swimming while off the ground (the usual case) needs x25 to fully cancel both.
         // No water bonus with Aqua Affinity: there is no penalty to restore there.
         float mult = 1.0F;
-        if (player.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get())
+        if (player.isEyeInFluidType(net.neoforged.neoforge.common.NeoForgeMod.WATER_TYPE.value())
                 && !net.minecraft.world.item.enchantment.EnchantmentHelper.hasAquaAffinity(player))
             mult *= 5.0F;
         if (!player.onGround()) mult *= 5.0F;
@@ -81,7 +82,7 @@ public final class ModTools {
         // non-deprecated onInventoryTick instead and only act while actually worn.
         @Override public void onInventoryTick(ItemStack stack, net.minecraft.world.level.Level level, Player player, int slot, int selected) {
             if (stack != player.getItemBySlot(EquipmentSlot.HEAD)) return;
-            if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) {
+            if (player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) {
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 220, 0, true, false));
                 if (com.abyssia.Config.DIVER_HELMET_NIGHT_VISION.get())
                     player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 220, 0, true, false));
@@ -100,7 +101,7 @@ public final class ModTools {
             if (slot != EquipmentSlot.FEET) return base;
             ImmutableMultimap.Builder<Attribute, AttributeModifier> b = ImmutableMultimap.builder();
             b.putAll(base);
-            b.put(ForgeMod.SWIM_SPEED.get(), new AttributeModifier(FLIPPER_SPEED, "Abyssal flipper swim speed", 0.35, Operation.MULTIPLY_TOTAL));
+            b.put(NeoForgeMod.SWIM_SPEED, new AttributeModifier(FLIPPER_SPEED, "Abyssal flipper swim speed", 0.35, Operation.ADD_MULTIPLIED_TOTAL));
             return b.build();
         }
     }

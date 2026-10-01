@@ -31,9 +31,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -73,7 +73,7 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated, HomeLayer
     {
         super(type, level);
         this.setMaxUpStep(1.0F);
-        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 0.0F);
+        this.setPathfindingMalus(PathType.WATER_BORDER, 0.0F);
     }
 
     public static AttributeSupplier.Builder createAttributes()
@@ -83,11 +83,11 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated, HomeLayer
     }
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
     {
-        super.defineSynchedData();
-        this.entityData.define(CURLED, false);
-        this.entityData.define(FEEDING, false);
+        super.defineSynchedData(builder);
+        builder.define(CURLED, false);
+        builder.define(FEEDING, false);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class GiantIsopod extends WaterAnimal implements FaunaAnimated, HomeLayer
             AttributeInstance armor = self.getAttribute(Attributes.ARMOR);
             if (armor != null && armor.getModifier(CURL_ARMOR) == null)
             {
-                armor.addTransientModifier(new AttributeModifier(CURL_ARMOR, "Curled up", 6.0, AttributeModifier.Operation.ADDITION));
+                armor.addTransientModifier(new AttributeModifier(CURL_ARMOR, "Curled up", 6.0, AttributeModifier.Operation.ADD_VALUE));
             }
         }
 

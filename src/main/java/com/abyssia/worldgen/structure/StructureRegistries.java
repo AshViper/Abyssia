@@ -4,15 +4,16 @@ import com.abyssia.Abyssia;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DataPackRegistryEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 /**
  * Datapack registries for biome-specific seabed structures, loaded with the other worldgen registries when a world
  * loads (server-side only), so a datapack can retune, add or remove structures and profiles without code.
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD)
 public final class StructureRegistries
 {
     public static final ResourceKey<Registry<SeabedStructure>> STRUCTURES = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "seabed_structure"));

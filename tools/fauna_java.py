@@ -158,8 +158,8 @@ def registry_java(entries):
     used = sorted({CLASSES[e["java"].get("kind", "swimmer")] for e in entries} | ({"SwimmerTraits"} if any(e["java"].get("kind", "swimmer") == "swimmer" for e in entries) else set()))
     L += [f"import com.abyssia.entity.{c};" for c in used]
     L += ["import net.minecraft.tags.TagKey;", "import net.minecraft.world.entity.EntityType;", "import net.minecraft.world.entity.MobCategory;",
-          "import net.minecraft.world.item.Item;", "import net.minecraftforge.event.entity.EntityAttributeCreationEvent;",
-          "import net.minecraftforge.registries.RegistryObject;", "", "import java.util.List;", ""]
+          "import net.minecraft.world.item.Item;", "import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;",
+          "import net.neoforged.neoforge.registries.DeferredHolder;", "import net.neoforged.neoforge.registries.DeferredItem;", "", "import java.util.List;", ""]
     L += ["/**", " * Registration of the species added through tools/fauna/&lt;id&gt;.py INFO[\"java\"] (data-driven entity classes).",
           " * Everything registers in static initialisers; {@link #init()} only forces the class to load from the mod constructor.",
           " */", "@SuppressWarnings(\"unused\")", "public final class GeneratedFauna", "{", "    private GeneratedFauna() {}", "",
@@ -180,12 +180,12 @@ def registry_java(entries):
             L.append(f"    public static final SwimmerTraits {c}_TRAITS = {traits_expr(name, j, c + '_VOICE')};")
         cls = CLASSES[kind]
         w, h = j["hitbox"]
-        L.append(f"    public static final RegistryObject<EntityType<{cls}>> {c} = ModEntities.ENTITIES.register(\"{name}\",")
+        L.append(f"    public static final DeferredHolder<EntityType<?>, EntityType<{cls}>> {c} = ModEntities.ENTITIES.register(\"{name}\",")
         L.append(f"            () -> EntityType.Builder.<{cls}>of({factory(name, j)}, MobCategory.WATER_CREATURE)")
         L.append(f"                    .sized({f(w)}, {f(h)}).clientTrackingRange({int(j.get('tracking', 8))}).build(\"{name}\"));")
         bg, hi = s.INFO["egg"]
         hexc = lambda c: f"0x{c:06X}" if isinstance(c, int) else "0x" + str(c).lstrip("#").upper()
-        L.append(f"    public static final RegistryObject<Item> {c}_SPAWN_EGG = ModItems.spawnEgg(\"{name}_spawn_egg\", {c}, {hexc(bg)}, {hexc(hi)});")
+        L.append(f"    public static final DeferredItem<Item> {c}_SPAWN_EGG = ModItems.spawnEgg(\"{name}_spawn_egg\", {c}, {hexc(bg)}, {hexc(hi)});")
         L.append("")
     L.append("    public static void attributes(EntityAttributeCreationEvent event)")
     L.append("    {")
@@ -194,7 +194,7 @@ def registry_java(entries):
     L.append("    }")
     L.append("")
     L.append("    /** Entity types for the spawn placement registration (in water; the fauna spawner does the rest). */")
-    L.append("    public static List<RegistryObject<? extends EntityType<?>>> types()")
+    L.append("    public static List<DeferredHolder<EntityType<?>, ? extends EntityType<?>>> types()")
     L.append("    {")
     L.append("        return List.of(" + ", ".join(const(e["name"]) for e in entries) + ");")
     L.append("    }")
@@ -205,7 +205,7 @@ def registry_java(entries):
 def renderers_java(entries, outputs):
     L = [HEADER, "package com.abyssia.client.entity;", ""]
     imports = {"com.abyssia.Abyssia", "com.abyssia.registry.GeneratedFauna", "net.minecraft.client.model.geom.ModelLayerLocation",
-               "net.minecraft.resources.ResourceLocation", "net.minecraft.util.Mth", "net.minecraftforge.client.event.EntityRenderersEvent",
+               "net.minecraft.resources.ResourceLocation", "net.minecraft.util.Mth", "net.neoforged.neoforge.client.event.EntityRenderersEvent",
                "java.util.List", "java.util.Map", "java.util.Set"}
     for e in entries:
         p = pascal(e["name"])

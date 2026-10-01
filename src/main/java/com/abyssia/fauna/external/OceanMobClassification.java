@@ -4,6 +4,7 @@ import com.abyssia.fauna.FaunaSpawnRule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementType;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public record OceanMobClassification(EntityType<?> type, ResourceLocation id, int score, List<String> reasons,
                                      @Nullable String exclusion, DeepSeaSpawnCategory category,
-                                     SpawnPlacements.Type placement, FaunaSpawnRule.Placement where,
+                                     SpawnPlacementType placement, FaunaSpawnRule.Placement where,
                                      boolean airBreather, boolean hostile, boolean despawns, float extent,
                                      float maxHealth, SpawnEvidence evidence, boolean examined)
 {

@@ -22,8 +22,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.Tags;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 import javax.annotation.Nullable;
 
@@ -79,7 +79,7 @@ public class ResourcePlantBlock extends UnderwaterPlantBlock
         if (level instanceof ServerLevel server)
         {
             ItemStack tool = player.getItemInHand(hand);
-            ResourceLocation id = ForgeRegistries.BLOCKS.getKey(this);
+            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(this);
             LootParams params = new LootParams.Builder(server)
                     .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                     .withParameter(LootContextParams.TOOL, tool)
@@ -88,7 +88,7 @@ public class ResourcePlantBlock extends UnderwaterPlantBlock
                     .create(LootContextParamSets.BLOCK);
             server.getServer().getLootData().getLootTable(id.withPrefix("harvest/")).getRandomItems(params)
                     .forEach(stack -> popResource(level, pos, stack));
-            if (tool.is(Tags.Items.SHEARS)) tool.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+            if (tool.is(Tags.Items.TOOLS_SHEAR)) tool.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
             level.setBlock(pos, state.setValue(RIPE, false), 2);
             level.playSound(null, pos, SoundEvents.CAVE_VINES_PICK_BERRIES, SoundSource.BLOCKS, 1.0f, 0.8f + level.random.nextFloat() * 0.4f);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, state));

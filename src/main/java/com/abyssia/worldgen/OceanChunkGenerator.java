@@ -9,6 +9,7 @@ import com.abyssia.worldgen.structure.SeabedStructures;
 import com.abyssia.worldgen.terrain.VanillaTerrainFallback;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.HashCommon;
 import it.unimi.dsi.fastutil.shorts.ShortList;
@@ -42,10 +43,10 @@ import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -70,15 +71,12 @@ import java.util.function.Supplier;
  */
 public class OceanChunkGenerator extends NoiseBasedChunkGenerator
 {
-    public static final Codec<OceanChunkGenerator> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<OceanChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource),
             NoiseGeneratorSettings.CODEC.fieldOf("settings").forGetter(NoiseBasedChunkGenerator::generatorSettings),
             Codec.BOOL.optionalFieldOf("vanilla_fluids", false).forGetter(g -> g.vanillaFluids),
             DensityFunction.CODEC.optionalFieldOf("fluid_zone").forGetter(g -> g.fluidZone)
     ).apply(i, i.stable(OceanChunkGenerator::new)));
-
-    // NoiseBasedChunkGenerator.globalFluidPicker
-    private static final String FLUID_PICKER_FIELD = "f_188607_";
 
     private volatile CaveNetwork caveNetwork;
     private volatile SeabedStructures seabedStructures;
@@ -109,7 +107,8 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
             int lavaBelow = Math.min(VANILLA_LAVA_LEVEL, s.seaLevel());
             return (x, y, z) -> y > DeepLayer.TOP_Y && y < lavaBelow && fissureZone(x, z) <= 0 ? lava : fluid;
         });
-        ObfuscationReflectionHelper.setPrivateValue(NoiseBasedChunkGenerator.class, this, picker, FLUID_PICKER_FIELD);
+        // NoiseBasedChunkGenerator.globalFluidPicker, made public non-final by META-INF/accesstransformer.cfg
+        this.globalFluidPicker = picker;
     }
 
     // ---------------------------------------------------------------- vanilla fluids: the fissure zone
@@ -237,7 +236,7 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
         return super.getBaseColumn(x, z, level, randomState);
     }
 
-    @Mod.EventBusSubscriber(modid = Abyssia.MODID)
+    @EventBusSubscriber(modid = Abyssia.MODID)
     public static final class Events
     {
         private Events() {}
@@ -432,7 +431,7 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
     }
 
     @Override
-    protected Codec<? extends ChunkGenerator> codec()
+    protected MapCodec<? extends ChunkGenerator> codec()
     {
         return CODEC;
     }

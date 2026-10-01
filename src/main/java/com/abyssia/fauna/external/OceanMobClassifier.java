@@ -6,7 +6,9 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraftforge.common.Tags;
+import net.minecraft.world.entity.SpawnPlacementType;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -81,9 +83,9 @@ public final class OceanMobClassifier
             default -> 0; // MONSTER: says nothing either way (guardians, drowned, zombies)
         }, "category " + mobCategory.getName());
 
-        SpawnPlacements.Type placement = SpawnPlacements.getPlacementType(type);
-        if (placement == SpawnPlacements.Type.IN_WATER) score += add(reasons, PLACED_IN_WATER, "spawn placement in water");
-        else if (placement == SpawnPlacements.Type.ON_GROUND) score += add(reasons, PLACED_ON_GROUND, "spawn placement on ground");
+        SpawnPlacementType placement = SpawnPlacements.getPlacementType(type);
+        if (placement == SpawnPlacementTypes.IN_WATER) score += add(reasons, PLACED_IN_WATER, "spawn placement in water");
+        else if (placement == SpawnPlacementTypes.ON_GROUND) score += add(reasons, PLACED_ON_GROUND, "spawn placement on ground");
 
         if (evidence.oceanListings() > 0) score += add(reasons, OCEAN_SPAWNS, "spawns in oceans");
         if (evidence.inlandOnly()) score += add(reasons, INLAND_ONLY, "spawns only inland");
@@ -91,7 +93,7 @@ public final class OceanMobClassifier
 
         String exclusion = preExclusion;
         if (exclusion == null && type.is(Tags.EntityTypes.BOSSES)) exclusion = "boss (#forge:bosses)";
-        if (exclusion == null && placement == SpawnPlacements.Type.IN_LAVA) exclusion = "lava placement";
+        if (exclusion == null && placement == SpawnPlacementTypes.IN_LAVA) exclusion = "lava placement";
 
         boolean hostile = mobCategory == MobCategory.MONSTER;
         boolean airBreather = false;
@@ -124,11 +126,11 @@ public final class OceanMobClassifier
             attack = probe.attackDamage();
             // bottom dwellers: placed on the ground, or walking without a swimming placement
             boolean walks = probe.navigation() == MobProbe.Navigation.GROUND || probe.navigation() == MobProbe.Navigation.AMPHIBIOUS;
-            if (placement == SpawnPlacements.Type.ON_GROUND || (walks && placement != SpawnPlacements.Type.IN_WATER)) where = FaunaSpawnRule.Placement.SEABED;
+            if (placement == SpawnPlacementTypes.ON_GROUND || (walks && placement != SpawnPlacementTypes.IN_WATER)) where = FaunaSpawnRule.Placement.SEABED;
         }
 
         EntityDimensions size = type.getDimensions();
-        float extent = Math.max(size.width, size.height);
+        float extent = Math.max(size.width(), size.height());
         DeepSeaSpawnCategory category = categorise(probe, mobCategory, hostile, extent, health, attack, evidence);
         return new OceanMobClassification(type, id, score, List.copyOf(reasons), exclusion, category, placement, where,
                 airBreather, hostile, despawns, extent, health, evidence, probe != null && !probe.failed());

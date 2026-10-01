@@ -41,10 +41,10 @@ public class ScalyFootSnail extends BenthicWalker
     }
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder builder)
     {
-        super.defineSynchedData();
-        this.entityData.define(RETRACTED, false);
+        super.defineSynchedData(builder);
+        builder.define(RETRACTED, false);
     }
 
     @Override

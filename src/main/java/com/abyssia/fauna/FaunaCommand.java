@@ -12,9 +12,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ import java.util.TreeMap;
  *     <li>{@code /abyssia fauna depth <metres>}: where a real depth lies (ocean world or deep layer Y)</li>
  * </ul>
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class FaunaCommand
 {
     private FaunaCommand() {}
@@ -109,7 +110,7 @@ public final class FaunaCommand
         ServerLevel level = ctx.getSource().getLevel();
         BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
         Map<String, Integer> counts = new TreeMap<>();
-        for (Entity e : level.getEntities((Entity) null, new AABB(pos).inflate(radius), e -> e.isAlive() && !(e instanceof net.minecraftforge.entity.PartEntity<?>) && FaunaSpawnRules.isFauna(e.getType())))
+        for (Entity e : level.getEntities((Entity) null, new AABB(pos).inflate(radius), e -> e.isAlive() && !(e instanceof net.neoforged.neoforge.entity.PartEntity<?>) && FaunaSpawnRules.isFauna(e.getType())))
         {
             counts.merge(BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getPath(), 1, Integer::sum);
         }
@@ -159,7 +160,7 @@ public final class FaunaCommand
     {
         ServerLevel level = ctx.getSource().getLevel();
         BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
-        List<Entity> found = level.getEntities((Entity) null, new AABB(pos).inflate(radius), e -> e.isAlive() && !(e instanceof net.minecraftforge.entity.PartEntity<?>) && FaunaSpawnRules.isFauna(e.getType()));
+        List<Entity> found = level.getEntities((Entity) null, new AABB(pos).inflate(radius), e -> e.isAlive() && !(e instanceof net.neoforged.neoforge.entity.PartEntity<?>) && FaunaSpawnRules.isFauna(e.getType()));
         for (Entity e : found)
         {
             String state = e instanceof com.abyssia.entity.Anglerfish a ? new String[]{"idle", "threat", "flee"}[a.mood()] + (a.isDigesting() ? ", digesting" : "")

@@ -19,12 +19,14 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.entity.PartEntity;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ import java.util.function.Predicate;
  * The ocean world and the deep layer below its bedrock band are kept apart: attempts stay in the player's layer, and
  * the per-player limit and species caps only count animals in the same layer, as when they were two dimensions.
  */
-@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class FaunaSpawner
 {
     private static final int MIN_DISTANCE = 24;
@@ -68,9 +70,9 @@ public final class FaunaSpawner
     }
 
     @SubscribeEvent
-    public static void onLevelTick(TickEvent.LevelTickEvent event)
+    public static void onLevelTick(LevelTickEvent.Post event)
     {
-        if (event.phase != TickEvent.Phase.END || !(event.level instanceof ServerLevel level) || !Config.FAUNA_SPAWNING.get()) return;
+        if (!(event.getLevel() instanceof ServerLevel level) || !Config.FAUNA_SPAWNING.get()) return;
         if (level.getGameTime() % Config.FAUNA_SPAWN_INTERVAL.get() != 0) return;
         if (!level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) || !level.getServer().isSpawningAnimals()) return;
         if (level.players().isEmpty() || FaunaSpawnRules.rules().isEmpty() || !isFaunaLevel(level)) return;
@@ -263,14 +265,14 @@ public final class FaunaSpawner
             mob.discard();
             return false;
         }
-        boolean ok = ForgeEventFactory.checkSpawnPosition(mob, level, MobSpawnType.NATURAL);
+        boolean ok = EventHooks.checkSpawnPosition(mob, level, MobSpawnType.NATURAL);
         provider.checked(rule, mob, ok);
         if (!ok)
         {
             mob.discard();
             return false;
         }
-        ForgeEventFactory.onFinalizeSpawn(mob, level, level.getCurrentDifficultyAt(p), MobSpawnType.NATURAL, null, null);
+        EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(p), MobSpawnType.NATURAL, null);
         level.addFreshEntityWithPassengers(mob);
         return true;
     }
