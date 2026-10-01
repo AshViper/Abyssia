@@ -1083,11 +1083,13 @@ def recipes():
     crust_smelt = {"manganese_crust": ("abyssia:manganese_ingot", 2), "cobalt_crust": ("abyssia:cobalt_ingot", 2),
                    "nickel_crust": ("abyssia:nickel_ingot", 2), "iron_crust": ("minecraft:iron_ingot", 2),
                    "copper_crust": ("minecraft:copper_ingot", 2), "cave_mineral_crust": ("abyssia:sulfur", 2)}
+    # Vanilla 1.20.1 cooking results are a bare id (always 1); Forge's SimpleCookingSerializer also takes an object
+    # result, which is the only way to carry the count (a top-level "count" is ignored).
     for crust, (result, count) in crust_smelt.items():
         for kind, time in (("smelting", 200), ("blasting", 100)):
             write(rd(f"{crust}_to_{kind}"), {"type": "minecraft:" + kind, "category": "misc",
-                  "ingredient": {"item": "abyssia:" + crust}, "result": result,
-                  "count": count, "experience": 0.5, "cookingtime": time})
+                  "ingredient": {"item": "abyssia:" + crust}, "result": {"item": result, "count": count},
+                  "experience": 0.5, "cookingtime": time})
 
     # Crust powder: ground from any crust; a mild pigment / adhesive helper.
     cp = {"item": "abyssia:crust_powder"}
