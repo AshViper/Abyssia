@@ -46,11 +46,13 @@ _TAG_RE = re.compile(r"((?:^|[\\/])data[\\/][^\\/]+[\\/]tags[\\/])(" + "|".join(
 
 
 def kind(path):
-    """'recipe', 'loot_table', 'tags' or None for a (1.21) data path."""
+    """'recipe', 'loot_table', 'tags', 'model' or None for a (1.21) data or asset path."""
     parts = re.split(r"[\\/]", path)
     for i in range(len(parts) - 2):
         if parts[i] == "data" and parts[i + 2] in ("recipe", "loot_table", "tags"):
             return parts[i + 2]
+        if parts[i] == "assets" and parts[i + 2] == "models":
+            return "model"
     return None
 
 
@@ -170,6 +172,20 @@ def upgrade_json(path, obj):
         return loot_table(obj)
     if k == "tags":
         return tag(obj)
+    if k == "model":
+        return model(obj)
+    return obj
+
+
+def model(obj):
+    """Block/item model: an element's forge_data (per-element light, e.g. emissive glow layers) is neoforge_data in
+    NeoForge 21.1; a model still using forge_data fails to load (missing-texture cube)."""
+    if not any("forge_data" in e for e in obj.get("elements", ())):
+        return obj
+    obj = copy.deepcopy(obj)
+    for e in obj["elements"]:
+        if "forge_data" in e:
+            e["neoforge_data"] = e.pop("forge_data")
     return obj
 
 
@@ -223,6 +239,28 @@ def migrate(data_root, dry_run=False):
     return report
 
 
+def migrate_assets(assets_root, dry_run=False):
+    """Rewrite the model JSON whose content changes (no folder renames in assets)."""
+    report = {"rewritten": 0, "files": 0}
+    for root, _, files in os.walk(assets_root):
+        for f in files:
+            p = os.path.join(root, f)
+            if not f.endswith(".json") or kind(p) != "model":
+                continue
+            report["files"] += 1
+            with open(p, encoding="utf-8") as fh:
+                obj = json.load(fh)
+            new = upgrade_json(p, obj)
+            if new != obj:
+                report["rewritten"] += 1
+                if not dry_run:
+                    with open(p, "w", encoding="utf-8") as fh:
+                        fh.write(_dump(new))
+    return report
+
+
 if __name__ == "__main__":
-    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src", "main", "resources", "data")
-    print(json.dumps(migrate(os.path.normpath(root), "--dry-run" in sys.argv), indent=2))
+    res = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src", "main", "resources")
+    dry = "--dry-run" in sys.argv
+    print(json.dumps({"data": migrate(os.path.normpath(os.path.join(res, "data")), dry),
+                      "assets": migrate_assets(os.path.normpath(os.path.join(res, "assets")), dry)}, indent=2))
