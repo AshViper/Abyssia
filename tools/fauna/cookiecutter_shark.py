@@ -44,3 +44,6 @@ INFO = dict(
               traits=dict(steering=(18, 5, 0.004), cruise_height=8, mouth_forward=0.4),
               render=dict(glow=dict(bones=["body"], halos=[("body", 0.3, 0.45, 1.0, 0.65)], base=0.75, flicker=0.05))),
 )
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="shark_flesh", count=(2, 3), looting=1, chance=0.7)]

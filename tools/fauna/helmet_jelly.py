@@ -30,3 +30,6 @@ INFO = dict(
     spawn=dict(weight=8, group=(1, 3), depth_m=(700, 900, 4000, 7000), placement="open_water",
                cave_factor=0.8, open_factor=1.0, max_light=3, cap=(6, 48)),
 )
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="jelly_tentacle", count=(1, 2), looting=1, chance=0.75)]

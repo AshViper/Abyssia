@@ -689,6 +689,21 @@ for _id, _kind in (("abyssal_alloy_pickaxe", "pickaxe"), ("abyssal_alloy_axe", "
                    ("abyssal_alloy_sword", "sword"), ("deep_diver_helmet", "helmet"),
                    ("abyssal_flippers", "flippers")):
     ITEMS[_id] = (lambda n, k: lambda: alloy_tool_icon(n, k))(_id, _kind)
+# F01 fauna drops: locked art imported from a ChatGPT sheet (texture_locks); only the item models are generated here.
+FAUNA_DROP_ITEMS = (
+    ("abyssal_fish_fillet", "Abyssal Fish Fillet", "深海魚の切り身"), ("cooked_abyssal_fish", "Cooked Abyssal Fish", "焼き深海魚"),
+    ("viper_flesh", "Viperfish Flesh", "ホウライエソの肉"), ("cooked_viper_flesh", "Cooked Viperfish", "焼きホウライエソ"),
+    ("shark_flesh", "Deep Sea Shark Flesh", "深海ザメの肉"), ("cooked_shark_flesh", "Cooked Deep Sea Shark", "焼き深海ザメ"),
+    ("eelpout_flesh", "Eelpout Flesh", "深海ウナギの肉"), ("cooked_eelpout_flesh", "Cooked Eelpout", "焼き深海ウナギ"),
+    ("blobfish_flesh", "Blobfish Flesh", "ブロブフィッシュの肉"), ("cooked_blobfish", "Cooked Blobfish", "焼きブロブフィッシュ"),
+    ("angler_flesh", "Anglerfish Flesh", "アンコウの肉"), ("cooked_angler_flesh", "Cooked Anglerfish", "焼きアンコウ"),
+    ("jelly_tentacle", "Silky Jelly Tentacle", "絹クラゲの触手"), ("atolla_tentacle", "Atolla Tentacle", "アトラの触手"),
+    ("phantom_tentacle", "Phantom Jelly Tentacle", "ファントムクラゲの触手"),
+    ("deepstaria_tentacle", "Deepstaria Tentacle", "ディープスタリアの触手"),
+)
+for _id, _en, _ja in FAUNA_DROP_ITEMS:
+    ITEMS[_id] = (lambda n: lambda: Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "texture_locks",
+                                                            "assets", "textures", "item", n + ".png")).convert("RGBA"))(_id)
 for _m in RARE_METALS:
     ITEMS["raw_" + _m] = (lambda m: lambda: lump("raw_" + m, MINERAL[m]))(_m)
     ITEMS[_m + "_ingot"] = (lambda m: lambda: ingot(m + "_ingot", MINERAL[m]))(_m)
@@ -746,6 +761,7 @@ ITEM_NAMES = {
     "abyssal_crystal_shard": ("Abyssal Crystal Shard", "深淵結晶の欠片"),
     "crust_powder": ("Crust Powder", "クラスト粉末"),
 }
+ITEM_NAMES.update({_id: (_en, _ja) for _id, _en, _ja in FAUNA_DROP_ITEMS})
 ITEM_NAMES.update({
     "abyssal_alloy_ingot": ("Abyssal Alloy Ingot", "深海合金インゴット"),
     "abyssal_alloy_pickaxe": ("Abyssal Alloy Pickaxe", "深海合金のツルハシ"),
@@ -1104,6 +1120,24 @@ def recipes():
           "ingredients": [cp, cp, {"item": "abyssia:organic_matter"}], "result": {"item": "abyssia:deep_pigment"}})
     write(rd("marine_adhesive_from_crust_powder"), {"type": "minecraft:crafting_shapeless", "category": "misc",
           "ingredients": [cp, {"item": "abyssia:plant_resin"}], "result": {"item": "abyssia:marine_adhesive", "count": 2}})
+
+    # F01 fauna drops: raw flesh -> cooked (furnace / smoker / campfire), and tentacle crafts.
+    for raw, cooked in (("abyssal_fish_fillet", "cooked_abyssal_fish"), ("viper_flesh", "cooked_viper_flesh"),
+                        ("shark_flesh", "cooked_shark_flesh"), ("eelpout_flesh", "cooked_eelpout_flesh"),
+                        ("blobfish_flesh", "cooked_blobfish"), ("angler_flesh", "cooked_angler_flesh")):
+        for kind, suffix, time in (("smelting", "smelting", 200), ("smoking", "smoking", 100),
+                                   ("campfire_cooking", "campfire", 600)):
+            write(rd(f"{cooked}_from_{suffix}"), {"type": "minecraft:" + kind, "category": "food",
+                  "ingredient": {"item": "abyssia:" + raw}, "result": "abyssia:" + cooked,
+                  "experience": 0.35, "cookingtime": time})
+    for out, (tentacle, tn), (other, on) in (
+            ("marine_adhesive", ("jelly_tentacle", 3), ("deep_fiber", 2)),
+            ("reinforced_fiber", ("atolla_tentacle", 2), ("lumen_gel", 1)),
+            ("reinforced_cable", ("phantom_tentacle", 3), ("reinforced_fiber", 2)),
+            ("hadal_plating", ("deepstaria_tentacle", 2), ("abyssal_composite", 1))):
+        write(rd(f"{out}_from_{tentacle}"), {"type": "minecraft:crafting_shapeless", "category": "misc",
+              "ingredients": [{"item": "abyssia:" + tentacle}] * tn + [{"item": "abyssia:" + other}] * on,
+              "result": {"item": "abyssia:" + out}})
 
     write(rd("abyssal_alloy_ingot"), {"type": "minecraft:crafting_shapeless", "category": "misc",
           "ingredients": [{"item": f"abyssia:{m}_ingot"} for m in ("vanadium", "cobalt", "nickel")],

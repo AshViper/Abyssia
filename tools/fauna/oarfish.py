@@ -40,3 +40,6 @@ INFO = dict(
               traits=dict(steering=(6, 3, 0.0015), zone=("open_water", 0.6, 240), hangs_still=True,
                           flees=(1.8, 6), home=48, ambient=400)),
 )
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="eelpout_flesh", count=(1, 3), looting=1, chance=0.7)]

@@ -46,3 +46,6 @@ INFO["java"] = dict(kind="swimmer", size_m=0.4, health=8,
     # barely moves: hovers just above the floor, drifting a little now and then
     traits=dict(steering=(10, 3, 0.0012), zone=("near_floor", 0.5, 400), flees=(1.2, 5), hangs_still=True, home=16, ambient=600),
     render=dict(eyeshine=(0.4, ["right_eye", "left_eye"])))
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="blobfish_flesh", count=(1, 2), looting=1, chance=0.75)]

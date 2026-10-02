@@ -40,3 +40,6 @@ INFO["java"] = dict(kind="swimmer", size_m=0.08, health=3,
     # schools; the belly light-organs cancel its silhouette against the light from above
     traits=dict(steering=(25, 8, 0.0025), zone=("open_water", 1.0, 120), migrates=0.4, schools=6, flees=(3.0, 10), home=32, ambient=350),
     render=dict(eyeshine=(0.6, ["right_eye", "left_eye"]), glow=dict(bones=["body"], base=0.7, flicker=0.1)))
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="abyssal_fish_fillet", count=(1, 1), looting=1, chance=0.8)]

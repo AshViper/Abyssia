@@ -31,3 +31,6 @@ INFO = dict(
                cave_factor=1.0, open_factor=1.0, max_light=15, cap=(2, 16),
                habitat=[dict(blocks="#abyssia:fauna/vent", radius=4, min=1, factor=1.0, required=True)]),
 )
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="eelpout_flesh", count=(2, 3), looting=1, chance=0.75)]

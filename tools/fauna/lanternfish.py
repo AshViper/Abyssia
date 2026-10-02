@@ -41,3 +41,6 @@ INFO["java"] = dict(kind="swimmer", size_m=0.15, health=3,
     # dense schools over the slope, rising at night
     traits=dict(steering=(25, 8, 0.0025), zone=("near_floor", 1.0, 120), migrates=0.3, schools=6, flees=(3.0, 10), home=32, ambient=350),
     render=dict(eyeshine=(0.6, ["right_eye", "left_eye"]), glow=dict(bones=["body", "tail", "head"], base=0.75, flicker=0.15)))
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="abyssal_fish_fillet", count=(1, 1), looting=1, chance=0.8)]

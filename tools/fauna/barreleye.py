@@ -28,3 +28,6 @@ INFO = dict(
                cave_factor=1.0, open_factor=0.6, max_light=7, cap=(24, 64),
                habitat=[dict(blocks="#abyssia:fauna/crystal", radius=4, min=2, factor=3.0)]),
 )
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="abyssal_fish_fillet", count=(1, 2), looting=1, chance=0.7)]
