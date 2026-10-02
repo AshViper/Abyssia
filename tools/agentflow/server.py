@@ -14,7 +14,7 @@ POST /api/texgen/preview {gen, params, seeds} | /api/texgen/add {gen, params, se
 
 Auto-run: a new request starts a headless `claude -p` in the project root (tools/agentflow/autorun.json).
 """
-import hashlib, http.server, json, os, shutil, subprocess, sys, threading, time
+import hashlib, http.server, json, os, re, shutil, subprocess, sys, threading, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -274,6 +274,108 @@ def textures():
     return out
 
 
+LIVE = ROOT / "inbox" / "flow" / "live.jsonl"  # written by hook.py
+AGENT_DEFS = ROOT / ".claude" / "agents"
+
+
+def agent_models():
+    """subagent_type -> model, from .claude/agents/*.md frontmatter (built-in types inherit the main model)."""
+    out = {}
+    for f in AGENT_DEFS.glob("*.md") if AGENT_DEFS.exists() else []:
+        for line in f.read_text(encoding="utf-8").splitlines()[1:12]:
+            if line.startswith("model:"):
+                out[f.stem] = line.split(":", 1)[1].strip().replace("claude-", "").replace("-5-5", "-5.5")
+            if line.strip() == "---":
+                break
+    return out
+
+
+def live(window=1800, lines=4000):
+    """Fold hook.py events into: agents (who is working where), msgs (agent <-> agent hand-offs), events (tail)."""
+    try:
+        raw = LIVE.read_bytes().splitlines()[-lines:]
+    except FileNotFoundError:
+        raw = []
+    now, models = time.time(), agent_models()
+    main_model = flow.load().get("main", {}).get("model") or "opus-5.5"
+    agents, msgs, events, pending, by_tid = {}, [], [], [], {}
+
+    def ag(e):
+        a = agents.get(e["who"])
+        if not a:
+            typ = e.get("type") or "main"
+            a = agents[e["who"]] = {"id": e["who"], "type": typ, "sid": e.get("sid", ""), "parent": "", "desc": "",
+                                    "model": main_model if typ == "main" else models.get(typ, main_model),
+                                    "status": "running", "tool": "", "target": "", "started": e["t"], "t": e["t"],
+                                    "ended": None, "calls": 0, "files": [], "err": 0}
+        a["t"] = e["t"]
+        return a
+
+    for ln in raw:
+        try:
+            e = json.loads(ln)
+        except ValueError:
+            continue
+        ev = e.get("ev")
+        a = ag(e)
+        if ev == "PreToolUse":
+            a.update(status="running", tool=e.get("tool", ""), target=e.get("target", ""), ended=None)
+            a["calls"] += 1
+            tg = e.get("target", "")
+            if tg and e.get("tool") in ("Read", "Edit", "Write", "MultiEdit", "NotebookEdit", "Grep", "Glob"):
+                a["files"] = ([tg] + [f for f in a["files"] if f != tg])[:8]
+            if e.get("tool") in ("Agent", "Task"):
+                m = {"t": e["t"], "from": e["who"], "to": "", "to_type": e.get("sub", ""), "kind": "task",
+                     "desc": e.get("desc", ""), "text": e.get("msg", ""), "tid": e.get("tid", "")}
+                msgs.append(m)
+                pending.append(m)
+            elif e.get("tool") == "SendMessage":
+                msgs.append({"t": e["t"], "from": e["who"], "to": e.get("to", ""), "kind": "send", "text": e.get("msg", "")})
+        elif ev == "PostToolUse":
+            if e.get("err"):
+                a["err"] += 1
+            if e.get("tool") in ("Agent", "Task"):
+                sub = by_tid.get(e.get("tid", ""), "")
+                msgs.append({"t": e["t"], "from": sub or e.get("sub", "subagent"), "to": e["who"], "kind": "result",
+                             "desc": e.get("desc", ""), "text": e.get("msg", "")})
+                if sub in agents:
+                    agents[sub].update(status="done", ended=agents[sub]["ended"] or e["t"])
+        elif ev == "SubagentStart":
+            m = next((p for p in pending if p["to_type"] == a["type"] and not p["to"]), None) \
+                or next((p for p in pending if not p["to"]), None)
+            if m:
+                m["to"] = a["id"]
+                pending.remove(m)
+                a.update(parent=m["from"], desc=m["desc"])
+                by_tid[m["tid"]] = a["id"]
+            a.update(status="running", started=e["t"])
+        elif ev == "SubagentStop":
+            a.update(status="done", ended=e["t"], tool="", target=a["target"])
+        elif ev == "Stop":
+            a.update(status="idle", tool="")
+        elif ev == "UserPromptSubmit":
+            a.update(status="running")
+            txt = e.get("msg", "")
+            src = re.search(r'<agent-message from="([^"]+)"', txt) or re.search(r"<task-id>([^<]+)</task-id>", txt)
+            if src and (src.group(1) in agents or "agent-message" in txt):  # background subagent reporting back
+                sub = src.group(1)
+                if sub in agents:
+                    agents[sub].update(status="done", ended=agents[sub]["ended"] or e["t"])
+                msgs.append({"t": e["t"], "from": sub, "to": e["who"], "kind": "result", "desc": "", "text": txt})
+            else:
+                msgs.append({"t": e["t"], "from": "user", "to": e["who"], "kind": "prompt", "text": txt})
+        events.append(e)
+
+    for a in agents.values():  # a crashed/killed agent never sends Stop; let it go quiet
+        if a["status"] == "running" and now - a["t"] > (900 if a["type"] != "main" else 300):
+            a["status"] = "stale" if a["type"] != "main" else "idle"
+    keep = [a for a in agents.values() if a["status"] == "running" or now - a["t"] < window]
+    keep.sort(key=lambda a: (a["type"] != "main", a["started"]))
+    return {"now": now, "agents": keep, "msgs": [m for m in msgs if now - m["t"] < window * 4][-120:],
+            "events": [{k: v for k, v in e.items() if k in ("t", "ev", "who", "tool", "target", "err")}
+                       for e in events if e.get("ev") in ("PreToolUse", "SubagentStart", "SubagentStop")][-200:]}
+
+
 class H(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *a, **k):
         super().__init__(*a, directory=str(HERE), **k)
@@ -500,6 +602,8 @@ class H(http.server.SimpleHTTPRequestHandler):
             return self._json(200, read_json_dir(REQ if path.startswith("/req") else APR, 40))
         if path == "/autorun.json":
             return self._json(200, AUTO.status())
+        if path == "/live.json":
+            return self._json(200, live())
         if path == "/textures.json":
             return self._json(200, textures())
         if path == "/sheets.json":

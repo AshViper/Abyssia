@@ -25,6 +25,15 @@
         "8765"
       ],
       "port": 8765
+    },
+    {
+      "name": "agentflow-preview",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "tools/agentflow/server.py",
+        "8766"
+      ],
+      "port": 8766
     }
   ]
 }

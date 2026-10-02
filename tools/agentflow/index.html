@@ -5,12 +5,83 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agent Flow</title>
 <style>
-:root{--bg:#f6f7f9;--panel:#fff;--fg:#1c2330;--mut:#6b7686;--line:#b8c0cc;--bd:#d6dbe3;--acc:#2f6fed;
---queued:#8b95a5;--running:#2f6fed;--done:#1f9d55;--failed:#d64545;--escalated:#d98a12;--idle:#8b95a5}
-@media (prefers-color-scheme:dark){:root{--bg:#12161d;--panel:#1b212b;--fg:#e6eaf0;--mut:#8f9aab;--line:#4a5566;--bd:#2c3542;--acc:#5b9bff}}
+/* terminal theme: dark always (agent tree look) */
+:root{--bg:#0b0d12;--panel:#11141b;--fg:#d9dde7;--mut:#6f788b;--line:#3a4252;--bd:#232a36;--acc:#6d9bf1;
+--queued:#6f788b;--running:#6d9bf1;--done:#6fd08c;--failed:#ef6b6b;--escalated:#e8a35a;--idle:#4d5566;
+--c-main:#e8875a;--c-gpt:#5fd4c4;--c-sub:#6d9bf1;--c-coder:#6fd08c;--c-dec:#a98bf0;--c-user:#e6d37a;
+--mono:"Cascadia Mono","JetBrains Mono",Consolas,"BIZ UDGothic","Yu Gothic UI",monospace;color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,"Yu Gothic UI",sans-serif}
+body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.55 var(--mono)}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
+/* agent tree */
+#tree{grid-column:1/-1;background:#0e1118;border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.tbar{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--bd);color:var(--mut);font-size:11px}
+.tbar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.tbar .ttl{flex:1;text-align:center}
+.thead{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;padding:12px 14px 8px;font-weight:700;letter-spacing:.06em;border-bottom:2px solid var(--bd);margin:0 14px}
+.tleg{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;padding:8px 14px;color:var(--mut);font-size:12px}
+.tleg b{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.tbody{position:relative;display:grid;grid-template-columns:230px minmax(0,1fr) 230px;gap:22px;padding:14px 16px 18px}
+@media(max-width:1100px){.tbody{grid-template-columns:230px minmax(0,1fr)}.gptc{grid-column:1/-1}}
+@media(max-width:900px){.tbody{grid-template-columns:minmax(0,1fr)}}
+.gptc{display:flex;flex-direction:column;gap:14px;align-self:start;position:relative;z-index:1}
+.gpt{border-color:var(--c-gpt)!important}.gpt h3,.gpt .sub{color:var(--c-gpt)!important}
+.gpt .hl{background:color-mix(in srgb,var(--c-gpt) 16%,transparent)}
+.pipe{border:1.5px solid var(--line);border-radius:4px;padding:8px 12px;background:#0e1118;font-size:12px}
+.pipe h3{margin:0 0 6px;text-align:center;font-size:12px;letter-spacing:.08em;color:var(--mut)}
+.pipe .row{display:grid;grid-template-columns:14px 70px minmax(0,1fr);gap:6px;margin:3px 0;align-items:baseline}
+.pipe .row span:last-child{color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbody>svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.adv{border:1.5px solid var(--c-dec);border-radius:4px;padding:10px 12px;color:var(--mut);font-size:12px;align-self:start;position:relative;z-index:1;background:#0e1118}
+.adv h3{margin:0 0 2px;text-align:center;color:var(--c-dec);font-size:13px;letter-spacing:.08em}
+.adv .sub{text-align:center;color:var(--c-dec);opacity:.8;margin-bottom:8px}
+.adv .row{display:flex;justify-content:space-between;gap:8px;margin:6px 0}
+.adv .row b{color:var(--fg);font-weight:600}
+.adv .hl{background:color-mix(in srgb,var(--c-dec) 18%,transparent);color:var(--fg);padding:2px 6px;margin:6px -6px}
+.adv .q{color:var(--fg);overflow-wrap:anywhere;max-height:120px;overflow:auto}
+.col{display:flex;flex-direction:column;align-items:center;gap:30px;min-width:0;position:relative;z-index:1}
+.mains,.subs{display:flex;flex-wrap:wrap;gap:16px 18px;justify-content:center;width:100%}
+.ab{--c:var(--c-sub);border:1.5px solid var(--c);border-radius:4px;background:#0e1118;padding:8px 12px;width:250px;cursor:pointer;text-align:center;font-size:12px;position:relative}
+.ab.main{width:310px;--c:var(--c-main)}
+.ab.coder{--c:var(--c-coder)}.ab.dec{--c:var(--c-dec)}
+.ab.sel{box-shadow:0 0 0 1px var(--c),0 0 18px color-mix(in srgb,var(--c) 40%,transparent)}
+.ab.done,.ab.idle,.ab.stale{opacity:.55}
+.ab .nm{color:var(--c);font-weight:700}
+.ab .md{color:var(--fg)}
+.ab .wt{color:var(--mut)}
+.ab .wt span{letter-spacing:-1px;color:var(--c)}
+.ab .where{margin-top:5px;padding-top:5px;border-top:1px dashed var(--bd);text-align:left;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ab .where em{font-style:normal;color:var(--c)}
+.ab .st{color:var(--mut);margin-top:2px}
+.ab.running .st{color:var(--fg)}
+.spin{display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--c);border-right-color:transparent;vertical-align:-1px;margin-right:4px;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hub{color:var(--mut);font-size:12px;background:#0e1118;padding:0 8px;position:relative;z-index:2}.hub b{color:var(--c-sub)}
+.tline{fill:none;stroke:var(--line);stroke-width:1.4}
+.tline.dash{stroke-dasharray:4 5}
+.tline.on{stroke:var(--c,var(--c-sub))}
+.tdot{filter:drop-shadow(0 0 4px currentColor)}
+.tlow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;padding:0 16px 14px}
+@media(max-width:1000px){.tlow{grid-template-columns:minmax(0,1fr)}}
+.fs{border:1px solid var(--bd);border-radius:3px;padding:12px 10px 8px;position:relative;min-width:0}
+.fs>.lg{position:absolute;top:-9px;left:12px;background:#0e1118;padding:0 6px;color:var(--mut);font-size:12px}
+.msgs,.slog{list-style:none;margin:0;padding:0;max-height:300px;overflow:auto;font-size:12px}
+.msgs li{padding:5px 2px;border-bottom:1px dashed var(--bd);cursor:pointer}
+.msgs .hd{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.msgs .tm,.slog .tm{color:#4a5263}
+.msgs .k{font-size:10px;border:1px solid currentColor;border-radius:2px;padding:0 4px}
+.msgs .tx{color:var(--mut);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.msgs li.open .tx{display:block;-webkit-line-clamp:unset;color:var(--fg);white-space:pre-wrap}
+.slog li{display:grid;grid-template-columns:64px 130px 64px minmax(0,1fr);gap:8px;padding:2px 0;white-space:nowrap}
+.slog li>*{overflow:hidden;text-overflow:ellipsis}
+.slog .tl{color:var(--mut)}
+.tstat{border-top:1px solid var(--bd);padding:8px 16px 10px;font-size:12px}
+.tstat .pr{color:var(--c-main);font-weight:700}
+.tstat .cur{display:inline-block;width:8px;height:14px;background:var(--fg);vertical-align:-2px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+.tstat .kv{color:var(--mut);margin-right:18px}.tstat .kv b{color:var(--c-sub);font-weight:400}
+.empty{color:var(--mut);padding:10px;text-align:center}
 header{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--panel)}
 h1{font-size:16px;margin:0}
 .chip{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:13px}
@@ -145,6 +216,26 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
 <div class="tabs"><button class="tab on" data-t="flow">フロー</button><button class="tab" data-t="tex">テクスチャ</button><button class="tab" data-t="gen">画像生成</button><button class="tab" data-t="tg">テクスチャ生成</button></div>
 
 <main id="flow">
+  <div id="tree">
+    <div class="tbar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="ttl">~/abyssia - agentflow - live</span></div>
+    <div class="thead"><span>CLAUDE CODE AGENT TREE</span><span style="color:var(--mut)">·</span><span style="color:var(--c-main)" id="thMain">OPUS 5.5 WORKS</span><span style="color:var(--mut)">·</span><span style="color:var(--c-dec)">DECISION ON CALL</span><span style="color:var(--mut)">·</span><span style="color:var(--c-gpt)">CHATGPT DESIGNS</span></div>
+    <div class="tleg"><span><b style="background:var(--c-main)"></b>main · opus</span><span><b style="background:var(--c-coder)"></b>coder · light/std/heavy</span><span><b style="background:var(--c-sub)"></b>subagents · explore/plan/etc</span><span><b style="background:var(--c-dec)"></b>decision · advisor</span><span><b style="background:var(--c-gpt)"></b>chatgpt · 設計/検査</span></div>
+    <div class="tbody" id="tbody">
+      <svg id="tsvg"></svg>
+      <div class="adv" id="adv"></div>
+      <div class="col">
+        <div class="mains" id="mains"></div>
+        <div class="hub" id="hub"></div>
+        <div class="subs" id="subs"></div>
+      </div>
+      <div class="gptc"><div class="adv gpt" id="gpt"></div><div class="pipe" id="pipe"></div></div>
+    </div>
+    <div class="tlow">
+      <div class="fs"><span class="lg">agent messages</span><ol class="msgs" id="msgs"></ol></div>
+      <div class="fs"><span class="lg" id="slogL">session log</span><ol class="slog" id="slog"></ol></div>
+    </div>
+    <div class="tstat" id="tstat"></div>
+  </div>
   <div>
     <div class="card"><svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="card" style="margin-top:12px">
@@ -394,7 +485,7 @@ $("onlySel").addEventListener("change",renderLog);
 async function poll(){
   try{
     const s=await (await fetch("state.json",{cache:"no-store"})).text();
-    if(s!==lastJson){lastJson=s;state=JSON.parse(s);render();renderLog();
+    if(s!==lastJson){lastJson=s;state=JSON.parse(s);render();renderLog();if(LV.agents)trender();
       const L=state.log||[];
       if(seenT!==null)L.filter(l=>l.t>seenT).slice(-6).forEach(l=>packet(l.who==="main"?"router":l.who));
       seenT=L.length?L[L.length-1].t:0;
@@ -402,6 +493,139 @@ async function poll(){
   }catch(e){$("upd").textContent="サーバー未接続"}
 }
 setInterval(()=>{ if(!document.hidden&&Date.now()/1000-(state.updated||0)>44&&Date.now()/1000-(state.updated||0)<48)render(); },1000); // idle decay redraw
+
+// ---- agent tree (live.json, written by hook.py via server.py)
+let LV={agents:[],msgs:[],events:[]},lvJson="",tsel=null,seenMsg=0;
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hms=t=>new Date(t*1000).toLocaleTimeString("ja-JP",{hour12:false});
+const kindOf=a=>a.type==="main"?"main":a.type==="decision"?"dec":a.type.startsWith("coder")?"coder":"sub";
+const KCOL={main:"var(--c-main)",dec:"var(--c-dec)",coder:"var(--c-coder)",sub:"var(--c-sub)",user:"var(--c-user)"};
+const WEIGHT={"coder-light":[1,"light"],"coder-standard":[2,"std"],"coder-heavy":[3,"heavy"],decision:[4,"judge"],Explore:[1,"read"],Plan:[2,"plan"]};
+const TOOLV={Read:"reads",Edit:"edits",Write:"writes",MultiEdit:"edits",Grep:"greps",Glob:"globs",Bash:"runs",PowerShell:"runs",Agent:"delegates",Task:"delegates",WebFetch:"fetches",WebSearch:"searches",SendMessage:"messages",Skill:"skill"};
+const short=id=>id.startsWith("main:")?id.slice(5,11):id.slice(0,7);
+const tname=t=>String(t||"").replace(/^mcp__Claude_Browser__/,"browser.").replace(/^mcp__claude-in-chrome__/,"chrome.").replace(/^mcp__([^_]+)__/,"$1.");
+const agentById=id=>LV.agents.find(a=>a.id===id);
+function aname(id){if(id==="user")return"user";const a=agentById(id);return a?(a.type==="main"?`main ${short(a.id)}`:`${a.type} ${short(a.id)}`):id}
+function acol(id){if(id==="user")return KCOL.user;const a=agentById(id);return a?KCOL[kindOf(a)]:"var(--c-sub)"}
+function bar(n){return "▮".repeat(n)+"▯".repeat(4-n)}
+function where(a){
+  if(a.status!=="running")return a.files[0]?`<em>last</em> ${esc(a.files[0])}`:`<em>—</em>`;
+  return `<em>${esc(TOOLV[a.tool]||tname(a.tool)||"thinking")}</em> ${esc(a.target||"")}`;
+}
+function abox(a){
+  const k=kindOf(a),[w,wl]=a.type==="main"?[4,"high"]:(WEIGHT[a.type]||[2,"med"]);
+  const st=a.status==="running"?`<span class="spin"></span>running · ${a.calls} calls`:a.status==="done"?`● done · ${a.calls} calls`:a.status==="stale"?"○ 応答なし":"○ idle";
+  const title=a.type==="main"?`Opus · main ${short(a.id)}`:`${a.type} · ${short(a.id)}`;
+  return `<div class="ab ${k} ${a.status}${tsel===a.id?" sel":""}" data-id="${esc(a.id)}">
+    <div class="nm">${esc(title)}</div>
+    <div class="md">${esc(a.model)}${a.type==="main"?" · plans + decides":a.desc?" · "+esc(a.desc):""}</div>
+    <div class="wt">weight <span>${bar(w)}</span> ${wl}${a.err?` · <span style="color:var(--failed)">err ${a.err}</span>`:""}</div>
+    <div class="where" title="${esc(a.target||a.files.join("\n"))}">${where(a)}</div>
+    <div class="st">${st}</div></div>`;
+}
+function advisor(decs){
+  const d=decs[decs.length-1],run=decs.filter(a=>a.status==="running").length;
+  const lastRes=[...LV.msgs].reverse().find(m=>m.kind==="result"&&(agentById(m.from)||{}).type==="decision");
+  const lastAsk=[...LV.msgs].reverse().find(m=>m.kind==="task"&&m.to_type==="decision");
+  $("adv").dataset.id=d?d.id:"";
+  $("adv").innerHTML=`<h3>DECISION</h3><div class="sub">advisor · ${run?"judging":"on call"}</div>
+    <div class="hl">◆ before a plan</div>
+    <div>読むだけ・書かない。<br>APPROVE / REJECT / MODIFY を返し、Opus が適用する。</div>
+    <div class="row"><span>calls</span><b>${decs.length}</b></div>
+    <div class="row"><span>tool calls</span><b>${decs.reduce((s,a)=>s+a.calls,0)}</b></div>
+    ${d&&d.status==="running"?`<div class="row"><span>now</span></div><div class="q">${where(d)}</div>`:""}
+    ${lastAsk?`<div style="margin-top:8px">last question:</div><div class="q">» ${esc(lastAsk.desc||lastAsk.text.slice(0,90))}</div>`:""}
+    ${lastRes?`<div style="margin-top:8px">last advice:</div><div class="q">» ${esc(lastRes.text.slice(0,160))}</div>`:""}
+    <div style="margin-top:10px">◇ arch / API / lib changes</div><div>◇ before done</div>`;
+}
+
+const SDOT={idle:["○","var(--idle)"],running:["◐","var(--running)"],done:["●","var(--done)"],failed:["✕","var(--failed)"],queued:["◌","var(--queued)"]};
+function sdot(st){const [c,col]=SDOT[st]||SDOT.idle;return `<span style="color:${col}">${c}</span>`}
+function gptbox(){ // ChatGPT = spec / design / texture owner and reviewer (driven by flow.py stage chatgpt|texture)
+  const V=view(),S=state.stages||{},c=S.chatgpt||{},tx=S.texture||{},cs=V.st("chatgpt");
+  const lg=[...(state.log||[])].reverse().find(l=>l.who==="chatgpt"&&l.msg&&!/^(idle|done|running)$/.test(l.msg));
+  $("gpt").innerHTML=`<h3>CHATGPT</h3><div class="sub">manager · ${cs==="running"?"designing":cs==="done"?"handed off":"on call"}</div>
+    <div class="hl">◆ before split</div>
+    <div>仕様書・デザイン画・テクスチャを兼任。完成品が依頼どおりか検査し、修正案を返す。</div>
+    <div class="row"><span>spec / design</span><b>${sdot(cs)}</b></div>
+    <div class="row"><span>texture</span><b>${sdot(V.st("texture"))}</b></div>
+    ${cs!=="idle"&&c.note?`<div class="q">» ${esc(c.note)}</div>`:""}
+    ${V.st("texture")!=="idle"&&tx.note?`<div class="q">» ${esc(tx.note)}</div>`:""}
+    ${lg?`<div style="margin-top:8px">last:</div><div class="q">» ${esc(lg.msg.slice(0,120))}</div>`:""}
+    <div style="margin-top:10px">◇ review ≤ 3 rounds</div><div>Claude は設計を変えない</div>`;
+  const P=[["request","依頼"],["router","振り分け"],["verify","検証"],["build","build/test"],["memory","Obsidian"],["git","git push"]];
+  $("pipe").innerHTML=`<h3>PIPELINE</h3>`+P.map(([k,l])=>{const n=(S[k]||{}).note;return `<div class="row">${sdot(V.st(k))}<span>${l}</span><span title="${esc(n||"")}">${V.st(k)!=="idle"&&n?esc(n):""}</span></div>`}).join("");
+}
+function trender(){
+  const ags=LV.agents,mains=ags.filter(a=>a.type==="main"),decs=ags.filter(a=>a.type==="decision"),subs=ags.filter(a=>a.type!=="main"&&a.type!=="decision");
+  $("mains").innerHTML=mains.length?mains.map(abox).join(""):`<div class="ab main idle"><div class="nm">Opus · main session</div><div class="st">○ 記録なし — hook 待ち</div></div>`;
+  const run=subs.filter(a=>a.status==="running").length;
+  $("hub").innerHTML=subs.length?`delegate to subagents · <b>${run} running</b> / ${subs.length}`:"";
+  $("subs").innerHTML=subs.map(abox).join("");
+  advisor(decs);gptbox();
+  const m=mains.find(a=>a.status==="running")||mains[0];
+  $("thMain").textContent=`${(m&&m.model||"opus-5.5").toUpperCase().replace("-"," ")} WORKS`;
+  document.querySelectorAll("#tree .ab[data-id]").forEach(e=>e.onclick=()=>{tsel=tsel===e.dataset.id?null:e.dataset.id;trender()});
+  $("adv").onclick=()=>{const id=$("adv").dataset.id;if(id){tsel=tsel===id?null:id;trender()}};
+  tmsgs();tlog();tstat();requestAnimationFrame(tlines);
+}
+function tlines(){
+  const svg=$("tsvg"),host=$("tbody").getBoundingClientRect();svg.innerHTML="";
+  const box=id=>{const e=document.querySelector(`#tree .ab[data-id="${CSS.escape(id)}"]`);return e&&e.getBoundingClientRect()};
+  const P=(r,s)=>s==="b"?[r.left+r.width/2-host.left,r.bottom-host.top]:s==="t"?[r.left+r.width/2-host.left,r.top-host.top]:s==="r"?[r.right-host.left,r.top+r.height/2-host.top]:[r.left-host.left,r.top+r.height/2-host.top];
+  const line=(d,col,on,dash)=>{const p=el("path",{d,class:"tline"+(on?" on":"")+(dash?" dash":"")},svg);p.style.setProperty("--c",col);
+    if(on)for(let i=0;i<2;i++){const c=el("circle",{r:3,fill:col,class:"tdot"},svg);c.style.color=col;el("animateMotion",{path:d,dur:"1.6s",begin:i*0.8+"s",repeatCount:"indefinite"},c)}return d};
+  window._tpaths={};
+  const g=$("gpt").getBoundingClientRect(),mb=LV.agents.filter(x=>x.type==="main").map(x=>box(x.id)).filter(Boolean).sort((p,q)=>q.right-p.right)[0];
+  if(mb&&g.width&&g.left>mb.right){const [x2,y2]=P(mb,"r"),x1=g.left-host.left,y1=g.top+40-host.top,mx=(x1+x2)/2;
+    window._tpaths.chatgpt=line(`M${x1},${y1} L${mx},${y1} L${mx},${y2} L${x2},${y2}`,"var(--c-gpt)",view().st("chatgpt")==="running",true)}
+  for(const a of LV.agents){
+    if(a.type==="main")continue;
+    const ch=box(a.id),par=box(a.parent)||box((LV.agents.find(x=>x.type==="main"&&x.sid===a.sid)||{}).id||"");
+    if(!par)continue;const col=KCOL[kindOf(a)],on=a.status==="running";
+    if(a.type==="decision"){const ad=$("adv").getBoundingClientRect();const [x1,y1]=[ad.right-host.left,ad.top+40-host.top],[x2,y2]=P(par,"l");
+      window._tpaths[a.id]=line(`M${x1},${y1} L${(x1+x2)/2},${y1} L${(x1+x2)/2},${y2} L${x2},${y2}`,col,on,true);continue}
+    const [x1,y1]=P(par,"b"),[x2,y2]=P(ch,"t"),my=(y1+y2)/2;
+    window._tpaths[a.id]=line(`M${x1},${y1} L${x1},${my} L${x2},${my} L${x2},${y2}`,col,on,false);
+  }
+}
+function tpacket(m){ // one-shot packet along the line for a fresh hand-off / result
+  const sub=m.kind==="result"?m.from:m.to,d=(window._tpaths||{})[sub];if(!d)return;
+  const svg=$("tsvg"),col=acol(sub),c=el("circle",{r:5,fill:col,class:"tdot"},svg);c.style.color=col;
+  el("animateMotion",{path:d,dur:"1s",repeatCount:"1",fill:"freeze",keyPoints:m.kind==="result"?"1;0":"0;1",keyTimes:"0;1",calcMode:"linear"},c);
+  setTimeout(()=>c.remove(),1100);
+}
+const MK={task:"依頼",result:"結果",send:"msg",prompt:"user"};
+function tmsgs(){
+  let ms=[...LV.msgs].reverse();if(tsel)ms=ms.filter(m=>m.from===tsel||m.to===tsel);
+  const open=new Set([...document.querySelectorAll("#msgs li.open")].map(e=>e.dataset.k));
+  $("msgs").innerHTML=ms.length?ms.slice(0,80).map(m=>{const k=m.t+m.from;const to=m.to||m.to_type||"?";
+    return `<li data-k="${esc(k)}" class="${open.has(String(k))?"open":""}"><div class="hd"><span class="tm">${hms(m.t)}</span>
+    <span style="color:${acol(m.from)}">${esc(aname(m.from))}</span><span class="tm">→</span><span style="color:${acol(to)}">${esc(m.to?aname(m.to):to)}</span>
+    <span class="k" style="color:${m.kind==="result"?"var(--done)":"var(--mut)"}">${MK[m.kind]||m.kind}</span>${m.desc?`<b>${esc(m.desc)}</b>`:""}</div>
+    <div class="tx">${esc(m.text||"")}</div></li>`}).join(""):`<li class="empty">まだやり取りなし (サブエージェント起動で表示)</li>`;
+  document.querySelectorAll("#msgs li[data-k]").forEach(e=>e.onclick=()=>e.classList.toggle("open"));
+}
+function tlog(){
+  let ev=[...LV.events].reverse();if(tsel)ev=ev.filter(e=>e.who===tsel);
+  $("slogL").textContent=tsel?`session log · ${aname(tsel)}`:"session log";
+  const TXT=e=>e.ev==="SubagentStart"?"start":e.ev==="SubagentStop"?"stop":(TOOLV[e.tool]||tname(e.tool));
+  $("slog").innerHTML=ev.length?ev.slice(0,150).map(e=>`<li><span class="tm">${hms(e.t)}</span><span style="color:${acol(e.who)}">${esc(aname(e.who))}</span><span class="tl">${esc(TXT(e))}</span><span title="${esc(e.target||"")}">${esc(e.target||"")}</span></li>`).join(""):`<li class="empty">hook の記録がまだありません (.claude/settings.json)</li>`;
+}
+function tstat(){
+  const a=LV.agents,subs=a.filter(x=>x.type!=="main"),run=subs.filter(x=>x.status==="running").length;
+  const calls=a.reduce((s,x)=>s+x.calls,0),dec=a.filter(x=>x.type==="decision"&&x.status==="running").length;
+  $("tstat").innerHTML=`<div><span class="pr">~/abyssia $</span> agentflow --live <span class="cur"></span></div>
+    <div><span class="kv">agents <b>[${a.length}]</b></span><span class="kv">subagents <b>[${run}/${subs.length}]</b></span><span class="kv">decision <b style="color:var(--c-dec)">[${dec?"advising":"on call"}]</b></span><span class="kv">tool calls <b>[${calls}]</b></span><span class="kv">msgs <b>[${LV.msgs.length}]</b></span></div>`;
+}
+async function tpoll(){
+  try{const s=await (await fetch("live.json",{cache:"no-store"})).text();
+    if(s===lvJson)return;lvJson=s;LV=JSON.parse(s);trender();
+    const fresh=LV.msgs.filter(m=>m.t>seenMsg);if(seenMsg)setTimeout(()=>fresh.slice(-4).forEach(tpacket),50);
+    seenMsg=LV.msgs.length?LV.msgs[LV.msgs.length-1].t:Date.now()/1000;
+  }catch(e){}
+}
+addEventListener("resize",()=>requestAnimationFrame(tlines));
 
 // ---- requests / approvals / autorun
 const RST={new:"未着手",specced:"仕様化済",running:"実装中",done:"完了"};
@@ -740,8 +964,8 @@ $("tgundo").onclick=async()=>{
     const r=await jpost("/api/texgen/undo",{});$("tgamsg").textContent=`元に戻しました: ${r.files.length} ファイル`;tgList();
   }catch(e){$("tgamsg").textContent="元に戻せません: "+e.message}};
 
-render();poll();reqs();aprs();autoPoll();
-setInterval(poll,1200);setInterval(reqs,4000);setInterval(aprs,2000);setInterval(autoPoll,2500);
+render();poll();tpoll();reqs();aprs();autoPoll();
+setInterval(poll,1200);setInterval(()=>{if(!document.hidden)tpoll()},1000);setInterval(reqs,4000);setInterval(aprs,2000);setInterval(autoPoll,2500);
 </script>
 </body>
 </html>

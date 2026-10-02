@@ -92,6 +92,32 @@ UI右の「実装したいこと」フォーム、または Claude に直接言�
 4. 仕様書とデザインが揃ってから `flow.py add` でタスク分担を始める。
 5. **検査**: 実装後 (ビルド通過後)、依頼どおりにできているかを ChatGPT に検査させる。依頼文・仕様書・デザイン画と、成果物のスクリーンショット (モデルのプレビュー/ゲーム内) を添付し、「依頼・仕様・デザインとの差異」を箇条書きで出させる。指摘のうち妥当なものは直して再検査 (最大2回)。結果は `flow.py log main` に1行で残し、`inbox/specs/<id>-review.md` に保存する。ChatGPT の見落としや誤りは Claude が現物で確認する (鵜呑みにしない)。
 
+### 役割一覧 (2026-10-03)
+| 担当 | 誰 | やること | 記録・表示 |
+|---|---|---|---|
+| 依頼 | ユーザー | フォームか `inbox/requests/` に依頼を出すだけ | stage `request` |
+| 管理 (設計・検査) | ChatGPT (Claude in Chrome で操作) | 仕様書・デザイン画・モデル設計案・テクスチャ画像を作る。成果物が依頼どおりか検査し、修正案を返す (最大3回) | stage `chatgpt` / `texture`、ツリー右の CHATGPT 枠 |
+| 振り分け・統合 | Main (Opus 5.5) | ChatGPT の成果を受けてタスクに割り、tier ごとにサブエージェントへ渡し、結果をまとめる。自分では大きな実装をしない | stage `router`、ツリー橙 |
+| 調査 | Explore | 該当コードの場所を探して要点だけ返す | ツリー青 |
+| 設計判断 | decision (Opus 5.5) | CLAUDE.md §8 のときだけ。approve / reject / modify を JSON で返す。コードは書かない | ツリー左の紫枠 |
+| 実装 | coder-light / standard (Sonnet 5.5)、coder-heavy (Opus 5.5) | 1体1タスク。`files:` の範囲だけ編集。手に負えないときは ESCALATE | `flow.py add/set`、ツリー緑 |
+| テクスチャ取込 | Texture Pipeline | ChatGPT 画像を `inbox/textures/` から取り込む (texture_locks 厳守) | stage `texture` |
+| 検証 | 実装とは別のエージェント | 設計違反、API の誤用、互換性。コードは変えない | stage `verify` |
+| ビルド・テスト | Main のみ | `gradle build` と実機テスト。サブエージェントには走らせない | stage `build` |
+| 記憶 | Main | Obsidian Vault に重要な事実と判断だけ書く | stage `memory` |
+| 公開 | Main | 依頼で変えたファイルだけを commit して push | stage `git` |
+
+### Agent Flow 運用ルール (2026-10-03、ユーザー指定)
+1. **仕様書とテクスチャは ChatGPT が兼任**: 仕様書・デザイン画・テクスチャ画像はすべて ChatGPT に作らせる (上の必須手順)。Claude は自分で仕様書を書いたり画像を描いたりしない。ChatGPT が使えないときだけ代行し、その理由を `flow.py log main --kind decision` に残す。
+2. **複数エージェントで分担・協力**: 1つの依頼を小さなタスクに割り、1エージェント1タスクで負担を小さくする。調査は Explore、設計判断は decision、実装は coder-light/standard/heavy、検査は別のエージェントに任せる。`files:` が重ならないタスクは並列にし、依存するタスクは queued で後に回す。前のエージェントの結果 (仕様書・調査メモ・SendMessage) を次のエージェントに渡して協力させる。メインは振り分けと統合に徹する。
+3. **作業が終わったら Obsidian メモと git push**: ① Vault `G:\Obsidian\Abyssia Vault\project\` の該当ノートを更新するか、`history/` に日付ログを書く (CLAUDE.md §17 の形式。些細な変更は書かない)。② その依頼で変えたファイルだけを commit し、ほかで作業中の変更は混ぜない。③ push する。Forge は `main` と `Forge1.20.1`、NeoForge 移植は `NeoForge1.21.1`。各段階は `flow.py stage memory|git running` → `done` で記録する。push に失敗したら `flow.py log main --kind error` に残して報告する。
+
+## エージェントツリー (live、2026-10-03)
+フロータブ最上段。`.claude/settings.json` の hook (`tools/agentflow/hook.py`) が全エージェントのツール呼び出し・サブエージェント起動/終了・やり取りを `inbox/flow/live.jsonl` に追記し、`server.py` が `/live.json` にまとめる。flow.py を呼ばなくても自動で出る。
+- 箱 = エージェント (橙 main / 緑 coder / 青 その他 / 紫 decision は左の advisor 枠)。「where」行 = いま何のツールでどのファイルを触っているか (終了後は最後のファイル)。
+- 線 = 親→子。実行中は光が流れ、依頼・結果が出るとその線をパケットが往復する。
+- agent messages = main→サブの依頼文、サブ→main の結果、SendMessage。クリックで全文表示。箱クリックでそのエージェントに絞り込む。
+
 ## 詳細ログ (activity)
 `flow.py log <task|main|stage> "今やっていること" [--kind file|tool|decision|error] [--model M]`。add/set/stage/main/escalate は自動でログされる。
 - メインは節目ごとに1行: 読んだファイル(file)、判断(decision)、エラー(error)。実行中ノードには最新の非status行が表示される。

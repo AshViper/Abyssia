@@ -5,7 +5,7 @@ State file: inbox/flow/state.json (override with AGENTFLOW_STATE). JSON in/out, 
 
   flow.py add <id> --tier light|standard|heavy [--title T] [--files F] [--parent ID] [--model M]
   flow.py set <id> queued|running|done|failed|escalated [--note N] [--model M]
-  flow.py stage chatgpt|router|verify|build|memory idle|running|done|failed [--note N]
+  flow.py stage chatgpt|router|texture|verify|build|memory|git idle|running|done|failed [--note N]
   flow.py main --model M [--note N]       # model the main agent is running as
   flow.py escalate <id> [--to standard|heavy]   # mark escalated + add child task in higher tier
   flow.py req [list [--all]] | req set <id> new|specced|running|done   # UI requests (inbox/requests)
@@ -27,7 +27,7 @@ MODEL = {"light": "sonnet-5.5", "standard": "sonnet-5.5", "heavy": "opus-5.5"}
 REQ = Path(os.environ.get("AGENTFLOW_REQUESTS", ROOT / "inbox" / "requests"))
 APR = Path(os.environ.get("AGENTFLOW_APPROVALS", ROOT / "inbox" / "approvals"))
 REQ_ST = ["new", "specced", "running", "done"]
-STAGES = ["request", "router", "chatgpt", "texture", "verify", "build", "memory"]
+STAGES = ["request", "router", "chatgpt", "texture", "verify", "build", "memory", "git"]
 TASK_ST = ["queued", "running", "done", "failed", "escalated"]
 STAGE_ST = ["idle", "running", "done", "failed"]
 
