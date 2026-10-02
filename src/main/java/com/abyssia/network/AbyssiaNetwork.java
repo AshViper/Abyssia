@@ -1,6 +1,8 @@
 package com.abyssia.network;
 
 import com.abyssia.habitat.HabitatControlPacket;
+import com.abyssia.waypoint.WaypointSavePacket;
+import com.abyssia.waypoint.WaypointSyncPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -10,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
-    private static final String PROTOCOL = "3";
+    private static final String PROTOCOL = "4";
 
     private AbyssiaNetwork() {}
 
@@ -20,6 +22,14 @@ public final class AbyssiaNetwork
         PayloadRegistrar registrar = event.registrar(PROTOCOL);
         registrar.playToClient(NaturalCurrentSaltPacket.TYPE, NaturalCurrentSaltPacket.STREAM_CODEC, NaturalCurrentSaltPacket::handle);
         registrar.playToServer(HabitatControlPacket.TYPE, HabitatControlPacket.STREAM_CODEC, HabitatControlPacket::handle);
+        // W01 waypoint beacon list (S2C) and settings save (C2S)
+        registrar.playToClient(WaypointSyncPacket.TYPE, WaypointSyncPacket.STREAM_CODEC, WaypointSyncPacket::handle);
+        registrar.playToServer(WaypointSavePacket.TYPE, WaypointSavePacket.STREAM_CODEC, WaypointSavePacket::handle);
+    }
+
+    public static void sendToServer(CustomPacketPayload message)
+    {
+        PacketDistributor.sendToServer(message);
     }
 
     public static void sendTo(ServerPlayer player, CustomPacketPayload message)

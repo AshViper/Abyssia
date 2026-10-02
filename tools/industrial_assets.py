@@ -35,6 +35,7 @@ WARNING_LIGHT = "warning_light"
 CABLE = "energy_cable"
 REINFORCED = "reinforced_energy_cable"
 ENERGY = "energy_device"
+BEACON = "waypoint_beacon"      # W01 (inbox/specs/W01-waypoint-beacon.md): work light model, tinted lamp
 
 PANEL_STAIRS, PANEL_SLAB, PANEL_WALL = ba.shape_names(PANEL)
 GRATING_SLAB = f"{GRATING}_slab"
@@ -71,6 +72,7 @@ NAMES = {
     VALVE: ("Industrial Valve", "工業用バルブ"),
     WORK_LIGHT: ("Work Light", "作業灯"),
     WARNING_LIGHT: ("Warning Light", "警告灯"),
+    BEACON: ("Waypoint Beacon", "迷子対策ビーコン"),
     CABLE: ("Energy Cable", "エネルギーケーブル"),
     REINFORCED: ("Reinforced Energy Cable", "強化エネルギーケーブル"),
     **MACHINES,
@@ -100,6 +102,24 @@ CONTAINER_NAMES.update({
     # JEI machine categories (com.abyssia.compat.jei.MachineCategory)
     f"jei.{MOD}.process": ("%s s · %s FE", "%s 秒・%s FE"),
     f"jei.{MOD}.needs_vent": ("Needs an active vent within 6 blocks", "6ブロック以内に活動中の噴出孔が必要"),
+})
+
+# W01 waypoint beacon: preset colours in palette order (index = blockstate color, same order as
+# com.abyssia.waypoint.WaypointColors) -> (English, Japanese); the settings screen text
+BEACON_COLORS = [
+    ("white", "White", "白"), ("light_gray", "Light Gray", "薄灰"), ("gray", "Gray", "灰"), ("black", "Black", "黒"),
+    ("red", "Red", "赤"), ("orange", "Orange", "橙"), ("yellow", "Yellow", "黄"), ("green", "Green", "緑"),
+    ("light_blue", "Light Blue", "水色"), ("cyan", "Cyan", "シアン"), ("blue", "Blue", "青"), ("purple", "Purple", "紫"),
+    ("pink", "Pink", "桃"), ("brown", "Brown", "茶"), ("deep_blue", "Deep Sea Blue", "深海青"),
+    ("deep_purple", "Deep Sea Purple", "深海紫"),
+]
+CONTAINER_NAMES.update({f"gui.{MOD}.waypoint.color.{c}": (en, ja) for c, en, ja in BEACON_COLORS})
+CONTAINER_NAMES.update({
+    f"gui.{MOD}.waypoint.name": ("Name", "名前"),
+    f"gui.{MOD}.waypoint.colour": ("Colour", "色"),
+    f"gui.{MOD}.waypoint.current": ("Current colour: %s", "現在の色: %s"),
+    f"gui.{MOD}.waypoint.save": ("Save", "保存"),
+    f"gui.{MOD}.waypoint.cancel": ("Cancel", "キャンセル"),
 })
 
 ALL_BLOCKS = list(NAMES)
@@ -251,6 +271,38 @@ def derive_energy_textures(assets_dir):
     return out
 
 
+def derive_beacon_lamp(assets_dir):
+    """waypoint_beacon_lamp = the work light texture in brightened grey, so the block colour tint shows true."""
+    tex = os.path.join(assets_dir, "textures", "block")
+    src = os.path.join(tex, f"{WORK_LIGHT}.png")
+    if not os.path.exists(src):
+        return []
+    im = Image.open(src).convert("RGBA")
+    out = Image.new("RGBA", im.size)
+    for y in range(im.size[1]):
+        for x in range(im.size[0]):
+            r, g, b, a = im.getpixel((x, y))
+            v = min(255, round((0.299 * r + 0.587 * g + 0.114 * b) * 1.25))
+            out.putpixel((x, y), (v, v, v, a))
+    path = os.path.join(tex, f"{BEACON}_lamp.png")
+    out.save(path)
+    return [path]
+
+
+def _beacon_model(work_light_model):
+    """The work light model with the lamp body (element "light_body") on the grey lamp texture, tint index 0."""
+    import copy
+    model = copy.deepcopy(work_light_model)
+    model["credit"] = "Abyssia W01 - work light model with a tinted lamp, built by tools/industrial_assets.py"
+    model.setdefault("textures", {})["lamp"] = rl(f"{BEACON}_lamp")
+    for element in model.get("elements", []):
+        if element.get("name") == "light_body":
+            for face in element["faces"].values():
+                face["texture"] = "#lamp"
+                face["tintindex"] = 0
+    return model
+
+
 # ================================================================ generate
 
 def generate(write, bs, bm, im, data_dir):
@@ -341,6 +393,14 @@ def generate(write, bs, bm, im, data_dir):
     write(bs(ENERGY), _energy_blockstate())
     write(im(ENERGY), {"parent": item_parent(ENERGY, rl(f"{ENERGY}_c0"))})
     derived = derive_energy_textures(assets_dir)
+
+    # ---- W01 waypoint beacon: work light geometry, lamp tinted by the block's COLOR (BlockColor / ItemColor)
+    import json
+    with open(bm(WORK_LIGHT), encoding="utf-8") as f:
+        write(bm(BEACON), _beacon_model(json.load(f)))
+    write(bs(BEACON), {"variants": _facing_variants(rl(BEACON), LIGHT_ROT)})
+    write(im(BEACON), {"parent": rl(BEACON)})
+    derived += derive_beacon_lamp(assets_dir)
     write(im(LEACHING_REAGENT), {"parent": "minecraft:item/generated",
                                  "textures": {"layer0": f"{MOD}:item/{LEACHING_REAGENT}"}})
 
@@ -393,6 +453,8 @@ def recipes(write, data_dir):
     shaped(VALVE, [" R ", "RVR", " R "], {"R": R, "V": "pressure_valve"}, 2, "misc")
     shaped(WORK_LIGHT, ["PLP", "RWR", " R "], {"P": P, "L": "lumen_cell", "R": R, "W": W}, 2, "misc")
     shaped(WARNING_LIGHT, ["WLW", "PRP", " R "], {"P": P, "L": "lumen_cell", "R": R, "W": W}, 2, "misc")
+    shaped(BEACON, ["IRI", "GWG", "ICI"], {"I": "minecraft:iron_ingot", "R": "minecraft:redstone", "G": "minecraft:glass",
+                                           "W": WORK_LIGHT, "C": "minecraft:copper_ingot"}, 1, "misc")
     shaped(CABLE, ["WWW", "WFW", "WWW"], {"W": W, "F": "deep_fiber"}, 8, "redstone")
     shaped(REINFORCED, ["CCC", "WAW", "CCC"], {"C": "conductive_alloy_ingot", "W": W, "A": "abyssal_alloy_ingot"}, 6,
            "redstone")

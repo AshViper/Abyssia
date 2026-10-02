@@ -15,6 +15,8 @@ import com.abyssia.industry.blockentity.GeneratorBlockEntity;
 import com.abyssia.industry.blockentity.IndustryBlockEntity;
 import com.abyssia.industry.blockentity.ProcessingMachineBlockEntity;
 import com.abyssia.industry.menu.IndustryMenu;
+import com.abyssia.waypoint.WaypointBeaconBlock;
+import com.abyssia.waypoint.WaypointBeaconBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
@@ -69,6 +71,8 @@ public final class ModIndustry
     public static final DeferredBlock<Block> INDUSTRIAL_VALVE = block("industrial_valve", () -> new ValveBlock(small()));
     public static final DeferredBlock<Block> WORK_LIGHT = block("work_light", () -> new IndustrialLightBlock(small().lightLevel(s -> 15)));
     public static final DeferredBlock<Block> WARNING_LIGHT = block("warning_light", () -> new IndustrialLightBlock(small().lightLevel(s -> 10)));
+    /** W01 (inbox/specs/W01-waypoint-beacon.md): HUD waypoint, work light model with a tinted lamp */
+    public static final DeferredBlock<Block> WAYPOINT_BEACON = block("waypoint_beacon", () -> new WaypointBeaconBlock(small().lightLevel(s -> 15)));
 
     // ---------- energy ----------
     public static final DeferredBlock<Block> ENERGY_CABLE = block("energy_cable", () -> new EnergyCableBlock(small().strength(1.0f, 6.0f), 128, 6, 10));
@@ -101,6 +105,8 @@ public final class ModIndustry
             () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, HYDROTHERMAL_GENERATOR.get(), AUXILIARY_GENERATOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyDeviceBlockEntity>> ENERGY_DEVICE_ENTITY = BLOCK_ENTITIES.register("energy_device",
             () -> BlockEntityType.Builder.of(EnergyDeviceBlockEntity::new, ENERGY_DEVICE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WaypointBeaconBlockEntity>> WAYPOINT_BEACON_ENTITY = BLOCK_ENTITIES.register("waypoint_beacon",
+            () -> BlockEntityType.Builder.of(WaypointBeaconBlockEntity::new, WAYPOINT_BEACON.get()).build(null));
     public static final DeferredHolder<MenuType<?>, MenuType<IndustryMenu>> MACHINE_MENU = MENUS.register("industrial_machine",
             () -> IMenuTypeExtension.create(IndustryMenu::new));
 
