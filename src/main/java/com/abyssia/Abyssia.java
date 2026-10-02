@@ -5,6 +5,7 @@ import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.registry.GeneratedFauna;
 import com.abyssia.registry.ModBlocks;
 import com.abyssia.registry.ModEntities;
+import com.abyssia.registry.ModFurniture;
 import com.abyssia.registry.ModItems;
 import com.abyssia.registry.ModParticles;
 import com.abyssia.registry.ModSounds;
@@ -27,6 +28,7 @@ public class Abyssia
         GeneratedFauna.init();
         modEventBus.addListener(AbyssiaNetwork::register);
         ModBlocks.register(modEventBus);
+        ModFurniture.register(modEventBus);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
         ModSounds.register(modEventBus);
