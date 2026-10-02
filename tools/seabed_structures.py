@@ -243,6 +243,12 @@ structure("sulfur_mound", "thermal", "small", 10, 6,
           f("vent", count=span(1, 2), spread=3, height=span(1, 3), width=span(1, 2), chimney=mix("sulfur_vent_rock"),
             core=mix((VENT("mineral", "weak"), 1)), mound=mix(("sulfur_deposit", 2), ("mineral_sediment", 1)), mound_radius=4, mound_height=2, flanges=0),
           dressing=dress(10, 0.3, VENT_LIFE), mobs=VENT_MOBS, max_slope=0.5)
+# 2026-10-02 user: "1-2 vent structures per 4 chunks" -> a small 1-3 chimney vent on a dense grid (cell 20, chance 0.95; measured ~1.4 per 32x32 in vent terrain).
+structure("vent_chimney", "thermal", "small", 9, 16,
+          f("vent", count=span(1, 3), spread=4, height=span(4, 12), width=span(1, 1.8), chimney=CHIMNEY, accent=SULFIDE, accent_chance=0.1,
+            core=mix((VENT("black_smoker", "active"), 2), (VENT("white_smoker", "active"), 1), (VENT("mineral", "weak"), 1)),
+            mound=VENT_MOUND, mound_radius=3, mound_height=2, flanges=0.3),
+          dressing=dress(9, 0.35, VENT_LIFE), mobs=VENT_MOBS, max_slope=2.0, max_top_y=125)
 structure("chimney_cluster", "thermal", "medium", 26, 24,
           f("vent", count=span(4, 9), spread=10, height=span(6, 18), width=span(1.2, 2.5), chimney=CHIMNEY, accent=SULFIDE, accent_chance=0.15,
             core=mix((VENT("black_smoker", "active"), 2), (VENT("white_smoker", "active"), 1)), mound=VENT_MOUND, mound_radius=6, mound_height=3,
@@ -440,6 +446,7 @@ PROFILES = {
         e("hadal_great_crater", 0.4, (900, 1536)),
         *cavern_entries(CAVE_TRENCH, 0.5)]),
     "thermal_vents": (["thermal_vents"], 1.0, [
+        e("vent_chimney", 0.95, (10, 20)),
         e("sulfur_mound", 0.5, SMALL), e("chimney_cluster", 0.6, (72, 144)), e("mineral_terraces", 0.4, MEDIUM),
         e("great_smoker_field", 0.5, (700, 1280)),
         *cavern_entries(CAVE_THERMAL)]),

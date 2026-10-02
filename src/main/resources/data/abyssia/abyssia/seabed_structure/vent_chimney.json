@@ -1,0 +1,173 @@
+{
+  "category": "thermal",
+  "tier": "small",
+  "footprint_radius": 9,
+  "max_height": 16,
+  "formation": {
+    "type": "vent",
+    "count": [
+      1,
+      3
+    ],
+    "spread": 4,
+    "height": [
+      4,
+      12
+    ],
+    "width": [
+      1,
+      1.8
+    ],
+    "chimney": [
+      {
+        "data": {
+          "Name": "abyssia:black_vent_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:vent_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:mineral_vent_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:black_mineral_deposit"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:sulfur_vent_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent_chance": 0.1,
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:thermal_vent",
+          "Properties": {
+            "type": "black_smoker",
+            "activity": "active"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:thermal_vent",
+          "Properties": {
+            "type": "white_smoker",
+            "activity": "active"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:thermal_vent",
+          "Properties": {
+            "type": "mineral",
+            "activity": "weak"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "mound": [
+      {
+        "data": {
+          "Name": "abyssia:mineral_sediment"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:black_mineral_deposit"
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:sulfur_deposit"
+        },
+        "weight": 1
+      }
+    ],
+    "mound_radius": 3,
+    "mound_height": 2,
+    "flanges": 0.3
+  },
+  "conditions": {
+    "max_slope": 2.0,
+    "max_top_y": -115
+  },
+  "dressing": {
+    "radius": 9,
+    "density": 0.35,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_tube"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:heat_moss"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:vent_grass"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_plant"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sulfur_cluster"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "preferred_mobs": [
+    "abyssia:tubeworm",
+    "abyssia:satsuma_tubeworm",
+    "abyssia:deep_sea_shrimp",
+    "abyssia:yunohana_crab",
+    "abyssia:ohara_shrimp",
+    "abyssia:scaly_foot_snail",
+    "abyssia:vent_eelpout"
+  ]
+}
