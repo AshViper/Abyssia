@@ -124,6 +124,12 @@ repositories {
     flatDir {
         dir 'libs'
     }
+    // JEI (optional integration, see com.abyssia.compat.jei)
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com'
+        content { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' }
+    }
 }
 
 dependencies {
@@ -139,6 +145,15 @@ dependencies {
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+
+    // JEI is an optional dependency: compile against its API only, and run the full mod in every dev run
+    // (client, server, gameTestServer) so the integration is always exercised in testing.
+    // `-PnoJei` leaves it out to check that Abyssia still runs without JEI.
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+    if (!project.hasProperty('noJei')) {
+        runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+    }
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
