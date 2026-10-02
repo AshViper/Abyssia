@@ -22,8 +22,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.55 var(--mono)}
 .thead{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;padding:12px 14px 8px;font-weight:700;letter-spacing:.06em;border-bottom:2px solid var(--bd);margin:0 14px}
 .tleg{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;padding:8px 14px;color:var(--mut);font-size:12px}
 .tleg b{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
-.tbody{position:relative;display:grid;grid-template-columns:230px minmax(0,1fr) 230px;gap:22px;padding:14px 16px 18px}
-@media(max-width:1100px){.tbody{grid-template-columns:230px minmax(0,1fr)}.gptc{grid-column:1/-1}}
+.tbody{position:relative;display:grid;grid-template-columns:250px minmax(0,1fr) 240px;gap:22px;padding:14px 16px 18px}
+@media(max-width:1100px){.tbody{grid-template-columns:250px minmax(0,1fr)}.gptc{grid-column:1/-1}}
 @media(max-width:900px){.tbody{grid-template-columns:minmax(0,1fr)}}
 .gptc{display:flex;flex-direction:column;gap:14px;align-self:start;position:relative;z-index:1}
 .gpt{border-color:var(--c-gpt)!important}.gpt h3,.gpt .sub{color:var(--c-gpt)!important}
@@ -84,6 +84,22 @@ body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.55 var(--mono)}
 @keyframes bl{50%{opacity:0}}
 .tstat .kv{color:var(--mut);margin-right:18px}.tstat .kv b{color:var(--c-sub);font-weight:400}
 .empty{color:var(--mut);padding:10px;text-align:center}
+.lcol{display:flex;flex-direction:column;gap:14px;align-self:start;position:relative;z-index:1;min-width:0}
+.pipe label{font-size:11px;margin-top:2px}
+.pipe input,.pipe textarea,.pipe select{font:12px var(--mono);padding:4px 6px;border-radius:2px;background:#0b0d12}
+.pipe textarea{min-height:60px}
+.pipe .b{font:12px var(--mono);border-radius:2px;margin-top:4px}
+.pipe dl{margin:0;display:grid;grid-template-columns:52px minmax(0,1fr);gap:3px 8px}
+.pipe dt{color:var(--mut)}.pipe dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+#reqs{margin:6px 0 0;padding:0;list-style:none;font-size:11px}
+#reqs li{padding:3px 0;border-top:1px dashed var(--bd);display:flex;gap:6px}
+#reqs .st{color:var(--mut);white-space:nowrap}
+.tapr{margin:4px 16px 0;border:1.5px solid var(--escalated);border-radius:4px;padding:8px 12px;font-size:12px}
+.tapr .h2{color:var(--escalated);margin:0 0 4px;font-size:12px;letter-spacing:.08em}
+.tstat details{margin-top:4px;color:var(--mut)}.tstat summary{cursor:pointer;font-size:11px}
+.slog li.fl .tl,.slog li.fl span:last-child{color:var(--c-user)}
+.slog li.fl.k-error span:last-child{color:var(--failed)}
+
 header{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--panel)}
 h1{font-size:16px;margin:0}
 .chip{display:inline-flex;align-items:center;gap:6px;color:var(--mut);font-size:13px}
@@ -203,9 +219,25 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
     <div class="tbar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="ttl">~/abyssia - agentflow - live</span></div>
     <div class="thead"><span>CLAUDE CODE AGENT TREE</span><span style="color:var(--mut)">·</span><span style="color:var(--c-main)" id="thMain">OPUS 5.5 WORKS</span><span style="color:var(--mut)">·</span><span style="color:var(--c-dec)">DECISION ON CALL</span><span style="color:var(--mut)">·</span><span style="color:var(--c-gpt)">CHATGPT DESIGNS</span></div>
     <div class="tleg"><span><b style="background:var(--c-main)"></b>main · opus</span><span><b style="background:var(--c-coder)"></b>coder · light/std/heavy</span><span><b style="background:var(--c-sub)"></b>subagents · explore/plan/etc</span><span><b style="background:var(--c-dec)"></b>decision · advisor</span><span><b style="background:var(--c-gpt)"></b>chatgpt · 設計/検査</span></div>
+    <div class="tapr" id="apr" hidden></div>
     <div class="tbody" id="tbody">
       <svg id="tsvg"></svg>
-      <div class="adv" id="adv"></div>
+      <div class="lcol">
+        <div class="adv" id="adv"></div>
+        <div class="pipe" id="detail"><h3>DETAIL</h3><div class="empty">箱・PIPELINE・TASKS をクリック</div></div>
+        <div class="pipe req"><h3>NEW REQUEST</h3>
+          <form id="rf">
+            <label>タイトル<input id="rt" required maxlength="120" placeholder="例: 深海クラゲの新種を追加"></label>
+            <label>内容・希望<textarea id="rb" placeholder="どんな挙動/見た目/制約か。ざっくりでOK"></textarea></label>
+            <label>関係しそうなファイル(任意)<input id="rfiles" placeholder="例: src/main/java/.../fauna"></label>
+            <label>仕様化<select id="rvia"><option value="chatgpt">ChatGPTに仕様書/テクスチャを依頼</option><option value="claude">Claudeがそのまま仕様化</option></select></label>
+            <label>重さ<select id="rtier"><option value="auto">おまかせ</option><option value="light">light (Sonnet 5.5)</option><option value="standard">standard (Sonnet 5.5)</option><option value="heavy">heavy (Opus 5.5)</option></select></label>
+            <button class="b" id="rsend">送信して開始</button>
+            <span id="rmsg" class="chip"></span>
+          </form>
+          <ul id="reqs"></ul>
+        </div>
+      </div>
       <div class="col">
         <div class="mains" id="mains"></div>
         <div class="hub" id="hub"></div>
@@ -217,35 +249,7 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
       <div class="fs"><span class="lg">agent messages</span><ol class="msgs" id="msgs"></ol></div>
       <div class="fs"><span class="lg" id="slogL">session log</span><ol class="slog" id="slog"></ol></div>
     </div>
-    <div class="tstat" id="tstat"></div>
-  </div>
-  <div>
-    <div class="card">
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
-        <h2 class="h2" style="margin:0">アクティビティ</h2>
-        <label style="display:flex;flex-direction:row;align-items:center;gap:4px"><input type="checkbox" id="onlySel" style="width:auto"> 選択中のノードのみ</label>
-        <span class="chip" id="selName"></span>
-      </div>
-      <ol id="log"></ol>
-      <details style="margin-top:6px"><summary class="chip" style="cursor:pointer">自動実行ログ</summary><pre id="alog"></pre></details>
-    </div>
-  </div>
-  <div>
-    <div class="card" id="apr" hidden style="margin-bottom:12px;border-color:var(--escalated)"></div>
-    <div class="card" id="detail"><h2 class="h2">詳細</h2><div style="color:var(--mut)">ツリーの箱・PIPELINE・TASKS をクリック</div></div>
-    <div class="card" style="margin-top:12px">
-      <h2 class="h2">実装したいこと</h2>
-      <form id="rf">
-        <label>タイトル<input id="rt" required maxlength="120" placeholder="例: 深海クラゲの新種を追加"></label>
-        <label>内容・希望<textarea id="rb" placeholder="どんな挙動/見た目/制約か。ざっくりでOK"></textarea></label>
-        <label>関係しそうなファイル(任意)<input id="rfiles" placeholder="例: src/main/java/.../fauna"></label>
-        <label>仕様化<select id="rvia"><option value="claude">Claudeがそのまま仕様化</option><option value="chatgpt">ChatGPTに仕様書/テクスチャを依頼</option></select></label>
-        <label>重さ<select id="rtier"><option value="auto">おまかせ</option><option value="light">light (Sonnet 5.5)</option><option value="standard">standard (Sonnet 5.5)</option><option value="heavy">heavy (Opus 5.5)</option></select></label>
-        <button class="b" id="rsend">送信して開始</button>
-        <span id="rmsg" class="chip"></span>
-      </form>
-      <ul id="reqs"></ul>
-    </div>
+    <div class="tstat"><div id="tstat"></div><details><summary>自動実行ログ</summary><pre id="alog"></pre></details></div>
   </div>
 </main>
 
@@ -360,19 +364,19 @@ function header(){
   const u=state.updated;$("upd").textContent=u?"更新 "+new Date(u*1000).toLocaleTimeString():"データなし";
 }
 const fmt=t=>t?new Date(t*1000).toLocaleTimeString():"-";
-function select(o){selected=o;detail();renderLog()}
+function select(o){selected=o;detail();tlog()}
 function selKey(){return selected?(selected.kind==="task"?selected.id:selected.k):null}
 function detail(){
   const d=$("detail");if(!selected)return;const o=selected;
   if(o.kind==="agent"){const a=agentById(o.id)||o;
     const rows=[["agent",a.type+" "+short(a.id)],["model",a.model],["状態",LABEL[a.status]||a.status],["親",a.parent?aname(a.parent):"-"],["依頼",a.desc||"-"],
       ["いま",a.status==="running"?(TOOLV[a.tool]||tname(a.tool)||"-")+" "+(a.target||""):"-"],["calls",a.calls+(a.err?` (err ${a.err})`:"")],["開始",fmt(a.started)],["終了",fmt(a.ended)],["files",a.files.join("\n")||"-"]];
-    d.innerHTML="<h2 class='h2'>エージェント</h2><dl>"+rows.map(()=>"<dt></dt><dd style='white-space:pre-wrap'></dd>").join("")+"</dl>";
+    d.innerHTML="<h3>AGENT</h3><dl>"+rows.map(()=>"<dt></dt><dd style='white-space:pre-wrap'></dd>").join("")+"</dl>";
     d.querySelectorAll("dt").forEach((e,i)=>e.textContent=rows[i][0]);d.querySelectorAll("dd").forEach((e,i)=>e.textContent=rows[i][1]);return}
   const rows=o.kind==="task"
     ?[["ID",o.id],["title",o.title||"-"],["tier",o.tier],["model",o.model],["状態",LABEL[o.status]],["files",o.files||"-"],["親",o.parent||"-"],["開始",fmt(o.started)],["終了",fmt(o.ended)],["note",o.note||"-"]]
     :[["stage",o.name],["状態",LABEL[o.status]||o.status],["検知",o.auto?"hook で自動 ("+(o.who?aname(o.who):"-")+")":"flow.py"],["時刻",fmt(o.t)],["note",o.note||"-"]];
-  d.innerHTML="<h2 class='h2'>"+(o.kind==="task"?"タスク (flow.py)":"ステージ")+"</h2><dl>"+rows.map(()=>"<dt></dt><dd></dd>").join("")+"</dl>";
+  d.innerHTML="<h3>"+(o.kind==="task"?"TASK · flow.py":"STAGE")+"</h3><dl>"+rows.map(()=>"<dt></dt><dd></dd>").join("")+"</dl>";
   d.querySelectorAll("dt").forEach((e,i)=>e.textContent=rows[i][0]);d.querySelectorAll("dd").forEach((e,i)=>e.textContent=rows[i][1]);
   if(o.kind==="stage"){const ev=(LV.events||[]).filter(e=>e.stage===o.k).slice(-8).reverse();
     if(ev.length){const ul=document.createElement("ul");ul.style.cssText="list-style:none;padding:0;margin:8px 0 0;font-size:11px";
@@ -380,24 +384,12 @@ function detail(){
         li.textContent=`${hms(e.t)} ${aname(e.who)} ${e.ev==="PostToolUse"?(e.ok===false?"✕":e.ok?"✓":"·"):"▶"} ${e.out||e.target||""}`;ul.appendChild(li)}
       d.appendChild(ul)}}
 }
-function renderLog(){
-  const ol=$("log"),only=$("onlySel").checked,key=selKey();
-  $("selName").textContent=key?"選択: "+key:"";
-  let ls=[...(state.log||[])].reverse();if(only&&key)ls=ls.filter(l=>l.who===key);
-  ol.innerHTML="";
-  if(!ls.length){const li=document.createElement("li");li.textContent="まだ記録がありません";ol.appendChild(li);return}
-  for(const l of ls.slice(0,150)){
-    const li=document.createElement("li");li.className="k-"+l.kind;
-    const mk=(c,t)=>{const s=document.createElement("span");s.className=c;s.textContent=t;return s};
-    li.append(mk("tm",new Date(l.t*1000).toLocaleTimeString()),mk("who",l.who),mk("md",l.model||""),mk("msg",l.msg));ol.appendChild(li);
-  }
-}
-$("onlySel").addEventListener("change",renderLog);
+
 
 async function poll(){
   try{
     const s=await (await fetch("state.json",{cache:"no-store"})).text();
-    if(s!==lastJson){lastJson=s;state=JSON.parse(s);render();renderLog();if(LV.agents)trender();
+    if(s!==lastJson){lastJson=s;state=JSON.parse(s);render();if(LV.agents)trender();
       if(selected&&selected.kind==="task"){const f=(state.tasks||[]).find(t=>t.id===selected.id);if(f)selected={kind:"task",...f};detail();}}
   }catch(e){$("upd").textContent="サーバー未接続"}
 }
@@ -453,7 +445,7 @@ function advisor(decs){
 const SDOT={idle:["○","var(--idle)"],running:["◐","var(--running)"],done:["●","var(--done)"],failed:["✕","var(--failed)"],queued:["◌","var(--queued)"]};
 function sdot(st){const [c,col]=SDOT[st]||SDOT.idle;return `<span style="color:${col}">${c}</span>`}
 const PIPE=[["request","依頼"],["router","振り分け"],["chatgpt","ChatGPT"],["texture","texture"],["verify","検証"],["build","build/test"],["memory","Obsidian"],["git","git push"]];
-const SNAME=Object.fromEntries(PIPE);
+const SNAME=Object.fromEntries(PIPE),STAGE_KEYS=new Set(PIPE.map(p=>p[0]));
 function selStage(k){const s=(state.stages||{})[k]||{};select({kind:"stage",name:SNAME[k]||k,k,status:view().st(k),note:s.note||"",auto:!!s.auto,t:s.t,who:s.who})}
 function tasksHtml(V){ // flow.py tasks (spec-level work units), newest first
   const ts=V.tasks.filter(t=>["running","queued","failed"].includes(t.status)).reverse().slice(0,12);if(!ts.length)return ""; // finished work is visible in the tree
@@ -536,11 +528,16 @@ function tmsgs(){
     <div class="tx">${esc(m.text||"")}</div></li>`}).join(""):`<li class="empty">まだやり取りなし (サブエージェント起動で表示)</li>`;
   document.querySelectorAll("#msgs li[data-k]").forEach(e=>e.onclick=()=>e.classList.toggle("open"));
 }
-function tlog(){
-  let ev=[...LV.events].reverse();if(tsel)ev=ev.filter(e=>e.who===tsel);
-  $("slogL").textContent=tsel?`session log · ${aname(tsel)}`:"session log";
+function tlog(){ // hook events + flow.py activity (progress notes, decisions) in one timeline
+  const key=tsel||selKey();
   const TXT=e=>e.ev==="SubagentStart"?"start":e.ev==="SubagentStop"?"stop":e.ev==="PostToolUse"?(e.ok===false?"✕ ":e.ok?"✓ ":"· ")+e.stage:(TOOLV[e.tool]||tname(e.tool));
-  $("slog").innerHTML=ev.length?ev.slice(0,150).map(e=>`<li><span class="tm">${hms(e.t)}</span><span style="color:${acol(e.who)}">${esc(aname(e.who))}</span><span class="tl">${esc(TXT(e))}</span><span title="${esc(e.out||e.target||"")}"${e.ok===false?' style="color:var(--failed)"':""}>${esc(e.ev==="PostToolUse"?(e.out||e.target||""):(e.target||""))}</span></li>`).join(""):`<li class="empty">hook の記録がまだありません (.claude/settings.json)</li>`;
+  let rows=(LV.events||[]).map(e=>({t:e.t,html:`<li><span class="tm">${hms(e.t)}</span><span style="color:${acol(e.who)}">${esc(aname(e.who))}</span><span class="tl">${esc(TXT(e))}</span><span title="${esc(e.out||e.target||"")}"${e.ok===false?' style="color:var(--failed)"':""}>${esc(e.ev==="PostToolUse"?(e.out||e.target||""):(e.target||""))}</span></li>`,
+    hit:!key||e.who===key||e.stage===key}));
+  rows=rows.concat((state.log||[]).slice(-150).map(l=>({t:l.t,html:`<li class="fl k-${esc(l.kind)}"><span class="tm">${hms(l.t)}</span><span style="color:${l.who==="main"?"var(--c-main)":STAGE_KEYS.has(l.who)?"var(--c-gpt)":"var(--c-coder)"}">${esc(l.who)}</span><span class="tl">${esc(l.kind==="info"?"log":l.kind)}</span><span title="${esc(l.msg)}">${esc(l.msg)}</span></li>`,
+    hit:!key||l.who===key})));
+  rows=rows.filter(r=>r.hit).sort((a,b)=>b.t-a.t).slice(0,200);
+  $("slogL").textContent=key?`session log · ${agentById(key)?aname(key):key}`:"session log";
+  $("slog").innerHTML=rows.length?rows.map(r=>r.html).join(""):`<li class="empty">記録なし</li>`;
 }
 function tstat(){
   const a=LV.agents,subs=a.filter(x=>x.type!=="main"),run=subs.filter(x=>x.status==="running").length;
@@ -581,7 +578,7 @@ async function aprs(){
     document.title=p.length?`(${p.length}) 承認待ち - Agent Flow`:"Agent Flow";
     box.hidden=!p.length;if(!p.length){box.innerHTML="";box.dataset.key="";return}
     const key=p.map(a=>a.id).join();if(box.dataset.key===key)return;box.dataset.key=key;
-    box.innerHTML="<h2 class='h2'>承認待ち</h2>";
+    box.innerHTML="<h3 class='h2'>⚠ 承認待ち</h3>";
     for(const a of p){
       const d=document.createElement("div");d.style.cssText="padding:6px 0;border-top:1px solid var(--bd)";
       const q=document.createElement("div");q.textContent=`[${a.who}] ${a.question}`;q.style.marginBottom="6px";

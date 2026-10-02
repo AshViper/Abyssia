@@ -138,7 +138,9 @@ def event(d):
                 if isinstance(r, dict) and r.get("backgroundTaskId"):
                     e["bg"] = True
                 e["ok"] = verdict(stage, out or "")
-                e["out"] = clip((out or "")[-400:], 200)
+                out = out or ""
+                m = re.search(r"BUILD FAILED|FAILED|FAILURE|\b(?:fatal|error):|\[rejected\]|\bFAIL\b", out) if e["ok"] is False else None
+                e["out"] = clip(out[max(0, m.start() - 60):m.start() + 160] if m else out[-400:], 200)  # failures: show the failing line
         if tool in ("Agent", "Task"):  # main -> subagent hand-off and the answer coming back
             e["sub"] = ti.get("subagent_type") or "general-purpose"
             e["desc"] = clip(ti.get("description", ""), 120)
