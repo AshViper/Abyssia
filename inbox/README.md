@@ -78,6 +78,20 @@ UI右の「実装したいこと」フォーム、または Claude に直接言�
 - Claude は「requestsを処理して」で `flow.py req list` を読み、via=claude なら仕様書化 / via=chatgpt なら ChatGPT へ依頼 → `inbox/specs/` → tier 別に並列実装。
 - 進行に合わせて `flow.py req set <id> specced|running|done`。tier=auto は Claude が判定。
 
+### 役割分担 (2026-10-02、ユーザー指定の理想形)
+- **ChatGPT が管理するもの**: 仕様書、デザイン画、モデルの設計 (パーツ定義の案・寸法・配色)、テクスチャ (画像生成)。「何をどう作るか」と「デザイン通りか」の判断は ChatGPT 側。
+- **Claude がやること**: ChatGPT の設計をモデル定義 (`tools/bbmodel-generator/definitions/<id>.json`) やコードに落として生成・実装・ビルド・実機テストする。設計を勝手に変えない (ツール制約で作れない所だけ差分を報告して相談)。
+- **検査**: できた成果物 (ゲーム内スクリーンショット) を ChatGPT に見せ、デザイン通りに作れているかを ChatGPT が判定。差異があれば ChatGPT が直し方 (パーツ定義の修正案) を返し、Claude が反映して再生成する。合格するまで (最大3回) 繰り返す。
+- テクスチャ: 生成ツールの UV 展開図 (`Base PNG`) を ChatGPT に渡して塗らせる形が目標。現状は配色指定のみで、ChatGPT 画像の取込は inbox/textures/ → texture pipeline。
+
+### 依頼処理の必須手順 (2026-10-02、ユーザー指定)
+依頼を処理するときは、タスクの分担 (サブエージェント投入) を始める前に、必ず ChatGPT に **仕様書** と **必要なデザイン** を生成させる。
+1. Claude が Claude in Chrome で chatgpt.com を直接操作する (ログイン済み前提。パスワード入力・CAPTCHA は人がやる)。依頼文と制約を送り、仕様書 (上のテンプレ) を出させて `inbox/specs/` に保存。
+2. 見た目が要る依頼 (乗り物・Mob・ブロックなど) は、デザイン画 (4面図など) も ChatGPT に生成させ `inbox/designs/<id>.png` に保存。プロンプト雛形は `inbox/prompts/`。モデル化は `/photo-to-model`。
+3. 画像の保存: ChatGPT 画像は blob URL でブラウザのダウンロードが落ちないことがある。その場合は画像ビューアを開いて `computer zoom` + `save_to_disk` で取得する。ChatGPT 画像のダウンロードに確認は不要 (ユーザー許可済み)。
+4. 仕様書とデザインが揃ってから `flow.py add` でタスク分担を始める。
+5. **検査**: 実装後 (ビルド通過後)、依頼どおりにできているかを ChatGPT に検査させる。依頼文・仕様書・デザイン画と、成果物のスクリーンショット (モデルのプレビュー/ゲーム内) を添付し、「依頼・仕様・デザインとの差異」を箇条書きで出させる。指摘のうち妥当なものは直して再検査 (最大2回)。結果は `flow.py log main` に1行で残し、`inbox/specs/<id>-review.md` に保存する。ChatGPT の見落としや誤りは Claude が現物で確認する (鵜呑みにしない)。
+
 ## 詳細ログ (activity)
 `flow.py log <task|main|stage> "今やっていること" [--kind file|tool|decision|error] [--model M]`。add/set/stage/main/escalate は自動でログされる。
 - メインは節目ごとに1行: 読んだファイル(file)、判断(decision)、エラー(error)。実行中ノードには最新の非status行が表示される。
