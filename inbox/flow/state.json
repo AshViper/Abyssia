@@ -1,39 +1,341 @@
 {
- "updated": 1790914622.952188,
+ "updated": 1790923672.9123595,
  "main": {
   "model": "",
   "note": ""
  },
- "tasks": [],
- "log": [],
+ "tasks": [
+  {
+   "id": "I01-java",
+   "title": "",
+   "tier": "heavy",
+   "model": "opus-5.5",
+   "status": "done",
+   "files": "",
+   "parent": "",
+   "note": "",
+   "started": 1790918164.1527634,
+   "ended": 1790920385.313202
+  },
+  {
+   "id": "I01-assets",
+   "title": "",
+   "tier": "standard",
+   "model": "sonnet-5.5",
+   "status": "done",
+   "files": "",
+   "parent": "",
+   "note": "",
+   "started": 1790918164.3895714,
+   "ended": 1790920385.4555385
+  },
+  {
+   "id": "I02-java",
+   "title": "",
+   "tier": "heavy",
+   "model": "opus-5.5",
+   "status": "done",
+   "files": "",
+   "parent": "",
+   "note": "",
+   "started": 1790922621.1587346,
+   "ended": 1790923672.587005
+  },
+  {
+   "id": "I02-assets",
+   "title": "",
+   "tier": "light",
+   "model": "sonnet-5.5",
+   "status": "done",
+   "files": "",
+   "parent": "",
+   "note": "",
+   "started": 1790922621.3536952,
+   "ended": 1790923672.7501028
+  }
+ ],
+ "log": [
+  {
+   "t": 1790914916.3245559,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "running — 魚/クラゲドロップ: ChatGPTに仕様+テクスチャシート依頼中"
+  },
+  {
+   "t": 1790915597.6253946,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "F01 仕様書を inbox/specs/F01-fauna-drops.md に保存 (ChatGPT設計+Claude補完)。テクスチャ16個を texture_locks に取込済み"
+  },
+  {
+   "t": 1790915608.6203256,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1790915608.7492635,
+   "who": "F01A",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] ModItems: 16 food/material items"
+  },
+  {
+   "t": 1790915608.8766901,
+   "who": "F01B",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] Generators: item icons/lang/recipes"
+  },
+  {
+   "t": 1790915609.003174,
+   "who": "F01C",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [light] Fauna INFO loot for 29 species"
+  },
+  {
+   "t": 1790915609.1330628,
+   "who": "F01A",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790915609.2613654,
+   "who": "F01B",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790915609.3969767,
+   "who": "F01C",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790915630.8916838,
+   "who": "F01A",
+   "kind": "info",
+   "model": "sonnet-5.5",
+   "msg": "start ModItems 16 items"
+  },
+  {
+   "t": 1790915649.060062,
+   "who": "F01C",
+   "kind": "info",
+   "model": "sonnet-5.5",
+   "msg": "INFO[loot] added to 29 species; gen_fauna --no-sounds rewrote 29 loot_tables/entities JSONs, no-drop species unchanged"
+  },
+  {
+   "t": 1790915649.87627,
+   "who": "F01A",
+   "kind": "info",
+   "model": "sonnet-5.5",
+   "msg": "done: 16 items + food() helper in ModItems"
+  },
+  {
+   "t": 1790915656.170962,
+   "who": "F01A",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790915659.2783146,
+   "who": "F01C",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790915673.4442563,
+   "who": "F01B",
+   "kind": "info",
+   "model": "sonnet-5.5",
+   "msg": "gen_deep_assets: 16 fauna drop items (locked PNGs, models, lang), 18 cooking + 4 tentacle recipes; check_recipes/check_textures ok, locks match"
+  },
+  {
+   "t": 1790915684.1131911,
+   "who": "F01B",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790915684.240042,
+   "who": "build",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1790915971.392417,
+   "who": "build",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1790915971.538364,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "F01 完了: ChatGPT検査=設計どおり。実機(隔離サーバー)でドロップ確認"
+  },
+  {
+   "t": 1790915971.6975892,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1790917604.8341255,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "I01 工業ブロック: ChatGPT で仕様(inbox/specs/I01-industrial-blocks.md)+イメージ(inbox/designs/I01.png) 作成、ユーザー確認待ち"
+  },
+  {
+   "t": 1790918163.7455947,
+   "who": "I01-java",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] "
+  },
+  {
+   "t": 1790918163.9260876,
+   "who": "I01-assets",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] "
+  },
+  {
+   "t": 1790918164.1527634,
+   "who": "I01-java",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790918164.3895714,
+   "who": "I01-assets",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790920385.313202,
+   "who": "I01-java",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790920385.4555385,
+   "who": "I01-assets",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790920385.5884383,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "I01 工業ブロック完了: 機能テスト・GUI・水中・再ロード合格、ChatGPT 検査合格 (inbox/specs/I01-review.md)"
+  },
+  {
+   "t": 1790922620.847119,
+   "who": "I02-java",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] "
+  },
+  {
+   "t": 1790922621.0007532,
+   "who": "I02-assets",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [light] "
+  },
+  {
+   "t": 1790922621.1587346,
+   "who": "I02-java",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790922621.3536952,
+   "who": "I02-assets",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790923672.587005,
+   "who": "I02-java",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790923672.7501028,
+   "who": "I02-assets",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790923672.9123595,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "I02 選択浸出分離機 完了: 1024回実測で 8/8/2% 一致、ChatGPT 合格 (inbox/specs/I02-review.md)"
+  }
+ ],
  "stages": {
   "request": {
    "status": "idle",
-   "note": ""
+   "note": "",
+   "t": 1790915971.6975892
   },
   "router": {
    "status": "idle",
-   "note": ""
+   "note": "",
+   "t": 1790915971.6975892
   },
   "chatgpt": {
    "status": "idle",
-   "note": ""
+   "note": "",
+   "t": 1790915971.6975892
   },
   "texture": {
    "status": "idle",
-   "note": ""
+   "note": "",
+   "t": 1790915971.6975892
   },
   "verify": {
    "status": "idle",
-   "note": ""
+   "note": "",
+   "t": 1790915971.6975892
   },
   "build": {
    "status": "idle",
-   "note": ""
+   "note": "",
+   "t": 1790915971.6975892
   },
   "memory": {
    "status": "idle",
-   "note": ""
+   "note": "",
+   "t": 1790915971.6975892
   }
  }
 }
