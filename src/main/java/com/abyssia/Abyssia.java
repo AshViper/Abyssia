@@ -34,6 +34,7 @@ public class Abyssia
         ModSounds.register(modEventBus);
         ModParticles.register(modEventBus);
         ModWorldgen.register(modEventBus);
+        com.abyssia.registry.ModHabitat.register(modEventBus);
 
         // Register our mod's ModConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
