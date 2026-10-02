@@ -1,11 +1,23 @@
 package com.abyssia.registry;
 
 import com.abyssia.Abyssia;
+import com.abyssia.habitat.HabitatBuilder;
 import com.abyssia.habitat.HabitatConstructorItem;
 import com.abyssia.habitat.HabitatDoorBlock;
 import com.abyssia.habitat.HabitatHatchBlock;
 import com.abyssia.habitat.HabitatSupportBlock;
 import com.abyssia.habitat.HabitatWindowBlock;
+import com.abyssia.habitat.power.HabitatPower;
+import com.abyssia.habitat.scan.ScanConsoleBlock;
+import com.abyssia.habitat.scan.ScanConsoleBlockEntity;
+import com.abyssia.habitat.scan.ScanConsoleMenu;
+import com.abyssia.industry.energy.EnergyHooks;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -44,12 +56,15 @@ public final class ModHabitat
     /** H09 support legs under floating modules */
     public static final DeferredBlock<Block> SUPPORT = BLOCKS.register("habitat_support", () -> new HabitatSupportBlock(metal(5.0f).noOcclusion()));
 
-    // H07 scan room console. TODO(NeoForge port, scan/): the real ScanConsoleBlock + block entity + menu need the
-    // industry energy classes; until they are ported this is a plain placeholder block so the scan room still builds
-    // and the minecraft:impermeable tag entry resolves. Swap in ScanConsoleBlock, SCAN_CONSOLE_ENTITY and
-    // SCAN_CONSOLE_MENU (BLOCK_ENTITIES / MENUS registers) when scan/ is ported.
+    // H07 scan room console (block entity + terminal menu; still no block item / loot)
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Abyssia.MODID);
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, Abyssia.MODID);
     public static final DeferredBlock<Block> SCAN_CONSOLE = BLOCKS.register("scan_console",
-            () -> new Block(metal(5.0f).noOcclusion().lightLevel(s -> 7)));
+            () -> new ScanConsoleBlock(metal(5.0f).noOcclusion().lightLevel(s -> 7)));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ScanConsoleBlockEntity>> SCAN_CONSOLE_ENTITY = BLOCK_ENTITIES.register("scan_console",
+            () -> BlockEntityType.Builder.of(ScanConsoleBlockEntity::new, SCAN_CONSOLE.get()).build(null));
+    public static final DeferredHolder<MenuType<?>, MenuType<ScanConsoleMenu>> SCAN_CONSOLE_MENU = MENUS.register("scan_console",
+            () -> IMenuTypeExtension.create(ScanConsoleMenu::new));
 
     // NeoForge: the constructor's module / rotation live in data components (Forge 1.20 kept them in NBT "Mode" / "Rot";
     // 1.20 stacks are not migrated, a converted constructor falls back to the foundation and the player's facing).
@@ -66,7 +81,19 @@ public final class ModHabitat
     public static void register(IEventBus modBus)
     {
         BLOCKS.register(modBus);
+        BLOCK_ENTITIES.register(modBus);
+        MENUS.register(modBus);
         DATA_COMPONENTS.register(modBus);
+        modBus.addListener(ModHabitat::registerCapabilities);
+        // H08: the cable network (industry) reaches the habitat through these hooks (main called them directly)
+        EnergyHooks.cableConnects = HabitatBuilder::shell;
+        EnergyHooks.externalReceiver = HabitatPower::externalReceiver;
+    }
+
+    /** NeoForge block capability (Forge: BlockEntity#getCapability): the scan console takes FE on every side. */
+    private static void registerCapabilities(RegisterCapabilitiesEvent event)
+    {
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, SCAN_CONSOLE_ENTITY.get(), (be, side) -> be.energy());
     }
 
     /** The constructor in the Abyssia tab (called from ModItems.register like ModTools). */
