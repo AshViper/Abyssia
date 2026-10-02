@@ -22,6 +22,7 @@ from PIL import Image
 
 import building_assets
 import cave_assets
+import diving_gear_assets
 import gen_fauna
 import habitat_assets
 import furniture_assets
@@ -972,8 +973,10 @@ def main():
     # Resource plants (plant_defs.py): after the generic loot tables and recipes, which it extends / overrides.
     plants = plant_assets.generate(write, bs, bm, im, cross_model, DATA)
     material_recipes()
+    diving_gear = diving_gear_assets.generate(write, im, DATA)
     lang()
     print(f"Resource plants: {plants}")
+    print(f"Entry diving gear: {diving_gear} items")
     print(f"{len(NAMES) - 1} blocks + {len(building_assets.NAMES)} building blocks + {len(industrial_assets.NAMES)} industrial blocks, {len(ITEMS)} items")
     print(f"Industrial models: {industrial}")
     print(f"Habitat: {habitat}")
@@ -1199,6 +1202,7 @@ def lang():
         data.update({k: v[idx] for k, v in habitat_assets.LANG.items()})
         data.update({k: v[idx] for k, v in furniture_assets.LANG.items()})
         data.update({k: v[idx] for k, v in electric_tool_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in diving_gear_assets.LANG.items()})
         data["itemGroup.abyssia"] = "Abyssia"
         write(path, dict(sorted(data.items())))
 
