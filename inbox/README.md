@@ -117,6 +117,7 @@ UI右の「実装したいこと」フォーム、または Claude に直接言�
 - 箱 = エージェント (橙 main / 緑 coder / 青 その他 / 紫 decision は左の advisor 枠)。「where」行 = いま何のツールでどのファイルを触っているか (終了後は最後のファイル)。
 - 線 = 親→子。実行中は光が流れ、依頼・結果が出るとその線をパケットが往復する。
 - agent messages = main→サブの依頼文、サブ→main の結果、SendMessage。クリックで全文表示。箱クリックでそのエージェントに絞り込む。
+- 完了したサブエージェントと終わったセッションの main は60秒後に隠れる。ハブ行の「完了 N 件を表示」で再表示する (ブラウザごとに記憶)。
 
 ## 詳細ログ (activity)
 `flow.py log <task|main|stage> "今やっていること" [--kind file|tool|decision|error] [--model M]`。add/set/stage/main/escalate は自動でログされる。

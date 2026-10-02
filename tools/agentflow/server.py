@@ -303,7 +303,7 @@ def live(window=1800, lines=4000):
     def ag(e):
         a = agents.get(e["who"])
         if not a:
-            typ = e.get("type") or "main"
+            typ = e.get("type") or ("main" if e["who"].startswith("main:") else "fork")  # agent_id without a type = fork
             a = agents[e["who"]] = {"id": e["who"], "type": typ, "sid": e.get("sid", ""), "parent": "", "desc": "",
                                     "model": main_model if typ == "main" else models.get(typ, main_model),
                                     "status": "running", "tool": "", "target": "", "started": e["t"], "t": e["t"],
@@ -366,6 +366,9 @@ def live(window=1800, lines=4000):
                 msgs.append({"t": e["t"], "from": "user", "to": e["who"], "kind": "prompt", "text": txt})
         events.append(e)
 
+    for a in agents.values():  # started before the hook was installed / unmatched: hang it under its session's main
+        if a["type"] != "main" and not a["parent"]:
+            a["parent"] = f"main:{a['sid']}"
     for a in agents.values():  # a crashed/killed agent never sends Stop; let it go quiet
         if a["status"] == "running" and now - a["t"] > (900 if a["type"] != "main" else 300):
             a["status"] = "stale" if a["type"] != "main" else "idle"

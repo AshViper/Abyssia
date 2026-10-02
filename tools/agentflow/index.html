@@ -495,7 +495,9 @@ async function poll(){
 setInterval(()=>{ if(!document.hidden&&Date.now()/1000-(state.updated||0)>44&&Date.now()/1000-(state.updated||0)<48)render(); },1000); // idle decay redraw
 
 // ---- agent tree (live.json, written by hook.py via server.py)
-let LV={agents:[],msgs:[],events:[]},lvJson="",tsel=null,seenMsg=0;
+let LV={agents:[],msgs:[],events:[]},lvJson="",tsel=null,seenMsg=0,showDone=false;
+try{showDone=localStorage.getItem("af.showDone")==="1"}catch(_){}
+const DONE_GRACE=60; // seconds a finished subagent stays visible
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const hms=t=>new Date(t*1000).toLocaleTimeString("ja-JP",{hour12:false});
 const kindOf=a=>a.type==="main"?"main":a.type==="decision"?"dec":a.type.startsWith("coder")?"coder":"sub";
@@ -557,10 +559,17 @@ function gptbox(){ // ChatGPT = spec / design / texture owner and reviewer (driv
   $("pipe").innerHTML=`<h3>PIPELINE</h3>`+P.map(([k,l])=>{const n=(S[k]||{}).note;return `<div class="row">${sdot(V.st(k))}<span>${l}</span><span title="${esc(n||"")}">${V.st(k)!=="idle"&&n?esc(n):""}</span></div>`}).join("");
 }
 function trender(){
-  const ags=LV.agents,mains=ags.filter(a=>a.type==="main"),decs=ags.filter(a=>a.type==="decision"),subs=ags.filter(a=>a.type!=="main"&&a.type!=="decision");
+  const ags=LV.agents,allMains=ags.filter(a=>a.type==="main"),decs=ags.filter(a=>a.type==="decision"),all=ags.filter(a=>a.type!=="main"&&a.type!=="decision");
+  const now=Date.now()/1000,live=a=>a.status==="running"||now-(a.ended||a.t)<DONE_GRACE||a.id===tsel;
+  const subs=showDone?all:all.filter(live);
+  const keepMain=new Set(subs.map(x=>x.parent));
+  let mains=showDone?allMains:allMains.filter(a=>live(a)||keepMain.has(a.id));
+  if(!mains.length&&allMains.length)mains=[allMains.reduce((p,q)=>q.t>p.t?q:p)]; // always show the latest session
+  const hidden=all.length-subs.length+allMains.length-mains.length;
   $("mains").innerHTML=mains.length?mains.map(abox).join(""):`<div class="ab main idle"><div class="nm">Opus · main session</div><div class="st">○ 記録なし — hook 待ち</div></div>`;
   const run=subs.filter(a=>a.status==="running").length;
-  $("hub").innerHTML=subs.length?`delegate to subagents · <b>${run} running</b> / ${subs.length}`:"";
+  $("hub").innerHTML=all.length?`delegate to subagents · <b>${run} running</b> / ${all.length}`+(hidden||showDone?` · <a href="#" id="tgDone" style="color:var(--mut)">${showDone?"完了を隠す":`完了 ${hidden} 件を表示`}</a>`:""):"";
+  if($("tgDone"))$("tgDone").onclick=e=>{e.preventDefault();showDone=!showDone;try{localStorage.setItem("af.showDone",showDone?"1":"0")}catch(_){}trender()};
   $("subs").innerHTML=subs.map(abox).join("");
   advisor(decs);gptbox();
   const m=mains.find(a=>a.status==="running")||mains[0];
@@ -582,7 +591,7 @@ function tlines(){
   for(const a of LV.agents){
     if(a.type==="main")continue;
     const ch=box(a.id),par=box(a.parent)||box((LV.agents.find(x=>x.type==="main"&&x.sid===a.sid)||{}).id||"");
-    if(!par)continue;const col=KCOL[kindOf(a)],on=a.status==="running";
+    if(!par||(!ch&&a.type!=="decision"))continue;const col=KCOL[kindOf(a)],on=a.status==="running";
     if(a.type==="decision"){const ad=$("adv").getBoundingClientRect();const [x1,y1]=[ad.right-host.left,ad.top+40-host.top],[x2,y2]=P(par,"l");
       window._tpaths[a.id]=line(`M${x1},${y1} L${(x1+x2)/2},${y1} L${(x1+x2)/2},${y2} L${x2},${y2}`,col,on,true);continue}
     const [x1,y1]=P(par,"b"),[x2,y2]=P(ch,"t"),my=(y1+y2)/2;
@@ -626,6 +635,7 @@ async function tpoll(){
   }catch(e){}
 }
 addEventListener("resize",()=>requestAnimationFrame(tlines));
+setInterval(()=>{if(!document.hidden&&!showDone&&LV.agents.some(a=>a.status!=="running"))trender()},5000);
 
 // ---- requests / approvals / autorun
 const RST={new:"未着手",specced:"仕様化済",running:"実装中",done:"完了"};
