@@ -183,6 +183,7 @@ public final class ModItems
         ITEMS.register(modBus);
         ModTools.register(ITEMS, TAB_ITEMS);
         MaterialTools.register(ITEMS, TAB_ITEMS);
+        ModHabitat.registerItems(ITEMS, TAB_ITEMS);
         TABS.register(modBus);
     }
 
