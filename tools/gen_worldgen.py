@@ -209,7 +209,12 @@ FISSURE = dict(
     biome=0.15,                    # fissure value above which the biome is deep_fissure
     walls_below=24,                # deep_fissure: rock under this Y (not the floor) is deepslate
     shaft_below=-56,               # rift / fissure biomes: deepslate instead of the bedrock band under this Y
-    slit=0.6,                      # fissure value above which the crack opens down into the deep layer (~7 blocks wide)
+    slit=0.6,                      # fissure_band above which the crack opens down into the deep layer (~7 blocks wide)
+    # The slit follows the crack band alone, not the faded fissure value: it used to need fissure > slit, so where the
+    # region / ocean gate faded the crack (strength 0.15..0.6) the biome was there but sealed (request 20261002-235036).
+    # It now opens wherever strength >= slit_strength (band > slit there means fissure > 0.15: inside the biome).
+    slit_strength=0.25,
+    slit_gate=200.0,               # density per unit of strength below slit_strength (closes it within ~0.02)
 )
 
 
@@ -241,8 +246,10 @@ def terrain():
     write("density_function/detail", mul(0.08, snoise("minecraft:surface", 1.0)))
     fi = FISSURE
     write("density_function/fissure_region", flat(snoise(A("fissure_region"), fi["region_xz"])))
-    write("density_function/fissure", flat(mul(ramp(A("fissure_region"), *fi["region"]),
-                                               band(snoise(A("fissure"), fi["xz"]), fi["width"], 1.0 / fi["width"]))))
+    # fissure = strength (region fade) x band (1 on the crack line); the slit follows the band (fissure_slit).
+    write("density_function/fissure_strength", flat(ramp(A("fissure_region"), *fi["region"])))
+    write("density_function/fissure_band", flat(band(snoise(A("fissure"), fi["xz"]), fi["width"], 1.0 / fi["width"])))
+    write("density_function/fissure", flat(mul(A("fissure_strength"), A("fissure_band"))))
     cut = mul(-fi["depth"], clamp(mul(fi["steep"], A("fissure")), 0.0, 1.0))
     write("density_function/seabed_raw", flat(add(add(add(add(add(A("base"), A("mountains")), A("trenches")), A("canyons")), A("detail")), cut)))
     # Deep seas bottom out at Y -50: below the knee the relief is compressed (trench walls keep sloping instead of
@@ -334,7 +341,7 @@ def terrain():
     # opening, a no-op against terrain densities of at most ~4.
     r, fi = RIFT, FISSURE
     rift_carve = mul(-r["carve"], A("rift"))
-    openings = dmin(rift_carve, fissure_slit(A("fissure")))
+    openings = dmin(rift_carve, fissure_slit(A("fissure_strength")))
     deep_gate = grad(CEILING_BOTTOM_Y - 16, CEILING_BOTTOM_Y - 8, 20.0, -20.0)
 
     def deep_density(seabed_offset, openings):
@@ -352,12 +359,15 @@ def terrain():
     write("density_function/final_density", interp(layered(A("deep_density"), A("ocean_density"))))
     # The vanilla world's deep layer: no rifts, opened only by the slits of the (ocean-gated) fissures.
     vanilla_world_fields()
-    write("density_function/overworld/deep_density_nr", deep_density(A("overworld/deep_seabed_offset_nr"), fissure_slit(A("overworld/fissure_v"))))
+    write("density_function/overworld/deep_density_nr", deep_density(A("overworld/deep_seabed_offset_nr"), fissure_slit(A("overworld/fissure_strength"))))
 
 
-def fissure_slit(fissure):
-    """The fissures' centre slit: open (< 0) where the fissure value is above FISSURE slit, +RIFT carve at the centre."""
-    return mul(-RIFT["carve"] / (1.0 - FISSURE["slit"]), add(fissure, -FISSURE["slit"]))
+def fissure_slit(strength):
+    """The fissures' centre slit: open (< 0) where fissure_band is above FISSURE slit (-RIFT carve at the centre) and the
+    crack's strength (fissure_strength, x the ocean gate in the vanilla world) is at least FISSURE slit_strength."""
+    fi = FISSURE
+    slit = mul(-RIFT["carve"] / (1.0 - fi["slit"]), add(A("fissure_band"), -fi["slit"]))
+    return dmax(slit, mul(-fi["slit_gate"], add(strength, -fi["slit_strength"])))
 
 
 # ================================================================ the vanilla world (inbox/specs/M02-vanilla-default-deep-layer.md)
@@ -390,6 +400,7 @@ def vanilla_world_fields():
     write("density_function/overworld/ocean_gate", flat(mul(ramp(c, lo, full_lo), ramp(mul(-1, c), -hi, -full_hi))))
     # The M01 fissure field, only in deep oceans.
     write("density_function/overworld/fissure_v", flat(mul(A("fissure"), A("overworld/ocean_gate"))))
+    write("density_function/overworld/fissure_strength", flat(mul(A("fissure_strength"), A("overworld/ocean_gate"))))
     # fissure_zone (OceanChunkGenerator fluid_zone, aquifer floodedness): the crack band widened by zone_margin blocks.
     # |fissure noise| grows about `slope` per block across a crack (the slit, fissure > FISSURE slit, is ~7 blocks wide).
     slope = fi["width"] * (1 - fi["slit"] ** 0.5) / 3.5
@@ -401,7 +412,7 @@ def vanilla_world_fields():
     # crack_carve: the crack down to its floor and the slit through the bedrock band, below sea level only.
     floor = add(v["crack_top"], mul(-v["crack_drop"], clamp(mul(v["crack_steep"], A("overworld/fissure_v")), 0.0, 1.0)))
     k = 1.0 / v["crack_scale"]
-    crack = dmin(mul(k, add(floor, mul(-1, "minecraft:y"))), fissure_slit(A("overworld/fissure_v")))
+    crack = dmin(mul(k, add(floor, mul(-1, "minecraft:y"))), fissure_slit(A("overworld/fissure_strength")))
     write("density_function/overworld/crack_carve", dmax(crack, mul(k, add("minecraft:y", -SEA_LEVEL))))
 
 
