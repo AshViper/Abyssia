@@ -57,6 +57,18 @@ public final class ClientConfig
 
     static {
         BUILDER.pop();
+        BUILDER.comment("Title screen").push("title");
+    }
+
+    public static final ForgeConfigSpec.BooleanValue TITLE_PANORAMA = BUILDER
+            .comment("Use the Abyssia deep-sea title screen panorama (other resource packs' panoramas take priority)")
+            .define("title_panorama", true);
+    public static final ForgeConfigSpec.BooleanValue TITLE_PANORAMA_EFFECTS = BUILDER
+            .comment("Draw faint bubbles, dust and a deep-blue tint over the title panorama")
+            .define("title_panorama_effects", true);
+
+    static {
+        BUILDER.pop();
     }
 
     static final ForgeConfigSpec SPEC = BUILDER.build();

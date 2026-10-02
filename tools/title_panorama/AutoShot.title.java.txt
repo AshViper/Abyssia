@@ -1,0 +1,181 @@
+package com.abyssia.devtest;
+
+import com.abyssia.Abyssia;
+import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Screenshot;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/** DEV TEST HARNESS (scratch copy only): T02 title panorama scene, then quit. */
+@Mod.EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
+public final class AutoShot
+{
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final boolean ENABLED = Boolean.getBoolean("abyssia.autoshot");
+    private record Step(String kind, String arg, int after) {}
+    private static final List<Step> STEPS = new ArrayList<>();
+    private static int index, wait;
+    private static boolean started, titleMode;
+
+    private static void cmd(String c, int after) { STEPS.add(new Step("cmd", c, after)); }
+    private static void shot(String name) { STEPS.add(new Step("shot", name, 6)); }
+    private static void use(int x, int y, int z) { STEPS.add(new Step("use", x + " " + y + " " + z, 30)); }
+    private static void close() { STEPS.add(new Step("close", "", 10)); }
+    private static void hud(boolean show) { STEPS.add(new Step("hud", Boolean.toString(show), 5)); }
+    private static void jei(String kind) { STEPS.add(new Step("jei", kind, 40)); }
+
+    private static String f(double v) { return String.format(Locale.ROOT, "%.2f", v); }
+
+    private static void camera(double x, double y, double z, double tx, double ty, double tz, int after)
+    {
+        cmd("tp @s " + f(x) + " " + f(y - 1.62) + " " + f(z) + " facing " + f(tx) + " " + f(ty - 1.62) + " " + f(tz), after);
+    }
+
+    private static final int Y = -60;
+
+    private static void pano() { STEPS.add(new Step("pano", "", 20)); }
+    private static void title() { STEPS.add(new Step("title", "", 120)); }
+
+    static
+    {
+        title();
+        shot("t02_title_1");
+        cmd("noop", 100);
+        shot("t02_title_2");
+    }
+
+    private AutoShot() {}
+
+    @SubscribeEvent
+    public static void onTick(TickEvent.ClientTickEvent event)
+    {
+        if (!ENABLED || event.phase != TickEvent.Phase.END) return;
+        Minecraft mc = Minecraft.getInstance();
+        if (!titleMode && (mc.player == null || mc.level == null || mc.getSingleplayerServer() == null)) return;
+        if (!started)
+        {
+            started = true;
+            wait = 100;
+            mc.options.hideGui = true;
+            LOGGER.info("[autoshot] started");
+            return;
+        }
+        if (wait > 0)
+        {
+            wait--;
+            return;
+        }
+        if (index >= STEPS.size())
+        {
+            LOGGER.info("[autoshot] done");
+            mc.stop();
+            return;
+        }
+        Step s = STEPS.get(index++);
+        wait = s.after();
+        switch (s.kind())
+        {
+            case "cmd" -> { if (!titleMode) run(mc, s.arg()); }
+            case "shot" -> Screenshot.grab(mc.gameDirectory, s.arg() + ".png", mc.getMainRenderTarget(),
+                    msg -> LOGGER.info("[autoshot] {}", msg.getString()));
+            case "use" ->
+            {
+                String[] p = s.arg().split(" ");
+                BlockPos pos = new BlockPos(Integer.parseInt(p[0]), Integer.parseInt(p[1]), Integer.parseInt(p[2]));
+                mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND,
+                        new BlockHitResult(Vec3.atCenterOf(pos), Direction.SOUTH, pos, false));
+            }
+            case "close" ->
+            {
+                mc.player.closeContainer();
+                mc.setScreen(null);
+            }
+            case "jei" ->
+            {
+                if (DevJei.runtime != null)
+                    DevJei.runtime.getRecipesGui().showTypes(java.util.List.of(
+                            com.abyssia.compat.jei.MachineCategory.type(com.abyssia.industry.MachineKind.valueOf(s.arg()))));
+            }
+            case "pano" -> {
+                java.io.File dir = new java.io.File(mc.gameDirectory, "pano");
+                dir.mkdirs();
+                grabPanorama(mc, dir, 1024);
+                LOGGER.info("[autoshot] panorama saved to {}", dir);
+            }
+            case "title" -> {
+                mc.level.disconnect();
+                mc.clearLevel();
+                mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
+                titleMode = true;
+            }
+            case "square" -> {
+                mc.options.fov().set(90);
+                mc.options.fovEffectScale().set(0.0);
+                mc.options.gamma().set(1.0);
+                mc.getWindow().setWindowed(960, 960);
+            }
+            case "hud" -> mc.options.hideGui = !Boolean.parseBoolean(s.arg());
+            default -> { }
+        }
+    }
+
+    /** Vanilla grabPanoramixScreenshot minus levelRenderer.graphicsChanged() (which drops every chunk mesh; Embeddium
+     *  cannot rebuild them inside the same frame) and with a few warm-up renders per face. */
+    private static void grabPanorama(Minecraft mc, java.io.File dir, int size)
+    {
+        com.mojang.blaze3d.platform.Window window = mc.getWindow();
+        int w = window.getWidth(), h = window.getHeight();
+        com.mojang.blaze3d.pipeline.RenderTarget target = new com.mojang.blaze3d.pipeline.TextureTarget(size, size, true, Minecraft.ON_OSX);
+        var p = mc.player;
+        float xr = p.getXRot(), yr = p.getYRot();
+        mc.gameRenderer.setRenderBlockOutline(false);
+        try {
+            mc.gameRenderer.setPanoramicMode(true);
+            window.setWidth(size);
+            window.setHeight(size);
+            float[][] rot = {{yr, 0}, {yr + 90, 0}, {yr + 180, 0}, {yr - 90, 0}, {yr, -90}, {yr, 90}};
+            for (int k = 0; k < 6; k++) {
+                p.setYRot(rot[k][0] % 360F); p.setXRot(rot[k][1]);
+                p.yRotO = p.getYRot(); p.xRotO = p.getXRot();
+                for (int n = 0; n < 4; n++) {
+                    target.bindWrite(true);
+                    mc.gameRenderer.renderLevel(1.0F, 0L, new com.mojang.blaze3d.vertex.PoseStack());
+                }
+                Screenshot.grab(dir, "panorama_" + k + ".png", target, msg -> {});
+            }
+        } finally {
+            p.setXRot(xr); p.setYRot(yr); p.xRotO = xr; p.yRotO = yr;
+            mc.gameRenderer.setRenderBlockOutline(true);
+            window.setWidth(w); window.setHeight(h);
+            target.destroyBuffers();
+            mc.gameRenderer.setPanoramicMode(false);
+            mc.getMainRenderTarget().bindWrite(true);
+        }
+    }
+
+    private static void run(Minecraft mc, String command)
+    {
+        MinecraftServer server = mc.getSingleplayerServer();
+        server.execute(() -> {
+            ServerPlayer p = server.getPlayerList().getPlayers().get(0);
+            var source = p.createCommandSourceStack().withPermission(4).withSuppressedOutput();
+            LOGGER.info("[autoshot] /{}", command);
+            server.getCommands().performPrefixedCommand(source, command);
+        });
+    }
+}
