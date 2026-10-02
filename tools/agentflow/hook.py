@@ -87,7 +87,7 @@ def classify(tool, ti):
             return "git"
         if re.search(head + r"python3?\s+\S*(forge_textures|texture_studio|texture_gen|title_panorama|armor_layers|mod_icon|sheets\.py\s+import)", cmd):
             return "texture"
-        if re.search(r"^\s*cd\s+[\"']?[^\"'\n]*Obsidian", cmd) or re.search(r"(>>?|tee(\s+-a)?|Out-File|Set-Content|Copy-Item|\bcp|\bmv)\s+(-\S+\s+)*[\"']?[^\s\"']*Obsidian", cmd):
+        if re.search(r"(?:^|\n|&&|;)\s*cd\s+[\"']?[^\"'\n]*Obsidian", cmd) or re.search(r"(>>?|tee(\s+-a)?|Out-File|Set-Content|Copy-Item|\bcp|\bmv)\s+(-\S+\s+)*[\"']?[^\s\"']*Obsidian", cmd):
             return "memory"
         return ""
     if tool in EDIT:
