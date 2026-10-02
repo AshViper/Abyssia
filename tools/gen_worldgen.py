@@ -640,6 +640,22 @@ for _metal, (_ore, _host, _n, _biomes) in RARE_VEINS.items():
     for _b in _biomes:
         VEINS[_b].append((_metal, "rare"))
 
+# Vanilla ores (2026-10-03, user request): seabed veins like the Abyssia minerals ("vein_<ore>_vanilla", in mineral host
+# rock, no crust / nodules: vanilla has no matching blocks), each in the deep biomes that suit it.
+VANILLA_VEINS = {
+    # ore: (block, size, rarity 1/n chunks, biomes)
+    "diamond": ("minecraft:deepslate_diamond_ore", "small", 3, ["abyssal_trench", "hadal_zone", "deep_crystal_fields", "frost_abyss"]),
+    "emerald": ("minecraft:deepslate_emerald_ore", "small", 4, ["deep_crystal_fields", "deep_forest", "abyssal_forest", "glow_gardens"]),
+    "lapis": ("minecraft:deepslate_lapis_ore", "medium", 3, ["abyssal_ocean", "deep_crystal_fields", "frost_abyss", "sunken_ruins", "brine_lakes"]),
+    "gold": ("minecraft:deepslate_gold_ore", "medium", 3, ["thermal_vents", "volcanic_deep", "deep_sea", "sunken_ruins", "deep_forest"]),
+    "redstone": ("minecraft:deepslate_redstone_ore", "medium", 2, ["abyssal_trench", "hadal_zone", "deep_sea", "abyssal_ocean", "bone_graveyard",
+                                                                 "glow_gardens"]),
+    "quartz": ("minecraft:nether_quartz_ore", "large", 4, ["volcanic_deep", "thermal_vents", "brine_lakes", "bone_graveyard"]),
+}
+for _ore, (_block, _size, _n, _biomes) in VANILLA_VEINS.items():
+    for _b in _biomes:
+        VEINS[_b].append((_ore, "vanilla"))
+
 
 def veins():
     for mineral, (ore, crust, cluster, host) in MINERALS.items():
@@ -653,30 +669,9 @@ def veins():
     for metal, (ore, host, n, _) in RARE_VEINS.items():
         feature(f"vein_{metal}_rare", {"type": A("ore_vein"), "config": {"ore": state(ore), "host": state(host), "size": "small"}},
                 on_floor(rarity(n)))
-
-
-# Vanilla ores in the deep layer (2026-10-03, user request): the deep biomes had only Abyssia veins. Vanilla ore
-# blocks (deepslate variants, quartz as nether quartz) in any deep rock or sediment (#abyssia:vein_replaceable),
-# at absolute heights inside the deep layer, so the ocean world's own vanilla ores are untouched.
-DEEP_ORES = {
-    # name: (block, size, placement count or rarity, min Y, max Y)
-    "diamond": ("deepslate_diamond_ore", 5, count(4), MIN_Y + 5, -220),
-    "gold": ("deepslate_gold_ore", 9, count(4), MIN_Y + 5, -100),
-    "redstone": ("deepslate_redstone_ore", 8, count(5), MIN_Y + 5, -180),
-    "lapis": ("deepslate_lapis_ore", 7, count(3), MIN_Y + 5, -100),
-    "emerald": ("deepslate_emerald_ore", 3, count(14), -300, -90),
-    "quartz": ("nether_quartz_ore", 12, count(6), MIN_Y + 5, -90),
-}
-
-
-def deep_ores():
-    for name, (block, size, n, lo, hi) in DEEP_ORES.items():
-        targets = [{"target": {"predicate_type": "minecraft:tag_match", "tag": A("vein_replaceable")}, "state": state("minecraft:" + block)}]
-        feature("deep_ore_" + name, {"type": "minecraft:ore", "config": {"size": size, "discard_chance_on_air_exposure": 0.0, "targets": targets}},
-                [n, {"type": "minecraft:in_square"},
-                 {"type": "minecraft:height_range", "height": {"type": "minecraft:uniform", "min_inclusive": {"absolute": lo},
-                                                               "max_inclusive": {"absolute": hi}}},
-                 {"type": "minecraft:biome"}])
+    for name, (block, size, n, _) in VANILLA_VEINS.items():
+        feature(f"vein_{name}_vanilla", {"type": A("ore_vein"), "config": {"ore": state(block), "host": state("mineral_host_rock"), "size": size}},
+                on_floor(rarity(n)))
 
 
 def spires():
@@ -1211,7 +1206,7 @@ def write_data(path, obj):
 
 # Global orders per generation step: every biome lists a subset in this order, so feature order stays consistent.
 LANDFORM_ORDER = ["seabed_structures", "rock_spire", "abyssal_spire", "trench_spire", "thermal_spire", "crystal_spire"]
-VEIN_ORDER = [f"vein_{m}_{s}" for m in MINERALS for s in ("small", "medium", "large", "huge")] + [f"vein_{m}_rare" for m in RARE_VEINS]
+VEIN_ORDER = [f"vein_{m}_{s}" for m in MINERALS for s in ("small", "medium", "large", "huge")] + [f"vein_{m}_rare" for m in RARE_VEINS] +     [f"vein_{m}_vanilla" for m in VANILLA_VEINS]
 DECOR_ORDER = ["vent_fields", "cave_deep_crystals", "cave_abyssal_mushrooms"]
 VEG_ORDER = ["seabed_structure_dressing", "meadow_green_normal", "meadow_green_sparse", "meadow_organic_dense", "meadow_organic_full", "meadow_ashen_normal",
              "meadow_ancient_normal", "meadow_crystal_normal", "meadow_thermal_sparse", "meadow_thermal_normal",
@@ -1276,7 +1271,7 @@ def deep_biome(name):
     water, fog, landforms, decor, veg = DEEP_BIOMES[name]
     features = [[] for _ in range(11)]
     features[2] = ordered(LANDFORM_ORDER, ["seabed_structures", *landforms])          # structure bodies, then large landforms
-    features[6] = [A("deep_ore_" + o) for o in DEEP_ORES] +         ordered(VEIN_ORDER, [f"vein_{m}_{s}" for m, s in VEINS[name]])                  # vanilla ores, then ore veins and their surface crusts
+    features[6] = ordered(VEIN_ORDER, [f"vein_{m}_{s}" for m, s in VEINS[name]])      # ore veins and their surface crusts
     features[7] = ordered(DECOR_ORDER, ["vent_fields", *decor])                        # vents after veins, then caves
     features[9] = ordered(VEG_ORDER, ["seabed_structure_dressing", *veg])              # structure dressing, then vegetation, crystals, small decorations
     effects = {"fog_color": fog, "sky_color": 0, "water_color": water, "water_fog_color": fog,
@@ -1649,7 +1644,6 @@ def main():
         shutil.rmtree(os.path.join(WG, d), ignore_errors=True)
     terrain()
     veins()
-    deep_ores()
     spires()
     vegetation()
     resource_plants()
