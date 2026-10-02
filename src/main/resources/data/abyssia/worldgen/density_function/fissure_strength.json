@@ -1,0 +1,45 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:mul",
+    "argument1": {
+      "type": "minecraft:square",
+      "argument": {
+        "type": "minecraft:clamp",
+        "input": {
+          "type": "minecraft:mul",
+          "argument1": 6.666666666666666,
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": "abyssia:fissure_region",
+            "argument2": -0.05
+          }
+        },
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": 3.0,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": -2.0,
+        "argument2": {
+          "type": "minecraft:clamp",
+          "input": {
+            "type": "minecraft:mul",
+            "argument1": 6.666666666666666,
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": "abyssia:fissure_region",
+              "argument2": -0.05
+            }
+          },
+          "min": 0.0,
+          "max": 1.0
+        }
+      }
+    }
+  }
+}
