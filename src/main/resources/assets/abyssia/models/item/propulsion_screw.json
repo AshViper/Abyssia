@@ -1,0 +1,586 @@
+{
+  "textures": {
+    "particle": "abyssia:item/propulsion_screw_body",
+    "body": "abyssia:item/propulsion_screw_body",
+    "propeller": "abyssia:item/propulsion_screw_propeller",
+    "light": "abyssia:item/propulsion_screw_light",
+    "grip": "abyssia:item/propulsion_screw_grip"
+  },
+  "elements": [
+    {
+      "name": "body",
+      "from": [
+        5,
+        5,
+        3
+      ],
+      "to": [
+        11,
+        11,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "nose",
+      "from": [
+        6,
+        6,
+        1
+      ],
+      "to": [
+        10,
+        10,
+        3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "guard_left",
+      "from": [
+        4,
+        4,
+        12
+      ],
+      "to": [
+        5,
+        12,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "guard_right",
+      "from": [
+        11,
+        4,
+        12
+      ],
+      "to": [
+        12,
+        12,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "guard_top",
+      "from": [
+        5,
+        11,
+        12
+      ],
+      "to": [
+        11,
+        12,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "guard_bottom",
+      "from": [
+        5,
+        4,
+        12
+      ],
+      "to": [
+        11,
+        5,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "hub",
+      "from": [
+        7,
+        7,
+        11.5
+      ],
+      "to": [
+        9,
+        9,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#propeller"
+        },
+        "east": {
+          "texture": "#propeller"
+        },
+        "south": {
+          "texture": "#propeller"
+        },
+        "west": {
+          "texture": "#propeller"
+        },
+        "up": {
+          "texture": "#propeller"
+        },
+        "down": {
+          "texture": "#propeller"
+        }
+      }
+    },
+    {
+      "name": "blade_h",
+      "from": [
+        4.5,
+        7.5,
+        12.5
+      ],
+      "to": [
+        11.5,
+        8.5,
+        13.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#propeller"
+        },
+        "east": {
+          "texture": "#propeller"
+        },
+        "south": {
+          "texture": "#propeller"
+        },
+        "west": {
+          "texture": "#propeller"
+        },
+        "up": {
+          "texture": "#propeller"
+        },
+        "down": {
+          "texture": "#propeller"
+        }
+      }
+    },
+    {
+      "name": "blade_v",
+      "from": [
+        7.5,
+        4.5,
+        12.5
+      ],
+      "to": [
+        8.5,
+        11.5,
+        13.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#propeller"
+        },
+        "east": {
+          "texture": "#propeller"
+        },
+        "south": {
+          "texture": "#propeller"
+        },
+        "west": {
+          "texture": "#propeller"
+        },
+        "up": {
+          "texture": "#propeller"
+        },
+        "down": {
+          "texture": "#propeller"
+        }
+      }
+    },
+    {
+      "name": "front_light",
+      "from": [
+        7,
+        7,
+        0.5
+      ],
+      "to": [
+        9,
+        9,
+        1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#light"
+        },
+        "east": {
+          "texture": "#light"
+        },
+        "south": {
+          "texture": "#light"
+        },
+        "west": {
+          "texture": "#light"
+        },
+        "up": {
+          "texture": "#light"
+        },
+        "down": {
+          "texture": "#light"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "grip_left",
+      "from": [
+        1,
+        6,
+        5
+      ],
+      "to": [
+        5,
+        10,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#grip"
+        },
+        "east": {
+          "texture": "#grip"
+        },
+        "south": {
+          "texture": "#grip"
+        },
+        "west": {
+          "texture": "#grip"
+        },
+        "up": {
+          "texture": "#grip"
+        },
+        "down": {
+          "texture": "#grip"
+        }
+      }
+    },
+    {
+      "name": "grip_right",
+      "from": [
+        11,
+        6,
+        5
+      ],
+      "to": [
+        15,
+        10,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#grip"
+        },
+        "east": {
+          "texture": "#grip"
+        },
+        "south": {
+          "texture": "#grip"
+        },
+        "west": {
+          "texture": "#grip"
+        },
+        "up": {
+          "texture": "#grip"
+        },
+        "down": {
+          "texture": "#grip"
+        }
+      }
+    },
+    {
+      "name": "top_light",
+      "from": [
+        7,
+        11,
+        4
+      ],
+      "to": [
+        9,
+        11.5,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#light"
+        },
+        "east": {
+          "texture": "#light"
+        },
+        "south": {
+          "texture": "#light"
+        },
+        "west": {
+          "texture": "#light"
+        },
+        "up": {
+          "texture": "#light"
+        },
+        "down": {
+          "texture": "#light"
+        }
+      },
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        -4,
+        1.5,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        4,
+        1.5,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "gui": {
+      "rotation": [
+        25,
+        145,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        20
+      ],
+      "translation": [
+        0,
+        1.75,
+        0
+      ],
+      "scale": [
+        0.45,
+        0.45,
+        0.45
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        13,
+        7
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "abyssia:block/habitat_wall",
+    "side": "abyssia:block/habitat_wall",
+    "end": "abyssia:block/habitat_ceiling"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        16,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#side",
+          "uv": [
+            4,
+            0,
+            12,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            4,
+            0,
+            12,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#side",
+          "uv": [
+            4,
+            0,
+            12,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            4,
+            0,
+            12,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#end",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#end",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "cullface": "down"
+        }
+      }
+    }
+  ]
+}
