@@ -3,6 +3,7 @@ package com.abyssia.habitat;
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.HabitatLayout.Part;
 import com.abyssia.habitat.HabitatMode.Face;
+import com.abyssia.habitat.power.HabitatPower;
 import com.abyssia.registry.ModHabitat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -635,7 +636,7 @@ public final class HabitatBuilder
                 if (!level.getFluidState(pos).isSource()) level.setBlock(pos, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
             List<BlockPos> neighbours = new ArrayList<>();
             int opened = connect(level, plan, neighbours);
-            // TODO(NeoForge port, H08): HabitatPower.register(level, plan, neighbours) once habitat/power (needs industry) is ported
+            HabitatPower.register(level, plan, neighbours);
             for (BlockPos pos : legs(level, plan))
                 if (HabitatPlan.replaceable(level.getBlockState(pos)))
                     level.setBlock(pos, support(level.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER)), Block.UPDATE_ALL);
