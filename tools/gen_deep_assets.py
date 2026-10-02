@@ -25,6 +25,7 @@ import cave_assets
 import gen_fauna
 import habitat_assets
 import furniture_assets
+import diving_gear_assets
 import electric_tool_assets
 import industrial_assets
 import material_system
@@ -1055,6 +1056,8 @@ def main():
     # Base furniture (H04 large locker / H05 wall workbench)
     furniture_assets.generate(write, bs, bm, im, DATA)
     electric_tool_assets.generate(write, im, DATA)
+    # Entry diving gear (D01): item models + vanilla recipes.
+    diving_gear_assets.generate(write, im, DATA)
 
     for name, make in ITEMS.items():
         _emit(make, os.path.join(ITEM_TEX, name + ".png"))
@@ -1329,6 +1332,7 @@ def lang():
         data.update({k: v[idx] for k, v in habitat_assets.LANG.items()})
         data.update({k: v[idx] for k, v in furniture_assets.LANG.items()})
         data.update({k: v[idx] for k, v in electric_tool_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in diving_gear_assets.LANG.items()})
         data["itemGroup.abyssia"] = "Abyssia"
         write(path, dict(sorted(data.items())))
 
