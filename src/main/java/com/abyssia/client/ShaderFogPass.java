@@ -4,7 +4,7 @@ import com.abyssia.Abyssia;
 import com.abyssia.ClientConfig;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
-import com.mojang.blaze3d.shaders.BlendMode;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -86,13 +86,17 @@ public final class ShaderFogPass
         // The fog amount travels in the alpha channel, which the pipeline may have left masked off.
         RenderSystem.colorMask(true, true, true, true);
         fogTarget.bindWrite(true);
-        // Overwrite, never blend: the target is not cleared, and the shader's cached opaque blend mode may not reapply.
+        // Overwrite, never blend: the target is not cleared.
         RenderSystem.disableBlend();
         drawFullScreen(fogShader);
         main.bindWrite(true);
+        // 1.21 core shader JSON has no "blend" any more, so the composite's blending is set here: fog colour over the
+        // scene by the fog amount, the target's alpha left as it is.
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
         drawFullScreen(compositeShader);
-        // The composite's blend mode stays "last applied"; hand back the opaque default the vanilla shaders expect.
-        new BlendMode().apply();
+        RenderSystem.disableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableCull();
         RenderSystem.depthMask(true);
