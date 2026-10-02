@@ -25,6 +25,7 @@ public final class ModParticles
     public static final RegistryObject<SimpleParticleType> MINERAL_PARTICLE = simple("mineral_particle");
     public static final RegistryObject<SimpleParticleType> SPORE = simple("spore");
     public static final RegistryObject<SimpleParticleType> GLOW_DUST = simple("glow_dust");
+    public static final RegistryObject<SimpleParticleType> CURRENT_MOTE = simple("current_mote");
 
     private ModParticles() {}
 

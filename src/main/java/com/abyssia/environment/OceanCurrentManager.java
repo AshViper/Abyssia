@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Seeds depend only on the dimension and layer (clients do not know the world seed), so every player sees the same
  * flow; the deep layer below the bedrock band flows on its own, keeping the former deep ocean dimension's seed.
- * It is side-agnostic so it can later push players, boats or items; today only particles use it.
+ * It is side-agnostic: particles drift with it and {@link OceanCurrentPush} carries players, mobs, items and boats.
  */
 public final class OceanCurrentManager
 {
