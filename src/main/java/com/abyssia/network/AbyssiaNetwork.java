@@ -1,9 +1,12 @@
 package com.abyssia.network;
 
+import com.abyssia.waypoint.WaypointSavePacket;
+import com.abyssia.waypoint.WaypointSyncPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public final class AbyssiaNetwork
 {
@@ -18,7 +21,15 @@ public final class AbyssiaNetwork
      */
     public static void register(RegisterPayloadHandlersEvent event)
     {
-        event.registrar(PROTOCOL);
+        PayloadRegistrar registrar = event.registrar(PROTOCOL);
+        // W01 waypoint beacon list (S2C) and settings save (C2S)
+        registrar.playToClient(WaypointSyncPacket.TYPE, WaypointSyncPacket.STREAM_CODEC, WaypointSyncPacket::handle);
+        registrar.playToServer(WaypointSavePacket.TYPE, WaypointSavePacket.STREAM_CODEC, WaypointSavePacket::handle);
+    }
+
+    public static void sendToServer(CustomPacketPayload message)
+    {
+        PacketDistributor.sendToServer(message);
     }
 
     public static void sendTo(ServerPlayer player, CustomPacketPayload message)

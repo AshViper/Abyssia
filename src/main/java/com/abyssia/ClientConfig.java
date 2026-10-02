@@ -45,6 +45,30 @@ public final class ClientConfig
 
     static {
         BUILDER.pop();
+        BUILDER.comment("Waypoint beacon markers on the HUD").push("waypoint_beacon");
+    }
+
+    public static final ModConfigSpec.IntValue WAYPOINT_MAX_DISTANCE = BUILDER
+            .comment("Beacons farther than this many blocks get no marker")
+            .defineInRange("max_display_distance", 512, 64, 4096);
+    public static final ModConfigSpec.IntValue WAYPOINT_HIDE_WITHIN = BUILDER
+            .comment("Beacons this close (blocks) get no marker: you can already see them (0 = always show)")
+            .defineInRange("hide_within_distance", 64, 0, 512);
+    public static final ModConfigSpec.BooleanValue WAYPOINT_SHOW_DISTANCE = BUILDER
+            .comment("Show the distance under each marker")
+            .define("show_distance", true);
+    public static final ModConfigSpec.BooleanValue WAYPOINT_SHOW_NAME = BUILDER
+            .comment("Show the beacon name under each marker")
+            .define("show_name", true);
+    public static final ModConfigSpec.BooleanValue WAYPOINT_SHOW_OFFSCREEN = BUILDER
+            .comment("Pin beacons that are off screen or behind you to the screen edge with an arrow")
+            .define("show_offscreen_marker", true);
+    public static final ModConfigSpec.IntValue WAYPOINT_MARKER_SIZE = BUILDER
+            .comment("Marker diamond size in GUI pixels")
+            .defineInRange("marker_size", 12, 8, 32);
+
+    static {
+        BUILDER.pop();
     }
 
     static final ModConfigSpec SPEC = BUILDER.build();
