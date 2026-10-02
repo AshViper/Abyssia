@@ -35,6 +35,9 @@ public final class ModTags
     public static final TagKey<EntityType<?>> ALARM_RESPONDERS = entity("alarm_responders");
     public static final TagKey<Block> FAUNA_VENT = block("fauna/vent");
 
+    /** Entities the ocean current never carries (drifting medusae already ride their own regional current). */
+    public static final TagKey<EntityType<?>> IGNORES_OCEAN_CURRENT = entity("ignores_ocean_current");
+
     /** Carrion a giant isopod scavenges from the seabed. */
     public static final TagKey<Item> ISOPOD_FOOD = item("isopod_food");
 

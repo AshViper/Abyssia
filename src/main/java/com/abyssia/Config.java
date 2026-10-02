@@ -255,6 +255,36 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("Ocean currents carry what is in the water: players, mobs, dropped items, XP and boats. The flow itself is marine_snow.current_strength").push("ocean_current");
+    }
+
+    public static final ModConfigSpec.BooleanValue CURRENT_PUSH_ENTITIES = BUILDER
+            .comment("Currents carry mobs, dropped items, XP orbs and boats (entity type tag abyssia:ignores_ocean_current opts out)")
+            .define("push_entities", true);
+    public static final ModConfigSpec.BooleanValue CURRENT_PUSH_PLAYERS = BUILDER
+            .comment("Currents carry swimming players (and the boat a player steers); creative flight and spectators are never carried")
+            .define("push_players", true);
+    public static final ModConfigSpec.DoubleValue CURRENT_PUSH_SCALE = BUILDER
+            .comment("Drift speed relative to the current field: 1 = things drift with the marine snow, higher = stronger pull")
+            .defineInRange("push_scale", 2.0, 0.0, 10.0);
+
+    static {
+        BUILDER.pop();
+        BUILDER.comment("Natural currents: seed-placed streams of fast water (weak / normal / strong) in the overworld's ocean and deep layer. Players see them as particles flowing along the stream").push("natural_currents");
+    }
+
+    public static final ModConfigSpec.BooleanValue NATURAL_CURRENTS = BUILDER
+            .comment("Place natural currents (clients learn the placement from the server on login)")
+            .define("enabled", true);
+    public static final ModConfigSpec.DoubleValue NATURAL_CURRENT_CHANCE = BUILDER
+            .comment("Chance that a 192x192-block cell holds a stream, per depth band (upper ocean, deep layer)")
+            .defineInRange("cell_chance", 0.4, 0.0, 1.0);
+    public static final ModConfigSpec.DoubleValue NATURAL_CURRENT_MAX_SPEED = BUILDER
+            .comment("Drift speed in blocks per tick at strength 1 on a stream's axis (0.16 = 3.2 blocks/s: sprint-swimming still beats it)")
+            .defineInRange("max_speed", 0.16, 0.0, 1.0);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Deep-sea fauna. Which animals live where (depth in metres, habitat, caps) is datapack data: data/<namespace>/fauna_spawns").push("fauna");
     }
 

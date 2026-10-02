@@ -7,12 +7,13 @@ package com.abyssia.environment;
  */
 public final class ParticleBudget
 {
-    /** Separate budgets so vent plumes, plant spores and ambient marine snow never starve each other. */
+    /** Separate budgets so vent plumes, plant spores, current streaks and ambient marine snow never starve each other. */
     public enum Budget
     {
         AMBIENT(Integer.MAX_VALUE),
         VENT(500),
-        PLANT(150);
+        PLANT(150),
+        CURRENT(600);
 
         /** Hard cap; AMBIENT is capped per depth band by its spawner instead. */
         public final int limit;

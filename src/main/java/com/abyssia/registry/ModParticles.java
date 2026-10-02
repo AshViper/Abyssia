@@ -25,6 +25,7 @@ public final class ModParticles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> MINERAL_PARTICLE = simple("mineral_particle");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> SPORE = simple("spore");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> GLOW_DUST = simple("glow_dust");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> CURRENT_MOTE = simple("current_mote");
 
     private ModParticles() {}
 
