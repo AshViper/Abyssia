@@ -42,3 +42,6 @@ INFO = dict(
               traits=dict(steering=(15, 4, 0.0015), zone=("near_floor", 0.5, 240), flees=(1.4, 6), home=20,
                           ambient=400)),
 )
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="abyssal_fish_fillet", count=(1, 2), looting=1, chance=0.7)]

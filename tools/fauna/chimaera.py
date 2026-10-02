@@ -44,3 +44,6 @@ INFO["java"] = dict(kind="swimmer", size_m=1.0, health=16, armor=1,
     # glides over the floor flapping its big pectoral fins; keeps its distance
     traits=dict(steering=(12, 4, 0.002), zone=("near_floor", 0.9, 150), flees=(2.2, 10), home=40, ambient=500),
     render=dict(eyeshine=(0.8, ["right_eye", "left_eye"])))
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="shark_flesh", count=(2, 3), looting=1, chance=0.65)]

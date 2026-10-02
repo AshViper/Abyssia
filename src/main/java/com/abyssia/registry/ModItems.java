@@ -4,8 +4,12 @@ import com.abyssia.Abyssia;
 import com.abyssia.item.MaterialItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DoubleHighBlockItem;
@@ -112,6 +116,30 @@ public final class ModItems
     public static final RegistryObject<Item> THERMAL_COMPONENT = item("thermal_component", Rarity.RARE);
     public static final RegistryObject<Item> CONDUCTIVE_COMPONENT = item("conductive_component", Rarity.RARE);
     public static final RegistryObject<Item> MACHINE_FRAME = item("machine_frame", Rarity.UNCOMMON);
+
+    // Fauna drops (F01): fish/eel/shark flesh is food (raw gives a chance effect, cooked via smelting/smoking/campfire),
+    // jelly tentacles are plain crafting materials. Loot tables come from tools/fauna/<id>.py INFO["loot"].
+    public static final RegistryObject<Item> ABYSSAL_FISH_FILLET = food("abyssal_fish_fillet", 2, 0.3f, Rarity.COMMON);
+    public static final RegistryObject<Item> COOKED_ABYSSAL_FISH = food("cooked_abyssal_fish", 6, 9.6f, Rarity.COMMON);
+    public static final RegistryObject<Item> VIPER_FLESH = food("viper_flesh", 2, 0.2f, Rarity.UNCOMMON,
+            new FoodEffect(MobEffects.DARKNESS, 10 * 20, 0.3f));
+    public static final RegistryObject<Item> COOKED_VIPER_FLESH = food("cooked_viper_flesh", 6, 9.6f, Rarity.UNCOMMON);
+    public static final RegistryObject<Item> SHARK_FLESH = food("shark_flesh", 3, 0.3f, Rarity.UNCOMMON,
+            new FoodEffect(MobEffects.POISON, 10 * 20, 0.3f));
+    public static final RegistryObject<Item> COOKED_SHARK_FLESH = food("cooked_shark_flesh", 8, 12.8f, Rarity.UNCOMMON);
+    public static final RegistryObject<Item> EELPOUT_FLESH = food("eelpout_flesh", 2, 0.3f, Rarity.COMMON,
+            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.3f));
+    public static final RegistryObject<Item> COOKED_EELPOUT_FLESH = food("cooked_eelpout_flesh", 6, 9.6f, Rarity.COMMON);
+    public static final RegistryObject<Item> BLOBFISH_FLESH = food("blobfish_flesh", 2, 0.4f, Rarity.COMMON);
+    public static final RegistryObject<Item> COOKED_BLOBFISH = food("cooked_blobfish", 5, 8.0f, Rarity.COMMON,
+            new FoodEffect(MobEffects.REGENERATION, 10 * 20, 0.2f));
+    public static final RegistryObject<Item> ANGLER_FLESH = food("angler_flesh", 2, 0.3f, Rarity.UNCOMMON,
+            new FoodEffect(MobEffects.NIGHT_VISION, 15 * 20, 0.5f));
+    public static final RegistryObject<Item> COOKED_ANGLER_FLESH = food("cooked_angler_flesh", 6, 9.6f, Rarity.UNCOMMON);
+    public static final RegistryObject<Item> JELLY_TENTACLE = item("jelly_tentacle", Rarity.COMMON);
+    public static final RegistryObject<Item> ATOLLA_TENTACLE = item("atolla_tentacle", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> PHANTOM_TENTACLE = item("phantom_tentacle", Rarity.UNCOMMON);
+    public static final RegistryObject<Item> DEEPSTARIA_TENTACLE = item("deepstaria_tentacle", Rarity.RARE);
 
     // Spawn eggs (colours match tools/fauna/<species>.py INFO["egg"])
     public static final RegistryObject<Item> ANGLERFISH_SPAWN_EGG = spawnEgg("anglerfish_spawn_egg", ModEntities.ANGLERFISH, 0x1B2029, 0x8FF0FF);

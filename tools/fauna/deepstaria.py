@@ -47,3 +47,6 @@ INFO["java"] = dict(kind="medusa", size_m=0.7, health=12,
     # slow peristaltic swimmer: long gaps, weak pulses
     traits=dict(pulse_interval=120, pulse_strength=0.03),
     render=dict(fish=False, pitch=False, translucent=["bell"]))
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="deepstaria_tentacle", count=(1, 2), looting=1, chance=0.6)]

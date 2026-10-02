@@ -30,3 +30,6 @@ INFO = dict(
     spawn=dict(weight=9, group=(1, 1), depth_m=(200, 494, 1000, 4700), placement="open_water",
                cave_factor=0.6, open_factor=1.0, max_light=6, cap=(30, 64)),
 )
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="viper_flesh", count=(1, 2), looting=1, chance=0.7)]

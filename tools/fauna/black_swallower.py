@@ -45,3 +45,6 @@ INFO["java"] = dict(kind="swimmer", size_m=0.25, health=5, attack=1,
     traits=dict(steering=(20, 5, 0.0022), zone=("open_water", 0.9, 220), migrates=0.2, flees=(2.5, 8), hunts=(1.4, 0.35, 0.3),
                 hangs_still=True, home=24, ambient=450),
     render=dict(eyeshine=(0.5, ["right_eye", "left_eye"])))
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="abyssal_fish_fillet", count=(2, 3), looting=1, chance=0.7)]

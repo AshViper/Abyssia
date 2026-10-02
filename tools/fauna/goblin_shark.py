@@ -29,3 +29,6 @@ INFO = dict(
     spawn=dict(weight=4, group=(1, 1), depth_m=(200, 270, 960, 2000), placement="near_floor",
                cave_factor=0.3, open_factor=1.0, max_light=8, clearance=3, cap=(12, 96)),
 )
+
+# Drops (F01): the spec drop table; looting adds up to 1 per level
+INFO["loot"] = [dict(item="shark_flesh", count=(2, 3), looting=1, chance=0.7)]

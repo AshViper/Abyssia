@@ -60,6 +60,15 @@ ITEM_NAMES = {}
 for _s in species():
     _en, _ja = _s.INFO["names"]
     ITEM_NAMES[sid(_s) + "_spawn_egg"] = (_en + " Spawn Egg", _ja + "のスポーンエッグ")
+# "<item>.dropped_by": which species drop an item (from INFO["loot"]), shown as a JEI info page (com.abyssia.compat.jei)
+_DROPPERS = {}
+for _s in species():
+    for _d in _s.INFO.get("loot", []):
+        if ":" not in _d["item"]:
+            _DROPPERS.setdefault(_d["item"], []).append(_s.INFO["names"])
+for _item, _names in _DROPPERS.items():
+    ITEM_NAMES[_item + ".dropped_by"] = ("Dropped by: " + ", ".join(n[0] for n in _names),
+                                         "落とす生物: " + "、".join(n[1] for n in _names))
 
 
 def item_models(write, im):
@@ -240,7 +249,8 @@ def lang():
     for code, idx in (("en_us", 0), ("ja_jp", 1)):
         path = os.path.join(ASSETS, "lang", code + ".json")
         old = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
-        keep = {k: v for k, v in old.items() if not k.startswith(("entity.abyssia.", "subtitles.abyssia.entity."))}
+        keep = {k: v for k, v in old.items() if not k.startswith(("entity.abyssia.", "subtitles.abyssia.entity."))
+                and not (k.startswith("item.abyssia.") and k.endswith(".dropped_by"))}
         for s in species():
             name = sid(s)
             keep["entity.abyssia." + name] = s.INFO["names"][idx]
