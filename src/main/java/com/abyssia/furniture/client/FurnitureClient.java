@@ -7,7 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
-/** Client setup of the furniture: the large locker screen. */
+/** Client setup of the furniture: the large locker and wall workbench screens. */
 @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class FurnitureClient
 {
@@ -16,6 +16,7 @@ public final class FurnitureClient
     @SubscribeEvent
     public static void onRegisterScreens(RegisterMenuScreensEvent event)
     {
+        event.register(ModFurniture.WALL_WORKBENCH_MENU.get(), WallWorkbenchScreen::new);
         event.register(ModFurniture.LARGE_LOCKER_MENU.get(), LargeLockerScreen::new);
     }
 }

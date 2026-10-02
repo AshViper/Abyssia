@@ -21,6 +21,7 @@ import com.abyssia.item.MaterialTools;
 import com.abyssia.item.ModTools;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import com.abyssia.item.electric.ElectricTools;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -172,7 +173,11 @@ public final class ModItems
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB = TABS.register("abyssia", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.abyssia"))
             .icon(() -> ModBlocks.ABYSSAL_BLOOM.get().asItem().getDefaultInstance())
-            .displayItems((params, output) -> TAB_ITEMS.forEach(item -> output.accept(item.get())))
+            .displayItems((params, output) ->
+            {
+                TAB_ITEMS.forEach(item -> output.accept(item.get()));
+                ElectricTools.addFullVariants(output);
+            })
             .build());
 
     private ModItems() {}
@@ -183,6 +188,7 @@ public final class ModItems
         ITEMS.register(modBus);
         ModTools.register(ITEMS, TAB_ITEMS);
         MaterialTools.register(ITEMS, TAB_ITEMS);
+        ElectricTools.register(ITEMS, TAB_ITEMS);
         com.abyssia.item.EntryDivingGear.register(ITEMS, TAB_ITEMS);
         ModIndustry.registerItems(ITEMS, TAB_ITEMS);
         ModHabitat.registerItems(ITEMS, TAB_ITEMS);

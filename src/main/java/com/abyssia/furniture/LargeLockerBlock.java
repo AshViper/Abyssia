@@ -89,6 +89,12 @@ public class LargeLockerBlock extends BaseEntityBlock implements SimpleWaterlogg
         return level.getFluidState(pos).getType() == Fluids.WATER;
     }
 
+    /** Drops cached item capabilities of all four cells (pipes keep BlockCapabilityCache handlers across changes). */
+    public static void invalidateCaps(Level level, BlockPos base, Direction facing)
+    {
+        for (LockerPart part : LockerPart.values()) level.invalidateCapabilities(part.from(base, facing));
+    }
+
     // ---------------------------------------------------------------- placement
 
     @Nullable
@@ -120,6 +126,7 @@ public class LargeLockerBlock extends BaseEntityBlock implements SimpleWaterlogg
             BlockPos p = part.from(pos, facing);
             level.setBlock(p, state.setValue(PART, part).setValue(OPEN, false).setValue(WATERLOGGED, water(level, p)), 3);
         }
+        invalidateCaps(level, pos, facing);
         if (stack.has(DataComponents.CUSTOM_NAME) && level.getBlockEntity(pos) instanceof LargeLockerBlockEntity be)
             be.applyComponentsFromItemStack(stack);
     }
@@ -142,6 +149,7 @@ public class LargeLockerBlock extends BaseEntityBlock implements SimpleWaterlogg
             BlockPos p = part.from(base, facing);
             level.setBlock(p, state.setValue(PART, part).setValue(WATERLOGGED, water(level, p)), 3);
         }
+        invalidateCaps(level, base, facing);
         return true;
     }
 
@@ -183,6 +191,7 @@ public class LargeLockerBlock extends BaseEntityBlock implements SimpleWaterlogg
                         level.setBlock(p, level.getFluidState(p).createLegacyBlock(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
                 }
                 level.updateNeighbourForOutputSignal(pos, this);
+                invalidateCaps(level, pos, facing);
             }
             else
             {
