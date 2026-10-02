@@ -1,0 +1,257 @@
+{
+ "_doc": "H06 habitat_constructor 3D item model (base: ChatGPT parts in inbox/specs/H04-chatgpt-raw.md, reoriented: lens forward = north / -Z, grip down). Built by tools/habitat_assets.py; textures abyssia:item/habitat_constructor_<tex>. emissive = full-bright face.",
+ "parts": [
+  {
+   "name": "body",
+   "from": [
+    4,
+    6,
+    3
+   ],
+   "to": [
+    12,
+    12,
+    12
+   ],
+   "tex": "body"
+  },
+  {
+   "name": "front_housing",
+   "from": [
+    3,
+    5,
+    1
+   ],
+   "to": [
+    13,
+    13,
+    4
+   ],
+   "tex": "body"
+  },
+  {
+   "name": "projector",
+   "from": [
+    5,
+    7,
+    0
+   ],
+   "to": [
+    11,
+    11,
+    1
+   ],
+   "tex": "projector",
+   "emissive": true
+  },
+  {
+   "name": "top_panel",
+   "from": [
+    6,
+    12,
+    5
+   ],
+   "to": [
+    10,
+    13,
+    10
+   ],
+   "tex": "body"
+  },
+  {
+   "name": "side_panel",
+   "from": [
+    12,
+    7,
+    5
+   ],
+   "to": [
+    13,
+    11,
+    10
+   ],
+   "tex": "display",
+   "emissive": true
+  },
+  {
+   "name": "teal_band",
+   "from": [
+    3.5,
+    8.5,
+    6
+   ],
+   "to": [
+    12.5,
+    9.5,
+    9
+   ],
+   "tex": "teal"
+  },
+  {
+   "name": "grip",
+   "from": [
+    6,
+    1,
+    8
+   ],
+   "to": [
+    10,
+    6,
+    11
+   ],
+   "tex": "grip"
+  },
+  {
+   "name": "grip_base",
+   "from": [
+    5.5,
+    0,
+    7.5
+   ],
+   "to": [
+    10.5,
+    1,
+    11.5
+   ],
+   "tex": "body"
+  }
+ ],
+ "display": {
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    1.5,
+    0
+   ],
+   "scale": [
+    0.55,
+    0.55,
+    0.55
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    1.5,
+    0
+   ],
+   "scale": [
+    0.55,
+    0.55,
+    0.55
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    -5,
+    0
+   ],
+   "translation": [
+    0.5,
+    1.5,
+    0.5
+   ],
+   "scale": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    5,
+    0
+   ],
+   "translation": [
+    0.5,
+    1.5,
+    0.5
+   ],
+   "scale": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "gui": {
+   "rotation": [
+    25,
+    145,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.8,
+    0.8,
+    0.8
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    20
+   ],
+   "translation": [
+    0,
+    1.75,
+    0
+   ],
+   "scale": [
+    0.45,
+    0.45,
+    0.45
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    90,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.8,
+    0.8,
+    0.8
+   ]
+  },
+  "head": {
+   "rotation": [
+    0,
+    180,
+    0
+   ],
+   "translation": [
+    0,
+    13,
+    7
+   ],
+   "scale": [
+    1,
+    1,
+    1
+   ]
+  }
+ }
+}

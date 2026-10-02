@@ -1,0 +1,51 @@
+{
+  "credit": "Abyssia H04/H05 - built by tools/furniture_models/build_models.py",
+  "textures": {
+    "front": "abyssia:block/large_locker_front_br",
+    "side": "abyssia:block/large_locker_side_bottom",
+    "top": "abyssia:block/large_locker_top",
+    "bottom": "abyssia:block/large_locker_bottom",
+    "particle": "abyssia:block/large_locker_side_bottom"
+  },
+  "elements": [
+    {
+      "name": "body",
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#front",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#side",
+          "cullface": "south"
+        },
+        "east": {
+          "texture": "#side",
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#side",
+          "cullface": "west"
+        },
+        "up": {
+          "texture": "#top",
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#bottom",
+          "cullface": "down"
+        }
+      }
+    }
+  ]
+}
