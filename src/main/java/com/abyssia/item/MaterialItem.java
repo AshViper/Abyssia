@@ -29,7 +29,7 @@ public class MaterialItem extends Item
     @Override
     public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType)
     {
-        return burnTime > 0 ? burnTime : -1;
+        return Math.max(burnTime, 0); // NeoForge 1.21: a negative value throws (it is 0 for "not a fuel")
     }
 
     @Override
