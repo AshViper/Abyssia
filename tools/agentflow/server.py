@@ -21,7 +21,8 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 sys.path.insert(1, str(HERE.parent))  # tools/: texture_gen (imported lazily, needs numpy/pillow)
-import flow  # noqa: E402  (state file helpers shared with the CLI)
+import flow  # noqa: E402
+import hook  # noqa: E402  (stage verdicts shared with the hook)  (state file helpers shared with the CLI)
 import sheets  # noqa: E402  (sheet presets / detect / import shared with the CLI)
 from urllib.parse import parse_qs, urlsplit  # noqa: E402
 
@@ -290,6 +291,26 @@ def agent_models():
     return out
 
 
+_repo_cache = {}
+
+
+def repo_info(cwd, ttl=30):
+    """{repo, branch} for a session's cwd (git toplevel folder name + current branch), cached."""
+    hit = _repo_cache.get(cwd)
+    if hit and time.time() - hit[0] < ttl:
+        return hit[1]
+    info = {"repo": Path(cwd).name, "branch": ""}
+    try:
+        out = subprocess.run(["git", "-C", cwd, "rev-parse", "--show-toplevel", "--abbrev-ref", "HEAD"],
+                             capture_output=True, text=True, timeout=3).stdout.split()
+        if len(out) >= 2:
+            info = {"repo": Path(out[0]).name, "branch": out[1] if out[1] != "HEAD" else "detached"}
+    except (OSError, subprocess.SubprocessError):
+        pass
+    _repo_cache[cwd] = (time.time(), info)
+    return info
+
+
 STAGE_NOTE = {"build": "gradle: ", "git": "", "memory": "Obsidian: ", "texture": "", "chatgpt": "ChatGPT: ", "verify": "verify: "}
 
 
@@ -321,7 +342,7 @@ def live(window=1800, lines=4000):
             a = agents[e["who"]] = {"id": e["who"], "type": typ, "sid": e.get("sid", ""), "parent": "", "desc": "",
                                     "model": main_model if typ == "main" else models.get(typ, main_model),
                                     "status": "running", "tool": "", "target": "", "started": e["t"], "t": e["t"],
-                                    "ended": None, "calls": 0, "files": [], "err": 0}
+                                    "ended": None, "calls": 0, "files": [], "err": 0, "cwd": "", "topic": "", "ask": "", "asked": None}
         a["t"] = e["t"]
         return a
 
@@ -332,6 +353,8 @@ def live(window=1800, lines=4000):
             continue
         ev = e.get("ev")
         a = ag(e)
+        if e.get("cwd"):
+            a["cwd"] = e["cwd"]
         if ev == "PreToolUse":
             a.update(status="running", tool=e.get("tool", ""), target=e.get("target", ""), ended=None)
             a["calls"] += 1
@@ -365,6 +388,10 @@ def live(window=1800, lines=4000):
             a.update(status="running", started=e["t"])
         elif ev == "SubagentStop":
             a.update(status="done", ended=e["t"], tool="", target=a["target"])
+            if a["type"] == "verify":  # the verify agent's final answer carries PASS / FAIL
+                ok = hook.verdict("verify", e.get("msg", ""))
+                stages["verify"] = {"status": "failed" if ok is False else "done", "t": e["t"], "who": a["id"], "auto": True,
+                                    "note": ("verify: " + (a["desc"] or "")) + (" — FAIL" if ok is False else " — PASS" if ok else "")}
         elif ev == "Stop":
             a.update(status="idle", tool="")
         elif ev == "UserPromptSubmit":
@@ -378,6 +405,9 @@ def live(window=1800, lines=4000):
                 msgs.append({"t": e["t"], "from": sub, "to": e["who"], "kind": "result", "desc": "", "text": txt})
             else:
                 msgs.append({"t": e["t"], "from": "user", "to": e["who"], "kind": "prompt", "text": txt})
+                if txt and not txt.lstrip().startswith("<"):  # what the user asked this session (not system notices)
+                    a["topic"] = a["topic"] or txt
+                    a.update(ask=txt, asked=e["t"])
         st = e.get("stage")
         if st and ev in ("PreToolUse", "PostToolUse"):
             cur = stages.get(st, {})
@@ -392,6 +422,9 @@ def live(window=1800, lines=4000):
                 stages[st] = {**cur, "t": e["t"], "auto": True}  # chatgpt / texture / memory: still busy, decays below
         events.append(e)
 
+    for a in agents.values():  # a background verify agent outlives its Agent tool call
+        if a["type"] == "verify" and a["status"] == "running" and a["t"] >= stages.get("verify", {}).get("t", 0) - 1:
+            stages["verify"] = {"status": "running", "t": a["t"], "who": a["id"], "auto": True, "note": "verify: " + (a["desc"] or "")}
     for k, v in stages.items():  # bursty stages: quiet for a while = finished
         if v["status"] == "running" and now - v["t"] > (90 if k in ("chatgpt", "texture", "memory") else 1800):
             v["status"] = "done"
@@ -401,6 +434,9 @@ def live(window=1800, lines=4000):
     for a in agents.values():  # a crashed/killed agent never sends Stop; let it go quiet
         if a["status"] == "running" and now - a["t"] > (900 if a["type"] != "main" else 300):
             a["status"] = "stale" if a["type"] != "main" else "idle"
+    for a in agents.values():
+        if a["cwd"]:
+            a.update(repo_info(a["cwd"]))
     keep = [a for a in agents.values() if a["status"] == "running" or now - a["t"] < window]
     keep.sort(key=lambda a: (a["type"] != "main", a["started"]))
     return {"now": now, "agents": keep, "stages": stages, "msgs": [m for m in msgs if now - m["t"] < window * 4][-120:],

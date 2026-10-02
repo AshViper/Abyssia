@@ -50,6 +50,17 @@ body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.55 var(--mono)}
 .ab.sel{box-shadow:0 0 0 1px var(--c),0 0 18px color-mix(in srgb,var(--c) 40%,transparent)}
 .ab.done,.ab.idle,.ab.stale{opacity:.55}
 .ab .nm{color:var(--c);font-weight:700}
+.post{display:flex;align-items:stretch;justify-content:center;gap:0;width:100%;flex-wrap:wrap;border:1.5px solid var(--c-main);border-radius:4px;padding:8px 10px 10px;background:#0e1118;position:relative}
+.post>h4{width:100%;margin:0 0 8px;text-align:center;color:var(--c-main);font-size:12px;letter-spacing:.06em}
+.pb{--c:var(--idle);border:1.5px solid var(--c);border-radius:3px;padding:5px 8px;width:150px;font-size:11px;cursor:pointer;background:#0e1118}
+.pb .n{color:var(--fg);font-weight:700}.pb .s{color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb.running{--c:var(--running)}.pb.done{--c:var(--done)}.pb.failed{--c:var(--failed)}
+.pb.running .n::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;border:2px solid var(--running);border-right-color:transparent;margin-right:5px;animation:sp 1s linear infinite}
+.parr{align-self:center;color:var(--mut);padding:0 6px}
+.sd{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:0}
+.sess{margin:4px 0 2px;padding:4px 6px;border:1px dashed var(--bd);text-align:left;font-size:11px}
+.sess .rp{color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sess .rp b{color:var(--fg);font-weight:400}
+.sess .ask{color:var(--fg);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .ab .md{color:var(--fg)}
 .ab .wt{color:var(--mut)}
 .ab .wt span{letter-spacing:-1px;color:var(--c)}
@@ -242,6 +253,7 @@ pre#alog{margin:6px 0 0;font-size:11px;white-space:pre-wrap;max-height:200px;ove
         <div class="mains" id="mains"></div>
         <div class="hub" id="hub"></div>
         <div class="subs" id="subs"></div>
+        <div class="post" id="post"></div>
       </div>
       <div class="gptc"><div class="adv gpt" id="gpt"></div><div class="pipe" id="pipe"></div></div>
     </div>
@@ -369,7 +381,7 @@ function selKey(){return selected?(selected.kind==="task"?selected.id:selected.k
 function detail(){
   const d=$("detail");if(!selected)return;const o=selected;
   if(o.kind==="agent"){const a=agentById(o.id)||o;
-    const rows=[["agent",a.type+" "+short(a.id)],["model",a.model],["状態",LABEL[a.status]||a.status],["親",a.parent?aname(a.parent):"-"],["依頼",a.desc||"-"],
+    const rows=[["agent",a.type+" "+short(a.id)],["session",a.sid+(a.repo?` · ${a.repo}${a.branch?" · "+a.branch:""}`:"")],...(a.type==="main"?[["担当",a.ask||"-"],["最初",a.topic||"-"]]:[]),["model",a.model],["状態",LABEL[a.status]||a.status],["親",a.parent?aname(a.parent):"-"],["依頼",a.desc||"-"],
       ["いま",a.status==="running"?(TOOLV[a.tool]||tname(a.tool)||"-")+" "+(a.target||""):"-"],["calls",a.calls+(a.err?` (err ${a.err})`:"")],["開始",fmt(a.started)],["終了",fmt(a.ended)],["files",a.files.join("\n")||"-"]];
     d.innerHTML="<h3>AGENT</h3><dl>"+rows.map(()=>"<dt></dt><dd style='white-space:pre-wrap'></dd>").join("")+"</dl>";
     d.querySelectorAll("dt").forEach((e,i)=>e.textContent=rows[i][0]);d.querySelectorAll("dd").forEach((e,i)=>e.textContent=rows[i][1]);return}
@@ -415,12 +427,22 @@ function where(a){
   if(a.status!=="running")return a.files[0]?`<em>last</em> ${esc(a.files[0])}`:`<em>—</em>`;
   return `<em>${esc(TOOLV[a.tool]||tname(a.tool)||"thinking")}</em> ${esc(a.target||"")}`;
 }
+const SESS_COL=["#e8875a","#e6d37a","#f08fb8","#8fd0f0","#b6e07a","#c9a3ff"];
+function sessCol(sid){const ids=[...new Set(LV.agents.filter(x=>x.type==="main").map(x=>x.sid))].sort();return SESS_COL[Math.max(0,ids.indexOf(sid))%SESS_COL.length]}
+const sdotS=sid=>`<i class="sd" style="background:${sessCol(sid)}" title="session ${esc(sid)}"></i>`;
+function subWork(mainId){ // no prompt in the log window: describe the session by what its subagents are doing
+  const ws=LV.agents.filter(x=>x.parent===mainId&&x.desc).sort((p,q)=>q.t-p.t).map(x=>x.desc);
+  return ws.length?"サブ: "+[...new Set(ws)].slice(0,3).join(" / "):"";
+}
 function abox(a){
   const k=kindOf(a),[w,wl]=a.type==="main"?[4,"high"]:(WEIGHT[a.type]||[2,"med"]);
   const st=a.status==="running"?`<span class="spin"></span>running · ${a.calls} calls`:a.status==="done"?`● done · ${a.calls} calls`:a.status==="stale"?"○ 応答なし":"○ idle";
   const title=a.type==="main"?`Opus · main ${short(a.id)}`:`${a.type} · ${short(a.id)}`;
+  const sess=a.type==="main"?`<div class="sess" title="${esc([a.cwd||"","最初の依頼: "+(a.topic||"-"),"最新の依頼: "+(a.ask||"-")].join(" / "))}">
+      <div class="rp">${a.repo?`📁 ${esc(a.repo)}${a.branch?` · <b>${esc(a.branch)}</b>`:""}`:"📁 —"}</div>
+      <div class="ask">担当: ${esc(a.ask||a.topic||subWork(a.id)||"(依頼文なし)")}</div></div>`:"";
   return `<div class="ab ${k} ${a.status}${tsel===a.id?" sel":""}" data-id="${esc(a.id)}">
-    <div class="nm">${esc(title)}</div>
+    <div class="nm">${sdotS(a.sid)}${esc(title)}</div>${sess}
     <div class="md">${esc(a.model)}${a.type==="main"?" · plans + decides":a.desc?" · "+esc(a.desc):""}</div>
     <div class="wt">weight <span>${bar(w)}</span> ${wl}${a.err?` · <span style="color:var(--failed)">err ${a.err}</span>`:""}</div>
     <div class="where" title="${esc(a.target||a.files.join("\n"))}">${where(a)}</div>
@@ -444,12 +466,20 @@ function advisor(decs){
 
 const SDOT={idle:["○","var(--idle)"],running:["◐","var(--running)"],done:["●","var(--done)"],failed:["✕","var(--failed)"],queued:["◌","var(--queued)"]};
 function sdot(st){const [c,col]=SDOT[st]||SDOT.idle;return `<span style="color:${col}">${c}</span>`}
-const PIPE=[["request","依頼"],["router","振り分け"],["chatgpt","ChatGPT"],["texture","texture"],["verify","検証"],["build","build/test"],["memory","Obsidian"],["git","git push"]];
-const SNAME=Object.fromEntries(PIPE),STAGE_KEYS=new Set(PIPE.map(p=>p[0]));
+const PIPE=[["request","依頼"],["router","振り分け"],["chatgpt","ChatGPT"],["texture","texture"]]; // verify..git live in the post row under the subagents
+const SNAME_POST={verify:"Verification",build:"Build/Test",memory:"Memory",git:"Git"};
+const SNAME={...Object.fromEntries(PIPE),...SNAME_POST},STAGE_KEYS=new Set(PIPE.map(p=>p[0]));
 function selStage(k){const s=(state.stages||{})[k]||{};select({kind:"stage",name:SNAME[k]||k,k,status:view().st(k),note:s.note||"",auto:!!s.auto,t:s.t,who:s.who})}
 function tasksHtml(V){ // flow.py tasks (spec-level work units), newest first
   const ts=V.tasks.filter(t=>["running","queued","failed"].includes(t.status)).reverse().slice(0,12);if(!ts.length)return ""; // finished work is visible in the tree
   return `<h3 style="margin-top:10px">TASKS</h3>`+ts.map(t=>`<div class="row t" data-task="${esc(t.id)}" title="${esc(t.title||"")}">${sdot(t.status==="escalated"?"queued":t.status)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.id)}${t.title?" "+esc(t.title):""}</span><span>${esc(t.tier)}</span></div>`).join("");
+}
+const POST=[["verify","Verification","verify エージェント"],["build","Build/Test","gradle (main のみ)"],["memory","Memory","Obsidian"],["git","Git","commit / push"]];
+function postbox(){ // after the subagents: verify -> build -> memory -> git (back on the main session)
+  const V=view(),S=state.stages||{};
+  $("post").innerHTML=`<h4>back to main session · review + verify</h4>`+POST.map(([k,n,d],i)=>{const st=V.st(k),x=S[k]||{};
+    return (i?`<span class="parr">→</span>`:"")+`<div class="pb ${st}" data-st="${k}" title="${esc(x.note||"")}"><div class="n">${n}</div><div class="s">${st!=="idle"&&x.auto?"⚡ ":""}${esc(st!=="idle"&&x.note?x.note:d)}</div><div class="s">${LABEL[st]||st}${x.t&&st!=="idle"?" · "+hms(x.t):""}</div></div>`}).join("");
+  $("post").querySelectorAll("[data-st]").forEach(e=>e.onclick=()=>selStage(e.dataset.st));
 }
 function gptbox(){ // ChatGPT = spec / design / texture owner and reviewer (driven by flow.py stage chatgpt|texture)
   const V=view(),S=state.stages||{},c=S.chatgpt||{},tx=S.texture||{},cs=V.st("chatgpt");
@@ -483,7 +513,7 @@ function trender(){
   $("hub").innerHTML=all.length?`delegate to subagents · <b>${run} running</b> / ${all.length}`+(hidden||showDone?` · <a href="#" id="tgDone" style="color:var(--mut)">${showDone?"完了を隠す":`完了 ${hidden} 件を表示`}</a>`:""):"";
   if($("tgDone"))$("tgDone").onclick=e=>{e.preventDefault();showDone=!showDone;try{localStorage.setItem("af.showDone",showDone?"1":"0")}catch(_){}trender()};
   $("subs").innerHTML=subs.map(abox).join("");
-  advisor(decs);gptbox();
+  advisor(decs);gptbox();postbox();
   const m=mains.find(a=>a.status==="running")||mains[0];
   $("thMain").textContent=`${(m&&m.model||"opus-5.5").toUpperCase().replace("-"," ")} WORKS`;
   document.querySelectorAll("#tree .ab[data-id]").forEach(e=>e.onclick=()=>{tsel=tsel===e.dataset.id?null:e.dataset.id;const a=agentById(e.dataset.id);if(tsel&&a)select({kind:"agent",...a});trender()});
@@ -498,6 +528,10 @@ function tlines(){
   const line=(d,col,on,dash)=>{const p=el("path",{d,class:"tline"+(on?" on":"")+(dash?" dash":"")},svg);p.style.setProperty("--c",col);
     if(on)for(let i=0;i<2;i++){const c=el("circle",{r:3,fill:col,class:"tdot"},svg);c.style.color=col;el("animateMotion",{path:d,dur:"1.6s",begin:i*0.8+"s",repeatCount:"indefinite"},c)}return d};
   window._tpaths={};
+  const pr=$("post").getBoundingClientRect(),sb=[...document.querySelectorAll("#subs .ab, #mains .ab")].map(e=>e.getBoundingClientRect());
+  if(pr.width&&sb.length){const by=Math.max(...sb.map(r=>r.bottom))-host.top,x=pr.left+pr.width/2-host.left;
+    const on=["verify","build","memory","git"].some(k=>view().st(k)==="running");
+    line(`M${x},${by} L${x},${pr.top-host.top}`,"var(--c-main)",on,false)}
   const g=$("gpt").getBoundingClientRect(),mb=LV.agents.filter(x=>x.type==="main").map(x=>box(x.id)).filter(Boolean).sort((p,q)=>q.right-p.right)[0];
   if(mb&&g.width&&g.left>mb.right){const [x2,y2]=P(mb,"r"),x1=g.left-host.left,y1=g.top+40-host.top,mx=(x1+x2)/2;
     window._tpaths.chatgpt=line(`M${x1},${y1} L${mx},${y1} L${mx},${y2} L${x2},${y2}`,"var(--c-gpt)",view().st("chatgpt")==="running",true)}

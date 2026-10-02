@@ -124,6 +124,8 @@ def event(d):
     aid = d.get("agent_id") or ""
     who = aid or f"main:{sid}"
     e = {"t": time.time(), "ev": ev, "who": who, "sid": sid, "type": d.get("agent_type") or ("" if aid else "main")}
+    if not aid and d.get("cwd"):
+        e["cwd"] = d["cwd"]  # which checkout / worktree the session works in
     tool, ti = d.get("tool_name", ""), d.get("tool_input") or {}
     if ev in ("PreToolUse", "PostToolUse"):
         e["tool"] = tool
