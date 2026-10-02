@@ -134,8 +134,9 @@ UI右の「実装したいこと」フォーム、または Claude に直接言�
 ## サイト側の承認 (approvals)
 確認が必要な場面（破壊的操作・課金・セキュリティ等 CLAUDE.md §24）だけ、質問をチャットでなくサイトへ出す: `flow.py ask "内容" --who B01 --wait 600`（exit 0=承認, 3=拒否, 4=未回答）。サイト右上の「承認待ち」カードのボタンで回答。通常の設計判断は承認不要（自分で決めて `log --kind decision`）。
 
-## 画面の使い方 (2026-09-30 更新)
-- 3段: 上=テクスチャ・管理(依頼/Main/ChatGPT/Texture Pipeline)、中=作業エージェント(light/standard/heavy)、下=その他(Verification/Build/Memory)。光の粒=情報の流れ、実行中の線は速く明るい。
+## 画面の使い方 (2026-10-03 更新)
+- フロータブはエージェントツリー1枚にまとめた (旧3段フローチャートは廃止)。左=decision、中央=main とサブエージェント、右=ChatGPT・PIPELINE (依頼〜git push の全ステージ)・TASKS (flow.py の実行中・待機・失敗タスクだけ)。下=やり取り・セッションログ、その下に flow.py のアクティビティ。
+- 箱・PIPELINE の行・TASKS の行を押すと、右の「詳細」に中身が出る (エージェントならいまの作業と触ったファイル)。
 - 待機に戻る: 何も動かず45秒たつと全ノードが待機表示。ヘッダーの「リセット」で即時。作業の最後に `flow.py finish`。
 - 「テクスチャ」タブ: 変更前(inbox/backup/textures-20260930)と現在を並べて表示。作り直し/ChatGPT/ロック/変更なしで絞り込み。
 - 自動実行: 既定OFF。ヘッダーのチェック(または tools/agentflow/autorun.json の enabled)でONにすると、依頼の送信で headless `claude -p` が起動する。許可ツールは autorun.json の allowed_tools。
