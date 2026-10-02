@@ -155,7 +155,8 @@ ROCK = ["deep_sea_rock", "abyssal_rock", "trench_rock", "thermal_rock", "volcani
         "crystal_rock", "mineral_host_rock", "vent_rock", "black_vent_rock", "sulfur_vent_rock", "mineral_vent_rock",
         "abyssal_cave_rock", "dark_cave_rock", "wet_cave_rock", "layered_cave_rock", "mineral_cave_rock", "thermal_cave_rock",
         "crystal_cave_rock", "organic_cave_rock", "eroded_cave_rock", "manganese_crust", "cobalt_crust", "nickel_crust",
-        "iron_crust", "copper_crust", "cave_mineral_crust",
+        "iron_crust", "copper_crust", "cave_mineral_crust", "diamond_crust", "gold_crust", "redstone_crust",
+        "lapis_crust", "emerald_crust", "quartz_crust",
         "ancient_masonry", "fossil_rock", "salt_rock", "lumen_rock", "frozen_rock"]
 SOFT = ["deep_sediment", "abyssal_mud", "deep_mud", "mineral_sediment", "crystal_sediment", "organic_sediment", "volcanic_ash",
         "cave_sediment", "cave_mud",
