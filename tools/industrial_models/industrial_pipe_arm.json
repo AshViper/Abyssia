@@ -1,0 +1,44 @@
+{
+  "credit": "Abyssia I01 - design: ChatGPT, built by tools/industrial_models/build_models.py",
+  "textures": {
+    "industrial_pipe": "abyssia:block/industrial_pipe",
+    "particle": "abyssia:block/industrial_pipe"
+  },
+  "elements": [
+    {
+      "name": "north_arm",
+      "from": [
+        4,
+        4,
+        0
+      ],
+      "to": [
+        12,
+        12,
+        4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#industrial_pipe",
+          "cullface": "north"
+        },
+        "east": {
+          "texture": "#industrial_pipe"
+        },
+        "south": {
+          "texture": "#industrial_pipe"
+        },
+        "west": {
+          "texture": "#industrial_pipe"
+        },
+        "up": {
+          "texture": "#industrial_pipe"
+        },
+        "down": {
+          "texture": "#industrial_pipe"
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout"
+}

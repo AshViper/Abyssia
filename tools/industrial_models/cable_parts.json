@@ -1,0 +1,12 @@
+{
+ "_doc": "ChatGPT pixel design (2026-10-02) for the energy cable textures; tools/industrial_models/cable_textures.py assembles them. Letters = palette, '.' = transparent.",
+ "palette": {"A": "#14181e", "B": "#232a33", "C": "#343e4a", "D": "#4a5866", "E": "#6c7c8a", "F": "#9aa8b4",
+             "G": "#0f3a40", "H": "#1d6670", "I": "#3ee6f0", "J": "#b8f8ff"},
+ "energy_cable": {"band_from": 6,
+   "strip": ["ABCDCBABCDCBABCD", "BCDEDCBCDEDCBCDE", "CDHHHHHHHHHHHHHH", "BCDEDCBCDEDCBCDE"],
+   "hub": ["BCHC", "CHIH", "HIIH", "CHHC"]},
+ "reinforced_energy_cable": {"band_from": 5,
+   "strip": ["ABCDEDCBCDEDCBCD", "BCDEDCBCDEDCBCDE", "CDEDCBCDEDCBCDED", "DEHHHHHHHHHHHHHH", "CDEDCBCDEDCBCDED", "BCDEDCBCDEDCBCDE"],
+   "hub": ["BCDHDC", "CDHIHD", "DHIIIH", "HIIIIH", "DHIIIH", "CDHIHD"],
+   "ring": ["CDED", "DFFE", "EFFD", "DEDC"]}
+}

@@ -23,6 +23,7 @@ from PIL import Image
 import building_assets
 import cave_assets
 import gen_fauna
+import industrial_assets
 import material_system
 import mc_format
 import mineral_textures
@@ -794,6 +795,7 @@ NAMES.update(plant_assets.BLOCK_NAMES)
 ITEM_NAMES.update(plant_assets.ITEM_NAMES)
 # Material processing system (tools/material_spec.json via material_system.py)
 ITEM_NAMES.update(material_system.item_names())
+ITEM_NAMES.update(industrial_assets.ITEM_NAMES)
 BIOME_NAMES = {
     "twilight_reef": ("Twilight Reef", "薄明の礁"), "deep_sea": ("Deep Sea", "深海"),
     "abyssal_ocean": ("Abyssal Ocean", "深淵の海"), "abyssal_trench": ("Abyssal Trench", "深淵の海溝"),
@@ -936,6 +938,8 @@ def main():
 
     # Building blocks: stone families and the ancient wood set (textures come from the Texture Forge pass below).
     building_assets.generate(write, bs, bm, im, DATA)
+    # Industrial blocks (I01): after building_assets, whose shared slab / stairs / wall tags it extends.
+    industrial = industrial_assets.generate(write, bs, bm, im, DATA)
 
     for name, make in ITEMS.items():
         _emit(make, os.path.join(ITEM_TEX, name + ".png"))
@@ -962,7 +966,8 @@ def main():
     material_recipes()
     lang()
     print(f"Resource plants: {plants}")
-    print(f"{len(NAMES) - 1} blocks + {len(building_assets.NAMES)} building blocks, {len(ITEMS)} items")
+    print(f"{len(NAMES) - 1} blocks + {len(building_assets.NAMES)} building blocks + {len(industrial_assets.NAMES)} industrial blocks, {len(ITEMS)} items")
+    print(f"Industrial models: {industrial}")
     if "--no-forge" not in sys.argv:
         import forge_textures
         forge_textures.run()
@@ -1027,7 +1032,7 @@ def loot_tables():
                 {"type": "minecraft:item", "name": "abyssia:" + name, "conditions": silk()},
                 {"type": "minecraft:item", "name": item, "functions": funcs}]}]
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": entries}
-        elif name in cave_assets.CAVERN_NO_DROP:
+        elif name in cave_assets.CAVERN_NO_DROP or name in industrial_assets.NO_DROP:
             write(lt(name), {"type": "minecraft:block", "pools": [], "random_sequence": "abyssia:blocks/" + name})
             continue
         elif name in SILK_ONLY:
@@ -1053,11 +1058,13 @@ def tags():
     write(os.path.join(blocks, "mineable", "pickaxe.json"), {"replace": False, "values": a(rocks + ores + crusts + list(CLUSTERS)
                                                                                           + cave_assets.CAVE_ROCKS + speleothems + ["crystal_needle"]
                                                                                           + list(cave_assets.CAVERN_CRYSTALS)
-                                                                                          + building_assets.pickaxe_blocks())})
+                                                                                          + building_assets.pickaxe_blocks()
+                                                                                          + industrial_assets.pickaxe_blocks())})
     write(os.path.join(blocks, "mineable", "shovel.json"), {"replace": False, "values": a(SOFT + cave_assets.CAVE_SOFT)})
     write(os.path.join(blocks, "mineable", "axe.json"), {"replace": False, "values": a(cave_assets.CAVERN_AXE + building_assets.axe_blocks())})
     write(os.path.join(blocks, "mineable", "hoe.json"), {"replace": False, "values": a(cave_assets.CAVERN_HOE)})
-    write(os.path.join(blocks, "needs_stone_tool.json"), {"replace": False, "values": a(["abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "manganese_ore"])})
+    write(os.path.join(blocks, "needs_stone_tool.json"), {"replace": False, "values": a(["abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "manganese_ore"]
+                                                                                     + industrial_assets.needs_stone_tool_blocks())})
     write(os.path.join(blocks, "needs_iron_tool.json"), {"replace": False, "values": a(["cobalt_ore", "deep_nickel_ore", "thermal_crystal_ore", "abyssal_crystal_ore"] + RARE_ORES)})
     write(os.path.join(blocks, "crystal_sound_blocks.json"), {"replace": False, "values": a(["deep_crystal_block"] + list(cave_assets.CAVERN_CRYSTALS))})
     # Veins stay visible: plants cannot root in ore, crust or hot vent minerals (heat moss and mineral vines can).
@@ -1176,6 +1183,8 @@ def lang():
         data.update({"item.abyssia." + k: v[idx] for k, v in gen_fauna.ITEM_NAMES.items()})
         data.update({"biome.abyssia." + k: v[idx] for k, v in BIOME_NAMES.items()})
         data.update({"block.abyssia." + k: v[idx] for k, v in building_assets.NAMES.items()})
+        data.update({"block.abyssia." + k: v[idx] for k, v in industrial_assets.NAMES.items()})
+        data.update({k: v[idx] for k, v in industrial_assets.CONTAINER_NAMES.items()})
         data["itemGroup.abyssia"] = "Abyssia"
         write(path, dict(sorted(data.items())))
 
