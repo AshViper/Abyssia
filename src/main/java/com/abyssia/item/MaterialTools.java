@@ -180,6 +180,7 @@ public final class MaterialTools
         @Override
         public void onInventoryTick(ItemStack stack, Level level, Player player, int slot, int selected)
         {
+            super.onInventoryTick(stack, level, player, slot, selected); // keeps vanilla inventoryTick (pickup pop animation)
             if (stack != player.getItemBySlot(EquipmentSlot.CHEST)) return;
             if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()))
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 220, 0, true, false));

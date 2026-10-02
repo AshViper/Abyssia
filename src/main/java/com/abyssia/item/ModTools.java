@@ -80,6 +80,7 @@ public final class ModTools {
         // IForgeItem#onArmorTick is deprecated for removal in this Forge: hook the
         // non-deprecated onInventoryTick instead and only act while actually worn.
         @Override public void onInventoryTick(ItemStack stack, net.minecraft.world.level.Level level, Player player, int slot, int selected) {
+            super.onInventoryTick(stack, level, player, slot, selected); // keeps vanilla inventoryTick (pickup pop animation)
             if (stack != player.getItemBySlot(EquipmentSlot.HEAD)) return;
             if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) {
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 220, 0, true, false));
