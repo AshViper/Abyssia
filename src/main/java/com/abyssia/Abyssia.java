@@ -5,6 +5,7 @@ import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.registry.GeneratedFauna;
 import com.abyssia.registry.ModBlocks;
 import com.abyssia.registry.ModEntities;
+import com.abyssia.registry.ModHabitat;
 import com.abyssia.registry.ModIndustry;
 import com.abyssia.registry.ModItems;
 import com.abyssia.registry.ModParticles;
@@ -32,6 +33,8 @@ public class Abyssia
         ModBlocks.register(modEventBus);
         // industrial blocks, block entities and menu (I01); their block items join ModItems
         ModIndustry.register(modEventBus);
+        ModHabitat.register(modEventBus);
+        com.abyssia.registry.ModFurniture.register(modEventBus);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
         ModSounds.register(modEventBus);

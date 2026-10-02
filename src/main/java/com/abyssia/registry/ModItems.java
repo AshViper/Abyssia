@@ -167,7 +167,11 @@ public final class ModItems
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("abyssia", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.abyssia"))
             .icon(() -> ModBlocks.ABYSSAL_BLOOM.get().asItem().getDefaultInstance())
-            .displayItems((params, output) -> TAB_ITEMS.forEach(item -> output.accept(item.get())))
+            .displayItems((params, output) ->
+            {
+                TAB_ITEMS.forEach(item -> output.accept(item.get()));
+                com.abyssia.item.electric.ElectricTools.addFullVariants(output);
+            })
             .build());
 
     private ModItems() {}
@@ -177,8 +181,11 @@ public final class ModItems
         ITEMS.register(modBus);
         ModTools.register(ITEMS, TAB_ITEMS);
         MaterialTools.register(ITEMS, TAB_ITEMS);
+        com.abyssia.item.electric.ElectricTools.register(ITEMS, TAB_ITEMS);
         com.abyssia.item.EntryDivingGear.register(ITEMS, TAB_ITEMS);
         ModIndustry.registerItems(ITEMS, TAB_ITEMS);
+        ModHabitat.registerItems(ITEMS, TAB_ITEMS);
+        ModFurniture.registerItems(ITEMS, TAB_ITEMS);
         TABS.register(modBus);
     }
 

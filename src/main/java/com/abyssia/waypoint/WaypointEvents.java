@@ -1,0 +1,32 @@
+package com.abyssia.waypoint;
+
+import com.abyssia.Abyssia;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+/** W01: sends each player the beacon list of the dimension they are now in. */
+@Mod.EventBusSubscriber(modid = Abyssia.MODID)
+public final class WaypointEvents
+{
+    private WaypointEvents() {}
+
+    @SubscribeEvent
+    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayer player) WaypointRegistry.sendTo(player);
+    }
+
+    @SubscribeEvent
+    public static void onChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayer player) WaypointRegistry.sendTo(player);
+    }
+
+    @SubscribeEvent
+    public static void onRespawn(PlayerEvent.PlayerRespawnEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayer player) WaypointRegistry.sendTo(player);
+    }
+}

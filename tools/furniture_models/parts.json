@@ -1,0 +1,51 @@
+[
+ {
+  "model": "large_locker",
+  "comment": "one locker cell, front north; furniture_assets.py binds front / side / top / bottom per part and open state",
+  "parts": [
+   {"name": "body", "from": [0, 0, 0], "to": [16, 16, 16],
+    "faces": {"north": "front", "south": "side", "east": "side", "west": "side", "up": "top", "down": "bottom"}}
+  ]
+ },
+ {
+  "model": "large_locker_item",
+  "comment": "inventory model: the whole 2x2 front at half scale (viewer's left = east), 8 px deep",
+  "parent": "minecraft:block/block",
+  "full_uv": ["front_bl", "front_br", "front_tl", "front_tr", "side_top", "side_bottom", "top", "bottom"],
+  "parts": [
+   {"name": "bl", "from": [8, 0, 4], "to": [16, 8, 12],
+    "faces": {"north": "front_bl", "south": "side_bottom", "east": "side_bottom", "west": "side_bottom", "down": "bottom"}},
+   {"name": "br", "from": [0, 0, 4], "to": [8, 8, 12],
+    "faces": {"north": "front_br", "south": "side_bottom", "east": "side_bottom", "west": "side_bottom", "down": "bottom"}},
+   {"name": "tl", "from": [8, 8, 4], "to": [16, 16, 12],
+    "faces": {"north": "front_tl", "south": "side_top", "east": "side_top", "west": "side_top", "up": "top"}},
+   {"name": "tr", "from": [0, 8, 4], "to": [8, 16, 12],
+    "faces": {"north": "front_tr", "south": "side_top", "east": "side_top", "west": "side_top", "up": "top"}}
+  ]
+ },
+ {
+  "model": "wall_workbench",
+  "comment": "front north, wall behind (south); 7 px deep (z 9..16) - keep WallWorkbenchBlock.SHAPES in sync. Viewer's right = west (low x).",
+  "full_uv": ["surface", "display", "connector"],
+  "parts": [
+   {"name": "back_plate", "from": [1, 0, 14], "to": [15, 15, 16],
+    "faces": {"north": "back", "south": "back", "east": "frame", "west": "frame", "up": "frame", "down": "frame"}},
+   {"name": "arm_left", "from": [13, 2, 9], "to": [15, 8, 14],
+    "faces": {"north": "frame", "east": "frame", "west": "frame", "up": "frame", "down": "frame"}},
+   {"name": "arm_right", "from": [1, 2, 9], "to": [3, 8, 14],
+    "faces": {"north": "frame", "east": "frame", "west": "frame", "up": "frame", "down": "frame"}},
+   {"name": "work_surface", "from": [1, 8, 9], "to": [15, 10, 14],
+    "faces": {"north": "frame", "east": "frame", "west": "frame", "up": "surface", "down": "frame"}},
+   {"name": "teal_band", "from": [3, 6, 9], "to": [13, 8, 10],
+    "faces": {"north": "teal", "east": "teal", "west": "teal", "south": "teal", "down": "teal"}},
+   {"name": "power_lamp", "from": [6, 11, 13], "to": [10, 13, 14],
+    "faces": {"north": "display", "east": "frame", "west": "frame", "up": "frame", "down": "frame"}},
+   {"name": "charge_cradle", "from": [2, 10, 11], "to": [5, 12, 14],
+    "faces": {"north": "frame", "east": "frame", "west": "frame", "up": "teal"}},
+   {"name": "cradle_lip", "from": [2, 12, 11], "to": [5, 13, 12],
+    "faces": {"north": "frame", "east": "frame", "west": "frame", "up": "frame", "south": "frame"}},
+   {"name": "cable_terminal", "from": [6, 0, 12], "to": [10, 2, 14],
+    "faces": {"north": "connector", "east": "connector", "west": "connector", "down": "connector"}}
+  ]
+ }
+]

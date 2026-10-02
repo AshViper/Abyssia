@@ -34,7 +34,10 @@ public class EnergyCableBlock extends ConnectingBlock
     protected boolean connectsTo(BlockGetter level, BlockPos pos, Direction dir)
     {
         BlockPos n = pos.relative(dir);
-        if (level.getBlockState(n).getBlock() instanceof EnergyCableBlock) return true;
+        BlockState other = level.getBlockState(n);
+        if (other.getBlock() instanceof EnergyCableBlock) return true;
+        // habitat hull feeds the base's shared power (H08): show the arm toward it (power flow is decided server-side)
+        if (com.abyssia.habitat.HabitatBuilder.shell(other)) return true;
         return EnergyLookup.exposesEnergy(level, n, dir.getOpposite());
     }
 

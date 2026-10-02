@@ -313,6 +313,18 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("Waypoint beacons (HUD markers of named, coloured beacons in the same dimension)").push("waypoint_beacon");
+    }
+
+    public static final ForgeConfigSpec.BooleanValue WAYPOINT_SHARE = BUILDER
+            .comment("Every player sees every beacon (false: only the player who placed it sees and edits it)")
+            .define("share_beacons", true);
+    public static final ForgeConfigSpec.IntValue WAYPOINT_MAX_NAME_LENGTH = BUILDER
+            .comment("Longest beacon name in characters")
+            .defineInRange("max_name_length", 32, 1, 64);
+
+    static {
+        BUILDER.pop();
     }
 
     static final ForgeConfigSpec SPEC = BUILDER.build();

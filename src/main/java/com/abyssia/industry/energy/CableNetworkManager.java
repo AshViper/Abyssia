@@ -1,6 +1,7 @@
 package com.abyssia.industry.energy;
 
 import com.abyssia.Abyssia;
+import com.abyssia.habitat.power.HabitatPower;
 import com.abyssia.industry.block.EnergyCableBlock;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -86,6 +87,14 @@ public final class CableNetworkManager
         if (!(accessor instanceof ServerLevel level)) return;
         LevelNetworks ln = of(level);
         markAround(ln, pos);
+    }
+
+    /** Every network of the level re-resolves its endpoints (H08: habitat bases changed). */
+    public static void markAllDirty(Level level)
+    {
+        if (!(level instanceof ServerLevel)) return;
+        LevelNetworks ln = LEVELS.get(level);
+        if (ln != null) for (Network net : ln.networks) net.dirty = true;
     }
 
     /** Called by industrial block entities now and then: makes sure neighbouring cables belong to a network. */
@@ -241,7 +250,7 @@ public final class CableNetworkManager
                         queue.add(n);
                     }
                 }
-                else if (EnergyLookup.get(level, n, dir.getOpposite()) != null)
+                else if (endpointStorage(level, n, dir.getOpposite()) != null)
                 {
                     endpoints.add(new Endpoint(n, dir.getOpposite()));
                     net.chunks.add(ChunkPos.asLong(n));
@@ -251,6 +260,13 @@ public final class CableNetworkManager
         net.endpoints.addAll(endpoints);
         if (net.rate == Integer.MAX_VALUE) net.rate = 0;
         return net;
+    }
+
+    /** The energy capability at pos, or (H08) the habitat base input when pos is an outer shell block. */
+    private static IEnergyStorage endpointStorage(ServerLevel level, BlockPos pos, Direction side)
+    {
+        IEnergyStorage storage = EnergyLookup.get(level, pos, side);
+        return storage != null ? storage : HabitatPower.externalReceiver(level, pos, side);
     }
 
     // ---------------------------------------------------------------- transfer
@@ -264,7 +280,7 @@ public final class CableNetworkManager
         Set<IEnergyStorage> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         for (Endpoint end : net.endpoints)
         {
-            IEnergyStorage storage = EnergyLookup.get(level, end.pos(), end.side());
+            IEnergyStorage storage = endpointStorage(level, end.pos(), end.side());
             if (storage == null || !seen.add(storage)) continue;
             boolean out = storage.canExtract();
             boolean in = storage.canReceive();

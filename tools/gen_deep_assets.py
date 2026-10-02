@@ -23,6 +23,9 @@ from PIL import Image
 import building_assets
 import cave_assets
 import gen_fauna
+import habitat_assets
+import furniture_assets
+import electric_tool_assets
 import industrial_assets
 import material_system
 import mineral_textures
@@ -935,6 +938,11 @@ def main():
     building_assets.generate(write, bs, bm, im, DATA)
     # Industrial blocks (I01): after building_assets, whose shared slab / stairs / wall tags it extends.
     industrial = industrial_assets.generate(write, bs, bm, im, DATA)
+    # Habitat modules (H01): no block items, no loot tables.
+    habitat = habitat_assets.generate(write, bs, bm, im, DATA)
+    # Base furniture (H04 large locker / H05 wall workbench)
+    furniture_assets.generate(write, bs, bm, im, DATA)
+    electric_tool_assets.generate(write, im, DATA)
 
     for name, make in ITEMS.items():
         _emit(make, os.path.join(ITEM_TEX, name + ".png"))
@@ -963,6 +971,7 @@ def main():
     print(f"Resource plants: {plants}")
     print(f"{len(NAMES) - 1} blocks + {len(building_assets.NAMES)} building blocks + {len(industrial_assets.NAMES)} industrial blocks, {len(ITEMS)} items")
     print(f"Industrial models: {industrial}")
+    print(f"Habitat: {habitat}")
     if "--no-forge" not in sys.argv:
         import forge_textures
         forge_textures.run()
@@ -1054,7 +1063,9 @@ def tags():
                                                                                           + cave_assets.CAVE_ROCKS + speleothems + ["crystal_needle"]
                                                                                           + list(cave_assets.CAVERN_CRYSTALS)
                                                                                           + building_assets.pickaxe_blocks()
-                                                                                          + industrial_assets.pickaxe_blocks())})
+                                                                                          + industrial_assets.pickaxe_blocks()
+                                                                                          + habitat_assets.pickaxe_blocks()
+                                                                                          + furniture_assets.pickaxe_blocks())})
     write(os.path.join(blocks, "mineable", "shovel.json"), {"replace": False, "values": a(SOFT + cave_assets.CAVE_SOFT)})
     write(os.path.join(blocks, "mineable", "axe.json"), {"replace": False, "values": a(cave_assets.CAVERN_AXE + building_assets.axe_blocks())})
     write(os.path.join(blocks, "mineable", "hoe.json"), {"replace": False, "values": a(cave_assets.CAVERN_HOE)})
@@ -1180,6 +1191,9 @@ def lang():
         data.update({"block.abyssia." + k: v[idx] for k, v in building_assets.NAMES.items()})
         data.update({"block.abyssia." + k: v[idx] for k, v in industrial_assets.NAMES.items()})
         data.update({k: v[idx] for k, v in industrial_assets.CONTAINER_NAMES.items()})
+        data.update({k: v[idx] for k, v in habitat_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in furniture_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in electric_tool_assets.LANG.items()})
         data["itemGroup.abyssia"] = "Abyssia"
         write(path, dict(sorted(data.items())))
 
