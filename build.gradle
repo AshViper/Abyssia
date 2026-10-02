@@ -16,6 +16,12 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    // JEI (optional integration, see com.abyssia.compat.jei)
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com'
+        content { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' }
+    }
 }
 
 base {
@@ -92,6 +98,13 @@ configurations {
 }
 
 dependencies {
+    // JEI is an optional dependency: compile against its API only, and run the full mod in every dev run.
+    // `-PnoJei` leaves it out to check that Abyssia still runs without JEI.
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    if (!project.hasProperty('noJei')) {
+        localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    }
     // Optional later: Sodium / Iris (NeoForge) for shader testing in the dev client (Forge-only Embeddium/Oculus removed).
 }
 
