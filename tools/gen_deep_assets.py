@@ -126,6 +126,13 @@ MINERAL = {
     "vanadium": P("#18242a", "#304349", "#4c666a", "#6e8a8a", "#9cb4b0"),
     "tungsten": P("#16171a", "#2a2c30", "#43464b", "#5f6268", "#868a90"),
     "yttrium": P("#2e2c26", "#57544a", "#838071", "#afab98", "#d8d4c0"),
+    # vanilla minerals of the deep veins (placeholders too)
+    "diamond": P("#0c2a2c", "#145450", "#1f8a80", "#3cbcae", "#8ce4da"),
+    "emerald": P("#082a16", "#0f5228", "#17803e", "#2cae58", "#7ad88e"),
+    "lapis": P("#0c1440", "#16286e", "#22409e", "#3a62c4", "#7894dc"),
+    "redstone": P("#2a0606", "#5a0c0a", "#8e1610", "#c2281c", "#e6604a"),
+    "quartz": P("#3a3632", "#6a645c", "#9a948a", "#c6c0b4", "#e8e4dc"),
+    "gold": P("#2a1d0f", "#5b4216", "#936f22", "#bf9632", "#dcbc5a"),
 }
 
 # ================================================================ rare metals (M01)
@@ -155,8 +162,17 @@ CRUST_RARE_DROPS = {
     "nickel_crust": [("tungsten", COMMON_RARE), ("yttrium", TRACE_RARE)],
     "iron_crust": [("yttrium", TRACE_RARE)],
     "copper_crust": [("yttrium", TRACE_RARE)],
+    # gem crusts are not smeltable: a mined crust sometimes yields the gem itself
+    "diamond_crust": [("minecraft:diamond", COMMON_RARE)],
+    "emerald_crust": [("minecraft:emerald", COMMON_RARE)],
 }
 RARE_ORES = [m + "_ore" for m in RARE_METALS]
+# Vanilla minerals in deep-sea form (2026-10-03, user request): seabed veins of abyssal_<m>_ore ringed by <m>_crust
+# (tools/gen_worldgen.py VANILLA_VEINS); they drop the vanilla items. Their 12 textures are ChatGPT-made (inbox/textures,
+# user 2026-10-03) and frozen in tools/texture_locks; the placeholders below are overwritten by the locks.
+VANILLA_MINERALS = ["diamond", "gold", "redstone", "lapis", "emerald", "quartz"]
+VANILLA_ORES = [f"abyssal_{m}_ore" for m in VANILLA_MINERALS]
+VANILLA_CRUSTS = [m + "_crust" for m in VANILLA_MINERALS]
 PLANT = {
     "green": P("#0f2a1c", "#184030", "#22583f", "#2f7050", "#4a9068"),
     "teal": P("#0c2a30", "#124048", "#1a5a62", "#267a80", "#3fa0a0"),
@@ -250,10 +266,11 @@ def ore_textures(t):
         "cobalt_ore": ("trench_rock", "cobalt"), "deep_nickel_ore": ("mineral_host_rock", "nickel"),
     }
     ores.update({m + "_ore": (v[2], m) for m, v in RARE_METALS.items()})
+    ores.update({f"abyssal_{m}_ore": ("abyssal_rock", m) for m in VANILLA_MINERALS})
     for name, (host, mineral) in ores.items():
         t[name] = ore(t[host], name, MINERAL[mineral][1:], blobs=5 if "crystal" in name else 4)
     crusts = {"manganese_crust": "manganese", "cobalt_crust": "cobalt", "nickel_crust": "nickel",
-              "iron_crust": "iron", "copper_crust": "copper"}
+              "iron_crust": "iron", "copper_crust": "copper", **{m + "_crust": m for m in VANILLA_MINERALS}}
     for name, mineral in crusts.items():
         t[name] = flecks(t["deep_sediment"], name, MINERAL[mineral][:4], density=0.45, threshold=0.42)
     # Polished crusts (the crust art itself) and crust bricks (crust + dark running-bond joints) are derived from the
@@ -571,7 +588,7 @@ CUBES = ["deep_sea_rock", "abyssal_rock", "trench_rock", "thermal_rock", "volcan
          "brine_silt", "salt_rock", "lumen_sand", "glow_silt", "lumen_rock", "frost_silt", "icy_sediment", "frozen_rock",
          "abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "thermal_crystal_ore", "abyssal_crystal_ore",
          "manganese_ore", "cobalt_ore", "deep_nickel_ore", "manganese_crust", "cobalt_crust", "nickel_crust",
-         "iron_crust", "copper_crust", "deep_crystal_block"] + RARE_ORES
+         "iron_crust", "copper_crust", "deep_crystal_block"] + RARE_ORES + VANILLA_ORES + VANILLA_CRUSTS
 SOFT = ["deep_sediment", "abyssal_mud", "deep_mud", "mineral_sediment", "crystal_sediment", "organic_sediment", "volcanic_ash",
         "ruin_gravel", "ruin_sediment", "bone_sediment", "fossil_silt", "salt_crust", "brine_silt", "lumen_sand", "glow_silt",
         "frost_silt", "icy_sediment"]
@@ -733,6 +750,13 @@ NAMES = {
     "cobalt_ore": ("Cobalt Ore", "コバルト鉱石"), "deep_nickel_ore": ("Deep Nickel Ore", "深海ニッケル鉱石"),
     "manganese_crust": ("Manganese Crust", "マンガンクラスト"), "cobalt_crust": ("Cobalt Crust", "コバルトクラスト"),
     "nickel_crust": ("Nickel Crust", "ニッケルクラスト"), "iron_crust": ("Iron Crust", "鉄クラスト"),
+    "abyssal_diamond_ore": ("Abyssal Diamond Ore", "深淵ダイヤモンド鉱石"), "abyssal_gold_ore": ("Abyssal Gold Ore", "深淵金鉱石"),
+    "abyssal_redstone_ore": ("Abyssal Redstone Ore", "深淵レッドストーン鉱石"),
+    "abyssal_lapis_ore": ("Abyssal Lapis Lazuli Ore", "深淵ラピスラズリ鉱石"),
+    "abyssal_emerald_ore": ("Abyssal Emerald Ore", "深淵エメラルド鉱石"), "abyssal_quartz_ore": ("Abyssal Quartz Ore", "深淵クォーツ鉱石"),
+    "diamond_crust": ("Diamond Crust", "ダイヤモンドクラスト"), "gold_crust": ("Gold Crust", "金クラスト"),
+    "redstone_crust": ("Redstone Crust", "レッドストーンクラスト"), "lapis_crust": ("Lapis Lazuli Crust", "ラピスラズリクラスト"),
+    "emerald_crust": ("Emerald Crust", "エメラルドクラスト"), "quartz_crust": ("Quartz Crust", "クォーツクラスト"),
     "copper_crust": ("Copper Crust", "銅クラスト"), "deep_crystal_block": ("Deep Crystal Block", "深海結晶ブロック"),
     "manganese_nodules": ("Manganese Nodules", "マンガン団塊"), "cobalt_cluster": ("Cobalt Cluster", "コバルトの結晶塊"),
     "nickel_cluster": ("Nickel Cluster", "ニッケルの結晶塊"), "sulfur_cluster": ("Sulfur Cluster", "硫黄の結晶塊"),
@@ -1014,6 +1038,10 @@ ORE_DROPS = {
     "thermal_crystal_cluster": ("abyssia:thermal_crystal_shard", 2, 4, "ore_drops"),
 }
 ORE_DROPS.update({m + "_ore": ("abyssia:raw_" + m, 1, 1, "ore_drops") for m in RARE_METALS})
+ORE_DROPS.update({  # same drops as the vanilla deepslate ores
+    "abyssal_diamond_ore": ("minecraft:diamond", 1, 1, "ore_drops"), "abyssal_gold_ore": ("minecraft:raw_gold", 1, 1, "ore_drops"),
+    "abyssal_redstone_ore": ("minecraft:redstone", 4, 5, "ore_drops"), "abyssal_lapis_ore": ("minecraft:lapis_lazuli", 4, 9, "ore_drops"),
+    "abyssal_emerald_ore": ("minecraft:emerald", 1, 1, "ore_drops"), "abyssal_quartz_ore": ("minecraft:quartz", 1, 1, "ore_drops")})
 SILK_ONLY = ["small_thermal_crystal_bud", "medium_thermal_crystal_bud"]
 
 
@@ -1024,7 +1052,7 @@ def silk():
 def rare_pools(name):
     """Extra pools of a crust: each concentrated rare metal rolls on its own (fortune raises the chance)."""
     return [{"rolls": 1, "bonus_rolls": 0,
-             "entries": [{"type": "minecraft:item", "name": "abyssia:raw_" + metal}],
+             "entries": [{"type": "minecraft:item", "name": metal if ":" in metal else "abyssia:raw_" + metal}],
              "conditions": [{"condition": "minecraft:inverted", "term": silk()[0]},
                             {"condition": "minecraft:table_bonus", "enchantment": "minecraft:fortune", "chances": chances},
                             {"condition": "minecraft:survives_explosion"}]}
@@ -1077,9 +1105,10 @@ def tags():
     write(os.path.join(blocks, "mineable", "shovel.json"), {"replace": False, "values": a(SOFT + cave_assets.CAVE_SOFT)})
     write(os.path.join(blocks, "mineable", "axe.json"), {"replace": False, "values": a(cave_assets.CAVERN_AXE + building_assets.axe_blocks())})
     write(os.path.join(blocks, "mineable", "hoe.json"), {"replace": False, "values": a(cave_assets.CAVERN_HOE)})
-    write(os.path.join(blocks, "needs_stone_tool.json"), {"replace": False, "values": a(["abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "manganese_ore"]
+    write(os.path.join(blocks, "needs_stone_tool.json"), {"replace": False, "values": a(["abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "manganese_ore", "abyssal_lapis_ore"]
                                                                                      + industrial_assets.needs_stone_tool_blocks())})
-    write(os.path.join(blocks, "needs_iron_tool.json"), {"replace": False, "values": a(["cobalt_ore", "deep_nickel_ore", "thermal_crystal_ore", "abyssal_crystal_ore"] + RARE_ORES)})
+    write(os.path.join(blocks, "needs_iron_tool.json"), {"replace": False, "values": a(["cobalt_ore", "deep_nickel_ore", "thermal_crystal_ore", "abyssal_crystal_ore"] + RARE_ORES
+                                                                                   + [o for o in VANILLA_ORES if o != "abyssal_lapis_ore"])})
     write(os.path.join(blocks, "crystal_sound_blocks.json"), {"replace": False, "values": a(["deep_crystal_block"] + list(cave_assets.CAVERN_CRYSTALS))})
     # Veins stay visible: plants cannot root in ore, crust or hot vent minerals (heat moss and mineral vines can).
     write(os.path.join(ours, "inhibits_plants.json"), {"values": a(ores + crusts + list(CLUSTERS) + [
@@ -1112,6 +1141,8 @@ def recipes():
         "raw_manganese": "abyssia:manganese_ingot", "raw_cobalt": "abyssia:cobalt_ingot", "raw_nickel": "abyssia:nickel_ingot",
         "manganese_ore": "abyssia:manganese_ingot", "cobalt_ore": "abyssia:cobalt_ingot", "deep_nickel_ore": "abyssia:nickel_ingot",
         "abyssal_iron_ore": "minecraft:iron_ingot", "deep_copper_ore": "minecraft:copper_ingot",
+        "abyssal_diamond_ore": "minecraft:diamond", "abyssal_gold_ore": "minecraft:gold_ingot", "abyssal_redstone_ore": "minecraft:redstone",
+        "abyssal_lapis_ore": "minecraft:lapis_lazuli", "abyssal_emerald_ore": "minecraft:emerald", "abyssal_quartz_ore": "minecraft:quartz",
     }
     for m in RARE_METALS:
         smelt["raw_" + m] = smelt[m + "_ore"] = f"abyssia:{m}_ingot"
@@ -1124,7 +1155,9 @@ def recipes():
     # Mineral crusts are both useful ore concentrates and durable building material.
     crust_smelt = {"manganese_crust": ("abyssia:manganese_ingot", 2), "cobalt_crust": ("abyssia:cobalt_ingot", 2),
                    "nickel_crust": ("abyssia:nickel_ingot", 2), "iron_crust": ("minecraft:iron_ingot", 2),
-                   "copper_crust": ("minecraft:copper_ingot", 2), "cave_mineral_crust": ("abyssia:sulfur", 2)}
+                   "copper_crust": ("minecraft:copper_ingot", 2), "cave_mineral_crust": ("abyssia:sulfur", 2),
+                   "gold_crust": ("minecraft:gold_ingot", 2), "redstone_crust": ("minecraft:redstone", 4),
+                   "lapis_crust": ("minecraft:lapis_lazuli", 4), "quartz_crust": ("minecraft:quartz", 2)}
     # Vanilla 1.20.1 cooking results are a bare id (always 1); Forge's SimpleCookingSerializer also takes an object
     # result, which is the only way to carry the count (a top-level "count" is ignored).
     for crust, (result, count) in crust_smelt.items():

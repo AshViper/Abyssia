@@ -640,19 +640,19 @@ for _metal, (_ore, _host, _n, _biomes) in RARE_VEINS.items():
     for _b in _biomes:
         VEINS[_b].append((_metal, "rare"))
 
-# Vanilla ores (2026-10-03, user request): seabed veins like the Abyssia minerals ("vein_<ore>_vanilla", in mineral host
-# rock, no crust / nodules: vanilla has no matching blocks), each in the deep biomes that suit it.
+# Vanilla minerals (2026-10-03, user request): seabed veins like the Abyssia minerals ("vein_<m>_vanilla"): abyssal_<m>_ore
+# in mineral host rock ringed by <m>_crust (tools/gen_deep_assets.py VANILLA_MINERALS; they drop the vanilla items),
+# each in the deep biomes that suit it.
 VANILLA_VEINS = {
-    # ore: (block, size, rarity 1/n chunks, biomes)
-    "diamond": ("minecraft:deepslate_diamond_ore", "small", 3, ["abyssal_trench", "hadal_zone", "deep_crystal_fields", "frost_abyss"]),
-    "emerald": ("minecraft:deepslate_emerald_ore", "small", 4, ["deep_crystal_fields", "deep_forest", "abyssal_forest", "glow_gardens"]),
-    "lapis": ("minecraft:deepslate_lapis_ore", "medium", 3, ["abyssal_ocean", "deep_crystal_fields", "frost_abyss", "sunken_ruins", "brine_lakes"]),
-    "gold": ("minecraft:deepslate_gold_ore", "medium", 3, ["thermal_vents", "volcanic_deep", "deep_sea", "sunken_ruins", "deep_forest"]),
-    "redstone": ("minecraft:deepslate_redstone_ore", "medium", 2, ["abyssal_trench", "hadal_zone", "deep_sea", "abyssal_ocean", "bone_graveyard",
-                                                                 "glow_gardens"]),
-    "quartz": ("minecraft:nether_quartz_ore", "large", 4, ["volcanic_deep", "thermal_vents", "brine_lakes", "bone_graveyard"]),
+    # mineral: (size, rarity 1/n chunks, biomes)
+    "diamond": ("small", 3, ["abyssal_trench", "hadal_zone", "deep_crystal_fields", "frost_abyss"]),
+    "emerald": ("small", 4, ["deep_crystal_fields", "deep_forest", "abyssal_forest", "glow_gardens"]),
+    "lapis": ("medium", 3, ["abyssal_ocean", "deep_crystal_fields", "frost_abyss", "sunken_ruins", "brine_lakes"]),
+    "gold": ("medium", 3, ["thermal_vents", "volcanic_deep", "deep_sea", "sunken_ruins", "deep_forest"]),
+    "redstone": ("medium", 2, ["abyssal_trench", "hadal_zone", "deep_sea", "abyssal_ocean", "bone_graveyard", "glow_gardens"]),
+    "quartz": ("large", 4, ["volcanic_deep", "thermal_vents", "brine_lakes", "bone_graveyard"]),
 }
-for _ore, (_block, _size, _n, _biomes) in VANILLA_VEINS.items():
+for _ore, (_size, _n, _biomes) in VANILLA_VEINS.items():
     for _b in _biomes:
         VEINS[_b].append((_ore, "vanilla"))
 
@@ -669,8 +669,9 @@ def veins():
     for metal, (ore, host, n, _) in RARE_VEINS.items():
         feature(f"vein_{metal}_rare", {"type": A("ore_vein"), "config": {"ore": state(ore), "host": state(host), "size": "small"}},
                 on_floor(rarity(n)))
-    for name, (block, size, n, _) in VANILLA_VEINS.items():
-        feature(f"vein_{name}_vanilla", {"type": A("ore_vein"), "config": {"ore": state(block), "host": state("mineral_host_rock"), "size": size}},
+    for name, (size, n, _) in VANILLA_VEINS.items():
+        feature(f"vein_{name}_vanilla", {"type": A("ore_vein"), "config": {"ore": state(f"abyssal_{name}_ore"), "host": state("mineral_host_rock"),
+                                                                           "crust": state(name + "_crust"), "size": size}},
                 on_floor(rarity(n)))
 
 

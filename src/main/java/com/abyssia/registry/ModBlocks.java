@@ -103,6 +103,13 @@ public final class ModBlocks
     public static final DeferredBlock<Block> VANADIUM_ORE = ore("vanadium_ore", 0, 0, 0);
     public static final DeferredBlock<Block> TUNGSTEN_ORE = ore("tungsten_ore", 0, 0, 0);
     public static final DeferredBlock<Block> YTTRIUM_ORE = ore("yttrium_ore", 0, 0, 0);
+    // Vanilla minerals in deep-sea form: seabed veins (tools/gen_worldgen.py VANILLA_VEINS), vanilla drops and XP
+    public static final DeferredBlock<Block> ABYSSAL_DIAMOND_ORE = ore("abyssal_diamond_ore", 3, 7, 0);
+    public static final DeferredBlock<Block> ABYSSAL_GOLD_ORE = ore("abyssal_gold_ore", 0, 0, 0);
+    public static final DeferredBlock<Block> ABYSSAL_REDSTONE_ORE = ore("abyssal_redstone_ore", 1, 5, 0);
+    public static final DeferredBlock<Block> ABYSSAL_LAPIS_ORE = ore("abyssal_lapis_ore", 2, 5, 0);
+    public static final DeferredBlock<Block> ABYSSAL_EMERALD_ORE = ore("abyssal_emerald_ore", 3, 7, 0);
+    public static final DeferredBlock<Block> ABYSSAL_QUARTZ_ORE = ore("abyssal_quartz_ore", 2, 5, 0);
 
     // ---------- Mineral crusts: thin mineral coatings on the seabed around and above veins ----------
     public static final DeferredBlock<Block> MANGANESE_CRUST = crust("manganese_crust", MapColor.COLOR_BLACK);
@@ -110,6 +117,12 @@ public final class ModBlocks
     public static final DeferredBlock<Block> NICKEL_CRUST = crust("nickel_crust", MapColor.COLOR_LIGHT_GREEN);
     public static final DeferredBlock<Block> IRON_CRUST = crust("iron_crust", MapColor.COLOR_RED);
     public static final DeferredBlock<Block> COPPER_CRUST = crust("copper_crust", MapColor.COLOR_ORANGE);
+    public static final DeferredBlock<Block> DIAMOND_CRUST = crust("diamond_crust", MapColor.DIAMOND);
+    public static final DeferredBlock<Block> GOLD_CRUST = crust("gold_crust", MapColor.GOLD);
+    public static final DeferredBlock<Block> REDSTONE_CRUST = crust("redstone_crust", MapColor.FIRE);
+    public static final DeferredBlock<Block> LAPIS_CRUST = crust("lapis_crust", MapColor.LAPIS);
+    public static final DeferredBlock<Block> EMERALD_CRUST = crust("emerald_crust", MapColor.EMERALD);
+    public static final DeferredBlock<Block> QUARTZ_CRUST = crust("quartz_crust", MapColor.QUARTZ);
 
     // ---------- Mineral clusters and crystals ----------
     public static final DeferredBlock<Block> MANGANESE_NODULES = block("manganese_nodules", () -> crystal(MapColor.COLOR_BLACK, 4, 4, 0));
