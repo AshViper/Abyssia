@@ -45,6 +45,18 @@ public final class ClientConfig
 
     static {
         BUILDER.pop();
+        BUILDER.comment("How natural currents look").push("natural_currents");
+    }
+
+    public static final ModConfigSpec.IntValue CURRENT_PARTICLE_DISTANCE = BUILDER
+            .comment("Draw current particles up to this many blocks from you")
+            .defineInRange("particle_distance", 40, 8, 96);
+    public static final ModConfigSpec.DoubleValue CURRENT_PARTICLE_DENSITY = BUILDER
+            .comment("Multiplier on how many current particles are drawn (0 = none)")
+            .defineInRange("particle_density", 1.0, 0.0, 4.0);
+
+    static {
+        BUILDER.pop();
     }
 
     static final ModConfigSpec SPEC = BUILDER.build();

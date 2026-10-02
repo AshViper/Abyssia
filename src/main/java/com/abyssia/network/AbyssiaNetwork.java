@@ -7,18 +7,16 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 public final class AbyssiaNetwork
 {
-    // 2: the deep ocean depth settings packet was removed with the deep ocean dimension.
-    private static final String PROTOCOL = "2";
+    // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
+    private static final String PROTOCOL = "3";
 
     private AbyssiaNetwork() {}
 
-    /**
-     * No messages at present; the registrar stays so client and server still agree on the mod's protocol version.
-     * Forge's SimpleChannel became NeoForge payloads: register CustomPacketPayload types on the registrar here.
-     */
+    /** Forge's SimpleChannel became NeoForge payloads: register CustomPacketPayload types on the registrar here. */
     public static void register(RegisterPayloadHandlersEvent event)
     {
-        event.registrar(PROTOCOL);
+        event.registrar(PROTOCOL)
+                .playToClient(NaturalCurrentSaltPacket.TYPE, NaturalCurrentSaltPacket.STREAM_CODEC, NaturalCurrentSaltPacket::handle);
     }
 
     public static void sendTo(ServerPlayer player, CustomPacketPayload message)
