@@ -79,6 +79,15 @@ public class LargeLockerBlockEntity extends RandomizableContainerBlockEntity
         super(ModFurniture.LARGE_LOCKER_ENTITY.get(), pos, state);
     }
 
+    /** The other cells forward to this handler through a cached capability: refresh it once this base exists. */
+    @Override
+    public void onLoad()
+    {
+        super.onLoad();
+        if (level != null && !level.isClientSide && getBlockState().hasProperty(LargeLockerBlock.FACING))
+            LargeLockerBlock.invalidateCaps(level, worldPosition, getBlockState().getValue(LargeLockerBlock.FACING));
+    }
+
     // ---------------------------------------------------------------- container
 
     @Override
