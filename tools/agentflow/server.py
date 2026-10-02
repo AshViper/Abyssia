@@ -274,7 +274,7 @@ def textures():
     return out
 
 
-LIVE = ROOT / "inbox" / "flow" / "live.jsonl"  # written by hook.py
+LIVE = Path(os.environ.get("AGENTFLOW_LIVE", ROOT / "inbox" / "flow" / "live.jsonl"))  # written by hook.py
 AGENT_DEFS = ROOT / ".claude" / "agents"
 
 
@@ -290,6 +290,20 @@ def agent_models():
     return out
 
 
+STAGE_NOTE = {"build": "gradle: ", "git": "", "memory": "Obsidian: ", "texture": "", "chatgpt": "ChatGPT: ", "verify": "verify: "}
+
+
+def merged_state():
+    """state.json with the hook-detected stages laid over it (whichever was updated last wins)."""
+    st = flow.load()
+    for k, v in live().get("stages", {}).items():
+        cur = st["stages"].setdefault(k, {"status": "idle", "note": ""})
+        if v.get("t", 0) > cur.get("t", 0):
+            st["stages"][k] = v
+            st["updated"] = max(st.get("updated", 0), v["t"])
+    return st
+
+
 def live(window=1800, lines=4000):
     """Fold hook.py events into: agents (who is working where), msgs (agent <-> agent hand-offs), events (tail)."""
     try:
@@ -298,7 +312,7 @@ def live(window=1800, lines=4000):
         raw = []
     now, models = time.time(), agent_models()
     main_model = flow.load().get("main", {}).get("model") or "opus-5.5"
-    agents, msgs, events, pending, by_tid = {}, [], [], [], {}
+    agents, msgs, events, pending, by_tid, stages = {}, [], [], [], {}, {}
 
     def ag(e):
         a = agents.get(e["who"])
@@ -364,8 +378,23 @@ def live(window=1800, lines=4000):
                 msgs.append({"t": e["t"], "from": sub, "to": e["who"], "kind": "result", "desc": "", "text": txt})
             else:
                 msgs.append({"t": e["t"], "from": "user", "to": e["who"], "kind": "prompt", "text": txt})
+        st = e.get("stage")
+        if st and ev in ("PreToolUse", "PostToolUse"):
+            cur = stages.get(st, {})
+            if ev == "PreToolUse":
+                stages[st] = {"status": "running", "note": STAGE_NOTE.get(st, "") + (e.get("target") or "")[:90],
+                              "t": e["t"], "who": e["who"], "auto": True}
+            elif e.get("ok") is False:
+                stages[st] = {**cur, "status": "failed", "note": (e.get("out") or cur.get("note", ""))[-120:], "t": e["t"], "auto": True}
+            elif st in ("build", "git", "verify") and not e.get("bg"):
+                stages[st] = {**cur, "status": "done", "t": e["t"], "auto": True}
+            else:
+                stages[st] = {**cur, "t": e["t"], "auto": True}  # chatgpt / texture / memory: still busy, decays below
         events.append(e)
 
+    for k, v in stages.items():  # bursty stages: quiet for a while = finished
+        if v["status"] == "running" and now - v["t"] > (90 if k in ("chatgpt", "texture", "memory") else 1800):
+            v["status"] = "done"
     for a in agents.values():  # started before the hook was installed / unmatched: hang it under its session's main
         if a["type"] != "main" and not a["parent"]:
             a["parent"] = f"main:{a['sid']}"
@@ -374,9 +403,10 @@ def live(window=1800, lines=4000):
             a["status"] = "stale" if a["type"] != "main" else "idle"
     keep = [a for a in agents.values() if a["status"] == "running" or now - a["t"] < window]
     keep.sort(key=lambda a: (a["type"] != "main", a["started"]))
-    return {"now": now, "agents": keep, "msgs": [m for m in msgs if now - m["t"] < window * 4][-120:],
-            "events": [{k: v for k, v in e.items() if k in ("t", "ev", "who", "tool", "target", "err")}
-                       for e in events if e.get("ev") in ("PreToolUse", "SubagentStart", "SubagentStop")][-200:]}
+    return {"now": now, "agents": keep, "stages": stages, "msgs": [m for m in msgs if now - m["t"] < window * 4][-120:],
+            "events": [{k: v for k, v in e.items() if k in ("t", "ev", "who", "tool", "target", "err", "stage", "ok", "out")}
+                       for e in events if e.get("ev") in ("PreToolUse", "SubagentStart", "SubagentStop")
+                       or (e.get("ev") == "PostToolUse" and e.get("stage"))][-200:]}
 
 
 class H(http.server.SimpleHTTPRequestHandler):
@@ -644,16 +674,7 @@ class H(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             return self.wfile.write(body)
         if path == "/state.json":
-            try:
-                body = STATE.read_bytes()
-            except FileNotFoundError:
-                body = json.dumps(flow.fresh()).encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Cache-Control", "no-store")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            return self.wfile.write(body)
+            return self._json(200, merged_state())
         super().do_GET()
 
     def log_message(self, *a):

@@ -8,7 +8,7 @@ inbox/flow/live.jsonl (override with AGENTFLOW_LIVE). server.py folds that file 
 Never blocks or fails the agent: no stdout, always exit 0. Also usable by hand:
   echo '{"hook_event_name":"PreToolUse","tool_name":"Read","tool_input":{"file_path":"x"}}' | python hook.py
 """
-import json, os, sys, time
+import json, os, re, sys, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -67,6 +67,56 @@ def result_text(resp):
         return " ".join(b.get("text", "") for b in resp if isinstance(b, dict))
     return ""
 
+SHELL = ("Bash", "PowerShell")
+EDIT = ("Edit", "Write", "MultiEdit", "NotebookEdit")
+
+
+def classify(tool, ti):
+    """Which pipeline stage a tool call belongs to (drives the Verification/Build/Memory/... nodes)."""
+    if not isinstance(ti, dict):
+        return ""
+    if tool in SHELL:
+        cmd = ti.get("command", "")
+        # heredoc bodies are data (scripts, commit messages), not commands
+        cmd = re.sub(r"<<-?\s*(['\"]?)(\w+)\1[^\n]*\n.*?\n\s*\2\s*(?=\n|$)", "<<heredoc", cmd, flags=re.S)
+        # only the command words themselves count (a heredoc that merely mentions "git push" must not)
+        head = r"(?:^|[;&|(]\s*|\n\s*)(?:cd\s+\S+\s*&&\s*)?"
+        if re.search(head + r"(?:\./|\.\\|&\s*)?(?:gradlew(?:\.bat)?|gradle)\b[^;&|\n]*\b(build|test|check|runClient|runServer|runGameTestServer|jar)\b", cmd):
+            return "build"
+        if re.search(head + r"git(?:\s+-[Cc]\s+\S+)*\s+(commit|push)\b", cmd):
+            return "git"
+        if re.search(head + r"python3?\s+\S*(forge_textures|texture_studio|texture_gen|title_panorama|armor_layers|mod_icon|sheets\.py\s+import)", cmd):
+            return "texture"
+        if re.search(r"^\s*cd\s+[\"']?[^\"'\n]*Obsidian", cmd) or re.search(r"(>>?|tee(\s+-a)?|Out-File|Set-Content|Copy-Item|\bcp|\bmv)\s+(-\S+\s+)*[\"']?[^\s\"']*Obsidian", cmd):
+            return "memory"
+        return ""
+    if tool in EDIT:
+        p = str(ti.get("file_path") or ti.get("notebook_path") or "").replace("\\", "/")
+        if "Obsidian" in p:
+            return "memory"
+        if "/textures/" in p or "texture_locks" in p:
+            return "texture"
+        return ""
+    if tool.startswith("mcp__claude-in-chrome__"):
+        return "chatgpt"  # in this project Chrome is driven for chatgpt.com (spec / design / texture / review)
+    if tool in ("Agent", "Task") and ti.get("subagent_type") == "verify":
+        return "verify"
+    return ""
+
+
+def verdict(stage, text):
+    """True ok / False failed / None unknown, from the tool output."""
+    if stage == "build":
+        if re.search(r"BUILD FAILED|FAILURE:|Compilation failed|error: ", text):
+            return False
+        return True if "BUILD SUCCESSFUL" in text else None
+    if stage == "git":
+        return False if re.search(r"\b(fatal|error):|\[rejected\]|nothing to commit", text) else True
+    if stage == "verify":
+        m = re.search(r'"?result"?\s*[:=]\s*"?(PASS|FAIL)', text, re.I) or re.search(r"\b(PASS|FAIL)\b", text)
+        return None if not m else m.group(1) == "PASS"
+    return None
+
 
 def event(d):
     ev = d.get("hook_event_name", "")
@@ -79,6 +129,16 @@ def event(d):
         e["tool"] = tool
         e["target"] = target(tool, ti)
         e["tid"] = d.get("tool_use_id", "")
+        stage = classify(tool, ti)
+        if stage:
+            e["stage"] = stage
+            if ev == "PostToolUse":
+                r = d.get("tool_response")
+                out = (r.get("stdout", "") + "\n" + r.get("stderr", "")) if isinstance(r, dict) and "stdout" in r else result_text(r)
+                if isinstance(r, dict) and r.get("backgroundTaskId"):
+                    e["bg"] = True
+                e["ok"] = verdict(stage, out or "")
+                e["out"] = clip((out or "")[-400:], 200)
         if tool in ("Agent", "Task"):  # main -> subagent hand-off and the answer coming back
             e["sub"] = ti.get("subagent_type") or "general-purpose"
             e["desc"] = clip(ti.get("description", ""), 120)

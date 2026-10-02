@@ -361,7 +361,7 @@ const LABEL={queued:"待機",running:"実行中",done:"完了",failed:"失敗",e
 const TIERS=[["light","sonnet-5.5"],["standard","sonnet-5.5"],["heavy","opus-5.5"]];
 // stage: [key, title, default sub, band, x]
 const STAGES=[["request","依頼","フォーム/CLI","top",30],["router","Main Agent","tier振り分け・統合","top",290],["chatgpt","ChatGPT","仕様書/テクスチャ","top",550],["texture","Texture Pipeline","Forge/Studio/取込","top",810],
-  ["verify","Verification","検証","bot",290],["build","Build/Test","gradle(メインのみ)","bot",550],["memory","Memory","Obsidian更新","bot",810]];
+  ["verify","Verification","verify エージェント (PASS/FAIL)","bot",160],["build","Build/Test","gradle (メインのみ)","bot",420],["memory","Memory","Obsidian 更新","bot",680],["git","Git","commit / push","bot",940]];
 const BW=190,BH=58,NW=340,NH=54,GAP=10,LW=380,LX=30;
 let state={tasks:[],stages:{},main:{},log:[]},auto={},selected=null,lastJson="",seenT=null,edgeD={};
 
@@ -400,7 +400,7 @@ function render(){
   const bot=k=>({x:pos[k].x+pos[k].w/2,y:pos[k].y+pos[k].h}),top=k=>({x:pos[k].x+pos[k].w/2,y:pos[k].y});
   const right=k=>({x:pos[k].x+pos[k].w,y:pos[k].y+pos[k].h/2}),left=k=>({x:pos[k].x,y:pos[k].y+pos[k].h/2});
   const H2=(a,b)=>edges.push([a,b,hcurve(right(a).x,right(a).y,left(b).x,left(b).y)]);
-  H2("request","router");H2("router","chatgpt");H2("chatgpt","texture");H2("verify","build");H2("build","memory");
+  H2("request","router");H2("router","chatgpt");H2("chatgpt","texture");H2("verify","build");H2("build","memory");H2("memory","git");
   edges.push(["texture","build",vcurve(bot("texture").x,bot("texture").y,top("build").x,top("build").y)]);
   for(const t of tasks){
     edges.push(["router",t.id,vcurve(bot("router").x,bot("router").y,top(t.id).x,top(t.id).y)]);
@@ -422,7 +422,7 @@ function render(){
   for(const [k,name,sub] of STAGES){
     const s=(state.stages||{})[k]||{};const st=V.st(k);
     const s2=k==="router"&&(state.main||{}).model?`${state.main.model}${state.main.note?" · "+state.main.note:""}`:(st!=="idle"&&s.note?s.note:sub);
-    box(svg,pos[k],name,s2,st,()=>select({kind:"stage",name,k,status:st,note:s.note||""}));
+    box(svg,pos[k],name,(s.auto&&st!=="idle"?"⚡ ":"")+s2,st,()=>select({kind:"stage",name,k,status:st,note:s.note||"",auto:!!s.auto,t:s.t,who:s.who}));
   }
   for(const t of tasks){
     const last=t.status==="running"?[...(state.log||[])].reverse().find(l=>l.who===t.id&&l.kind!=="status"):null;
@@ -438,7 +438,7 @@ function box(svg,p,title,sub,status,onclick){
 }
 function packet(who){ // one-shot bright packet for a fresh log entry
   const svg=$("svg");let d=null;
-  const T={request:"request>router",chatgpt:"router>chatgpt",texture:"chatgpt>texture",build:"verify>build",memory:"build>memory"};
+  const T={request:"request>router",chatgpt:"router>chatgpt",texture:"chatgpt>texture",build:"verify>build",memory:"build>memory",git:"memory>git"};
   if(T[who])d=edgeD[T[who]];
   else if(who==="verify")d=Object.entries(edgeD).find(([k])=>k.endsWith(">verify"))?.[1];
   else d=edgeD["router>"+who];
@@ -464,9 +464,14 @@ function detail(){
   const d=$("detail");if(!selected)return;const o=selected;
   const rows=o.kind==="task"
     ?[["ID",o.id],["title",o.title||"-"],["tier",o.tier],["model",o.model],["状態",LABEL[o.status]],["files",o.files||"-"],["親",o.parent||"-"],["開始",fmt(o.started)],["終了",fmt(o.ended)],["note",o.note||"-"]]
-    :[["stage",o.name],["状態",LABEL[o.status]||o.status],["note",o.note||"-"]];
+    :[["stage",o.name],["状態",LABEL[o.status]||o.status],["検知",o.auto?"hook で自動 ("+(o.who?aname(o.who):"-")+")":"flow.py"],["時刻",fmt(o.t)],["note",o.note||"-"]];
   d.innerHTML="<h2 class='h2'>"+(o.kind==="task"?"タスク":"ステージ")+"</h2><dl>"+rows.map(()=>"<dt></dt><dd></dd>").join("")+"</dl>";
   d.querySelectorAll("dt").forEach((e,i)=>e.textContent=rows[i][0]);d.querySelectorAll("dd").forEach((e,i)=>e.textContent=rows[i][1]);
+  if(o.kind==="stage"){const ev=(LV.events||[]).filter(e=>e.stage===o.k).slice(-8).reverse();
+    if(ev.length){const ul=document.createElement("ul");ul.style.cssText="list-style:none;padding:0;margin:8px 0 0;font-size:11px";
+      for(const e of ev){const li=document.createElement("li");li.style.cssText="border-top:1px dashed var(--bd);padding:3px 0;overflow-wrap:anywhere";
+        li.textContent=`${hms(e.t)} ${aname(e.who)} ${e.ev==="PostToolUse"?(e.ok===false?"✕":e.ok?"✓":"·"):"▶"} ${e.out||e.target||""}`;ul.appendChild(li)}
+      d.appendChild(ul)}}
 }
 function renderLog(){
   const ol=$("log"),only=$("onlySel").checked,key=selKey();
@@ -502,7 +507,7 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const hms=t=>new Date(t*1000).toLocaleTimeString("ja-JP",{hour12:false});
 const kindOf=a=>a.type==="main"?"main":a.type==="decision"?"dec":a.type.startsWith("coder")?"coder":"sub";
 const KCOL={main:"var(--c-main)",dec:"var(--c-dec)",coder:"var(--c-coder)",sub:"var(--c-sub)",user:"var(--c-user)"};
-const WEIGHT={"coder-light":[1,"light"],"coder-standard":[2,"std"],"coder-heavy":[3,"heavy"],decision:[4,"judge"],Explore:[1,"read"],Plan:[2,"plan"]};
+const WEIGHT={verify:[2,"check"],"coder-light":[1,"light"],"coder-standard":[2,"std"],"coder-heavy":[3,"heavy"],decision:[4,"judge"],Explore:[1,"read"],Plan:[2,"plan"]};
 const TOOLV={Read:"reads",Edit:"edits",Write:"writes",MultiEdit:"edits",Grep:"greps",Glob:"globs",Bash:"runs",PowerShell:"runs",Agent:"delegates",Task:"delegates",WebFetch:"fetches",WebSearch:"searches",SendMessage:"messages",Skill:"skill"};
 const short=id=>id.startsWith("main:")?id.slice(5,11):id.slice(0,7);
 const tname=t=>String(t||"").replace(/^mcp__Claude_Browser__/,"browser.").replace(/^mcp__claude-in-chrome__/,"chrome.").replace(/^mcp__([^_]+)__/,"$1.");
@@ -618,8 +623,8 @@ function tmsgs(){
 function tlog(){
   let ev=[...LV.events].reverse();if(tsel)ev=ev.filter(e=>e.who===tsel);
   $("slogL").textContent=tsel?`session log · ${aname(tsel)}`:"session log";
-  const TXT=e=>e.ev==="SubagentStart"?"start":e.ev==="SubagentStop"?"stop":(TOOLV[e.tool]||tname(e.tool));
-  $("slog").innerHTML=ev.length?ev.slice(0,150).map(e=>`<li><span class="tm">${hms(e.t)}</span><span style="color:${acol(e.who)}">${esc(aname(e.who))}</span><span class="tl">${esc(TXT(e))}</span><span title="${esc(e.target||"")}">${esc(e.target||"")}</span></li>`).join(""):`<li class="empty">hook の記録がまだありません (.claude/settings.json)</li>`;
+  const TXT=e=>e.ev==="SubagentStart"?"start":e.ev==="SubagentStop"?"stop":e.ev==="PostToolUse"?(e.ok===false?"✕ ":e.ok?"✓ ":"· ")+e.stage:(TOOLV[e.tool]||tname(e.tool));
+  $("slog").innerHTML=ev.length?ev.slice(0,150).map(e=>`<li><span class="tm">${hms(e.t)}</span><span style="color:${acol(e.who)}">${esc(aname(e.who))}</span><span class="tl">${esc(TXT(e))}</span><span title="${esc(e.out||e.target||"")}"${e.ok===false?' style="color:var(--failed)"':""}>${esc(e.ev==="PostToolUse"?(e.out||e.target||""):(e.target||""))}</span></li>`).join(""):`<li class="empty">hook の記録がまだありません (.claude/settings.json)</li>`;
 }
 function tstat(){
   const a=LV.agents,subs=a.filter(x=>x.type!=="main"),run=subs.filter(x=>x.status==="running").length;

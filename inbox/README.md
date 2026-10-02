@@ -102,7 +102,7 @@ UI右の「実装したいこと」フォーム、または Claude に直接言�
 | 設計判断 | decision (Opus 5.5) | CLAUDE.md §8 のときだけ。approve / reject / modify を JSON で返す。コードは書かない | ツリー左の紫枠 |
 | 実装 | coder-light / standard (Sonnet 5.5)、coder-heavy (Opus 5.5) | 1体1タスク。`files:` の範囲だけ編集。手に負えないときは ESCALATE | `flow.py add/set`、ツリー緑 |
 | テクスチャ取込 | Texture Pipeline | ChatGPT 画像を `inbox/textures/` から取り込む (texture_locks 厳守) | stage `texture` |
-| 検証 | 実装とは別のエージェント | 設計違反、API の誤用、互換性。コードは変えない | stage `verify` |
+| 検証 | verify エージェント (Sonnet 5.5、読むだけ) | 設計違反、API の誤用、互換性。PASS / FAIL を JSON で返す。コードは変えない | stage `verify` |
 | ビルド・テスト | Main のみ | `gradle build` と実機テスト。サブエージェントには走らせない | stage `build` |
 | 記憶 | Main | Obsidian Vault に重要な事実と判断だけ書く | stage `memory` |
 | 公開 | Main | 依頼で変えたファイルだけを commit して push | stage `git` |
@@ -118,6 +118,13 @@ UI右の「実装したいこと」フォーム、または Claude に直接言�
 - 線 = 親→子。実行中は光が流れ、依頼・結果が出るとその線をパケットが往復する。
 - agent messages = main→サブの依頼文、サブ→main の結果、SendMessage。クリックで全文表示。箱クリックでそのエージェントに絞り込む。
 - 完了したサブエージェントと終わったセッションの main は60秒後に隠れる。ハブ行の「完了 N 件を表示」で再表示する (ブラウザごとに記憶)。
+- 下段のステージ (⚡ 付き) は hook から自動で変わる。flow.py の `stage` も使え、新しいほうが優先される。
+  - Verification: `verify` エージェント (`.claude/agents/verify.md`、読むだけ) の起動で実行中。結果の `"result": "PASS"|"FAIL"` で完了か失敗か
+  - Build/Test: `gradlew build|test|check|runClient...` で実行中。出力の BUILD SUCCESSFUL / FAILED で完了か失敗か
+  - Memory: Obsidian Vault への Edit/Write、Vault に cd して書くコマンド
+  - Git: `git commit` / `git push`。error・fatal・rejected なら失敗
+  - ChatGPT: Claude in Chrome の操作。Texture Pipeline: textures/ への書き込みとテクスチャ生成ツール。この2つは90秒動きがなければ完了
+  - ヒアドキュメントの本文は判定に使わない。ノードを押すと、そのステージの最近の記録が出る
 
 ## 詳細ログ (activity)
 `flow.py log <task|main|stage> "今やっていること" [--kind file|tool|decision|error] [--model M]`。add/set/stage/main/escalate は自動でログされる。
