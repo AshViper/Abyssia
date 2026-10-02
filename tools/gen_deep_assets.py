@@ -23,6 +23,7 @@ from PIL import Image
 import building_assets
 import cave_assets
 import gen_fauna
+import industrial_assets
 import material_system
 import mineral_textures
 import plant_assets
@@ -685,6 +686,21 @@ for _id, _kind in (("abyssal_alloy_pickaxe", "pickaxe"), ("abyssal_alloy_axe", "
                    ("abyssal_alloy_sword", "sword"), ("deep_diver_helmet", "helmet"),
                    ("abyssal_flippers", "flippers")):
     ITEMS[_id] = (lambda n, k: lambda: alloy_tool_icon(n, k))(_id, _kind)
+# F01 fauna drops: locked art imported from a ChatGPT sheet (texture_locks); only the item models are generated here.
+FAUNA_DROP_ITEMS = (
+    ("abyssal_fish_fillet", "Abyssal Fish Fillet", "深海魚の切り身"), ("cooked_abyssal_fish", "Cooked Abyssal Fish", "焼き深海魚"),
+    ("viper_flesh", "Viperfish Flesh", "ホウライエソの肉"), ("cooked_viper_flesh", "Cooked Viperfish", "焼きホウライエソ"),
+    ("shark_flesh", "Deep Sea Shark Flesh", "深海ザメの肉"), ("cooked_shark_flesh", "Cooked Deep Sea Shark", "焼き深海ザメ"),
+    ("eelpout_flesh", "Eelpout Flesh", "深海ウナギの肉"), ("cooked_eelpout_flesh", "Cooked Eelpout", "焼き深海ウナギ"),
+    ("blobfish_flesh", "Blobfish Flesh", "ブロブフィッシュの肉"), ("cooked_blobfish", "Cooked Blobfish", "焼きブロブフィッシュ"),
+    ("angler_flesh", "Anglerfish Flesh", "アンコウの肉"), ("cooked_angler_flesh", "Cooked Anglerfish", "焼きアンコウ"),
+    ("jelly_tentacle", "Silky Jelly Tentacle", "絹クラゲの触手"), ("atolla_tentacle", "Atolla Tentacle", "アトラの触手"),
+    ("phantom_tentacle", "Phantom Jelly Tentacle", "ファントムクラゲの触手"),
+    ("deepstaria_tentacle", "Deepstaria Tentacle", "ディープスタリアの触手"),
+)
+for _id, _en, _ja in FAUNA_DROP_ITEMS:
+    ITEMS[_id] = (lambda n: lambda: Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "texture_locks",
+                                                            "assets", "textures", "item", n + ".png")).convert("RGBA"))(_id)
 for _m in RARE_METALS:
     ITEMS["raw_" + _m] = (lambda m: lambda: lump("raw_" + m, MINERAL[m]))(_m)
     ITEMS[_m + "_ingot"] = (lambda m: lambda: ingot(m + "_ingot", MINERAL[m]))(_m)
@@ -742,6 +758,7 @@ ITEM_NAMES = {
     "abyssal_crystal_shard": ("Abyssal Crystal Shard", "深淵結晶の欠片"),
     "crust_powder": ("Crust Powder", "クラスト粉末"),
 }
+ITEM_NAMES.update({_id: (_en, _ja) for _id, _en, _ja in FAUNA_DROP_ITEMS})
 ITEM_NAMES.update({
     "abyssal_alloy_ingot": ("Abyssal Alloy Ingot", "深海合金インゴット"),
     "abyssal_alloy_pickaxe": ("Abyssal Alloy Pickaxe", "深海合金のツルハシ"),
@@ -774,6 +791,7 @@ NAMES.update(plant_assets.BLOCK_NAMES)
 ITEM_NAMES.update(plant_assets.ITEM_NAMES)
 # Material processing system (tools/material_spec.json via material_system.py)
 ITEM_NAMES.update(material_system.item_names())
+ITEM_NAMES.update(industrial_assets.ITEM_NAMES)
 BIOME_NAMES = {
     "twilight_reef": ("Twilight Reef", "薄明の礁"), "deep_sea": ("Deep Sea", "深海"),
     "abyssal_ocean": ("Abyssal Ocean", "深淵の海"), "abyssal_trench": ("Abyssal Trench", "深淵の海溝"),
@@ -915,6 +933,8 @@ def main():
 
     # Building blocks: stone families and the ancient wood set (textures come from the Texture Forge pass below).
     building_assets.generate(write, bs, bm, im, DATA)
+    # Industrial blocks (I01): after building_assets, whose shared slab / stairs / wall tags it extends.
+    industrial = industrial_assets.generate(write, bs, bm, im, DATA)
 
     for name, make in ITEMS.items():
         _emit(make, os.path.join(ITEM_TEX, name + ".png"))
@@ -941,7 +961,8 @@ def main():
     material_recipes()
     lang()
     print(f"Resource plants: {plants}")
-    print(f"{len(NAMES) - 1} blocks + {len(building_assets.NAMES)} building blocks, {len(ITEMS)} items")
+    print(f"{len(NAMES) - 1} blocks + {len(building_assets.NAMES)} building blocks + {len(industrial_assets.NAMES)} industrial blocks, {len(ITEMS)} items")
+    print(f"Industrial models: {industrial}")
     if "--no-forge" not in sys.argv:
         import forge_textures
         forge_textures.run()
@@ -1006,7 +1027,7 @@ def loot_tables():
                 {"type": "minecraft:item", "name": "abyssia:" + name, "conditions": silk()},
                 {"type": "minecraft:item", "name": item, "functions": funcs}]}]
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": entries}
-        elif name in cave_assets.CAVERN_NO_DROP:
+        elif name in cave_assets.CAVERN_NO_DROP or name in industrial_assets.NO_DROP:
             write(lt(name), {"type": "minecraft:block", "pools": [], "random_sequence": "abyssia:blocks/" + name})
             continue
         elif name in SILK_ONLY:
@@ -1032,11 +1053,13 @@ def tags():
     write(os.path.join(blocks, "mineable", "pickaxe.json"), {"replace": False, "values": a(rocks + ores + crusts + list(CLUSTERS)
                                                                                           + cave_assets.CAVE_ROCKS + speleothems + ["crystal_needle"]
                                                                                           + list(cave_assets.CAVERN_CRYSTALS)
-                                                                                          + building_assets.pickaxe_blocks())})
+                                                                                          + building_assets.pickaxe_blocks()
+                                                                                          + industrial_assets.pickaxe_blocks())})
     write(os.path.join(blocks, "mineable", "shovel.json"), {"replace": False, "values": a(SOFT + cave_assets.CAVE_SOFT)})
     write(os.path.join(blocks, "mineable", "axe.json"), {"replace": False, "values": a(cave_assets.CAVERN_AXE + building_assets.axe_blocks())})
     write(os.path.join(blocks, "mineable", "hoe.json"), {"replace": False, "values": a(cave_assets.CAVERN_HOE)})
-    write(os.path.join(blocks, "needs_stone_tool.json"), {"replace": False, "values": a(["abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "manganese_ore"])})
+    write(os.path.join(blocks, "needs_stone_tool.json"), {"replace": False, "values": a(["abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "manganese_ore"]
+                                                                                     + industrial_assets.needs_stone_tool_blocks())})
     write(os.path.join(blocks, "needs_iron_tool.json"), {"replace": False, "values": a(["cobalt_ore", "deep_nickel_ore", "thermal_crystal_ore", "abyssal_crystal_ore"] + RARE_ORES)})
     write(os.path.join(blocks, "crystal_sound_blocks.json"), {"replace": False, "values": a(["deep_crystal_block"] + list(cave_assets.CAVERN_CRYSTALS))})
     # Veins stay visible: plants cannot root in ore, crust or hot vent minerals (heat moss and mineral vines can).
@@ -1100,6 +1123,24 @@ def recipes():
     write(rd("marine_adhesive_from_crust_powder"), {"type": "minecraft:crafting_shapeless", "category": "misc",
           "ingredients": [cp, {"item": "abyssia:plant_resin"}], "result": {"item": "abyssia:marine_adhesive", "count": 2}})
 
+    # F01 fauna drops: raw flesh -> cooked (furnace / smoker / campfire), and tentacle crafts.
+    for raw, cooked in (("abyssal_fish_fillet", "cooked_abyssal_fish"), ("viper_flesh", "cooked_viper_flesh"),
+                        ("shark_flesh", "cooked_shark_flesh"), ("eelpout_flesh", "cooked_eelpout_flesh"),
+                        ("blobfish_flesh", "cooked_blobfish"), ("angler_flesh", "cooked_angler_flesh")):
+        for kind, suffix, time in (("smelting", "smelting", 200), ("smoking", "smoking", 100),
+                                   ("campfire_cooking", "campfire", 600)):
+            write(rd(f"{cooked}_from_{suffix}"), {"type": "minecraft:" + kind, "category": "food",
+                  "ingredient": {"item": "abyssia:" + raw}, "result": "abyssia:" + cooked,
+                  "experience": 0.35, "cookingtime": time})
+    for out, (tentacle, tn), (other, on) in (
+            ("marine_adhesive", ("jelly_tentacle", 3), ("deep_fiber", 2)),
+            ("reinforced_fiber", ("atolla_tentacle", 2), ("lumen_gel", 1)),
+            ("reinforced_cable", ("phantom_tentacle", 3), ("reinforced_fiber", 2)),
+            ("hadal_plating", ("deepstaria_tentacle", 2), ("abyssal_composite", 1))):
+        write(rd(f"{out}_from_{tentacle}"), {"type": "minecraft:crafting_shapeless", "category": "misc",
+              "ingredients": [{"item": "abyssia:" + tentacle}] * tn + [{"item": "abyssia:" + other}] * on,
+              "result": {"item": "abyssia:" + out}})
+
     write(rd("abyssal_alloy_ingot"), {"type": "minecraft:crafting_shapeless", "category": "misc",
           "ingredients": [{"item": f"abyssia:{m}_ingot"} for m in ("vanadium", "cobalt", "nickel")],
           "result": {"item": "abyssia:abyssal_alloy_ingot", "count": 2}})
@@ -1137,6 +1178,8 @@ def lang():
         data.update({"item.abyssia." + k: v[idx] for k, v in gen_fauna.ITEM_NAMES.items()})
         data.update({"biome.abyssia." + k: v[idx] for k, v in BIOME_NAMES.items()})
         data.update({"block.abyssia." + k: v[idx] for k, v in building_assets.NAMES.items()})
+        data.update({"block.abyssia." + k: v[idx] for k, v in industrial_assets.NAMES.items()})
+        data.update({k: v[idx] for k, v in industrial_assets.CONTAINER_NAMES.items()})
         data["itemGroup.abyssia"] = "Abyssia"
         write(path, dict(sorted(data.items())))
 

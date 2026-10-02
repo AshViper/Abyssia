@@ -87,7 +87,7 @@ def tag_exists(full: str) -> bool:
 def check() -> dict:
     java, models = java_ids(), model_ids()
     report = {"recipes": 0, "refs": 0, "unresolved": [], "unchecked_tags": [], "resolved_by_model_only": [],
-              "invalid_json": [], "spec": {}}
+              "invalid_json": [], "bad_pattern": [], "spec": {}}
     by_model = set()
     for path in sorted(glob.glob(os.path.join(RECIPES, "**", "*.json"), recursive=True)):
         rid = os.path.relpath(path, RECIPES)[:-5].replace(os.sep, "/")
@@ -98,6 +98,13 @@ def check() -> dict:
             report["invalid_json"].append({"recipe": rid, "error": str(e)})
             continue
         report["recipes"] += 1
+        if recipe.get("type") == "minecraft:crafting_shaped":
+            # vanilla refuses the whole recipe on unused / undefined key symbols or ragged rows
+            used = {c for row in recipe.get("pattern", []) for c in row if c != " "}
+            keys = set(recipe.get("key", {}))
+            if used != keys or len({len(row) for row in recipe.get("pattern", [])}) > 1:
+                report["bad_pattern"].append({"recipe": rid, "unused_keys": sorted(keys - used),
+                                              "undefined_symbols": sorted(used - keys)})
         for kind, full in refs(recipe, []):
             report["refs"] += 1
             ns, _, name = full.partition(":") if ":" in full else ("minecraft", "", full)
@@ -132,7 +139,7 @@ def check() -> dict:
             "recipes_not_generated": [r["id"] for r in spec["recipes"]
                                       if not os.path.isfile(os.path.join(RECIPES, r["id"] + ".json"))],
         }
-    report["ok"] = not (report["unresolved"] or report["invalid_json"]
+    report["ok"] = not (report["unresolved"] or report["invalid_json"] or report["bad_pattern"]
                         or any(v for k, v in report["spec"].items() if isinstance(v, list)))
     return report
 

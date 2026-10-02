@@ -1,0 +1,99 @@
+[
+ {
+  "model": "industrial_valve",
+  "parts": [
+   {
+    "name": "pipe_body",
+    "from": [
+     4,
+     4,
+     0
+    ],
+    "to": [
+     12,
+     12,
+     16
+    ],
+    "faces": {
+     "north": "industrial_pipe",
+     "east": "industrial_pipe",
+     "south": "industrial_pipe",
+     "west": "industrial_pipe",
+     "up": "industrial_pipe",
+     "down": "industrial_pipe"
+    }
+   },
+   {
+    "name": "valve_housing",
+    "from": [
+     3,
+     3,
+     5
+    ],
+    "to": [
+     13,
+     13,
+     11
+    ],
+    "faces": {
+     "north": "industrial_pipe",
+     "east": "industrial_pipe",
+     "south": "industrial_pipe",
+     "west": "industrial_pipe",
+     "up": "industrial_pipe",
+     "down": "industrial_pipe"
+    }
+   },
+   {
+    "name": "valve_stem",
+    "from": [
+     7,
+     12,
+     7
+    ],
+    "to": [
+     9,
+     14,
+     9
+    ],
+    "faces": {
+     "north": "industrial_pipe",
+     "east": "industrial_pipe",
+     "south": "industrial_pipe",
+     "west": "industrial_pipe",
+     "up": "industrial_pipe",
+     "down": "industrial_pipe"
+    }
+   },
+   {
+    "name": "handle",
+    "from": [
+     3,
+     13,
+     3
+    ],
+    "to": [
+     13,
+     14,
+     13
+    ],
+    "faces": {
+     "north": "industrial_pipe",
+     "east": "industrial_pipe",
+     "south": "industrial_pipe",
+     "west": "industrial_pipe",
+     "up": {
+      "texture": "industrial_valve",
+      "uv": [
+       0,
+       0,
+       16,
+       16
+      ]
+     },
+     "down": "industrial_pipe"
+    }
+   }
+  ]
+ }
+]

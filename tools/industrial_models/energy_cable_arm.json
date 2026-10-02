@@ -1,0 +1,44 @@
+{
+  "credit": "Abyssia I01 - design: ChatGPT, built by tools/industrial_models/build_models.py",
+  "textures": {
+    "energy_cable": "abyssia:block/energy_cable",
+    "particle": "abyssia:block/energy_cable"
+  },
+  "elements": [
+    {
+      "name": "north_arm",
+      "from": [
+        6,
+        6,
+        0
+      ],
+      "to": [
+        10,
+        10,
+        6
+      ],
+      "faces": {
+        "north": {
+          "texture": "#energy_cable",
+          "cullface": "north"
+        },
+        "east": {
+          "texture": "#energy_cable"
+        },
+        "south": {
+          "texture": "#energy_cable"
+        },
+        "west": {
+          "texture": "#energy_cable"
+        },
+        "up": {
+          "texture": "#energy_cable"
+        },
+        "down": {
+          "texture": "#energy_cable"
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout"
+}

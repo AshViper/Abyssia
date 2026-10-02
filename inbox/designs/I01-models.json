@@ -1,0 +1,1048 @@
+[
+ {
+  "model": "industrial_pipe_core",
+  "parts": [
+   {
+    "name": "core",
+    "from": [
+     4,
+     4,
+     4
+    ],
+    "to": [
+     12,
+     12,
+     12
+    ],
+    "faces": {
+     "north": "industrial_pipe",
+     "east": "industrial_pipe",
+     "south": "industrial_pipe",
+     "west": "industrial_pipe",
+     "up": "industrial_pipe",
+     "down": "industrial_pipe"
+    }
+   }
+  ]
+ },
+ {
+  "model": "industrial_pipe_arm",
+  "parts": [
+   {
+    "name": "core",
+    "from": [
+     4,
+     4,
+     4
+    ],
+    "to": [
+     12,
+     12,
+     12
+    ],
+    "faces": {
+     "north": "industrial_pipe",
+     "east": "industrial_pipe",
+     "south": "industrial_pipe",
+     "west": "industrial_pipe",
+     "up": "industrial_pipe",
+     "down": "industrial_pipe"
+    }
+   },
+   {
+    "name": "north_arm",
+    "from": [
+     4,
+     4,
+     0
+    ],
+    "to": [
+     12,
+     12,
+     4
+    ],
+    "faces": {
+     "north": "industrial_pipe",
+     "east": "industrial_pipe",
+     "south": "industrial_pipe",
+     "west": "industrial_pipe",
+     "up": "industrial_pipe",
+     "down": "industrial_pipe"
+    }
+   }
+  ]
+ },
+ {
+  "model": "energy_cable_core",
+  "parts": [
+   {
+    "name": "core",
+    "from": [
+     6,
+     6,
+     6
+    ],
+    "to": [
+     10,
+     10,
+     10
+    ],
+    "faces": {
+     "north": "energy_cable",
+     "east": "energy_cable",
+     "south": "energy_cable",
+     "west": "energy_cable",
+     "up": "energy_cable",
+     "down": "energy_cable"
+    }
+   }
+  ]
+ },
+ {
+  "model": "energy_cable_arm",
+  "parts": [
+   {
+    "name": "core",
+    "from": [
+     6,
+     6,
+     6
+    ],
+    "to": [
+     10,
+     10,
+     10
+    ],
+    "faces": {
+     "north": "energy_cable",
+     "east": "energy_cable",
+     "south": "energy_cable",
+     "west": "energy_cable",
+     "up": "energy_cable",
+     "down": "energy_cable"
+    }
+   },
+   {
+    "name": "north_arm",
+    "from": [
+     6,
+     6,
+     0
+    ],
+    "to": [
+     10,
+     10,
+     6
+    ],
+    "faces": {
+     "north": "energy_cable",
+     "east": "energy_cable",
+     "south": "energy_cable",
+     "west": "energy_cable",
+     "up": "energy_cable",
+     "down": "energy_cable"
+    }
+   }
+  ]
+ },
+ {
+  "model": "reinforced_energy_cable_core",
+  "parts": [
+   {
+    "name": "core",
+    "from": [
+     5,
+     5,
+     5
+    ],
+    "to": [
+     11,
+     11,
+     11
+    ],
+    "faces": {
+     "north": "reinforced_energy_cable",
+     "east": "reinforced_energy_cable",
+     "south": "reinforced_energy_cable",
+     "west": "reinforced_energy_cable",
+     "up": "reinforced_energy_cable",
+     "down": "reinforced_energy_cable"
+    }
+   }
+  ]
+ },
+ {
+  "model": "reinforced_energy_cable_arm",
+  "parts": [
+   {
+    "name": "core",
+    "from": [
+     5,
+     5,
+     5
+    ],
+    "to": [
+     11,
+     11,
+     11
+    ],
+    "faces": {
+     "north": "reinforced_energy_cable",
+     "east": "reinforced_energy_cable",
+     "south": "reinforced_energy_cable",
+     "west": "reinforced_energy_cable",
+     "up": "reinforced_energy_cable",
+     "down": "reinforced_energy_cable"
+    }
+   },
+   {
+    "name": "north_arm",
+    "from": [
+     5,
+     5,
+     0
+    ],
+    "to": [
+     11,
+     11,
+     5
+    ],
+    "faces": {
+     "north": "reinforced_energy_cable",
+     "east": "reinforced_energy_cable",
+     "south": "reinforced_energy_cable",
+     "west": "reinforced_energy_cable",
+     "up": "reinforced_energy_cable",
+     "down": "reinforced_energy_cable"
+    }
+   },
+   {
+    "name": "band",
+    "from": [
+     4.5,
+     4.5,
+     2
+    ],
+    "to": [
+     11.5,
+     11.5,
+     3
+    ],
+    "faces": {
+     "north": "reinforced_energy_cable",
+     "east": "reinforced_energy_cable",
+     "south": "reinforced_energy_cable",
+     "west": "reinforced_energy_cable",
+     "up": "reinforced_energy_cable",
+     "down": "reinforced_energy_cable"
+    }
+   }
+  ]
+ },
+ {
+  "model": "industrial_valve",
+  "parts": [
+   {
+    "name": "valve_body",
+    "from": [
+     3,
+     3,
+     3
+    ],
+    "to": [
+     13,
+     13,
+     13
+    ],
+    "faces": {
+     "north": "industrial_valve",
+     "east": "industrial_valve",
+     "south": "industrial_valve",
+     "west": "industrial_valve",
+     "up": "industrial_valve",
+     "down": "industrial_valve"
+    }
+   },
+   {
+    "name": "handle",
+    "from": [
+     5,
+     6,
+     2.5
+    ],
+    "to": [
+     11,
+     10,
+     3.5
+    ],
+    "faces": {
+     "north": "industrial_valve",
+     "east": "industrial_valve",
+     "south": "industrial_valve",
+     "west": "industrial_valve",
+     "up": "industrial_valve",
+     "down": "industrial_valve"
+    }
+   }
+  ]
+ },
+ {
+  "model": "work_light",
+  "parts": [
+   {
+    "name": "base",
+    "from": [
+     4,
+     0,
+     4
+    ],
+    "to": [
+     12,
+     2,
+     12
+    ],
+    "faces": {
+     "north": "work_light",
+     "east": "work_light",
+     "south": "work_light",
+     "west": "work_light",
+     "up": "work_light",
+     "down": "work_light"
+    }
+   },
+   {
+    "name": "light_body",
+    "from": [
+     5,
+     2,
+     5
+    ],
+    "to": [
+     11,
+     6,
+     11
+    ],
+    "faces": {
+     "north": "work_light",
+     "east": "work_light",
+     "south": "work_light",
+     "west": "work_light",
+     "up": "work_light",
+     "down": "work_light"
+    }
+   }
+  ]
+ },
+ {
+  "model": "warning_light",
+  "parts": [
+   {
+    "name": "base",
+    "from": [
+     4,
+     0,
+     4
+    ],
+    "to": [
+     12,
+     2,
+     12
+    ],
+    "faces": {
+     "north": "warning_light",
+     "east": "warning_light",
+     "south": "warning_light",
+     "west": "warning_light",
+     "up": "warning_light",
+     "down": "warning_light"
+    }
+   },
+   {
+    "name": "warning_body",
+    "from": [
+     5,
+     2,
+     5
+    ],
+    "to": [
+     11,
+     6,
+     11
+    ],
+    "faces": {
+     "north": "warning_light",
+     "east": "warning_light",
+     "south": "warning_light",
+     "west": "warning_light",
+     "up": "warning_light",
+     "down": "warning_light"
+    }
+   }
+  ]
+ },
+ {
+  "model": "crusher",
+  "parts": [
+   {
+    "name": "body",
+    "from": [
+     1,
+     1,
+     1
+    ],
+    "to": [
+     15,
+     15,
+     15
+    ],
+    "faces": {
+     "north": "crusher_front",
+     "east": "crusher_side",
+     "south": "crusher_side",
+     "west": "crusher_side",
+     "up": "crusher_top",
+     "down": "crusher_side"
+    }
+   },
+   {
+    "name": "rotor_housing",
+    "from": [
+     2,
+     4,
+     0
+    ],
+    "to": [
+     14,
+     12,
+     2
+    ],
+    "faces": {
+     "north": "crusher_front",
+     "east": "crusher_side",
+     "south": "crusher_side",
+     "west": "crusher_side",
+     "up": "crusher_front",
+     "down": "crusher_front"
+    }
+   },
+   {
+    "name": "top_hopper",
+    "from": [
+     4,
+     13,
+     4
+    ],
+    "to": [
+     12,
+     16,
+     12
+    ],
+    "faces": {
+     "north": "crusher_top",
+     "east": "crusher_top",
+     "south": "crusher_top",
+     "west": "crusher_top",
+     "up": "crusher_top",
+     "down": "crusher_top"
+    }
+   }
+  ]
+ },
+ {
+  "model": "refinery_furnace",
+  "parts": [
+   {
+    "name": "body",
+    "from": [
+     1,
+     1,
+     2
+    ],
+    "to": [
+     15,
+     15,
+     14
+    ],
+    "faces": {
+     "north": "refinery_furnace_front",
+     "east": "refinery_furnace_side",
+     "south": "refinery_furnace_side",
+     "west": "refinery_furnace_side",
+     "up": "refinery_furnace_top",
+     "down": "refinery_furnace_side"
+    }
+   },
+   {
+    "name": "pressure_pipe",
+    "from": [
+     0,
+     5,
+     5
+    ],
+    "to": [
+     3,
+     9,
+     9
+    ],
+    "faces": {
+     "north": "refinery_furnace_side",
+     "east": "refinery_furnace_side",
+     "south": "refinery_furnace_side",
+     "west": "refinery_furnace_side",
+     "up": "refinery_furnace_side",
+     "down": "refinery_furnace_side"
+    }
+   },
+   {
+    "name": "exhaust",
+    "from": [
+     5,
+     14,
+     5
+    ],
+    "to": [
+     11,
+     16,
+     11
+    ],
+    "faces": {
+     "north": "refinery_furnace_top",
+     "east": "refinery_furnace_top",
+     "south": "refinery_furnace_top",
+     "west": "refinery_furnace_top",
+     "up": "refinery_furnace_top",
+     "down": "refinery_furnace_top"
+    }
+   }
+  ]
+ },
+ {
+  "model": "alloy_furnace",
+  "parts": [
+   {
+    "name": "body",
+    "from": [
+     1,
+     1,
+     1
+    ],
+    "to": [
+     15,
+     15,
+     15
+    ],
+    "faces": {
+     "north": "alloy_furnace_front",
+     "east": "alloy_furnace_side",
+     "south": "alloy_furnace_side",
+     "west": "alloy_furnace_side",
+     "up": "alloy_furnace_top",
+     "down": "alloy_furnace_side"
+    }
+   },
+   {
+    "name": "core_housing",
+    "from": [
+     3,
+     4,
+     0
+    ],
+    "to": [
+     13,
+     12,
+     2
+    ],
+    "faces": {
+     "north": "alloy_furnace_front",
+     "east": "alloy_furnace_side",
+     "south": "alloy_furnace_side",
+     "west": "alloy_furnace_side",
+     "up": "alloy_furnace_side",
+     "down": "alloy_furnace_side"
+    }
+   },
+   {
+    "name": "material_hopper",
+    "from": [
+     4,
+     13,
+     4
+    ],
+    "to": [
+     12,
+     16,
+     12
+    ],
+    "faces": {
+     "north": "alloy_furnace_top",
+     "east": "alloy_furnace_top",
+     "south": "alloy_furnace_top",
+     "west": "alloy_furnace_top",
+     "up": "alloy_furnace_top",
+     "down": "alloy_furnace_top"
+    }
+   },
+   {
+    "name": "heat_pipe",
+    "from": [
+     0,
+     6,
+     6
+    ],
+    "to": [
+     3,
+     10,
+     10
+    ],
+    "faces": {
+     "north": "alloy_furnace_side",
+     "east": "alloy_furnace_side",
+     "south": "alloy_furnace_side",
+     "west": "alloy_furnace_side",
+     "up": "alloy_furnace_side",
+     "down": "alloy_furnace_side"
+    }
+   }
+  ]
+ },
+ {
+  "model": "high_temp_furnace",
+  "parts": [
+   {
+    "name": "body",
+    "from": [
+     1,
+     1,
+     1
+    ],
+    "to": [
+     15,
+     15,
+     15
+    ],
+    "faces": {
+     "north": "high_temp_furnace_front",
+     "east": "high_temp_furnace_side",
+     "south": "high_temp_furnace_side",
+     "west": "high_temp_furnace_side",
+     "up": "high_temp_furnace_top",
+     "down": "high_temp_furnace_side"
+    }
+   },
+   {
+    "name": "furnace_door",
+    "from": [
+     3,
+     4,
+     0
+    ],
+    "to": [
+     13,
+     12,
+     2
+    ],
+    "faces": {
+     "north": "high_temp_furnace_front",
+     "east": "high_temp_furnace_side",
+     "south": "high_temp_furnace_side",
+     "west": "high_temp_furnace_side",
+     "up": "high_temp_furnace_front",
+     "down": "high_temp_furnace_front"
+    }
+   },
+   {
+    "name": "heat_pipe",
+    "from": [
+     0,
+     5,
+     5
+    ],
+    "to": [
+     3,
+     11,
+     11
+    ],
+    "faces": {
+     "north": "high_temp_furnace_side",
+     "east": "high_temp_furnace_side",
+     "south": "high_temp_furnace_side",
+     "west": "high_temp_furnace_side",
+     "up": "high_temp_furnace_side",
+     "down": "high_temp_furnace_side"
+    }
+   },
+   {
+    "name": "exhaust_fin_left",
+    "from": [
+     3,
+     15,
+     3
+    ],
+    "to": [
+     6,
+     16,
+     13
+    ],
+    "faces": {
+     "north": "high_temp_furnace_top",
+     "east": "high_temp_furnace_top",
+     "south": "high_temp_furnace_top",
+     "west": "high_temp_furnace_top",
+     "up": "high_temp_furnace_top",
+     "down": "high_temp_furnace_top"
+    }
+   },
+   {
+    "name": "exhaust_fin_right",
+    "from": [
+     10,
+     15,
+     3
+    ],
+    "to": [
+     13,
+     16,
+     13
+    ],
+    "faces": {
+     "north": "high_temp_furnace_top",
+     "east": "high_temp_furnace_top",
+     "south": "high_temp_furnace_top",
+     "west": "high_temp_furnace_top",
+     "up": "high_temp_furnace_top",
+     "down": "high_temp_furnace_top"
+    }
+   }
+  ]
+ },
+ {
+  "model": "hydrothermal_generator",
+  "parts": [
+   {
+    "name": "body",
+    "from": [
+     1,
+     2,
+     1
+    ],
+    "to": [
+     15,
+     15,
+     15
+    ],
+    "faces": {
+     "north": "hydrothermal_generator_front",
+     "east": "hydrothermal_generator_side",
+     "south": "hydrothermal_generator_side",
+     "west": "hydrothermal_generator_side",
+     "up": "hydrothermal_generator_top",
+     "down": "hydrothermal_generator_side"
+    }
+   },
+   {
+    "name": "turbine_housing",
+    "from": [
+     2,
+     5,
+     0
+    ],
+    "to": [
+     14,
+     13,
+     2
+    ],
+    "faces": {
+     "north": "hydrothermal_generator_front",
+     "east": "hydrothermal_generator_side",
+     "south": "hydrothermal_generator_side",
+     "west": "hydrothermal_generator_side",
+     "up": "hydrothermal_generator_side",
+     "down": "hydrothermal_generator_side"
+    }
+   },
+   {
+    "name": "thermal_nozzle",
+    "from": [
+     5,
+     0,
+     5
+    ],
+    "to": [
+     11,
+     3,
+     11
+    ],
+    "faces": {
+     "north": "hydrothermal_generator_side",
+     "east": "hydrothermal_generator_side",
+     "south": "hydrothermal_generator_side",
+     "west": "hydrothermal_generator_side",
+     "up": "hydrothermal_generator_side",
+     "down": "hydrothermal_generator_side"
+    }
+   },
+   {
+    "name": "heat_pipe_left",
+    "from": [
+     0,
+     7,
+     5
+    ],
+    "to": [
+     3,
+     11,
+     9
+    ],
+    "faces": {
+     "north": "hydrothermal_generator_side",
+     "east": "hydrothermal_generator_side",
+     "south": "hydrothermal_generator_side",
+     "west": "hydrothermal_generator_side",
+     "up": "hydrothermal_generator_side",
+     "down": "hydrothermal_generator_side"
+    }
+   },
+   {
+    "name": "heat_pipe_right",
+    "from": [
+     13,
+     7,
+     5
+    ],
+    "to": [
+     16,
+     11,
+     9
+    ],
+    "faces": {
+     "north": "hydrothermal_generator_side",
+     "east": "hydrothermal_generator_side",
+     "south": "hydrothermal_generator_side",
+     "west": "hydrothermal_generator_side",
+     "up": "hydrothermal_generator_side",
+     "down": "hydrothermal_generator_side"
+    }
+   },
+   {
+    "name": "top_grille",
+    "from": [
+     4,
+     15,
+     4
+    ],
+    "to": [
+     12,
+     16,
+     12
+    ],
+    "faces": {
+     "north": "hydrothermal_generator_top",
+     "east": "hydrothermal_generator_top",
+     "south": "hydrothermal_generator_top",
+     "west": "hydrothermal_generator_top",
+     "up": "hydrothermal_generator_top",
+     "down": "hydrothermal_generator_top"
+    }
+   }
+  ]
+ },
+ {
+  "model": "auxiliary_generator",
+  "parts": [
+   {
+    "name": "body",
+    "from": [
+     1,
+     2,
+     1
+    ],
+    "to": [
+     15,
+     15,
+     15
+    ],
+    "faces": {
+     "north": "auxiliary_generator_front",
+     "east": "auxiliary_generator_side",
+     "south": "auxiliary_generator_side",
+     "west": "auxiliary_generator_side",
+     "up": "auxiliary_generator_top",
+     "down": "auxiliary_generator_side"
+    }
+   },
+   {
+    "name": "rotor_housing",
+    "from": [
+     3,
+     5,
+     0
+    ],
+    "to": [
+     13,
+     12,
+     2
+    ],
+    "faces": {
+     "north": "auxiliary_generator_front",
+     "east": "auxiliary_generator_side",
+     "south": "auxiliary_generator_side",
+     "west": "auxiliary_generator_side",
+     "up": "auxiliary_generator_side",
+     "down": "auxiliary_generator_side"
+    }
+   },
+   {
+    "name": "exhaust_pipe",
+    "from": [
+     11,
+     7,
+     5
+    ],
+    "to": [
+     16,
+     11,
+     9
+    ],
+    "faces": {
+     "north": "auxiliary_generator_side",
+     "east": "auxiliary_generator_side",
+     "south": "auxiliary_generator_side",
+     "west": "auxiliary_generator_side",
+     "up": "auxiliary_generator_side",
+     "down": "auxiliary_generator_side"
+    }
+   },
+   {
+    "name": "fuel_cap",
+    "from": [
+     5,
+     15,
+     5
+    ],
+    "to": [
+     11,
+     16,
+     11
+    ],
+    "faces": {
+     "north": "auxiliary_generator_top",
+     "east": "auxiliary_generator_top",
+     "south": "auxiliary_generator_top",
+     "west": "auxiliary_generator_top",
+     "up": "auxiliary_generator_top",
+     "down": "auxiliary_generator_top"
+    }
+   }
+  ]
+ },
+ {
+  "model": "energy_device",
+  "parts": [
+   {
+    "name": "body",
+    "from": [
+     1,
+     1,
+     1
+    ],
+    "to": [
+     15,
+     15,
+     15
+    ],
+    "faces": {
+     "north": "energy_device_front",
+     "east": "energy_device_side",
+     "south": "energy_device_side",
+     "west": "energy_device_side",
+     "up": "energy_device_top",
+     "down": "energy_device_side"
+    }
+   },
+   {
+    "name": "energy_core",
+    "from": [
+     2,
+     4,
+     0
+    ],
+    "to": [
+     14,
+     12,
+     2
+    ],
+    "faces": {
+     "north": "energy_device_front",
+     "east": "energy_device_side",
+     "south": "energy_device_side",
+     "west": "energy_device_side",
+     "up": "energy_device_side",
+     "down": "energy_device_side"
+    }
+   },
+   {
+    "name": "cooling_fin_left",
+    "from": [
+     0,
+     4,
+     4
+    ],
+    "to": [
+     2,
+     13,
+     12
+    ],
+    "faces": {
+     "north": "energy_device_side",
+     "east": "energy_device_side",
+     "south": "energy_device_side",
+     "west": "energy_device_side",
+     "up": "energy_device_side",
+     "down": "energy_device_side"
+    }
+   },
+   {
+    "name": "cooling_fin_right",
+    "from": [
+     14,
+     4,
+     4
+    ],
+    "to": [
+     16,
+     13,
+     12
+    ],
+    "faces": {
+     "north": "energy_device_side",
+     "east": "energy_device_side",
+     "south": "energy_device_side",
+     "west": "energy_device_side",
+     "up": "energy_device_side",
+     "down": "energy_device_side"
+    }
+   },
+   {
+    "name": "inspection_hatch",
+    "from": [
+     5,
+     14,
+     5
+    ],
+    "to": [
+     11,
+     16,
+     11
+    ],
+    "faces": {
+     "north": "energy_device_top",
+     "east": "energy_device_top",
+     "south": "energy_device_top",
+     "west": "energy_device_top",
+     "up": "energy_device_top",
+     "down": "energy_device_top"
+    }
+   }
+  ]
+ }
+]

@@ -177,6 +177,7 @@ public final class ModItems
         ITEMS.register(modBus);
         ModTools.register(ITEMS, TAB_ITEMS);
         MaterialTools.register(ITEMS, TAB_ITEMS);
+        ModIndustry.registerItems(ITEMS, TAB_ITEMS);
         TABS.register(modBus);
     }
 
@@ -190,6 +191,23 @@ public final class ModItems
     private static RegistryObject<Item> item(String name, Rarity rarity)
     {
         RegistryObject<Item> item = ITEMS.register(name, () -> new Item(new Item.Properties().rarity(rarity)));
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    /** Extra effect of a food: duration in ticks, probability 0..1. */
+    private record FoodEffect(MobEffect effect, int ticks, float chance) {}
+
+    /** Food item: saturation is the absolute value (vanilla stores nutrition * mod * 2), standard eat speed, not meat. */
+    private static RegistryObject<Item> food(String name, int nutrition, float saturation, Rarity rarity, FoodEffect... effects)
+    {
+        RegistryObject<Item> item = ITEMS.register(name, () ->
+        {
+            FoodProperties.Builder food = new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation / (2.0f * nutrition));
+            for (FoodEffect e : effects)
+                food.effect(() -> new MobEffectInstance(e.effect(), e.ticks()), e.chance());
+            return new Item(new Item.Properties().rarity(rarity).food(food.build()));
+        });
         TAB_ITEMS.add(item);
         return item;
     }
