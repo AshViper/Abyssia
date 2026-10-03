@@ -13,6 +13,7 @@ import com.abyssia.registry.ModItems;
 import com.abyssia.registry.ModParticles;
 import com.abyssia.registry.ModSounds;
 import com.abyssia.worldgen.ModWorldgen;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -53,6 +54,8 @@ public class Abyssia
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         modEventBus.addListener(Config::onLoading);
         modEventBus.addListener(Config::onReloading);
+        modEventBus.addListener((ModConfigEvent.Loading e) -> ClientConfig.migrate(e));
+        modEventBus.addListener((ModConfigEvent.Reloading e) -> ClientConfig.migrate(e));
         // Client-only presentation options; a dedicated server never loads them.
         context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         // Other mods' sea animals in the deep ocean: a file of its own so abyssia-common.toml keeps its shape.

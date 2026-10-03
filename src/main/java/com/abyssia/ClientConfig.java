@@ -1,5 +1,6 @@
 package com.abyssia;
 
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
@@ -11,6 +12,11 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class ClientConfig
 {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+
+    /** Bumped when a default changes in a way old files should follow (see {@link #migrate}); 0 = file older than this key. */
+    public static final ModConfigSpec.IntValue CONFIG_VERSION = BUILDER
+            .comment("Internal: version of this file's defaults (do not edit)")
+            .defineInRange("config_version", 0, 0, Integer.MAX_VALUE);
 
     static {
         BUILDER.comment("Underwater fog of the ocean world and the deep layer").push("fog");
@@ -124,6 +130,21 @@ public final class ClientConfig
     }
 
     static final ModConfigSpec SPEC = BUILDER.build();
+
+    /**
+     * 1: W02 changed the waypoint marker defaults (hide within 64 -> 16 blocks, max distance 512 -> 0 = no limit). Files that
+     * still hold the untouched old defaults move to the new ones; values the player changed are kept.
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
+    static void migrate(ModConfigEvent event)
+    {
+        if (event.getConfig().getSpec() != SPEC || CONFIG_VERSION.get() >= CURRENT_CONFIG_VERSION) return;
+        if (WAYPOINT_HIDE_WITHIN.get() == 64) WAYPOINT_HIDE_WITHIN.set(16);
+        if (WAYPOINT_MAX_DISTANCE.get() == 512) WAYPOINT_MAX_DISTANCE.set(0);
+        CONFIG_VERSION.set(CURRENT_CONFIG_VERSION);
+        SPEC.save();
+    }
 
     private ClientConfig() {}
 }
