@@ -45,7 +45,7 @@ public final class GeneratedFauna
     public static final SwimmerTraits ALFONSINO_TRAITS = SwimmerTraits.of(ALFONSINO_VOICE).steering(20, 6, 0.0022F).zone(SwimmerTraits.Zone.OPEN_WATER, 0.9, 140).schools(4.0).flees(3.0, 10).home(32).ambient(400);
     public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> ALFONSINO = ModEntities.ENTITIES.register("alfonsino",
             () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, ALFONSINO_TRAITS), MobCategory.WATER_CREATURE)
-                    .sized(0.38F, 0.43F).clientTrackingRange(8).build("alfonsino"));
+                    .sized(0.38F, 0.37F).clientTrackingRange(8).build("alfonsino"));
     public static final DeferredItem<Item> ALFONSINO_SPAWN_EGG = ModItems.spawnEgg("alfonsino_spawn_egg", ALFONSINO, 0xE02A2E, 0xF0C040);
 
     // ---- bigfin_squid: Bigfin Squid / ミズヒキイカ
@@ -102,7 +102,7 @@ public final class GeneratedFauna
     public static final SwimmerTraits BLUE_LING_TRAITS = SwimmerTraits.of(BLUE_LING_VOICE).steering(12, 4, 0.0018F).zone(SwimmerTraits.Zone.NEAR_FLOOR, 0.6, 200).flees(2.0, 8).home(32).ambient(500);
     public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> BLUE_LING = ModEntities.ENTITIES.register("blue_ling",
             () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, BLUE_LING_TRAITS), MobCategory.WATER_CREATURE)
-                    .sized(0.61F, 0.2F).clientTrackingRange(8).build("blue_ling"));
+                    .sized(0.61F, 0.21F).clientTrackingRange(8).build("blue_ling"));
     public static final DeferredItem<Item> BLUE_LING_SPAWN_EGG = ModItems.spawnEgg("blue_ling_spawn_egg", BLUE_LING, 0x5A6E80, 0xB4BEC8);
 
     // ---- bluntnose_sixgill_shark: Bluntnose Sixgill Shark / カグラザメ
@@ -149,7 +149,7 @@ public final class GeneratedFauna
     public static final SwimmerTraits DEEPWATER_REDFISH_TRAITS = SwimmerTraits.of(DEEPWATER_REDFISH_VOICE).steering(18, 5, 0.002F).zone(SwimmerTraits.Zone.OPEN_WATER, 0.8, 140).migrates(0.2).schools(4.0).flees(2.6, 9).home(32).ambient(400);
     public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> DEEPWATER_REDFISH = ModEntities.ENTITIES.register("deepwater_redfish",
             () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, DEEPWATER_REDFISH_TRAITS), MobCategory.WATER_CREATURE)
-                    .sized(0.44F, 0.48F).clientTrackingRange(8).build("deepwater_redfish"));
+                    .sized(0.38F, 0.38F).clientTrackingRange(8).build("deepwater_redfish"));
     public static final DeferredItem<Item> DEEPWATER_REDFISH_SPAWN_EGG = ModItems.spawnEgg("deepwater_redfish_spawn_egg", DEEPWATER_REDFISH, 0xC8402E, 0xE88A6A);
 
     // ---- dumbo_octopus: Flapjack Octopus / メンダコ
@@ -244,7 +244,7 @@ public final class GeneratedFauna
     public static final SwimmerTraits ORANGE_ROUGHY_TRAITS = SwimmerTraits.of(ORANGE_ROUGHY_VOICE).steering(14, 4, 0.0018F).zone(SwimmerTraits.Zone.OPEN_WATER, 0.7, 160).schools(3.0).flees(2.0, 8).home(32).ambient(450);
     public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> ORANGE_ROUGHY = ModEntities.ENTITIES.register("orange_roughy",
             () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, ORANGE_ROUGHY_TRAITS), MobCategory.WATER_CREATURE)
-                    .sized(0.55F, 0.77F).clientTrackingRange(8).build("orange_roughy"));
+                    .sized(0.51F, 0.8F).clientTrackingRange(8).build("orange_roughy"));
     public static final DeferredItem<Item> ORANGE_ROUGHY_SPAWN_EGG = ModItems.spawnEgg("orange_roughy_spawn_egg", ORANGE_ROUGHY, 0xD8582C, 0x7A2E22);
 
     // ---- pacific_sleeper_shark: Pacific Sleeper Shark / オンデンザメ
@@ -260,7 +260,7 @@ public final class GeneratedFauna
     public static final SwimmerTraits PATAGONIAN_TOOTHFISH_TRAITS = SwimmerTraits.of(PATAGONIAN_TOOTHFISH_VOICE).steering(10, 3, 0.0016F).zone(SwimmerTraits.Zone.NEAR_FLOOR, 0.9, 180).flees(1.8, 6).home(48).ambient(550);
     public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> PATAGONIAN_TOOTHFISH = ModEntities.ENTITIES.register("patagonian_toothfish",
             () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, PATAGONIAN_TOOTHFISH_TRAITS), MobCategory.WATER_CREATURE)
-                    .sized(0.77F, 0.43F).clientTrackingRange(8).build("patagonian_toothfish"));
+                    .sized(0.77F, 0.42F).clientTrackingRange(8).build("patagonian_toothfish"));
     public static final DeferredItem<Item> PATAGONIAN_TOOTHFISH_SPAWN_EGG = ModItems.spawnEgg("patagonian_toothfish_spawn_egg", PATAGONIAN_TOOTHFISH, 0x4E4A44, 0x8A8A86);
 
     // ---- sablefish: Sablefish / ギンダラ

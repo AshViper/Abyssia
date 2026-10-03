@@ -46,19 +46,19 @@
     ],
     "glow_texture": false,
     "size_units": [
-      9.85,
+      11.93,
       14.22,
-      19
+      21
     ],
     "size_blocks": [
-      0.62,
+      0.75,
       0.89,
-      1.19
+      1.31
     ],
     "core_size_blocks": [
-      0.25,
-      0.5,
-      0.94
+      0.31,
+      0.44,
+      1
     ],
     "cubes": 18
   },
@@ -84,8 +84,8 @@
       "role": "body",
       "pivot": [
         0,
-        6.2214,
-        -3
+        5.2214,
+        -2
       ],
       "rotation": [
         0,
@@ -99,8 +99,8 @@
       "role": "head",
       "pivot": [
         0,
-        6.2214,
-        -3
+        5.2214,
+        -2
       ],
       "rotation": [
         0,
@@ -114,8 +114,8 @@
       "role": "jaw",
       "pivot": [
         0,
-        5.2214,
-        -4
+        4.2214,
+        -3
       ],
       "rotation": [
         0,
@@ -128,8 +128,8 @@
       "parent": "head",
       "role": "eye",
       "pivot": [
-        2.3,
-        8.7214,
+        2.8,
+        7.7214,
         -5.5
       ],
       "rotation": [
@@ -143,8 +143,8 @@
       "parent": "head",
       "role": "eye",
       "pivot": [
-        -2.3,
-        8.7214,
+        -2.8,
+        7.7214,
         -5.5
       ],
       "rotation": [
@@ -160,7 +160,7 @@
       "pivot": [
         2,
         5.2214,
-        -3
+        -2
       ],
       "rotation": [
         0,
@@ -175,7 +175,7 @@
       "pivot": [
         -2,
         5.2214,
-        -3
+        -2
       ],
       "rotation": [
         0,
@@ -190,7 +190,7 @@
       "pivot": [
         1,
         2.2214,
-        -1
+        0
       ],
       "rotation": [
         -20,
@@ -205,7 +205,7 @@
       "pivot": [
         -1,
         2.2214,
-        -1
+        0
       ],
       "rotation": [
         -20,
@@ -219,8 +219,8 @@
       "role": "dorsal",
       "pivot": [
         0,
-        10.2214,
-        -4
+        9.2214,
+        -3
       ],
       "rotation": [
         0,
@@ -234,8 +234,8 @@
       "role": "dorsal",
       "pivot": [
         0,
-        10.2214,
-        -1
+        9.2214,
+        0
       ],
       "rotation": [
         0,
@@ -250,7 +250,7 @@
       "pivot": [
         0,
         2.2214,
-        1
+        2
       ],
       "rotation": [
         0,
@@ -264,8 +264,8 @@
       "role": "tail",
       "pivot": [
         0,
-        6.2214,
-        4
+        5.2214,
+        5
       ],
       "rotation": [
         0,
@@ -279,8 +279,8 @@
       "role": "tail_fin",
       "pivot": [
         0,
-        6.2214,
-        7
+        5.2214,
+        8
       ],
       "rotation": [
         0,
@@ -381,7 +381,7 @@
     "body": {
       "length": 9,
       "width": 4,
-      "height": 8,
+      "height": 7,
       "round": 1
     },
     "parts": [
@@ -394,8 +394,8 @@
     ],
     "params": {
       "head": {
-        "length": 5,
-        "width": 4,
+        "length": 6,
+        "width": 5,
         "height": 7,
         "drop": 0,
         "round": 1
@@ -450,17 +450,17 @@
         "segments": 1,
         "length": 3,
         "width": 2,
-        "height": 5,
+        "height": 4,
         "taper": 0.7
       },
       "caudal": {
-        "length": 4,
-        "height": 6,
-        "shape": "fan"
+        "length": 5,
+        "height": 9,
+        "shape": "fork"
       },
       "pectoral": {
         "enabled": true,
-        "length": 4,
+        "length": 6,
         "height": 4,
         "angle": 35,
         "droop": 25,
@@ -475,10 +475,10 @@
       "dorsal": {
         "count": 2,
         "length": 5,
-        "height": 4,
-        "position": 0.08,
-        "apex": 0.2,
-        "second_position": 0.5
+        "height": 5,
+        "position": 0.05,
+        "apex": 0.15,
+        "second_position": 0.55
       },
       "anal": {
         "enabled": true,

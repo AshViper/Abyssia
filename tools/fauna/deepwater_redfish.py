@@ -17,8 +17,8 @@ Planque et al. 2013, "Who eats whom in the Barents Sea", on its pelagic feeding)
 
 Sources: https://www.fishbase.se/summary/Sebastes-mentella.html  https://en.wikipedia.org/wiki/Sebastes_mentella
 
-Game simplifications: the spec's depth band and group size were filled in by Claude (the ChatGPT table was cut off);
-schools of 2-5 in midwater show as red fish shadows; harmless; drops its own raw fillet.
+Game simplifications: depth band, group size and length follow ChatGPT's FS01 table (restored after the review);
+schools of 3-6 in midwater show as red fish shadows; harmless; drops its own raw fillet.
 """
 
 INFO = dict(
@@ -32,13 +32,13 @@ INFO = dict(
         "death": (1, "Deepwater redfish dies", "アラスカメヌケが死ぬ"),
         "flop": (2, "Deepwater redfish flops", "アラスカメヌケが跳ねる"),
     },
-    # 300-1000 m, mostly 300-500 m (pelagic at night)
-    spawn=dict(weight=12, group=(2, 5), depth_m=(300, 500, 800, 1000), placement="open_water",
+    # 300-1000 m, mostly 300-500 m (pelagic at night); spawn band from the FS01 table
+    spawn=dict(weight=12, group=(3, 6), depth_m=(200, 400, 900, 1200), placement="open_water",
                cave_factor=0.5, open_factor=1.0, max_light=8, cap=(48, 48)),
 )
 
-# Behaviour and in-game size of the data-driven entity (tools/fauna_java.py); ~0.8 blocks long
-INFO["java"] = dict(kind="swimmer", size_m=0.38, health=6,
+# Behaviour and in-game size of the data-driven entity (tools/fauna_java.py); ~0.7 blocks long
+INFO["java"] = dict(kind="swimmer", size_m=0.3, health=6,
     # schools in midwater, rising a little at night
     traits=dict(steering=(18, 5, 0.002), zone=("open_water", 0.8, 140), migrates=0.2, schools=4, flees=(2.6, 9), home=32, ambient=400),
     render=dict(eyeshine=(0.7, ["right_eye", "left_eye"])))
