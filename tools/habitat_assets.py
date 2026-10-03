@@ -27,7 +27,9 @@ NAMES = {
     "scan_console": ("Scan Console", "スキャンコンソール"),     # H07, has a block entity
     "habitat_support": ("Habitat Support Leg", "深海拠点支柱"),     # H09, waterloggable post
 }
-CUBES = ["habitat_floor", "habitat_trim", "habitat_wall", "habitat_ceiling", "habitat_light", "habitat_door_frame"]
+CUBES = ["habitat_door_frame"]
+# CT01: opaque hull blocks with connected textures (HabitatConnectedBlock, tools/habitat_ctm.py)
+CONNECTED = ["habitat_floor", "habitat_trim", "habitat_wall", "habitat_ceiling", "habitat_light"]
 
 MODES = {
     "foundation": ("Foundation", "土台"),
@@ -128,20 +130,23 @@ WINDOW_FACES = {
 }
 
 
-def _window(write, bs, bm):
+def _window(write, bs, bm, block="habitat_window", translucent=True):
     """64 states (one boolean per direction = same block there) -> one model each."""
     variants = {}
     for bits in range(64):
         on = {d: bool(bits >> i & 1) for i, d in enumerate(WINDOW_DIRS)}
-        name = "habitat_window" if bits == 0 else f"habitat_window_{bits}"
+        name = block if bits == 0 else f"{block}_{bits}"
         textures = {}
         for face, (u, d, l, r) in WINDOW_FACES.items():
             mask = on[u] * 1 | on[d] * 2 | on[l] * 4 | on[r] * 8
-            textures[face] = rl("habitat_window" if mask == 0 else f"habitat_window_c{mask}")
-        textures["particle"] = rl("habitat_window")
-        write(bm(name), {"parent": "minecraft:block/cube", "render_type": "minecraft:translucent", "textures": textures})
+            textures[face] = rl(block if mask == 0 else f"{block}_c{mask}")
+        textures["particle"] = rl(block)
+        model = {"parent": "minecraft:block/cube", "textures": textures}
+        if translucent:
+            model = {"parent": "minecraft:block/cube", "render_type": "minecraft:translucent", "textures": textures}
+        write(bm(name), model)
         variants[",".join(f"{d}={str(on[d]).lower()}" for d in WINDOW_DIRS)] = {"model": rl(name)}
-    write(bs("habitat_window"), {"variants": variants})
+    write(bs(block), {"variants": variants})
 
 
 def generate(write, bs, bm, im, data_dir):
@@ -152,6 +157,8 @@ def generate(write, bs, bm, im, data_dir):
         write(bm(name), {"parent": "minecraft:block/cube_all", "textures": {"all": rl(name)}})
 
     _window(write, bs, bm)
+    for name in CONNECTED:
+        _window(write, bs, bm, name, translucent=False)
 
     # hatch: hatch face on the outside (north in the model) and the inside, hull on the rest
     write(bm("habitat_hatch"), {"parent": "minecraft:block/cube", "textures": {

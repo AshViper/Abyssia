@@ -1,6 +1,7 @@
 package com.abyssia.registry;
 
 import com.abyssia.Abyssia;
+import com.abyssia.habitat.HabitatConnectedBlock;
 import com.abyssia.habitat.HabitatConstructorItem;
 import com.abyssia.habitat.HabitatDoorBlock;
 import com.abyssia.habitat.HabitatHatchBlock;
@@ -33,13 +34,13 @@ public final class ModHabitat
 {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Abyssia.MODID);
 
-    public static final RegistryObject<Block> FLOOR = BLOCKS.register("habitat_floor", () -> new Block(metal(5.0f)));
-    public static final RegistryObject<Block> TRIM = BLOCKS.register("habitat_trim", () -> new Block(metal(6.0f)));
-    public static final RegistryObject<Block> WALL = BLOCKS.register("habitat_wall", () -> new Block(metal(6.0f)));
-    public static final RegistryObject<Block> CEILING = BLOCKS.register("habitat_ceiling", () -> new Block(metal(5.0f)));
+    public static final RegistryObject<Block> FLOOR = BLOCKS.register("habitat_floor", () -> new HabitatConnectedBlock(metal(5.0f)));
+    public static final RegistryObject<Block> TRIM = BLOCKS.register("habitat_trim", () -> new HabitatConnectedBlock(metal(6.0f)));
+    public static final RegistryObject<Block> WALL = BLOCKS.register("habitat_wall", () -> new HabitatConnectedBlock(metal(6.0f)));
+    public static final RegistryObject<Block> CEILING = BLOCKS.register("habitat_ceiling", () -> new HabitatConnectedBlock(metal(5.0f)));
     public static final RegistryObject<Block> WINDOW = BLOCKS.register("habitat_window", () -> new HabitatWindowBlock(metal(3.0f)
             .noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false).isValidSpawn((s, l, p, e) -> false)));
-    public static final RegistryObject<Block> LIGHT = BLOCKS.register("habitat_light", () -> new Block(metal(3.0f).lightLevel(s -> 15)));
+    public static final RegistryObject<Block> LIGHT = BLOCKS.register("habitat_light", () -> new HabitatConnectedBlock(metal(3.0f).lightLevel(s -> 15)));
     public static final RegistryObject<Block> DOOR_FRAME = BLOCKS.register("habitat_door_frame", () -> new Block(metal(6.0f)));
     public static final RegistryObject<Block> HATCH = BLOCKS.register("habitat_hatch", () -> new HabitatHatchBlock(metal(6.0f)));
     public static final RegistryObject<Block> DOOR = BLOCKS.register("habitat_door", () -> new HabitatDoorBlock(metal(6.0f).noOcclusion()));
