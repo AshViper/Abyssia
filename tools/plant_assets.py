@@ -160,6 +160,17 @@ def _pool(d: pd.Drop, conditions: list) -> dict:
     return pool
 
 
+def keep_block():
+    """Silk Touch or shears: the plant block itself drops."""
+    return {"condition": "minecraft:any_of", "terms": [
+        {"condition": "minecraft:match_tool", "predicate": {"enchantments": [{"enchantment": "minecraft:silk_touch", "levels": {"min": 1}}]}},
+        {"condition": "minecraft:match_tool", "predicate": {"tag": "forge:shears"}}]}
+
+
+def no_keep():
+    return {"condition": "minecraft:inverted", "term": keep_block()}
+
+
 def _state(block: str, props: dict) -> dict:
     return {"condition": "minecraft:block_state_property", "block": "abyssia:" + block, "properties": props}
 
@@ -170,12 +181,12 @@ def loot_tables(write, data_dir: str):
     for p in pd.PLANTS:
         drop_self = "void_kelp" if p.id == "void_kelp_plant" else p.id
         pools = [{"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:" + drop_self}],
-                  "conditions": [{"condition": "minecraft:survives_explosion"}]}]
-        when = []
+                  "conditions": [keep_block(), {"condition": "minecraft:survives_explosion"}]}]
+        when = [no_keep()]
         if p.harvest:
-            when = [_state(p.id, {"ripe": "true"})]
+            when += [_state(p.id, {"ripe": "true"})]
         elif p.per in PER_STATE:
-            when = [_state(p.id, PER_STATE[p.per])]
+            when += [_state(p.id, PER_STATE[p.per])]
         pools += [_pool(d, when) for d in p.drops]
         write(blocks(p.id), {"type": "minecraft:block", "pools": pools, "random_sequence": "abyssia:blocks/" + p.id})
         if p.harvest:

@@ -66,6 +66,9 @@ def generate(write, im, data_dir):
             "key": {k: {"item": f"{MOD}:{v}"} for k, v in key.items()},
             "result": {"item": f"{MOD}:{name}", "count": 1}})
     write(im(SCREW), screw_model())
+    # The cutter shears plants: plant blocks drop themselves for #forge:shears (and Silk Touch), else only materials.
+    write(os.path.join(data_dir, "forge", "tags", "items", "shears.json"),
+          {"replace": False, "values": [f"{MOD}:electric_abyssal_cutter"]})
     pattern, key = _SCREW_RECIPE
     write(os.path.join(data_dir, MOD, "recipes", SCREW + ".json"), {
         "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": pattern,

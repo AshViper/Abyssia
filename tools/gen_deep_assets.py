@@ -1259,10 +1259,18 @@ def loot_tables():
             continue
         elif name in SILK_ONLY:
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:" + name}], "conditions": silk()}
+        elif name == "void_kelp_plant":
+            # the stalk drops like the top: void_kelp only with silk touch / shears, otherwise the top's materials
+            top = next(p for p in plant_assets.pd.PLANTS if p.id == "void_kelp")
+            pools = [{"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:void_kelp"}],
+                      "conditions": [plant_assets.keep_block(), {"condition": "minecraft:survives_explosion"}]}]
+            pools += [plant_assets._pool(d, [plant_assets.no_keep()]) for d in top.drops]
+            write(lt(name), {"type": "minecraft:block", "pools": pools, "random_sequence": "abyssia:blocks/" + name})
+            continue
         else:
-            drop = "void_kelp" if name == "void_kelp_plant" else name
+            drop = name
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:" + drop}],
-                    "conditions": [{"condition": "minecraft:survives_explosion"}]}
+                    "conditions": ([plant_assets.keep_block()] if name == "ancient_frond" else []) + [{"condition": "minecraft:survives_explosion"}]}
         write(lt(name), {"type": "minecraft:block", "pools": [pool] + rare_pools(name), "random_sequence": "abyssia:blocks/" + name})
 
 
