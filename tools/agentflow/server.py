@@ -46,6 +46,8 @@ DEFAULT_CFG = {
     "prompt": ("inbox/requests の status=new の依頼を処理して。手順は CLAUDE.md、inbox/README.md、"
                "Vault project/decisions/autonomous-request-pipeline.md に従い、確認の質問はせず自律的に進める"
                "(破壊的操作・課金・セキュリティ影響のみ `python tools/agentflow/flow.py ask` でサイト承認を取る)。"
+               "依頼は Forge 1.20.1 (main) と NeoForge 1.21.1 (worktree F:/Java/Abyssia-NeoForge) の両方に入れて完了とする"
+               "(inbox/README.md 運用ルール4)。"
                "進行は flow.py で記録し、全て終わったら `python tools/agentflow/flow.py finish` を実行して待機に戻す。"),
     "max_reruns": 3,
 }
