@@ -126,7 +126,11 @@ public final class ScanUpgradeEntry implements BuildEntry
     private static List<ItemStack> cost(int next)
     {
         int[] c = COST[Math.max(1, Math.min(ScanData.MAX_TIER, next)) - 1];
-        return List.of(new ItemStack(Items.IRON_INGOT, c[0]), new ItemStack(Items.COPPER_INGOT, c[1]), new ItemStack(Items.GLASS, c[2]));
+        List<ItemStack> cost = List.of(new ItemStack(Items.IRON_INGOT, c[0]), new ItemStack(Items.COPPER_INGOT, c[1]), new ItemStack(Items.GLASS, c[2]));
+        // Lv3 also needs the material system's top part (user 2026-10-03: the abyssal power core had no other use)
+        if (next >= ScanData.MAX_TIER)
+            return List.of(cost.get(0), cost.get(1), cost.get(2), new ItemStack(com.abyssia.registry.ModItems.ABYSSAL_POWER_CORE.get()));
+        return cost;
     }
 
     @Nullable
