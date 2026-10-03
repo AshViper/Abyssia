@@ -28,6 +28,8 @@ import java.util.TreeMap;
  *     <li>{@code /abyssia fauna here}: depth (blocks, metres, zone), cover, seabed and light here, and what each
  *     species' rule would weigh at this spot</li>
  *     <li>{@code /abyssia fauna census [radius]}: deep-sea animals around, by species</li>
+ *     <li>{@code /abyssia fauna census rings}: every entity around (any mod, items too), by type, within 64 / 128 / 192
+ *     blocks, with how many are persistent (never despawn)</li>
  *     <li>{@code /abyssia fauna list [radius]}: each deep-sea animal around, with what it is doing</li>
  *     <li>{@code /abyssia fauna spawn [attempts]}: run spawn attempts around you (or the command position) now,
  *     with the reasoning</li>
@@ -46,7 +48,8 @@ public final class FaunaCommand
                 .then(Commands.literal("fauna")
                         .then(Commands.literal("here").executes(FaunaCommand::here))
                         .then(Commands.literal("census")
-                                .executes(ctx -> census(ctx, 96))
+                                .executes(ctx -> census(ctx, FaunaSpawner.LIMIT_RADIUS))
+                                .then(Commands.literal("rings").executes(FaunaCommand::censusRings))
                                 .then(Commands.argument("radius", IntegerArgumentType.integer(8, 512))
                                         .executes(ctx -> census(ctx, IntegerArgumentType.getInteger(ctx, "radius")))))
                         .then(Commands.literal("list")
@@ -118,6 +121,41 @@ public final class FaunaCommand
         counts.forEach((k, v) -> line.append(' ').append(k).append('=').append(v));
         say(ctx, counts.isEmpty() ? line + " none" : line.toString());
         return counts.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
+    private static final int[] RINGS = {64, 128, 192};
+
+    /** Entity counts by type within each ring radius (all entities but players), for tracking population growth. */
+    private static int censusRings(CommandContext<CommandSourceStack> ctx)
+    {
+        ServerLevel level = ctx.getSource().getLevel();
+        net.minecraft.world.phys.Vec3 at = ctx.getSource().getPosition();
+        int outer = RINGS[RINGS.length - 1];
+        Map<String, int[]> byType = new TreeMap<>();
+        int[] totals = new int[RINGS.length];
+        int[] persistent = new int[RINGS.length];
+        for (Entity e : level.getEntities((Entity) null, new AABB(BlockPos.containing(at)).inflate(outer),
+                e -> e.isAlive() && !(e instanceof net.minecraft.world.entity.player.Player) && !(e instanceof net.neoforged.neoforge.entity.PartEntity<?>)))
+        {
+            double d = e.position().distanceTo(at);
+            int[] c = byType.computeIfAbsent(BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).toString(), k -> new int[RINGS.length]);
+            boolean kept = e instanceof net.minecraft.world.entity.Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()
+                    || !mob.removeWhenFarAway(d * d));
+            for (int i = 0; i < RINGS.length; i++)
+            {
+                if (d > RINGS[i]) continue;
+                c[i]++;
+                totals[i]++;
+                if (kept) persistent[i]++;
+            }
+        }
+        StringBuilder head = new StringBuilder("entities (not players) within");
+        for (int i = 0; i < RINGS.length; i++) head.append(String.format(" %d: %d (%d persistent)%s", RINGS[i], totals[i], persistent[i], i < RINGS.length - 1 ? "," : ""));
+        say(ctx, head.toString());
+        say(ctx, "by type, count within " + RINGS[0] + "/" + RINGS[1] + "/" + RINGS[2] + ":");
+        byType.entrySet().stream().sorted((a, b) -> Integer.compare(b.getValue()[RINGS.length - 1], a.getValue()[RINGS.length - 1]))
+                .forEach(en -> say(ctx, "  " + en.getKey() + " " + en.getValue()[0] + "/" + en.getValue()[1] + "/" + en.getValue()[2]));
+        return totals[RINGS.length - 1];
     }
 
     private static int spawn(CommandContext<CommandSourceStack> ctx, int attempts)

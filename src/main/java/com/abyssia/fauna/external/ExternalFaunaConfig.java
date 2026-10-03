@@ -69,7 +69,7 @@ public final class ExternalFaunaConfig
             .comment("At most this many external species per biome (the highest-scoring ones)")
             .defineInRange("max_external_mobs_per_biome", 20, 0, 500);
     public static final ModConfigSpec.IntValue MAX_PER_PLAYER = BUILDER
-            .comment("At most this many external animals (spawned by this system) within 96 blocks of a player")
+            .comment("At most this many external animals (spawned by this system) within 128 blocks of a player")
             .defineInRange("max_per_player", 16, 0, 500);
     public static final ModConfigSpec.IntValue LARGE_MIN_DISTANCE = BUILDER
             .comment("Large animals spawn at least this many blocks from every player")

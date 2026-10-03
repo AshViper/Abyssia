@@ -298,7 +298,7 @@ public class Config
             .comment("Positions tried around each player per spawn round")
             .defineInRange("spawn_attempts", 6, 1, 32);
     public static final ModConfigSpec.IntValue FAUNA_MAX_PER_PLAYER = BUILDER
-            .comment("At most this many deep-sea animals within 96 blocks of a player before no more spawn near them")
+            .comment("At most this many deep-sea animals within 128 blocks of a player before no more spawn near them (all fauna, tubeworm colonies and vent animals included: 1.5x this)")
             .defineInRange("max_per_player", 180, 0, 1000);
     public static final ModConfigSpec.DoubleValue FAUNA_DENSITY = BUILDER
             .comment("Multiplier on every species' spawn weight (1 = default density)")

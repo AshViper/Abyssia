@@ -53,7 +53,14 @@ public final class FaunaSpawner
     private static final int MIN_DISTANCE = 24;
     private static final int MAX_DISTANCE = 56;
     private static final int VERTICAL = 24;
-    private static final int PLAYER_RADIUS = 96;
+    /**
+     * Radius of the per-player limits: vanilla's instant despawn distance for water creatures (128), so an animal that
+     * swims out of the counted range is gone instead of uncounted. With 96, animals drifting to 96-128 blocks (still
+     * tracked and drawn by the client with the wider deep-sea view) no longer counted and the spawner kept refilling.
+     */
+    public static final int LIMIT_RADIUS = 128;
+    /** All managed fauna (scenery colonies and vent communities included) may reach this multiple of the per-player limit. */
+    private static final double TOTAL_LIMIT_FACTOR = 1.5;
     /** Weight of "nothing spawns here": sparse habitats stay sparse. */
     private static final double EMPTY_WEIGHT = 4.0;
     /** Native weight assumed for a bounded provider's budget where no native animal fits (a typical species weight). */
@@ -104,7 +111,7 @@ public final class FaunaSpawner
      */
     public static int attempt(ServerLevel level, Vec3 centre, RandomSource random, @Nullable List<String> log)
     {
-        if (countFauna(level, BlockPos.containing(centre), PLAYER_RADIUS) >= Config.FAUNA_MAX_PER_PLAYER.get())
+        if (limitReached(level, BlockPos.containing(centre)))
         {
             if (log != null) log.add("player limit reached");
             return 0;
@@ -128,7 +135,7 @@ public final class FaunaSpawner
      */
     public static int ventAttempt(ServerLevel level, Vec3 centre, RandomSource random, @Nullable List<String> log)
     {
-        if (countFauna(level, BlockPos.containing(centre), PLAYER_RADIUS) >= Config.FAUNA_MAX_PER_PLAYER.get()) return 0;
+        if (limitReached(level, BlockPos.containing(centre))) return 0;
         ChunkPos here = new ChunkPos(BlockPos.containing(centre));
         List<BlockPos> vents = List.of();
         // a few loaded chunks within 4 of the player (the scans are cached, so this stays cheap)
@@ -275,6 +282,26 @@ public final class FaunaSpawner
         EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(p), MobSpawnType.NATURAL, null);
         level.addFreshEntityWithPassengers(mob);
         return true;
+    }
+
+    /**
+     * Whether no more animals may spawn around a point: the mobile fauna's per-player limit, or all managed fauna
+     * (environmental colonies and vent communities, which the mobile limit leaves out) past {@link #TOTAL_LIMIT_FACTOR}
+     * times it, both within {@link #LIMIT_RADIUS}. Without the second bound, colonies and vent animals were capped only
+     * per species around each spawn spot, so their total grew with the area around the player.
+     */
+    public static boolean limitReached(ServerLevel level, BlockPos around)
+    {
+        int max = Config.FAUNA_MAX_PER_PLAYER.get();
+        boolean deep = DeepLayer.isDeep(level, around.getY());
+        int mobile = 0, all = 0;
+        for (Entity e : level.getEntities((Entity) null, new AABB(around).inflate(LIMIT_RADIUS), e -> e.isAlive() && !(e instanceof PartEntity<?>)
+                && FaunaSpawnRules.isFauna(e.getType()) && DeepLayer.isDeep(level, e.getY()) == deep))
+        {
+            all++;
+            if (FaunaSpawnRules.countsTowardLimit(e.getType())) mobile++;
+        }
+        return mobile >= max || all >= max * TOTAL_LIMIT_FACTOR;
     }
 
     /** Fauna counting toward the per-player limit around a point, in the same layer (ocean world or deep layer) only. */

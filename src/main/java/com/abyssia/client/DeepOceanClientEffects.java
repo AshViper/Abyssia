@@ -27,8 +27,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.EventBusSubscriber;
 
 /**
- * Client-side depth presentation of the ocean world and the deep layer below its bedrock band: depth-based fog
- * distance and darkness, and deep-sea ambience.
+ * Client-side depth presentation of the ocean world and the deep layer below its bedrock band: underwater fog with a
+ * fixed distance (client config) whose density and darkness grow with depth, and deep-sea ambience.
  * <p>
  * Above the old transition depth (overworld Y -40 = deep Y {@link DeepLayer#DEPTH_ORIGIN_DEEP_Y}) the ocean curve
  * runs from the surface; below it the deep curve, tuned in old deep-ocean Y, takes over continuously.
@@ -43,9 +43,16 @@ public final class DeepOceanClientEffects
     /** Old deep-ocean Y of the world bottom. */
     private static final double DEEP_CURVE_BOTTOM = DeepLayer.toDeepY(DeepLayer.MIN_Y);
 
-    private static final float SURFACE_FOG_END = 96f;
-    private static final float BOUNDARY_FOG_END = 28f;
-    private static final float ABYSS_FOG_END = 10f;
+    /**
+     * Where the fog starts, as a share of the fog end: the view distance stays the same at every depth
+     * ({@link ClientConfig#DEEP_SEA_FOG_DISTANCE}), and depth shows as fog that starts closer (denser) and darker.
+     * Negative = fog already a little in front of the camera, as vanilla water fog (-8).
+     */
+    private static final float SURFACE_FOG_START = 0.4f;
+    private static final float BOUNDARY_FOG_START = 0.12f;
+    private static final float ABYSS_FOG_START = -0.05f;
+    /** Marine snow, vent haze and caverns together shorten the fog to no less than this share of the configured distance. */
+    private static final float MIN_FOG_FACTOR = 0.6f;
     /** Fraction of the fog distance removed at full marine snow density. */
     private static final float MARINE_SNOW_FOG = 0.2f;
     /** Fraction of the fog distance removed, and how far fog turns milky grey, at full vent temperature. */
@@ -134,17 +141,24 @@ public final class DeepOceanClientEffects
     {
         double y = player.getEyeY();
         if (!abyssiaFog(player.level(), y)) return -1;
-        float end = deepCurve(y)
-                ? Mth.lerp(smoothstep(abyssDepth01(y)), BOUNDARY_FOG_END, ABYSS_FOG_END)
-                : Mth.lerp(smoothstep(oceanDepth01(y)), SURFACE_FOG_END, BOUNDARY_FOG_END);
+        float end = ClientConfig.DEEP_SEA_FOG_DISTANCE.get();
         // Denser marine snow scatters more light: thicken fog with it (eased, so never a sudden change).
-        end *= 1f - MARINE_SNOW_FOG * smoothstep(Mth.clamp(MarineSnowClientManager.currentDensity(), 0f, 1f));
+        float factor = 1f - MARINE_SNOW_FOG * smoothstep(Mth.clamp(MarineSnowClientManager.currentDensity(), 0f, 1f));
         // Hot vent water is cloudy with minerals.
-        end *= 1f - VENT_FOG * ventHaze;
+        factor *= 1f - VENT_FOG * ventHaze;
         // Large caverns: a little hazier, so the far walls dissolve instead of closing the space off like a box.
-        end *= Mth.lerp(cavernHaze, 1f, ClientConfig.CAVERN_FOG_DISTANCE.get().floatValue());
+        factor *= Mth.lerp(cavernHaze, 1f, ClientConfig.CAVERN_FOG_DISTANCE.get().floatValue());
+        end *= Math.max(MIN_FOG_FACTOR, factor);
         if (player.hasEffect(MobEffects.NIGHT_VISION) || player.hasEffect(MobEffects.CONDUIT_POWER)) end *= 2f;
         return end;
+    }
+
+    /** Fog start as a share of the fog end at the camera's depth: deeper water is denser from closer in. */
+    private static float fogStartShare(double y)
+    {
+        return deepCurve(y)
+                ? Mth.lerp(smoothstep(abyssDepth01(y)), BOUNDARY_FOG_START, ABYSS_FOG_START)
+                : Mth.lerp(smoothstep(oceanDepth01(y)), SURFACE_FOG_START, BOUNDARY_FOG_START);
     }
 
     private static float smoothstep(float t)
@@ -167,9 +181,12 @@ public final class DeepOceanClientEffects
         lastFogNanos = now;
         fogEnd = fogEnd < 0 ? target : fogEnd + (target - fogEnd) * Math.min(1f, dt * 1.5f);
 
-        float end = Math.min(event.getFarPlaneDistance(), fogEnd);
+        // The event's far plane is vanilla's water fog (96 x water vision), not the render distance: cap by the render
+        // distance instead, and keep vanilla's eyes-adjusting ramp (from 1/4 of the distance) right after diving in.
+        float waterVision = Mth.clamp(player.getWaterVision(), 0.25f, 1f);
+        float end = Math.min(Minecraft.getInstance().gameRenderer.getRenderDistance(), fogEnd * waterVision);
         // In a cavern the fog starts a little way out: nearby rock and plants stay crisp, the middle distance hazes over.
-        float near = Mth.lerp(cavernHaze, -8f, end * ClientConfig.CAVERN_FOG_CLEAR.get().floatValue());
+        float near = end * Mth.lerp(cavernHaze, fogStartShare(player.getEyeY()), ClientConfig.CAVERN_FOG_CLEAR.get().floatValue());
         event.setNearPlaneDistance(near);
         event.setFarPlaneDistance(end);
         event.setCanceled(true);

@@ -145,7 +145,7 @@ DEEP_GRAD = grad(dy(-128), dy(256), 2.0, -4.0)
 MACRO_SCALE = 2.5    # ocean basins, shelves, mountain chains and trench lines, x the vanilla-sized original
 CLIMATE_SCALE = 2.0  # ocean world temperature belts
 REGION_SCALE = 9.0   # trench_region only (terrain)
-BIOME_REGION_SCALE = 9.0  # deep biome provinces: habitat, volcanic / crystal, water-mass, relic (noise lattice ~2300 blocks; measured median patch 7.0 -> 1230, 8.5 -> 1420 blocks)
+BIOME_REGION_SCALE = 10.5 # deep biome provinces: habitat, volcanic / crystal, water-mass, relic (noise lattice ~2700 blocks; measured median patch 7.0 -> 1230, 8.5 -> 1420, 9.0 -> 1340 (seed noise ~100))
 ZONE_FUZZ = 0.3      # medium-scale wobble of the deep depth-zone borders (biome only, not terrain)
 
 # ---------------------------------------------------------------- deep ocean relief (old deep-ocean Y; overworld Y = dy())

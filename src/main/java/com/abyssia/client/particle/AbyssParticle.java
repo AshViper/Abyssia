@@ -143,6 +143,7 @@ public class AbyssParticle extends TextureSheetParticle
     @Override
     public void tick()
     {
+        if (budget != null && !removed) ParticleBudget.ticked(budget);
         xo = x;
         yo = y;
         zo = z;

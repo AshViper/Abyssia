@@ -90,6 +90,7 @@ public class FaunaRenderer<T extends Mob & FaunaAnimated> extends MobRenderer<T,
     {
         private final ResourceLocation texture;
         private List<ModelPart> parts;
+        private List<ModelPart> all;
 
         TranslucentLayer(FaunaRenderer<T> parent, ResourceLocation texture)
         {
@@ -103,13 +104,17 @@ public class FaunaRenderer<T extends Mob & FaunaAnimated> extends MobRenderer<T,
         {
             if (entity.isInvisible()) return;
             FaunaModel<T> model = this.getParentModel();
-            if (this.parts == null) this.parts = model.translucentBones().stream().map(model::bone).toList();
-            List<ModelPart> all = model.root().getAllParts().toList();
-            all.forEach(p -> p.skipDraw = true);
-            this.parts.forEach(p -> p.skipDraw = false);
+            if (this.parts == null)
+            {
+                this.parts = model.translucentBones().stream().map(model::bone).toList();
+                this.all = model.root().getAllParts().toList();
+            }
+            // resolved once: no per-frame stream over the whole model for every visible animal
+            for (ModelPart p : this.all) p.skipDraw = true;
+            for (ModelPart p : this.parts) p.skipDraw = false;
             VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucent(this.texture));
             model.renderToBuffer(pose, consumer, packedLight, LivingEntityRenderer.getOverlayCoords(entity, 0.0F));
-            all.forEach(p -> p.skipDraw = false);
+            for (ModelPart p : this.all) p.skipDraw = false;
         }
     }
 
