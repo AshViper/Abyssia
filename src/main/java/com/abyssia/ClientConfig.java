@@ -3,7 +3,8 @@ package com.abyssia;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 /**
- * Client-only options (abyssia-client.toml): how the deep ocean's large caverns look from inside, and shader pack support.
+ * Client-only options (abyssia-client.toml): underwater fog distance, how the deep ocean's large caverns look from inside,
+ * and shader pack support.
  * Kept apart from the common config, so a dedicated server never loads them and tweaking them never rewrites the shared
  * common file.
  */
@@ -12,6 +13,15 @@ public final class ClientConfig
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     static {
+        BUILDER.comment("Underwater fog of the ocean world and the deep layer").push("fog");
+    }
+
+    public static final ForgeConfigSpec.IntValue DEEP_SEA_FOG_DISTANCE = BUILDER
+            .comment("Underwater fog end distance (blocks) at every depth. Depth shows as denser, darker fog rather than a shorter view; marine snow, vent haze and caverns shorten it to 0.6x at most. Capped by the render distance")
+            .defineInRange("deep_sea_fog_distance", 144, 64, 192);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("How large deep ocean caverns look from inside").push("caverns");
     }
 

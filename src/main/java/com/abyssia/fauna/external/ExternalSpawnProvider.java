@@ -72,7 +72,8 @@ public final class ExternalSpawnProvider implements FaunaSpawnProvider
     /** Persistent-data flag on every animal this system spawned (its per-player limit counts only these). */
     public static final String SPAWNED_TAG = Abyssia.MODID + ":external_spawn";
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int LIMIT_RADIUS = 96;
+    /** Same as the native fauna limit: vanilla's instant despawn distance, so nothing counted can hide just outside it. */
+    private static final int LIMIT_RADIUS = com.abyssia.fauna.FaunaSpawner.LIMIT_RADIUS;
     /** A type whose spawn checks keep failing in the deep ocean is dropped for the session after this many tries... */
     private static final int DEMOTE_AFTER = 40;
     /** ...when fewer than this share passed. */
