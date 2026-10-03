@@ -15,7 +15,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import com.abyssia.registry.ModMobEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -144,6 +146,11 @@ public final class DeepOceanClientEffects
         // Large caverns: a little hazier, so the far walls dissolve instead of closing the space off like a box.
         end *= Mth.lerp(cavernHaze, 1f, ClientConfig.CAVERN_FOG_DISTANCE.get().floatValue());
         if (player.hasEffect(MobEffects.NIGHT_VISION) || player.hasEffect(MobEffects.CONDUIT_POWER)) end *= 2f;
+        // EN01: Deep Sight pushes the fog out (never past the surface-water 96, nor below what it already was); Murk pulls it in.
+        MobEffectInstance sight = player.getEffect(ModMobEffects.DEEP_SIGHT.get());
+        if (sight != null) end = Math.max(end, Math.min(end * (sight.getAmplifier() >= 1 ? 4f : 2.5f), 96f));
+        if (player.hasEffect(ModMobEffects.MURK.get()))
+            end *= sight == null ? 0.5f : sight.getAmplifier() >= 1 ? 1f : 0.75f;
         return end;
     }
 
@@ -187,6 +194,11 @@ public final class DeepOceanClientEffects
         float brightness = deepCurve(y)
                 ? Mth.lerp(abyssDepth01(y), 0.35f, 0.05f)
                 : Mth.lerp(oceanDepth01(y), 1f, 0.35f);
+        // EN01: Murk darkens the water (Deep Sight I halves the effect, II cancels it); Deep Sight lifts the darkness toward full brightness.
+        MobEffectInstance sight = player.getEffect(ModMobEffects.DEEP_SIGHT.get());
+        if (player.hasEffect(ModMobEffects.MURK.get()))
+            brightness *= sight == null ? 0.7f : sight.getAmplifier() >= 1 ? 1f : 0.85f;
+        if (sight != null) brightness += (1f - brightness) * (sight.getAmplifier() >= 1 ? 0.55f : 0.30f);
         // The far reaches of a cavern fall into darkness.
         brightness *= 1f - cavernHaze * ClientConfig.CAVERN_FOG_DARKENING.get().floatValue();
         float haze = ventHaze * VENT_HAZE_COLOR;

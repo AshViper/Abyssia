@@ -41,6 +41,10 @@ public class Abyssia
         ModSounds.register(modEventBus);
         ModParticles.register(modEventBus);
         ModWorldgen.register(modEventBus);
+        // EN01 enchantments, effects and potions
+        com.abyssia.registry.ModMobEffects.register(modEventBus);
+        com.abyssia.registry.ModEnchantments.register(modEventBus);
+        com.abyssia.registry.ModPotions.register(modEventBus);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
