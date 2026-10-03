@@ -246,3 +246,4 @@ ChatGPT 検査の結論: 仕様上の要修正なし。追加確認を求めら�
 - NeoForge 1.21.1 側は移植後に同じテストを実施する (BT01-neo)。
 初回テストの S5「壁に戻す」FAIL はハーネスの期待値誤り (元からある窓 12 枚は仕様どおり残す) で、ハーネスを修正済み。
 Forge: 64 + 8 項目 PASS (BT01 全シナリオ + S13)。
+- NeoForge 1.21.1 (c0c4616): 同じハーネスを 1.21 API に移植し全シナリオ + S13 で 75 PASS / FAIL 0。見た目も Forge と同じ (NeoForge ブランチ inbox/designs/BT01-neo-ingame.png)。
