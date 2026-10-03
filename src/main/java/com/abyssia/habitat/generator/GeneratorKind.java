@@ -1,7 +1,10 @@
 package com.abyssia.habitat.generator;
 
+import com.abyssia.registry.ModItems;
+import com.abyssia.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -44,9 +47,33 @@ public enum GeneratorKind
         this.glass = glass;
     }
 
+    /** build cost: the bulk metal + glass, 8 machine frames each, plus the kind's working parts (user 2026-10-04) */
     public List<ItemStack> cost()
     {
-        return List.of(new ItemStack(Items.IRON_INGOT, iron), new ItemStack(Items.COPPER_INGOT, copper), new ItemStack(Items.GLASS, glass));
+        List<ItemStack> out = new ArrayList<>(List.of(new ItemStack(Items.IRON_INGOT, iron), new ItemStack(Items.COPPER_INGOT, copper),
+                new ItemStack(Items.GLASS, glass), new ItemStack(ModItems.MACHINE_FRAME.get(), 8)));
+        switch (this)
+        {
+            case CURRENT_TURBINE -> out.add(new ItemStack(ModItems.CONDUCTIVE_COMPONENT.get(), 4));
+            case GEOTHERMAL ->
+            {
+                out.add(new ItemStack(Items.GOLD_INGOT, 8));
+                out.add(new ItemStack(ModItems.THERMAL_COMPONENT.get(), 2));
+            }
+            case BIOFUEL -> out.add(new ItemStack(ModItems.PRESSURE_VALVE.get(), 2));
+        }
+        return out;
+    }
+
+    /** the loop played while the generator works */
+    public SoundEvent runningSound()
+    {
+        return switch (this)
+        {
+            case CURRENT_TURBINE -> ModSounds.MACHINE_TURBINE.get();
+            case GEOTHERMAL -> ModSounds.MACHINE_GEOTHERMAL.get();
+            case BIOFUEL -> ModSounds.MACHINE_BIOFUEL.get();
+        };
     }
 
     public Block controller()

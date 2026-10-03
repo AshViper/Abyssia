@@ -11,7 +11,11 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Containers;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -39,6 +43,8 @@ public class HydroPlanterBlockEntity extends BlockEntity
     public static final int CELLS = 4;
 
     private final PlanterCrop[] crops = {PlanterCrop.NONE, PlanterCrop.NONE, PlanterCrop.NONE, PlanterCrop.NONE};
+    /** the planted item of a GENERIC cell (null otherwise): its seedling and its produce */
+    private final Item[] items = new Item[CELLS];
     /** game time the current growth started */
     private final long[] planted = new long[CELLS];
     /** produce already taken out of a ripe cell by automation */
@@ -116,6 +122,25 @@ public class HydroPlanterBlockEntity extends BlockEntity
         return crops[cell];
     }
 
+    /** The planted item of a GENERIC cell, null for the dedicated crops and empty cells. */
+    @Nullable
+    public Item plantedItem(int cell)
+    {
+        return crops[cell] == PlanterCrop.GENERIC ? items[cell] : null;
+    }
+
+    private ItemStack seedStack(int cell)
+    {
+        if (crops[cell] != PlanterCrop.GENERIC) return crops[cell].seedStack();
+        return items[cell] == null ? ItemStack.EMPTY : new ItemStack(items[cell]);
+    }
+
+    @Nullable
+    private Item resultItem(int cell)
+    {
+        return crops[cell] == PlanterCrop.GENERIC ? items[cell] : crops[cell].resultItem();
+    }
+
     private long now()
     {
         return level == null ? 0 : level.getGameTime();
@@ -166,7 +191,7 @@ public class HydroPlanterBlockEntity extends BlockEntity
     {
         if (!isRipe(cell)) return ItemStack.EMPTY;
         resolvePending();
-        var item = crops[cell].resultItem();
+        var item = resultItem(cell);
         if (item == null || item == net.minecraft.world.item.Items.AIR) return ItemStack.EMPTY;
         int left = produceCount(cell) - taken[cell];
         return left <= 0 ? ItemStack.EMPTY : new ItemStack(item, left);
@@ -179,11 +204,13 @@ public class HydroPlanterBlockEntity extends BlockEntity
         taken[cell] = 0;
     }
 
-    /** Plants a crop into an empty cell; false when the cell is taken. */
-    public boolean plant(int cell, PlanterCrop crop)
+    /** Plants a seedling stack into an empty cell; false when the cell is taken or the stack does not grow here. */
+    public boolean plant(int cell, ItemStack seedling)
     {
+        PlanterCrop crop = PlanterCrop.of(seedling);
         if (crop == PlanterCrop.NONE || crops[cell] != PlanterCrop.NONE) return false;
         crops[cell] = crop;
+        items[cell] = crop == PlanterCrop.GENERIC ? seedling.getItem() : null;
         pendingProgress[cell] = -1;
         restart(cell);
         changed();
@@ -203,14 +230,15 @@ public class HydroPlanterBlockEntity extends BlockEntity
     /** Takes the seedling out of a cell (the cell becomes empty); empty stack when there was none. */
     public ItemStack removeSeedling(int cell)
     {
-        PlanterCrop crop = crops[cell];
-        if (crop == PlanterCrop.NONE) return ItemStack.EMPTY;
+        if (crops[cell] == PlanterCrop.NONE) return ItemStack.EMPTY;
+        ItemStack seed = seedStack(cell);
         crops[cell] = PlanterCrop.NONE;
+        items[cell] = null;
         planted[cell] = 0;
         taken[cell] = 0;
         pendingProgress[cell] = -1;
         changed();
-        return crop.seedStack();
+        return seed;
     }
 
     /** Bone meal: moves the growth start back by a tenth of the crop time; false when nothing changed. */
@@ -231,9 +259,10 @@ public class HydroPlanterBlockEntity extends BlockEntity
         double x = worldPosition.getX() + 0.5, y = worldPosition.getY() + 0.5, z = worldPosition.getZ() + 0.5;
         for (int i = 0; i < CELLS; i++)
         {
-            ItemStack seed = crops[i].seedStack();
+            ItemStack seed = seedStack(i);
             if (!seed.isEmpty()) Containers.dropItemStack(level, x, y, z, seed);
             crops[i] = PlanterCrop.NONE;
+            items[i] = null;
         }
         for (ItemStack stack : leftovers) Containers.dropItemStack(level, x, y, z, stack);
         leftovers.clear();
@@ -280,6 +309,8 @@ public class HydroPlanterBlockEntity extends BlockEntity
         {
             CompoundTag c = new CompoundTag();
             c.putString("Crop", crops[i].getSerializedName());
+            if (crops[i] == PlanterCrop.GENERIC && items[i] != null)
+                c.putString("Item", BuiltInRegistries.ITEM.getKey(items[i]).toString());
             if (pendingProgress[i] >= 0) c.putInt("Progress", pendingProgress[i]);
             else c.putLong("Planted", planted[i]);
             if (taken[i] > 0) c.putInt("Taken", taken[i]);
@@ -301,6 +332,7 @@ public class HydroPlanterBlockEntity extends BlockEntity
         for (int i = 0; i < CELLS; i++)
         {
             crops[i] = PlanterCrop.NONE;
+            items[i] = null;
             planted[i] = 0;
             taken[i] = 0;
             pendingProgress[i] = -1;
@@ -322,6 +354,13 @@ public class HydroPlanterBlockEntity extends BlockEntity
             {
                 CompoundTag c = cells.getCompound(i);
                 crops[i] = PlanterCrop.byName(c.getString("Crop"));
+                if (crops[i] == PlanterCrop.GENERIC)
+                {
+                    ResourceLocation id = ResourceLocation.tryParse(c.getString("Item"));
+                    Item item = id == null ? null : BuiltInRegistries.ITEM.get(id);
+                    if (item == null || item == Items.AIR) crops[i] = PlanterCrop.NONE;
+                    else items[i] = item;
+                }
                 if (crops[i] == PlanterCrop.NONE) continue;
                 if (c.contains("Progress")) pendingProgress[i] = Math.max(0, c.getInt("Progress"));
                 else planted[i] = c.getLong("Planted");
@@ -352,6 +391,7 @@ public class HydroPlanterBlockEntity extends BlockEntity
             return;
         }
         crops[0] = crop;
+        if (crop == PlanterCrop.GENERIC) items[0] = stack.getItem();
         pendingProgress[0] = Math.max(0, Math.min(crop.ticks, tag.getInt("Growth")));
         if (stack.getCount() > 1) leftovers.add(stack.copyWithCount(stack.getCount() - 1));
     }

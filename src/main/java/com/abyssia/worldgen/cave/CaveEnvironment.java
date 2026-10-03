@@ -86,13 +86,23 @@ public final class CaveEnvironment
         ).apply(i, Formations::new));
     }
 
-    /** A plant and, for column plants (stacking, hanging), the range of column heights. */
-    public record PlantEntry(BlockState state, int minHeight, int maxHeight)
+    /**
+     * A plant and, for column plants (stacking, hanging), the range of column heights. {@code maxY}: placed only at
+     * or below this world Y (RS01: resin roots in deep thermal caves only).
+     */
+    public record PlantEntry(BlockState state, int minHeight, int maxHeight, int maxY)
     {
+        public PlantEntry(BlockState state, int minHeight, int maxHeight)
+        {
+            this(state, minHeight, maxHeight, Integer.MAX_VALUE);
+        }
+
+
         public static final Codec<PlantEntry> CODEC = RecordCodecBuilder.create(i -> i.group(
                 BlockState.CODEC.fieldOf("state").forGetter(PlantEntry::state),
                 Codec.intRange(1, 200).lenientOptionalFieldOf("min_height", 1).forGetter(PlantEntry::minHeight),
-                Codec.intRange(1, 200).lenientOptionalFieldOf("max_height", 1).forGetter(PlantEntry::maxHeight)
+                Codec.intRange(1, 200).lenientOptionalFieldOf("max_height", 1).forGetter(PlantEntry::maxHeight),
+                Codec.INT.lenientOptionalFieldOf("max_y", Integer.MAX_VALUE).forGetter(PlantEntry::maxY)
         ).apply(i, PlantEntry::new));
     }
 

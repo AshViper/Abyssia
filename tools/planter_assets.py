@@ -21,7 +21,7 @@ LANG = {
 }
 
 # crop -> planter_<crop>_<stage> textures drawn by HydroPlanterRenderer (listed for tooling; must match PlanterCrop)
-CROPS = ("mushroom", "gourd", "kelp")
+CROPS = ("mushroom", "gourd", "kelp", "amber_fan")   # amber_fan: RS01 (sheet from ChatGPT)
 STAGES = 3
 
 

@@ -13,7 +13,19 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import com.mojang.math.Axis;
 import org.joml.Matrix4f;
 
 import java.util.function.Function;
@@ -22,6 +34,9 @@ import java.util.function.Function;
  * Draws the four planter cells (PL02): each crop is a cross of two double-sided quads (like a vanilla crop) of
  * 8 x 8 px standing on the slab top inside its quarter, textured block/planter_&lt;crop&gt;_&lt;stage&gt; (block atlas,
  * cutout). Nothing is drawn for empty cells.
+ * <p>
+ * GENERIC cells (any edible plant) draw the plant block of the planted item at half size, its "age" set from the stage
+ * (and "berries" when ripe); an item without a plant block is drawn as a floating item that grows with the stage.
  */
 public class HydroPlanterRenderer implements BlockEntityRenderer<HydroPlanterBlockEntity>
 {
@@ -48,6 +63,11 @@ public class HydroPlanterRenderer implements BlockEntityRenderer<HydroPlanterBlo
         {
             PlanterCrop crop = be.crop(cell);
             if (crop == PlanterCrop.NONE) continue;
+            if (crop == PlanterCrop.GENERIC)
+            {
+                renderGeneric(be, cell, poseStack, buffers, light, overlay);
+                continue;
+            }
             if (vc == null)
             {
                 vc = buffers.getBuffer(Sheets.cutoutBlockSheet());
@@ -61,6 +81,51 @@ public class HydroPlanterRenderer implements BlockEntityRenderer<HydroPlanterBlo
             plane(vc, pose, last, sprite, light, x0, z0, x0 + SIZE, z0 + SIZE);
             plane(vc, pose, last, sprite, light, x0, z0 + SIZE, x0 + SIZE, z0);
         }
+    }
+
+    private static void renderGeneric(HydroPlanterBlockEntity be, int cell, PoseStack poseStack, MultiBufferSource buffers,
+                                      int light, int overlay)
+    {
+        Item item = be.plantedItem(cell);
+        if (item == null) return;
+        int stage = be.stage(cell);
+        float x0 = (cell & 1) * SIZE, z0 = (cell >> 1) * SIZE;
+        Minecraft mc = Minecraft.getInstance();
+        if (item instanceof BlockItem bi && bi.getBlock().defaultBlockState().getRenderShape() == RenderShape.MODEL)
+        {
+            BlockState state = grown(bi.getBlock().defaultBlockState(), stage);
+            poseStack.pushPose();
+            poseStack.translate(x0, TOP, z0);
+            poseStack.scale(SIZE, SIZE, SIZE);
+            mc.getBlockRenderer().renderSingleBlock(state, poseStack, buffers, light, OverlayTexture.NO_OVERLAY,
+                    ModelData.EMPTY, RenderType.cutout());
+            poseStack.popPose();
+            return;
+        }
+        float scale = 0.3f + 0.15f * stage;
+        poseStack.pushPose();
+        poseStack.translate(x0 + SIZE / 2, TOP + 0.05f + scale * 0.25f, z0 + SIZE / 2);
+        poseStack.mulPose(Axis.YP.rotationDegrees(cell * 90 + 45));
+        poseStack.scale(scale, scale, scale);
+        mc.getItemRenderer().renderStatic(new ItemStack(item), ItemDisplayContext.FIXED, light, overlay, poseStack, buffers,
+                be.getLevel(), (int) be.getBlockPos().asLong() + cell);
+        poseStack.popPose();
+    }
+
+    /** The plant state for a stage: "age" from 0 to its maximum, "berries" when ripe. */
+    private static BlockState grown(BlockState state, int stage)
+    {
+        for (Property<?> p : state.getProperties())
+        {
+            if (p instanceof IntegerProperty age && p.getName().equals("age"))
+            {
+                int min = age.getPossibleValues().stream().min(Integer::compare).orElse(0);
+                int max = age.getPossibleValues().stream().max(Integer::compare).orElse(0);
+                state = state.setValue(age, min + (max - min) * stage / 2);
+            }
+            else if (p instanceof BooleanProperty b && p.getName().equals("berries")) state = state.setValue(b, stage == 2);
+        }
+        return state;
     }
 
     /** One vertical quad from (ax, az) to (bx, bz), drawn on both sides. */

@@ -3,9 +3,15 @@ package com.abyssia.furniture;
 import com.abyssia.Abyssia;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
+import com.abyssia.registry.ModTags;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.GrowingPlantBlock;
 
 /**
  * What a hydro planter cell grows (features PL01 / PL02, inbox/specs/PL02-planter-remake.md): the seedling item, the
@@ -15,9 +21,21 @@ import net.minecraft.core.registries.BuiltInRegistries;
 public enum PlanterCrop implements StringRepresentable
 {
     NONE("none", null, null, 0, 0, 0),
-    MUSHROOM("mushroom", "abyssal_mushroom", "mushroom_cap", 1, 2, 8 * 60 * 20),
-    GOURD("gourd", "pressure_gourd", "gourd_flesh", 1, 2, 12 * 60 * 20),
-    KELP("kelp", "deep_kelp", "kelp_leaf", 2, 3, 6 * 60 * 20);
+    MUSHROOM("mushroom", "abyssal_mushroom", "mushroom_cap", 1, 2, Const.GROW),
+    GOURD("gourd", "pressure_gourd", "gourd_flesh", 1, 2, Const.GROW),
+    KELP("kelp", "deep_kelp", "kelp_leaf", 2, 3, Const.GROW),
+    /** RS01: the amber fan block item is the seedling; one sea resin per harvest (less than a wild fan's 1..2). */
+    AMBER_FAN("amber_fan", "amber_fan", "plant_resin", 1, 1, Const.GROW),
+    /** Any other edible plant: seed and result are the planted item, kept per cell by the block entity. */
+    GENERIC("generic", null, null, 1, 3, Const.GROW);
+
+    /** Growth time of every crop: 3 minutes. */
+    public static final int GROW_TICKS = Const.GROW;
+
+    private static final class Const
+    {
+        static final int GROW = 3 * 60 * 20;
+    }
 
     private final String name;
     private final String seed;
@@ -48,10 +66,23 @@ public enum PlanterCrop implements StringRepresentable
     {
         if (stack.isEmpty()) return NONE;
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        if (id == null || !Abyssia.MODID.equals(id.getNamespace())) return NONE;
-        for (PlanterCrop crop : values())
-            if (crop.seed != null && crop.seed.equals(id.getPath())) return crop;
-        return NONE;
+        if (id != null && Abyssia.MODID.equals(id.getNamespace()))
+            for (PlanterCrop crop : values())
+                if (crop.seed != null && crop.seed.equals(id.getPath())) return crop;
+        return isEdiblePlant(stack) ? GENERIC : NONE;
+    }
+
+    /** Edible and a plant: in #abyssia:planter_crops (fruits, vegetables) or placing a plant block (carrot, berries). */
+    public static boolean isEdiblePlant(ItemStack stack)
+    {
+        if (stack.isEmpty() || !stack.has(DataComponents.FOOD)) return false;
+        if (stack.is(ModTags.PLANTER_CROPS)) return true;
+        return stack.getItem() instanceof BlockItem bi && isPlantBlock(bi.getBlock());
+    }
+
+    private static boolean isPlantBlock(Block block)
+    {
+        return block instanceof BushBlock || block instanceof GrowingPlantBlock;
     }
 
     /** Growth stage 0 (planted), 1 (half grown) or 2 (ripe) for a progress in ticks. */

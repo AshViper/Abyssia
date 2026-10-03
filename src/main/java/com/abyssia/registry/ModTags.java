@@ -42,6 +42,9 @@ public final class ModTags
     public static final TagKey<Item> ISOPOD_FOOD = item("isopod_food");
 
     /** Crystal blocks the crystal pickaxe breaks twice as fast (material system crystal_harvest). */
+    /** Edible fruits / vegetables a hydro planter grows besides edible plant-block items (PlanterCrop.GENERIC). */
+    public static final TagKey<Item> PLANTER_CROPS = item("planter_crops");
+
     public static final TagKey<Block> CRYSTAL_BLOCKS = block("crystal_blocks");
     /** Gear exempt from the future hadal pressure damage (pressure_diver_helmet). */
     public static final TagKey<Item> PRESSURE_PROOF = item("pressure_proof");

@@ -2,6 +2,7 @@ package com.abyssia.habitat.generator;
 
 import com.abyssia.Abyssia;
 import com.abyssia.block.ThermalVentBlock;
+import com.abyssia.client.sound.MachineSounds;
 import com.abyssia.environment.NaturalCurrents;
 import com.abyssia.habitat.power.HabitatPower;
 import com.abyssia.industry.VentHeat;
@@ -9,11 +10,14 @@ import com.abyssia.registry.ModPlants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -132,9 +136,12 @@ public class GeneratorBlockEntity extends BlockEntity
     private long nextScan, nextSample;
     private List<Outlet> outlets = List.of();
 
+    /** synced to the client (rotor + running loop): generating this tick, turbine current strength */
+    private boolean running;
+    private float runningStrength;
+
     // client: rotor animation
     private float rotor, prevRotor, rotorSpeed;
-    private long nextClientSample;
 
     public GeneratorBlockEntity(BlockPos pos, BlockState state)
     {
@@ -263,6 +270,24 @@ public class GeneratorBlockEntity extends BlockEntity
         lastExtracted = extractedAcc;
         extractedAcc = 0;
         lastOutput = lastPushed + lastExtracted;
+        // "working" = making FE from its source; a full buffer with nothing taking FE idles (a bio tank stops burning)
+        syncRunning(level, kind == GeneratorKind.BIOFUEL ? made > 0 || (potential > 0 && energy < BUFFER) : potential > 0);
+    }
+
+    /** sends the running state when it flips (or the turbine strength moves by 0.05), not every tick */
+    private void syncRunning(ServerLevel level, boolean now)
+    {
+        float strength = now && kind() == GeneratorKind.CURRENT_TURBINE ? sampledStrength : 0f;
+        if (now == running && Math.abs(strength - runningStrength) < 0.05f) return;
+        running = now;
+        runningStrength = strength;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    /** whether the generator is working (client: last synced value) */
+    public boolean running()
+    {
+        return running;
     }
 
     /** FE/t from the environment (turbine / geothermal), refreshed every second */
@@ -367,13 +392,13 @@ public class GeneratorBlockEntity extends BlockEntity
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, GeneratorBlockEntity be)
     {
-        long now = level.getGameTime();
-        if (now >= be.nextClientSample)
-        {
-            be.nextClientSample = now + SAMPLE_TICKS;
-            float s = NaturalCurrents.getCurrentAt(level, be.kind().rotorCell(be.origin(), be.forward())).getLocalStrength();
-            be.rotorSpeed = s < MIN_CURRENT ? 0f : ROTOR_DEG * Math.min(2f, s);
-        }
+        GeneratorKind kind = be.kind();
+        MachineSounds.tick(level, pos, kind.runningSound(), 0.6f, 1.0f, GeneratorBlockEntity::runningAt);
+        if (kind != GeneratorKind.CURRENT_TURBINE) return;
+        // the rotor turns only while the server says the turbine generates; spin up / run down over ~1 s
+        float target = be.running ? ROTOR_DEG * Math.max(0.4f, Math.min(2f, be.runningStrength)) : 0f;
+        be.rotorSpeed += (target - be.rotorSpeed) * 0.05f;
+        if (Math.abs(be.rotorSpeed) < 0.01f) be.rotorSpeed = 0f;
         be.prevRotor = be.rotor;
         be.rotor += be.rotorSpeed;
         if (be.rotor > 3600f)
@@ -381,6 +406,11 @@ public class GeneratorBlockEntity extends BlockEntity
             be.rotor -= 3600f;
             be.prevRotor -= 3600f;
         }
+    }
+
+    private static boolean runningAt(Level level, BlockPos pos)
+    {
+        return level.getBlockEntity(pos) instanceof GeneratorBlockEntity be && be.running;
     }
 
     /** rotor angle in degrees, interpolated */
@@ -402,6 +432,35 @@ public class GeneratorBlockEntity extends BlockEntity
     public IItemHandler itemHandler()
     {
         return kind() == GeneratorKind.BIOFUEL ? fuelSlot : null;
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries)
+    {
+        CompoundTag tag = new CompoundTag();
+        tag.putBoolean("Running", running);
+        tag.putFloat("Strength", runningStrength);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries)
+    {
+        running = tag.getBoolean("Running");
+        runningStrength = tag.getFloat("Strength");
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
+    {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet, HolderLookup.Provider registries)
+    {
+        CompoundTag tag = packet.getTag();
+        if (tag != null) handleUpdateTag(tag, registries);
     }
 
     @Override
