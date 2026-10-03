@@ -73,11 +73,11 @@ public final class ClientConfig
     }
 
     public static final ModConfigSpec.IntValue WAYPOINT_MAX_DISTANCE = BUILDER
-            .comment("Beacons farther than this many blocks get no marker")
-            .defineInRange("max_display_distance", 512, 64, 4096);
+            .comment("Beacons farther than this many blocks get no marker (0 = no limit: every beacon of the dimension is shown)")
+            .defineInRange("max_display_distance", 0, 0, 1000000);
     public static final ModConfigSpec.IntValue WAYPOINT_HIDE_WITHIN = BUILDER
             .comment("Beacons this close (blocks) get no marker: you can already see them (0 = always show)")
-            .defineInRange("hide_within_distance", 64, 0, 512);
+            .defineInRange("hide_within_distance", 16, 0, 512);
     public static final ModConfigSpec.BooleanValue WAYPOINT_SHOW_DISTANCE = BUILDER
             .comment("Show the distance under each marker")
             .define("show_distance", true);

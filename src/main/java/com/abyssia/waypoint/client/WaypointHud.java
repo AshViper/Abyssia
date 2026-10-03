@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * W01 HUD markers: each beacon of the current dimension within max_display_distance is projected with the camera
+ * W01 HUD markers: each beacon of the current dimension within max_display_distance (0 = no limit) is projected with the camera
  * matrices of this frame and drawn as a diamond (dark outline + beacon colour) with its name and distance below.
  * Beacons off screen or behind the camera are pinned 16 px inside the screen edge with a small arrow towards them.
  * Markers whose labels would overlap are pushed apart vertically, nearest first.
@@ -79,7 +79,7 @@ final class WaypointHud
         {
             Vec3 p = Vec3.atCenterOf(e.pos());
             double distance = p.distanceTo(cameraPos);
-            if (distance > maxDistance || distance <= hideWithin) continue;
+            if ((maxDistance > 0 && distance > maxDistance) || distance <= hideWithin) continue;
             Vector4f v = new Vector4f((float) (p.x - cameraPos.x), (float) (p.y - cameraPos.y), (float) (p.z - cameraPos.z), 1.0f);
             view.transform(v);
             projection.transform(v);
