@@ -11,7 +11,6 @@ import com.abyssia.habitat.build.BuildLayout;
 import com.abyssia.habitat.build.BuildPlacement;
 import com.abyssia.habitat.build.BuildStep;
 import com.abyssia.habitat.build.BuiltUnits;
-import com.abyssia.habitat.power.HabitatBases;
 import com.abyssia.habitat.power.HabitatPower;
 import com.abyssia.registry.ModHabitat;
 import com.abyssia.thermal.VentActivity;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -42,9 +40,10 @@ import java.util.Map;
 /**
  * BT01d build entry (POWER) of one multiblock generator. Placement: aiming at the side of a habitat shell block puts
  * the back row (local z = 0) against it, facing away (snapped); the geothermal generator snaps its core onto the top
- * of a thermal vent near the aim point; otherwise the footprint is centred on the aim point and R rotates it.
- * Rules: every footprint cell is water, a registered base shell block touches the footprint, and (geothermal) a
- * non-dormant thermal vent is right under the core.
+ * of a thermal vent near the aim point; otherwise (free placement, no base needed) the footprint is centred
+ * horizontally on the view-distance aim point with its bottom row on the aimed y, and R rotates it.
+ * Rules: every footprint cell is water and (geothermal) a non-dormant thermal vent is right under the core. A base
+ * wall is optional: next to one the generator pushes into the base, otherwise cables pull or the buffer fills.
  */
 public final class GeneratorEntry implements BuildEntry
 {
@@ -138,7 +137,8 @@ public final class GeneratorEntry implements BuildEntry
                 return new Placement(kind, back.relative(out.getClockWise(), -mx).below(my), out, true);
             }
         }
-        BlockPos origin = aim.relative(forward, -(kind.depth / 2)).relative(forward.getClockWise(), -(kind.width / 2)).below(kind.height / 2);
+        // free placement: footprint centred horizontally on the aim point, bottom row on the aimed y
+        BlockPos origin = aim.relative(forward, -(kind.depth / 2)).relative(forward.getClockWise(), -(kind.width / 2));
         return new Placement(kind, origin, forward, false);
     }
 
@@ -175,7 +175,6 @@ public final class GeneratorEntry implements BuildEntry
         BuildCheck water = BuildChecks.water(level, player, kind.cells(p.origin(), p.forward()), p.box());
         if (!water.ok()) return water;
         if (kind == GeneratorKind.GEOTHERMAL && !activeVent(level, p.controller().below())) return BuildCheck.fail("no_vent");
-        if (!touchesShell(level, p)) return BuildCheck.fail("not_shell");
         return BuildCheck.OK;
     }
 
@@ -183,21 +182,6 @@ public final class GeneratorEntry implements BuildEntry
     {
         BlockState state = level.getBlockState(pos);
         return state.getBlock() instanceof ThermalVentBlock && state.getValue(ThermalVentBlock.ACTIVITY) != VentActivity.DORMANT;
-    }
-
-    /** a habitat shell block (server: of a registered base) is next to the footprint */
-    private static boolean touchesShell(Level level, Placement p)
-    {
-        BoundingBox box = p.kind().blockBox(p.origin(), p.forward());
-        HabitatBases bases = level instanceof ServerLevel server ? HabitatBases.get(server) : null;
-        for (BlockPos cell : p.kind().cells(p.origin(), p.forward()))
-            for (Direction dir : Direction.values())
-            {
-                BlockPos n = cell.relative(dir);
-                if (box.isInside(n) || !HabitatPower.isShell(level.getBlockState(n))) continue;
-                if (bases == null || bases.baseAt(n) >= 0) return true;
-            }
-        return false;
     }
 
     // ---------------------------------------------------------------- build / dismantle
