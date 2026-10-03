@@ -43,7 +43,7 @@ public class GeneratorPartBlockEntity extends BlockEntity
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side)
     {
-        if (cap == ForgeCapabilities.ITEM_HANDLER && controller != null && level != null && level.isLoaded(controller)
+        if ((cap == ForgeCapabilities.ITEM_HANDLER || cap == ForgeCapabilities.ENERGY) && controller != null && level != null && level.isLoaded(controller)
                 && level.getBlockEntity(controller) instanceof GeneratorBlockEntity be)
             return be.getCapability(cap, side);
         return super.getCapability(cap, side);

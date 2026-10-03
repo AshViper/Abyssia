@@ -34,9 +34,10 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * BT01d generator controller. No energy capability (no double counting with the base scan): every server tick it
- * pushes its output straight into the base through {@link HabitatPower#externalReceiver} of a habitat shell block next
- * to its footprint, so a generator that touches no registered shell makes 0 FE.
+ * BT01d generator controller. Output goes into a 20,000 FE buffer; each tick the buffer is pushed into the base through
+ * {@link HabitatPower#externalReceiver} of a habitat shell block next to the footprint, and the rest is extractable
+ * through an ENERGY capability (extract only; also forwarded by the part blocks) for cables. The generators sit outside
+ * the module boxes, so the base's wireless device scan never sees them (no double counting).
  * <ul>
  *   <li>current turbine: 120 x felt current strength at the rotor hub, below 0.1 nothing, cap 240 FE/t</li>
  *   <li>geothermal: 80 x VentHeat.multiplier(activity of the vent right under the core) = 0/40/80/120/160 FE/t</li>
@@ -55,6 +56,63 @@ public class GeneratorBlockEntity extends BlockEntity
 
     /** a shell block taking FE, with the base receiver resolved at the last rescan (one outlet per receiver) */
     private record Outlet(BlockPos shell, Direction side, IEnergyStorage receiver) {}
+
+    public static final int BUFFER = 20_000;
+    /** ticks after the last cable pull during which a cable counts as attached */
+    private static final int CABLE_GRACE = 60;
+
+    private int energy;
+    private int extractedAcc;
+    private long lastPull = -1000;
+    private long gameTimeCache;
+    private int lastPushed, lastExtracted;
+    private final IEnergyStorage cableStorage = new IEnergyStorage()
+    {
+        @Override
+        public int receiveEnergy(int max, boolean simulate)
+        {
+            return 0;
+        }
+
+        @Override
+        public int extractEnergy(int max, boolean simulate)
+        {
+            if (level != null) lastPull = level.getGameTime();
+            int n = Math.min(Math.max(0, max), energy);
+            if (!simulate && n > 0)
+            {
+                energy -= n;
+                extractedAcc += n;
+                setChanged();
+            }
+            return n;
+        }
+
+        @Override
+        public int getEnergyStored()
+        {
+            return energy;
+        }
+
+        @Override
+        public int getMaxEnergyStored()
+        {
+            return BUFFER;
+        }
+
+        @Override
+        public boolean canExtract()
+        {
+            return true;
+        }
+
+        @Override
+        public boolean canReceive()
+        {
+            return false;
+        }
+    };
+    private LazyOptional<IEnergyStorage> energyCap = LazyOptional.of(() -> cableStorage);
 
     private final ItemStackHandler fuelSlot = new ItemStackHandler(1)
     {
@@ -118,7 +176,17 @@ public class GeneratorBlockEntity extends BlockEntity
 
     public boolean connected()
     {
-        return !outlets.isEmpty();
+        return !outlets.isEmpty() || cableAttached();
+    }
+
+    public boolean cableAttached()
+    {
+        return level != null && level.getGameTime() - lastPull <= CABLE_GRACE;
+    }
+
+    public int buffer()
+    {
+        return energy;
     }
 
     public int fuel()
@@ -162,7 +230,7 @@ public class GeneratorBlockEntity extends BlockEntity
         }
         if (kind == GeneratorKind.BIOFUEL)
         {
-            if (fuel < BURN && !outlets.isEmpty())
+            if (fuel < BURN && energy < BUFFER)
             {
                 int value = fuelValue(fuelSlot.getStackInSlot(0));
                 if (value > 0)
@@ -176,13 +244,24 @@ public class GeneratorBlockEntity extends BlockEntity
         }
         else potential = sampled;
 
-        int delivered = potential <= 0 || outlets.isEmpty() ? 0 : push(level, potential);
-        if (kind == GeneratorKind.BIOFUEL && delivered > 0)
+        // generate into the buffer (stops when full), then push to the base; the rest waits for cables
+        int made = Math.max(0, Math.min(potential, BUFFER - energy));
+        if (made > 0)
         {
-            fuel -= delivered;
+            energy += made;
+            if (kind == GeneratorKind.BIOFUEL) fuel -= made;
             setChanged();
         }
-        lastOutput = delivered;
+        int pushed = energy <= 0 || outlets.isEmpty() ? 0 : push(level, energy);
+        if (pushed > 0)
+        {
+            energy -= pushed;
+            setChanged();
+        }
+        lastPushed = pushed;
+        lastExtracted = extractedAcc;
+        extractedAcc = 0;
+        lastOutput = lastPushed + lastExtracted;
     }
 
     /** FE/t from the environment (turbine / geothermal), refreshed every second */
@@ -261,6 +340,9 @@ public class GeneratorBlockEntity extends BlockEntity
         List<Component> lines = new ArrayList<>();
         lines.add(connected() ? Component.translatable(key + "output", name, lastOutput, potential)
                 : Component.translatable(key + "disconnected", name));
+        lines.add(Component.translatable(key + "buffer", energy, BUFFER,
+                Component.translatable(key + (!outlets.isEmpty() ? (cableAttached() ? "via_both" : "via_base")
+                        : cableAttached() ? "via_cable" : "via_none"))));
         switch (kind)
         {
             case CURRENT_TURBINE -> lines.add(Component.translatable(key + "current", String.format(Locale.ROOT, "%.2f", sampledStrength)));
@@ -318,6 +400,7 @@ public class GeneratorBlockEntity extends BlockEntity
     public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side)
     {
         if (cap == ForgeCapabilities.ITEM_HANDLER && kind() == GeneratorKind.BIOFUEL) return fuelCap.cast();
+        if (cap == ForgeCapabilities.ENERGY) return energyCap.cast();
         return super.getCapability(cap, side);
     }
 
@@ -326,6 +409,7 @@ public class GeneratorBlockEntity extends BlockEntity
     {
         super.invalidateCaps();
         fuelCap.invalidate();
+        energyCap.invalidate();
     }
 
     @Override
@@ -333,6 +417,7 @@ public class GeneratorBlockEntity extends BlockEntity
     {
         super.reviveCaps();
         fuelCap = LazyOptional.of(() -> fuelSlot);
+        energyCap = LazyOptional.of(() -> cableStorage);
     }
 
     @Override
@@ -340,6 +425,7 @@ public class GeneratorBlockEntity extends BlockEntity
     {
         super.saveAdditional(tag);
         tag.putInt("Fuel", fuel);
+        tag.putInt("Buffer", energy);
         tag.put("Slot", fuelSlot.serializeNBT());
     }
 
@@ -348,6 +434,7 @@ public class GeneratorBlockEntity extends BlockEntity
     {
         super.load(tag);
         fuel = tag.getInt("Fuel");
+        energy = Math.max(0, Math.min(BUFFER, tag.getInt("Buffer")));
         if (tag.contains("Slot")) fuelSlot.deserializeNBT(tag.getCompound("Slot"));
     }
 }
