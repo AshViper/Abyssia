@@ -127,7 +127,8 @@ public final class ModItems
     // Fauna drops (F01): fish/eel/shark flesh is food (raw gives a chance effect, cooked via smelting/smoking/campfire),
     // jelly tentacles are plain crafting materials. Loot tables come from tools/fauna/<id>.py INFO["loot"].
     public static final DeferredItem<Item> ABYSSAL_FISH_FILLET = food("abyssal_fish_fillet", 2, 0.3f, Rarity.COMMON);
-    public static final DeferredItem<Item> COOKED_ABYSSAL_FISH = food("cooked_abyssal_fish", 6, 9.6f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_ABYSSAL_FISH = food("cooked_abyssal_fish", 6, 9.6f, Rarity.COMMON,
+            buff(ModMobEffects.ABYSSAL_CURRENT, 120, 0));
     public static final DeferredItem<Item> VIPER_FLESH = food("viper_flesh", 2, 0.2f, Rarity.UNCOMMON,
             new FoodEffect(MobEffects.DARKNESS, 10 * 20, 0.3f));
     public static final DeferredItem<Item> COOKED_VIPER_FLESH = food("cooked_viper_flesh", 6, 9.6f, Rarity.UNCOMMON);
@@ -180,12 +181,14 @@ public final class ModItems
             new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.15f));
     public static final DeferredItem<Item> KELP_SOUP = foodMod("kelp_soup", 5, 0.7f, Rarity.COMMON, true);
     public static final DeferredItem<Item> FISH_SOUP = foodMod("fish_soup", 8, 1.0f, Rarity.COMMON, true,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.15f));
+            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.15f),
+            buff(ModMobEffects.ABYSSAL_CURRENT, 180, 0));
     public static final DeferredItem<Item> MUSHROOM_FISH_STEW = foodMod("mushroom_fish_stew", 9, 1.0f, Rarity.COMMON, true,
             new FoodEffect(MobEffects.REGENERATION, 10 * 20, 0.05f));
     public static final DeferredItem<Item> GOURD_FISH_STEW = foodMod("gourd_fish_stew", 9, 1.0f, Rarity.COMMON, true,
             new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.2f));
-    public static final DeferredItem<Item> KELP_FISH_STEW = foodMod("kelp_fish_stew", 8, 0.9f, Rarity.COMMON, true);
+    public static final DeferredItem<Item> KELP_FISH_STEW = foodMod("kelp_fish_stew", 8, 0.9f, Rarity.COMMON, true,
+            buff(ModMobEffects.DEEP_SIGHT, 150, 0));
     public static final DeferredItem<Item> MUSHROOM_PIE = foodMod("mushroom_pie", 8, 0.8f, Rarity.COMMON, false);
     public static final DeferredItem<Item> GOURD_PIE = foodMod("gourd_pie", 8, 0.9f, Rarity.COMMON, false,
             new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.1f));
@@ -202,17 +205,21 @@ public final class ModItems
             new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.05f));
     public static final DeferredItem<Item> GRILLED_KELP = foodMod("grilled_kelp", 4, 0.6f, Rarity.COMMON, false);
     public static final DeferredItem<Item> MUSHROOM_FISH_GRILL = foodMod("mushroom_fish_grill", 8, 0.9f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.1f));
+            new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.1f),
+            buff(ModMobEffects.ABYSSAL_CURRENT, 60, 1));
     public static final DeferredItem<Item> GOURD_FISH_GRILL = foodMod("gourd_fish_grill", 9, 1.0f, Rarity.COMMON, false,
             new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f));
     public static final DeferredItem<Item> KELP_FISH_GRILL = foodMod("kelp_fish_grill", 7, 0.8f, Rarity.COMMON, false);
     public static final DeferredItem<Item> JELLYFISH_SKEWER = foodMod("jellyfish_skewer", 6, 0.8f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f));
+            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f),
+            buff(ModMobEffects.DEEP_SIGHT, 120, 0));
     public static final DeferredItem<Item> JELLYFISH_STEW = foodMod("jellyfish_stew", 7, 0.9f, Rarity.COMMON, true,
-            new FoodEffect(MobEffects.REGENERATION, 10 * 20, 0.05f));
+            new FoodEffect(MobEffects.REGENERATION, 10 * 20, 0.05f),
+            buff(ModMobEffects.DEEP_SIGHT, 120, 0));
     public static final DeferredItem<Item> ABYSSAL_SURVIVAL_RATION = foodMod("abyssal_survival_ration", 10, 1.2f, Rarity.COMMON, false,
             new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.1f),
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f));
+            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f),
+            buff(ModMobEffects.DEEP_SIGHT, 90, 0));
     public static final DeferredItem<Item> THERMAL_RATION = foodMod("thermal_ration", 9, 1.1f, Rarity.COMMON, false,
             new FoodEffect(MobEffects.REGENERATION, 10 * 20, 0.05f));
     public static final DeferredItem<Item> MUSHROOM_SALAD = foodMod("mushroom_salad", 5, 0.7f, Rarity.COMMON, true);
@@ -290,7 +297,16 @@ public final class ModItems
     }
 
     /** Extra effect of a food: duration in ticks, probability 0..1. */
-    private record FoodEffect(Holder<MobEffect> effect, int ticks, float chance) {}
+    private record FoodEffect(Holder<MobEffect> effect, int ticks, float chance, int amplifier)
+    {
+        FoodEffect(Holder<MobEffect> effect, int ticks, float chance) { this(effect, ticks, chance, 0); }
+    }
+
+    /** EN01 buff: always applied, amplifier 0 = level I. */
+    private static FoodEffect buff(Holder<MobEffect> effect, int seconds, int amplifier)
+    {
+        return new FoodEffect(effect, seconds * 20, 1.0f, amplifier);
+    }
 
     /** Food item: saturation is the absolute value (vanilla stores nutrition * mod * 2), standard eat speed, not meat. */
     private static DeferredItem<Item> food(String name, int nutrition, float saturation, Rarity rarity, FoodEffect... effects)
@@ -299,7 +315,7 @@ public final class ModItems
         {
             FoodProperties.Builder food = new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation / (2.0f * nutrition));
             for (FoodEffect e : effects)
-                food.effect(new MobEffectInstance(e.effect(), e.ticks()), e.chance());
+                food.effect(new MobEffectInstance(e.effect(), e.ticks(), e.amplifier()), e.chance());
             return new Item(new Item.Properties().rarity(rarity).food(food.build()));
         });
         TAB_ITEMS.add(item);
@@ -313,7 +329,7 @@ public final class ModItems
         {
             FoodProperties.Builder food = new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturationMod);
             for (FoodEffect e : effects)
-                food.effect(new MobEffectInstance(e.effect(), e.ticks()), e.chance());
+                food.effect(new MobEffectInstance(e.effect(), e.ticks(), e.amplifier()), e.chance());
             if (bowl) food.usingConvertsTo(Items.BOWL);
             Item.Properties props = new Item.Properties().rarity(rarity).food(food.build());
             return new Item(bowl ? props.stacksTo(1) : props);

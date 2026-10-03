@@ -15,7 +15,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import com.abyssia.registry.ModMobEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FogType;
 import net.neoforged.api.distmarker.Dist;
@@ -148,6 +150,12 @@ public final class DeepOceanClientEffects
         factor *= Mth.lerp(cavernHaze, 1f, ClientConfig.CAVERN_FOG_DISTANCE.get().floatValue());
         end *= Math.max(MIN_FOG_FACTOR, factor);
         if (player.hasEffect(MobEffects.NIGHT_VISION) || player.hasEffect(MobEffects.CONDUIT_POWER)) end *= 2f;
+        // EN01: Deep Sight pushes the fog out (+64 / +144 blocks; the render distance still caps it in onRenderFog) and
+        // clears the near water (onRenderFog); Murk pulls it in.
+        MobEffectInstance sight = player.getEffect(ModMobEffects.DEEP_SIGHT);
+        if (sight != null) end += sight.getAmplifier() >= 1 ? 144f : 64f;
+        if (player.hasEffect(ModMobEffects.MURK))
+            end *= sight == null ? 0.5f : sight.getAmplifier() >= 1 ? 1f : 0.75f;
         return end;
     }
 
@@ -184,7 +192,11 @@ public final class DeepOceanClientEffects
         float waterVision = Mth.clamp(player.getWaterVision(), 0.25f, 1f);
         float end = Math.min(Minecraft.getInstance().gameRenderer.getRenderDistance(), fogEnd * waterVision);
         // In a cavern the fog starts a little way out: nearby rock and plants stay crisp, the middle distance hazes over.
-        float near = end * Mth.lerp(cavernHaze, fogStartShare(player.getEyeY()), ClientConfig.CAVERN_FOG_CLEAR.get().floatValue());
+        float share = fogStartShare(player.getEyeY());
+        // EN01: Deep Sight moves the start of the fog out toward the clear surface-water share (I 35%, II 65% of the way).
+        MobEffectInstance sight = player.getEffect(ModMobEffects.DEEP_SIGHT);
+        if (sight != null) share = Mth.lerp(sight.getAmplifier() >= 1 ? 0.65f : 0.35f, share, SURFACE_FOG_START);
+        float near = end * Mth.lerp(cavernHaze, share, ClientConfig.CAVERN_FOG_CLEAR.get().floatValue());
         event.setNearPlaneDistance(near);
         event.setFarPlaneDistance(end);
         event.setCanceled(true);
@@ -202,6 +214,11 @@ public final class DeepOceanClientEffects
         float brightness = deepCurve(y)
                 ? Mth.lerp(abyssDepth01(y), 0.35f, 0.05f)
                 : Mth.lerp(oceanDepth01(y), 1f, 0.35f);
+        // EN01: Murk darkens the water (Deep Sight I halves the effect, II cancels it); Deep Sight lifts the darkness toward full brightness.
+        MobEffectInstance sight = player.getEffect(ModMobEffects.DEEP_SIGHT);
+        if (player.hasEffect(ModMobEffects.MURK))
+            brightness *= sight == null ? 0.7f : sight.getAmplifier() >= 1 ? 1f : 0.85f;
+        if (sight != null) brightness += (1f - brightness) * (sight.getAmplifier() >= 1 ? 0.55f : 0.30f);
         // The far reaches of a cavern fall into darkness.
         brightness *= 1f - cavernHaze * ClientConfig.CAVERN_FOG_DARKENING.get().floatValue();
         float haze = ventHaze * VENT_HAZE_COLOR;

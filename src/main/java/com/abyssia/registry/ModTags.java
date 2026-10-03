@@ -46,6 +46,9 @@ public final class ModTags
     /** Gear exempt from the future hadal pressure damage (pressure_diver_helmet). */
     public static final TagKey<Item> PRESSURE_PROOF = item("pressure_proof");
 
+    /** Abyssia's fish (not eels, sharks or jellies): thermal_catch cooks their meat drops. */
+    public static final TagKey<EntityType<?>> FISH = entity("fish");
+
     private ModTags() {}
 
     private static TagKey<Block> block(String name)
