@@ -91,7 +91,7 @@ public final class MaterialTools
         CRYSTAL_PICKAXE = add(items, tab, "crystal_pickaxe", () -> new PickaxeItem(CRYSTAL, props(Rarity.RARE).attributes(PickaxeItem.createAttributes(CRYSTAL, 1, -2.8F))));
         ABYSSAL_DRILL = add(items, tab, "abyssal_drill", () -> new PickaxeItem(DRILL, props(Rarity.EPIC).attributes(PickaxeItem.createAttributes(DRILL, 1, -3.0F))));
         ABYSSAL_CUTTER = add(items, tab, "abyssal_cutter", () -> new SwordItem(CUTTER, props(Rarity.EPIC).attributes(SwordItem.createAttributes(CUTTER, 2, -1.8F))));
-        DIVE_TANK = add(items, tab, "dive_tank", () -> new DiveTank(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON).durability(448)));
+        DIVE_TANK = add(items, tab, "dive_tank", () -> new ArmorItem(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON).durability(448)));
         DIVING_SUIT_LEGGINGS = add(items, tab, "diving_suit_leggings", () -> new SuitLeggings(DIVING, ArmorItem.Type.LEGGINGS, props(Rarity.UNCOMMON).durability(420)));
         // Smithing upgrade of deep_diver_helmet: same breathing / night vision; tag abyssia:pressure_proof marks it for
         // the future hadal pressure damage.
@@ -180,20 +180,6 @@ public final class MaterialTools
             swim.addTransientModifier(new AttributeModifier(SET_SPEED, 0.10, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         else if (!full && has)
             swim.removeModifier(SET_SPEED);
-    }
-
-    /** tank_breathing: water breathing while worn under water (no night vision, unlike the helmets). */
-    private static final class DiveTank extends ArmorItem
-    {
-        DiveTank(Holder<ArmorMaterial> material, Type type, Properties props) { super(material, type, props); }
-
-        @Override
-        public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected)
-        {
-            if (!(entity instanceof Player player) || stack != player.getItemBySlot(EquipmentSlot.CHEST)) return;
-            if (player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()))
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 220, 0, true, false));
-        }
     }
 
     /** suit_swim: +5% swim speed (the armor's own defense/toughness modifiers are kept). */

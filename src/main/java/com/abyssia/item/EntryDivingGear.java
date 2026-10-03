@@ -3,7 +3,6 @@ package com.abyssia.item;
 import com.abyssia.Abyssia;
 import com.abyssia.registry.ModItems;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -33,8 +32,8 @@ import java.util.function.Supplier;
 
 /**
  * D01 entry diving gear: vanilla-material starter set (spec inbox/specs/D01-entry-diving-gear.md). No potion effects:
- * helmet / tank top up the air gauge at the cost of durability; leggings / flippers add swim speed; the full set adds
- * a small bonus and faster air assists. Weaker than the deep diver gear by design.
+ * helmet / tank extend the air time (see DivingBreathing); leggings / flippers add swim speed; the full set adds
+ * a small swim speed bonus. Weaker than the deep diver gear by design.
  */
 public final class EntryDivingGear
 {
@@ -46,8 +45,6 @@ public final class EntryDivingGear
     private static final ResourceLocation LEGGINGS_SPEED = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "entry_suit_swim_speed");
     private static final ResourceLocation FLIPPERS_SPEED = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "entry_flipper_swim_speed");
     private static final ResourceLocation SET_SPEED = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "entry_set_swim_speed");
-    private static final String HELMET_CD = "abyssia_entry_helmet_next";
-    private static final String TANK_CD = "abyssia_entry_tank_next";
 
     public static DeferredItem<Item> HELMET, TANK, LEGGINGS, FLIPPERS;
 
@@ -56,8 +53,8 @@ public final class EntryDivingGear
     public static void register(DeferredRegister.Items items, List<DeferredItem<? extends Item>> tab)
     {
         // Per-piece durability as in the Forge material (boots, legs, chest, head = 100, 150, 160, 120).
-        HELMET = add(items, tab, "entry_diver_helmet", () -> new Helmet(MATERIAL, ArmorItem.Type.HELMET, new Item.Properties().durability(120)));
-        TANK = add(items, tab, "entry_dive_tank", () -> new Tank(MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(160)));
+        HELMET = add(items, tab, "entry_diver_helmet", () -> new ArmorItem(MATERIAL, ArmorItem.Type.HELMET, new Item.Properties().durability(120)));
+        TANK = add(items, tab, "entry_dive_tank", () -> new ArmorItem(MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(160)));
         LEGGINGS = add(items, tab, "entry_diving_suit_leggings", () -> new Leggings(MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Properties().durability(150)));
         FLIPPERS = add(items, tab, "entry_diving_flippers", () -> new Flippers(MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties().durability(100)));
         NeoForge.EVENT_BUS.register(EntryDivingGear.class);
@@ -93,48 +90,6 @@ public final class EntryDivingGear
             swim.addTransientModifier(new AttributeModifier(SET_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         else if (!active && has)
             swim.removeModifier(SET_SPEED);
-    }
-
-    /** Shared air assist: server side, eye in water, worn in the slot; cooldown by game time in persistent data. */
-    private static void assist(ItemStack stack, Entity entity, EquipmentSlot slot, String key, int threshold, int baseCooldown, boolean fill)
-    {
-        if (!(entity instanceof Player player) || player.level().isClientSide || stack != player.getItemBySlot(slot)) return;
-        if (!player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) return;
-        long now = player.level().getGameTime();
-        CompoundTag data = player.getPersistentData();
-        if (now < data.getLong(key)) return;
-        int air = player.getAirSupply();
-        if (air > threshold) return;
-        int max = player.getMaxAirSupply();
-        int next = fill ? Math.min(max, 140) : Math.min(max, air + 40);
-        if (next <= air) return;
-        player.setAirSupply(next);
-        data.putLong(key, now + (fullSet(player) ? Math.round(baseCooldown * 0.8) : baseCooldown));
-        stack.hurtAndBreak(1, player, slot);
-    }
-
-    private static final class Helmet extends ArmorItem
-    {
-        Helmet(Holder<ArmorMaterial> material, Type type, Properties props) { super(material, type, props); }
-
-        @Override
-        public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected)
-        {
-            super.inventoryTick(stack, level, entity, slot, selected);
-            assist(stack, entity, EquipmentSlot.HEAD, HELMET_CD, 80, 40, true);
-        }
-    }
-
-    private static final class Tank extends ArmorItem
-    {
-        Tank(Holder<ArmorMaterial> material, Type type, Properties props) { super(material, type, props); }
-
-        @Override
-        public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected)
-        {
-            super.inventoryTick(stack, level, entity, slot, selected);
-            assist(stack, entity, EquipmentSlot.CHEST, TANK_CD, 100, 60, false);
-        }
     }
 
     private static final class Leggings extends ArmorItem

@@ -312,6 +312,31 @@ public class Config
             .define("diver_helmet_night_vision", true);
 
     static {
+        BUILDER.comment("Underwater air time by diving gear stage (stage 1 = entry gear, stage 2 = deep gear; the best of helmet / tank counts)").push("breathing");
+    }
+    public static final ModConfigSpec.BooleanValue BREATHING_ENABLED = BUILDER
+            .comment("Scale the underwater air time by diving gear stage")
+            .define("enabled", true);
+    public static final ModConfigSpec.IntValue BREATHING_STAGE0_SECONDS = BUILDER
+            .comment("Seconds of air without diving gear")
+            .defineInRange("stage0_seconds", 120, 15, 3600);
+    public static final ModConfigSpec.IntValue BREATHING_STAGE1_SECONDS = BUILDER
+            .comment("Seconds of air with entry diving gear")
+            .defineInRange("stage1_seconds", 300, 15, 3600);
+    public static final ModConfigSpec.IntValue BREATHING_STAGE2_SECONDS = BUILDER
+            .comment("Seconds of air with deep diving gear")
+            .defineInRange("stage2_seconds", 480, 15, 3600);
+    public static final ModConfigSpec.IntValue BREATHING_STAGE1_DURABILITY_SECONDS = BUILDER
+            .comment("Underwater seconds per 1 durability lost on entry gear")
+            .defineInRange("stage1_durability_seconds", 5, 1, 600);
+    public static final ModConfigSpec.IntValue BREATHING_STAGE2_DURABILITY_SECONDS = BUILDER
+            .comment("Underwater seconds per 1 durability lost on deep gear")
+            .defineInRange("stage2_durability_seconds", 10, 1, 600);
+    static {
+        BUILDER.pop();
+    }
+
+    static {
         BUILDER.pop();
         BUILDER.comment("Waypoint beacons (HUD markers of named, coloured beacons in the same dimension)").push("waypoint_beacon");
     }
