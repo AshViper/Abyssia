@@ -36,6 +36,7 @@ public class Abyssia
         ModHabitat.register(modEventBus);
         com.abyssia.registry.ModFurniture.register(modEventBus);
         ModItems.register(modEventBus);
+        com.abyssia.guide.GuideBookRegistry.register(modEventBus);
         ModEntities.register(modEventBus);
         ModSounds.register(modEventBus);
         ModParticles.register(modEventBus);

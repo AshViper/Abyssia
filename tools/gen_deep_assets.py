@@ -27,6 +27,7 @@ import habitat_assets
 import furniture_assets
 import planter_assets
 import diving_gear_assets
+import guide_assets
 import electric_tool_assets
 import industrial_assets
 import material_system
@@ -1087,6 +1088,7 @@ def main():
     electric_tool_assets.generate(write, im, DATA)
     # Entry diving gear (D01): item models + vanilla recipes.
     diving_gear_assets.generate(write, im, DATA)
+    guide_assets.generate(write, im, DATA)   # GB01 guide book item/recipe
 
     for name, make in ITEMS.items():
         _emit(make, os.path.join(ITEM_TEX, name + ".png"))
@@ -1376,6 +1378,7 @@ def lang():
         data.update({k: v[idx] for k, v in planter_assets.LANG.items()})
         data.update({k: v[idx] for k, v in electric_tool_assets.LANG.items()})
         data.update({k: v[idx] for k, v in diving_gear_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in guide_assets.LANG.items()})
         data["itemGroup.abyssia"] = "Abyssia"
         write(path, dict(sorted(data.items())))
 
