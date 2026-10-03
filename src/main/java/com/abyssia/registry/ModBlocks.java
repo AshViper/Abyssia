@@ -252,7 +252,8 @@ public final class ModBlocks
     public static final RegistryObject<Block> ANCIENT_FROND = block("ancient_frond", () -> new FrondBlock(props(MapColor.COLOR_GREEN).strength(0.3f)
             .sound(SoundType.WET_GRASS).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
     // OL01: no block item; oil_kelp_seed places it
-    public static final RegistryObject<Block> OIL_KELP = BLOCKS.register("oil_kelp", () -> new com.abyssia.block.OilKelpBlock(plantProps(MapColor.COLOR_BROWN, 0)));
+    public static final RegistryObject<Block> OIL_KELP = BLOCKS.register("oil_kelp", () -> new com.abyssia.block.OilKelpBlock(plantProps(MapColor.COLOR_BROWN, 0)
+            .lightLevel(s -> s.getValue(com.abyssia.block.OilKelpBlock.RIPE) ? 4 : 0)));   // OL02: ripe sac glows
     public static final RegistryObject<Block> ANCIENT_SAPLING =block("ancient_sapling", () -> new com.abyssia.block.AncientSaplingBlock(
             plantProps(MapColor.TERRACOTTA_CYAN, 0)));
     // Glows only through its emissive texture (no block light), so it sprinkles cavern roofs with points of light without lighting them.
