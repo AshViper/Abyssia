@@ -43,6 +43,34 @@
           "chance": 0.3
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "abyssia:kelp_leaf",
+          "functions": [
+            {
+              "function": "minecraft:explosion_decay"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "abyssia:cave_grass",
+          "properties": {
+            "top": "true"
+          }
+        },
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.3
+        }
+      ]
     }
   ],
   "random_sequence": "abyssia:blocks/cave_grass"

@@ -65,6 +65,14 @@ SIMPLE_STONES = {
     "eroded_cave_rock": ("Eroded Cave Rock", "侵食洞窟岩"),
 }
 
+# CB01 cobbled main rocks (blocks come from gen_deep_assets.COBBLED): shapes like SIMPLE_STONES, smelt back to the rock
+COBBLED_ROCKS = {"deep_sea_rock": ("Deep Sea Rock", "深海岩"), "abyssal_rock": ("Abyssal Rock", "深淵岩"),
+                 "trench_rock": ("Trench Rock", "海溝岩"), "thermal_rock": ("Thermal Rock", "熱水岩"),
+                 "volcanic_rock": ("Volcanic Rock", "火山岩"), "crystal_rock": ("Crystal Rock", "結晶岩"),
+                 "mineral_host_rock": ("Mineral Host Rock", "鉱物母岩")}
+for _r, (_en, _ja) in COBBLED_ROCKS.items():
+    SIMPLE_STONES["cobbled_" + _r] = (f"Cobbled {_en}", f"{_ja}の丸石")
+
 # Metal crusts: polished (crust art reused) and bricks (crust art with brick joints), each with stairs / slab / wall.
 CRUSTS = {"manganese_crust": ("Manganese", "マンガン"), "cobalt_crust": ("Cobalt", "コバルト"),
           "nickel_crust": ("Nickel", "ニッケル"), "iron_crust": ("Iron", "鉄"), "copper_crust": ("Copper", "銅")}
@@ -458,6 +466,10 @@ def recipes(write, data_dir):
         shape_recipes(f.brick, f.bricks, [f.rock, f.polished, f.bricks])
     for rock in SIMPLE_STONES:
         shape_recipes(rock, rock, [rock])
+    for rock in COBBLED_ROCKS:
+        write(rd(f"{rock}_from_smelting_cobbled_{rock}"), {
+            "type": "minecraft:smelting", "category": "blocks", "ingredient": item(f"cobbled_{rock}"),
+            "result": f"{MOD}:{rock}", "experience": 0.1, "cookingtime": 200})
     for crust in CRUSTS:
         polished, bricks = f"polished_{crust}", f"{crust}_bricks"
         shaped(polished, polished, ["##", "##"], {"#": item(crust)}, 4)
@@ -507,5 +519,12 @@ def tags(write, data_dir):
     for tag, names in shared.items():
         write(os.path.join(mc_blocks, tag + ".json"), {"replace": False, "values": a(names)})
         write(os.path.join(mc_items, tag + ".json"), {"replace": False, "values": a(names)})
+    # CB01: cobbled rocks stand in for cobblestone (vanilla stone tools / furnace / etc. and the common cobblestone tags)
+    cobbled = a(f"cobbled_{r}" for r in COBBLED_ROCKS)
+    for ns, tag in (("minecraft", "stone_tool_materials"), ("minecraft", "stone_crafting_materials"),
+                    ("forge", "cobblestone"), ("c", "cobblestone")):
+        write(os.path.join(data_dir, ns, "tags", "items", tag + ".json"), {"replace": False, "values": cobbled})
+    for ns in ("forge", "c"):
+        write(os.path.join(data_dir, ns, "tags", "blocks", "cobblestone.json"), {"replace": False, "values": cobbled})
     write(os.path.join(ours_blocks, f"{W}_stems.json"), {"values": a(stems)})
     write(os.path.join(ours_items, f"{W}_stems.json"), {"values": a(stems)})
