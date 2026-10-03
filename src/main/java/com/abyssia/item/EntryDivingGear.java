@@ -2,7 +2,6 @@ package com.abyssia.item;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -16,7 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -30,8 +28,8 @@ import java.util.function.Supplier;
 
 /**
  * D01 entry diving gear: vanilla-material starter set (spec inbox/specs/D01-entry-diving-gear.md). No potion effects:
- * helmet / tank top up the air gauge at the cost of durability; leggings / flippers add swim speed; the full set adds
- * a small bonus and faster air assists. Weaker than the deep diver gear by design.
+ * helmet / tank extend the air time (see DivingBreathing); leggings / flippers add swim speed; the full set adds
+ * a small swim speed bonus. Weaker than the deep diver gear by design.
  */
 public final class EntryDivingGear
 {
@@ -42,8 +40,6 @@ public final class EntryDivingGear
     private static final UUID LEGGINGS_SPEED = UUID.fromString("b3a6f0d2-5c71-4e8a-9f24-6d1e8c7a3b05");
     private static final UUID FLIPPERS_SPEED = UUID.fromString("e9d41c7b-2a68-4f35-8b90-1c5f7a2d6e48");
     private static final UUID SET_SPEED = UUID.fromString("41c8a5e7-9b3d-4026-a7f1-3e6b0d9c5a82");
-    private static final String HELMET_CD = "abyssia_entry_helmet_next";
-    private static final String TANK_CD = "abyssia_entry_tank_next";
 
     public static RegistryObject<Item> HELMET, TANK, LEGGINGS, FLIPPERS;
 
@@ -51,8 +47,8 @@ public final class EntryDivingGear
 
     public static void register(DeferredRegister<Item> items, List<RegistryObject<? extends Item>> tab)
     {
-        HELMET = add(items, tab, "entry_diver_helmet", () -> new Helmet(MATERIAL, ArmorItem.Type.HELMET, new Item.Properties()));
-        TANK = add(items, tab, "entry_dive_tank", () -> new Tank(MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+        HELMET = add(items, tab, "entry_diver_helmet", () -> new ArmorItem(MATERIAL, ArmorItem.Type.HELMET, new Item.Properties()));
+        TANK = add(items, tab, "entry_dive_tank", () -> new ArmorItem(MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
         LEGGINGS = add(items, tab, "entry_diving_suit_leggings", () -> new Leggings(MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Properties()));
         FLIPPERS = add(items, tab, "entry_diving_flippers", () -> new Flippers(MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties()));
         MinecraftForge.EVENT_BUS.register(EntryDivingGear.class);
@@ -88,48 +84,6 @@ public final class EntryDivingGear
             swim.addTransientModifier(new AttributeModifier(SET_SPEED, "Entry diving set swim speed", 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
         else if (!active && has)
             swim.removeModifier(SET_SPEED);
-    }
-
-    /** Shared air assist: server side, eye in water, worn in the slot; cooldown by game time in persistent data. */
-    private static void assist(ItemStack stack, Player player, EquipmentSlot slot, String key, int threshold, int baseCooldown, boolean fill)
-    {
-        if (player.level().isClientSide || stack != player.getItemBySlot(slot)) return;
-        if (!player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) return;
-        long now = player.level().getGameTime();
-        CompoundTag data = player.getPersistentData();
-        if (now < data.getLong(key)) return;
-        int air = player.getAirSupply();
-        if (air > threshold) return;
-        int max = player.getMaxAirSupply();
-        int next = fill ? Math.min(max, 140) : Math.min(max, air + 40);
-        if (next <= air) return;
-        player.setAirSupply(next);
-        data.putLong(key, now + (fullSet(player) ? Math.round(baseCooldown * 0.8) : baseCooldown));
-        stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(slot));
-    }
-
-    private static final class Helmet extends ArmorItem
-    {
-        Helmet(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
-
-        @Override
-        public void onInventoryTick(ItemStack stack, Level level, Player player, int slot, int selected)
-        {
-            super.onInventoryTick(stack, level, player, slot, selected); // keeps vanilla inventoryTick (pickup pop animation)
-            assist(stack, player, EquipmentSlot.HEAD, HELMET_CD, 80, 40, true);
-        }
-    }
-
-    private static final class Tank extends ArmorItem
-    {
-        Tank(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
-
-        @Override
-        public void onInventoryTick(ItemStack stack, Level level, Player player, int slot, int selected)
-        {
-            super.onInventoryTick(stack, level, player, slot, selected); // keeps vanilla inventoryTick (pickup pop animation)
-            assist(stack, player, EquipmentSlot.CHEST, TANK_CD, 100, 60, false);
-        }
     }
 
     private static final class Leggings extends ArmorItem

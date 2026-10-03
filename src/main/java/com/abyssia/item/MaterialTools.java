@@ -88,7 +88,7 @@ public final class MaterialTools
         CRYSTAL_PICKAXE = add(items, tab, "crystal_pickaxe", () -> new PickaxeItem(CRYSTAL, 1, -2.8F, props(Rarity.RARE)));
         ABYSSAL_DRILL = add(items, tab, "abyssal_drill", () -> new PickaxeItem(DRILL, 1, -3.0F, props(Rarity.EPIC)));
         ABYSSAL_CUTTER = add(items, tab, "abyssal_cutter", () -> new SwordItem(CUTTER, 2, -1.8F, props(Rarity.EPIC)));
-        DIVE_TANK = add(items, tab, "dive_tank", () -> new DiveTank(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON)));
+        DIVE_TANK = add(items, tab, "dive_tank", () -> new ArmorItem(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON)));
         DIVING_SUIT_LEGGINGS = add(items, tab, "diving_suit_leggings", () -> new SuitLeggings(DIVING, ArmorItem.Type.LEGGINGS, props(Rarity.UNCOMMON)));
         // Smithing upgrade of deep_diver_helmet: same breathing / night vision; tag abyssia:pressure_proof marks it for
         // the future hadal pressure damage.
@@ -170,21 +170,6 @@ public final class MaterialTools
             swim.addTransientModifier(new AttributeModifier(SET_SPEED, "Abyssia diving set swim speed", 0.10, AttributeModifier.Operation.MULTIPLY_TOTAL));
         else if (!full && has)
             swim.removeModifier(SET_SPEED);
-    }
-
-    /** tank_breathing: water breathing while worn under water (no night vision, unlike the helmets). */
-    private static final class DiveTank extends ArmorItem
-    {
-        DiveTank(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
-
-        @Override
-        public void onInventoryTick(ItemStack stack, Level level, Player player, int slot, int selected)
-        {
-            super.onInventoryTick(stack, level, player, slot, selected); // keeps vanilla inventoryTick (pickup pop animation)
-            if (stack != player.getItemBySlot(EquipmentSlot.CHEST)) return;
-            if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()))
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 220, 0, true, false));
-        }
     }
 
     /** suit_swim: +5% swim speed (the armor's own defense/toughness modifiers are kept). */

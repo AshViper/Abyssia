@@ -74,7 +74,7 @@ public final class ModTools {
         if (mult != 1.0F) event.setNewSpeed(event.getNewSpeed() * mult);
     }
 
-    // Package-private: MaterialTools' pressure_diver_helmet keeps the same breathing / night vision.
+    // Package-private: MaterialTools' pressure_diver_helmet keeps the same night vision (air time: DivingBreathing).
     static final class DiverHelmet extends ArmorItem {
         DiverHelmet(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
         // IForgeItem#onArmorTick is deprecated for removal in this Forge: hook the
@@ -82,11 +82,9 @@ public final class ModTools {
         @Override public void onInventoryTick(ItemStack stack, net.minecraft.world.level.Level level, Player player, int slot, int selected) {
             super.onInventoryTick(stack, level, player, slot, selected); // keeps vanilla inventoryTick (pickup pop animation)
             if (stack != player.getItemBySlot(EquipmentSlot.HEAD)) return;
-            if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) {
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 220, 0, true, false));
-                if (com.abyssia.Config.DIVER_HELMET_NIGHT_VISION.get())
-                    player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 220, 0, true, false));
-            }
+            if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())
+                    && com.abyssia.Config.DIVER_HELMET_NIGHT_VISION.get())
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 220, 0, true, false));
         }
     }
 
