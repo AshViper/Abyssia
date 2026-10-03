@@ -3,13 +3,15 @@ package com.abyssia.habitat.client;
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.HabitatConstructorItem;
 import com.abyssia.habitat.HabitatControlPacket;
-import com.abyssia.habitat.HabitatMode;
+import com.abyssia.habitat.HabitatPlan;
+import com.abyssia.habitat.build.BuildEntry;
 import com.abyssia.network.AbyssiaNetwork;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,8 +24,8 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
 /**
- * H02 controls while the constructor is in the main hand: right-click / G = build menu, left-click = build,
- * wheel / R = rotate (reverse wheel / Shift+R counter-clockwise; Shift+wheel stays the hotbar).
+ * H02 / BT01a controls while the constructor is in the main hand: right-click / G = build menu, left-click = build,
+ * R = rotate +90 (Shift+R -90), mouse wheel = placement distance +-1 (3..12, NBT Dist; Shift+wheel stays the hotbar).
  */
 @Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class HabitatClient
@@ -58,7 +60,7 @@ public final class HabitatClient
         ItemStack stack = heldConstructor();
         if (stack == null || mc.screen != null) return;
         click();
-        mc.setScreen(new HabitatMenuScreen(HabitatConstructorItem.mode(stack)));
+        mc.setScreen(new HabitatMenuScreen(HabitatConstructorItem.entry(stack)));
     }
 
     static void click()
@@ -66,12 +68,12 @@ public final class HabitatClient
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
     }
 
-    static void select(HabitatMode mode)
+    static void select(BuildEntry entry)
     {
         ItemStack stack = heldConstructor();
         if (stack == null) return;
-        stack.getOrCreateTag().putString(HabitatConstructorItem.MODE, mode.id);
-        AbyssiaNetwork.sendToServer(new HabitatControlPacket(HabitatControlPacket.Action.SELECT, mode, 0));
+        stack.getOrCreateTag().putString(HabitatConstructorItem.MODE, entry.id());
+        AbyssiaNetwork.sendToServer(HabitatControlPacket.select(entry.id()));
     }
 
     private static void rotate(int steps)
@@ -80,7 +82,23 @@ public final class HabitatClient
         if (stack == null) return;
         int rot = Math.floorMod(HabitatConstructorItem.rotation(stack, Minecraft.getInstance().player) + steps, 4);
         stack.getOrCreateTag().putInt(HabitatConstructorItem.ROT, rot);
-        AbyssiaNetwork.sendToServer(new HabitatControlPacket(HabitatControlPacket.Action.ROTATE, HabitatMode.FOUNDATION, rot));
+        AbyssiaNetwork.sendToServer(HabitatControlPacket.rotate(rot));
+    }
+
+    /** BT01a: placement distance +-1, clamped 3..12, shown on the action bar. */
+    private static void changeDistance(int by)
+    {
+        ItemStack stack = heldConstructor();
+        Minecraft mc = Minecraft.getInstance();
+        if (stack == null || mc.player == null) return;
+        int old = HabitatConstructorItem.distance(stack);
+        int dist = HabitatPlan.clampDistance(old + by);
+        if (dist != old)
+        {
+            stack.getOrCreateTag().putInt(HabitatConstructorItem.DIST, dist);
+            AbyssiaNetwork.sendToServer(HabitatControlPacket.distance(dist));
+        }
+        mc.player.displayClientMessage(Component.translatable("message." + Abyssia.MODID + ".habitat.distance", dist), true);
     }
 
     @SubscribeEvent
@@ -111,7 +129,8 @@ public final class HabitatClient
             if (attackHeld) return;
             attackHeld = true;
             int rot = HabitatConstructorItem.rotation(stack, Minecraft.getInstance().player);
-            AbyssiaNetwork.sendToServer(new HabitatControlPacket(HabitatControlPacket.Action.BUILD, HabitatConstructorItem.mode(stack), rot));
+            AbyssiaNetwork.sendToServer(HabitatControlPacket.build(HabitatConstructorItem.entry(stack).id(), rot,
+                    HabitatConstructorItem.distance(stack)));
         }
     }
 
@@ -120,7 +139,7 @@ public final class HabitatClient
     {
         if (heldConstructor() == null || Minecraft.getInstance().screen != null || shift() || event.getScrollDelta() == 0) return;
         event.setCanceled(true);
-        rotate(event.getScrollDelta() > 0 ? 1 : -1);
+        changeDistance(event.getScrollDelta() > 0 ? 1 : -1);
     }
 
     @Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

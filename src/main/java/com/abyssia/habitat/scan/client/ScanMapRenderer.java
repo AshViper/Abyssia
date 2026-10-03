@@ -27,9 +27,17 @@ import java.util.WeakHashMap;
  */
 public final class ScanMapRenderer
 {
-    /** extent of the terrain grid (cells of 4 around the block centres) */
-    public static final float MIN_X = -ScanData.RADIUS - 2.5f, MAX_X = MIN_X + ScanData.GRID_X * ScanData.CELL;
-    public static final float MIN_Y = -ScanData.HALF_HEIGHT - 2.5f, MAX_Y = MIN_Y + ScanData.GRID_Y * ScanData.CELL;
+    /** extent of the terrain grid (cells of 4 around the block centres), per upgrade level */
+    public static float minXZ(int tier) { return -ScanData.radius(tier) - 2.5f; }
+
+    public static float maxXZ(int tier) { return minXZ(tier) + ScanData.gridXZ(tier) * ScanData.CELL; }
+
+    public static float minY(int tier) { return -ScanData.halfHeight(tier) - 2.5f; }
+
+    public static float maxY(int tier) { return minY(tier) + ScanData.gridY(tier) * ScanData.CELL; }
+
+    /** hologram scale above the console: the level-0 map keeps 1/40, bigger maps shrink to the same size */
+    public static float hologramScale(int tier) { return 32.0f / (ScanData.radius(tier) * 40.0f); }
     private static final float ORE = 0.9f;
 
     private record Cache(int version, float[] quads, int[] colors) {}
@@ -43,6 +51,9 @@ public final class ScanMapRenderer
         Level level = be.getLevel();
         ScanData data = be.result();
         Matrix4f m = pose.last().pose();
+        int tier = be.upgrade();
+        int radius = ScanData.radius(tier), halfHeight = ScanData.halfHeight(tier);
+        float minXZ = minXZ(tier), maxXZ = maxXZ(tier), minY = minY(tier), maxY = maxY(tier);
         VertexConsumer quads = buffers.getBuffer(RenderType.debugQuads());
 
         // ores first (the terrain is translucent on top of them)
@@ -71,16 +82,16 @@ public final class ScanMapRenderer
             for (Player player : level.players())
             {
                 double dx = player.getX() - origin.getX() - 0.5, dy = player.getY() - origin.getY(), dz = player.getZ() - origin.getZ() - 0.5;
-                if (Math.abs(dx) > ScanData.RADIUS || Math.abs(dz) > ScanData.RADIUS || Math.abs(dy) > ScanData.HALF_HEIGHT) continue;
+                if (Math.abs(dx) > radius || Math.abs(dz) > radius || Math.abs(dy) > halfHeight) continue;
                 cube(quads, m, (float) dx, (float) dy + 0.9f, (float) dz, 1.4f, 0xFFFFFF, alpha);
             }
         }
         // north marker at the top of the north edge
-        cube(quads, m, 0, MAX_Y, MIN_X, 2.0f, 0xFF5050, alpha);
+        cube(quads, m, 0, maxY, minXZ, 2.0f, 0xFF5050, alpha);
 
         VertexConsumer lines = buffers.getBuffer(RenderType.lines());
-        LevelRenderer.renderLineBox(pose, lines, MIN_X, MIN_Y, MIN_X, MAX_X, MAX_Y, MAX_X, 0.35f, 0.9f, 1.0f, 0.8f * alpha);
-        LevelRenderer.renderLineBox(pose, lines, -0.3, MIN_Y, -0.3, 0.3, 0.0, 0.3, 0.35f, 0.9f, 1.0f, 0.9f * alpha);
+        LevelRenderer.renderLineBox(pose, lines, minXZ, minY, minXZ, maxXZ, maxY, maxXZ, 0.35f, 0.9f, 1.0f, 0.8f * alpha);
+        LevelRenderer.renderLineBox(pose, lines, -0.3, minY, -0.3, 0.3, 0.0, 0.3, 0.35f, 0.9f, 1.0f, 0.9f * alpha);
     }
 
     private static Cache cache(ScanConsoleBlockEntity be, ScanData data)
@@ -103,13 +114,14 @@ public final class ScanMapRenderer
     private static float[] terrainQuads(ScanData data)
     {
         FloatList out = new FloatList();
-        for (int cy = 0; cy < ScanData.GRID_Y; cy++)
-            for (int cz = 0; cz < ScanData.GRID_Z; cz++)
-                for (int cx = 0; cx < ScanData.GRID_X; cx++)
+        int tier = data.tier, gx = ScanData.gridXZ(tier), gy = ScanData.gridY(tier);
+        for (int cy = 0; cy < gy; cy++)
+            for (int cz = 0; cz < gx; cz++)
+                for (int cx = 0; cx < gx; cx++)
                 {
                     if (!data.solid(cx, cy, cz)) continue;
-                    float x0 = cx * ScanData.CELL - ScanData.RADIUS - 2.5f, y0 = cy * ScanData.CELL - ScanData.HALF_HEIGHT - 2.5f;
-                    float z0 = cz * ScanData.CELL - ScanData.RADIUS - 2.5f;
+                    float x0 = cx * ScanData.CELL + minXZ(tier), y0 = cy * ScanData.CELL + minY(tier);
+                    float z0 = cz * ScanData.CELL + minXZ(tier);
                     float s = ScanData.CELL;
                     for (Direction d : Direction.values())
                     {

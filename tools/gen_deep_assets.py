@@ -1129,6 +1129,11 @@ def main():
     # Entry diving gear (D01): item models + vanilla recipes.
     diving_gear_assets.generate(write, im, DATA)
     guide_assets.generate(write, im, DATA)   # GB01 guide book item/recipe
+    # BT01 build-menu content: its generators write straight into src/main/resources, so run them after the wipe.
+    import subprocess
+    for part in ("aquarium", "custom", "generator", "ladder"):
+        subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "bt01", part + "_assets.py")],
+                       check=True, stdout=subprocess.DEVNULL)
 
     for name, make in ITEMS.items():
         _emit(make, os.path.join(ITEM_TEX, name + ".png"))
@@ -1409,6 +1414,12 @@ def material_recipes():
         write(path, recipe)
 
 
+def _lang_parts():
+    import glob
+    here = os.path.dirname(os.path.abspath(__file__))
+    return [json.load(open(f, encoding="utf-8")) for f in sorted(glob.glob(os.path.join(here, "lang_parts", "*.json")))]
+
+
 def lang():
     for lang_code, idx in (("en_us", 0), ("ja_jp", 1)):
         path = os.path.join(ASSETS, "lang", lang_code + ".json")
@@ -1428,6 +1439,8 @@ def lang():
         data.update({k: v[idx] for k, v in electric_tool_assets.LANG.items()})
         data.update({k: v[idx] for k, v in diving_gear_assets.LANG.items()})
         data.update({k: v[idx] for k, v in guide_assets.LANG.items()})
+        for part in _lang_parts():  # BT01h: tools/lang_parts/*.json = {"key": [en, ja]}
+            data.update({k: v[idx] for k, v in part.items()})
         data["itemGroup.abyssia"] = "Abyssia"
         write(path, dict(sorted(data.items())))
 

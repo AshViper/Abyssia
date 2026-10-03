@@ -85,6 +85,12 @@ public class ScanConsoleScreen extends AbstractContainerScreen<ScanConsoleMenu>
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY)
     {
         g.drawString(font, title, 8, 5, 0x9FEFFF, false);
+        ScanConsoleBlockEntity be = console();
+        if (be != null)
+        {
+            Component level = Component.translatable(K + "level", be.upgrade(), be.radius(), be.halfHeight());
+            g.drawString(font, level, imageWidth - 8 - font.width(level), 5, 0x7FD0E0, false);
+        }
         g.drawString(font, Component.translatable(K + "hint"), MAP_X, MAP_Y + MAP_H + 3, 0x6A8A94, false);
     }
 
@@ -133,7 +139,8 @@ public class ScanConsoleScreen extends AbstractContainerScreen<ScanConsoleMenu>
         PoseStack pose = g.pose();
         pose.pushPose();
         pose.translate(x0 + MAP_W / 2.0f, y0 + MAP_H / 2.0f, 300.0f);
-        pose.scale(zoom, -zoom, zoom);
+        float z = zoom * 32.0f / ScanData.radius(be.upgrade());   // bigger maps start at the same on-screen size
+        pose.scale(z, -z, z);
         pose.mulPose(Axis.XP.rotationDegrees(pitch));
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         ScanMapRenderer.draw(pose, g.bufferSource(), be, 1.0f);

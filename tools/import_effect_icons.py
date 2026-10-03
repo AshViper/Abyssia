@@ -14,7 +14,7 @@ import import_item_sheet as sheet  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "src/main/resources/assets/abyssia/textures/mob_effect"
-LOCKS = ROOT / "tools/texture_locks/mob_effect"
+LOCKS = ROOT / "tools/texture_locks/assets/textures/mob_effect"
 
 
 def main(argv=None):

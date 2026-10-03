@@ -1,0 +1,70 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "abyssia:block/gen_frame",
+    "glow": "abyssia:block/gen_glow"
+  },
+  "elements": [
+    {
+      "from": [
+        21,
+        -15,
+        -16
+      ],
+      "to": [
+        27,
+        -14,
+        -8
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            5,
+            8,
+            11,
+            16
+          ],
+          "texture": "#glow"
+        },
+        "up": {
+          "uv": [
+            5,
+            0,
+            11,
+            8
+          ],
+          "texture": "#glow"
+        },
+        "south": {
+          "uv": [
+            5,
+            14,
+            11,
+            15
+          ],
+          "texture": "#glow"
+        },
+        "west": {
+          "uv": [
+            0,
+            14,
+            8,
+            15
+          ],
+          "texture": "#glow"
+        },
+        "east": {
+          "uv": [
+            8,
+            14,
+            16,
+            15
+          ],
+          "texture": "#glow"
+        }
+      },
+      "shade": false
+    }
+  ]
+}
