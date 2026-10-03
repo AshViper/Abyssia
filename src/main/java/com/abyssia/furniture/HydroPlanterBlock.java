@@ -88,7 +88,7 @@ public class HydroPlanterBlock extends BaseEntityBlock
         {
             case PLANT ->
             {
-                if (be.plant(cell, PlanterCrop.of(held)))
+                if (be.plant(cell, held))
                 {
                     if (!player.getAbilities().instabuild) held.shrink(1);
                     level.playSound(null, pos, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 1.0f, 1.0f);

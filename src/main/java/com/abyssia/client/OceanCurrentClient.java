@@ -23,7 +23,7 @@ public final class OceanCurrentClient
         if (event.phase != TickEvent.Phase.START) return;
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if (player == null || mc.isPaused() || !Config.CURRENT_PUSH_PLAYERS.get()) return;
+        if (player == null || mc.isPaused() || (!Config.CURRENT_PUSH_PLAYERS.get() && !Config.CURRENT_STREAM_PLAYERS.get() && !Config.CURRENT_STREAM_BOATS.get())) return;
         Entity vehicle = player.getVehicle();
         if (vehicle != null)
         {

@@ -101,7 +101,9 @@ public class HabitatMenuScreen extends Screen
             Component detail = entry.detail();
             if (detail != null) g.drawString(font, detail, x0 + 32, y + 11, 0xA0B0C0);
             int cx = x0 + 32;
-            for (ItemStack cost : entry.cost())
+            List<ItemStack> costs = entry.cost();
+            int gap = costs.size() > 4 ? 3 : 8; // generators list 5-6 items
+            for (ItemStack cost : costs)
             {
                 int have = player == null ? 0 : HabitatBuilder.count(player, cost.getItem());
                 g.renderItem(cost.copyWithCount(1), cx, y + 21);
@@ -109,7 +111,7 @@ public class HabitatMenuScreen extends Screen
                 g.drawString(font, text, cx + 18, y + 26, have >= cost.getCount() || creative ? 0xC0FFC0 : 0xFF5555);
                 if (mouseX >= cx && mouseX < cx + 16 && mouseY >= y + 21 && mouseY < y + 37)
                     g.renderTooltip(font, cost.getHoverName(), mouseX, mouseY);
-                cx += 18 + font.width(text) + 8;
+                cx += 18 + font.width(text) + gap;
             }
         }
         g.drawCenteredString(font, Component.translatable("screen." + Abyssia.MODID + ".habitat.hint"), width / 2,

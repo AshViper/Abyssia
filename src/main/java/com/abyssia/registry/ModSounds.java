@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Sound events. The sounds themselves (and sounds.json) are synthesised by tools/gen_fauna.py: the real animals are
- * close to silent, so these are quiet underwater cues rather than calls.
+ * close to silent, so these are quiet underwater cues rather than calls. Machine loops come from tools/machine_sounds.py.
  */
 public final class ModSounds
 {
@@ -59,6 +59,14 @@ public final class ModSounds
     public static final Voice ATOLLA_JELLY = voice("atolla_jelly", "ambient", "pulse", "hurt", "death");
     public static final Voice HELMET_JELLY = voice("helmet_jelly", "ambient", "pulse", "hurt", "death");
     public static final Voice GIANT_PHANTOM_JELLY = voice("giant_phantom_jelly", "ambient", "pulse", "hurt", "death");
+
+    // machine / generator running loops (tools/machine_sounds.py), played by client.sound.MachineSounds while working
+    public static final RegistryObject<SoundEvent> MACHINE_CRUSHER = sound("machine.crusher");
+    public static final RegistryObject<SoundEvent> MACHINE_FURNACE = sound("machine.furnace");
+    public static final RegistryObject<SoundEvent> MACHINE_SEPARATOR = sound("machine.separator");
+    public static final RegistryObject<SoundEvent> MACHINE_TURBINE = sound("machine.turbine");
+    public static final RegistryObject<SoundEvent> MACHINE_GEOTHERMAL = sound("machine.geothermal");
+    public static final RegistryObject<SoundEvent> MACHINE_BIOFUEL = sound("machine.biofuel");
 
     private ModSounds() {}
 

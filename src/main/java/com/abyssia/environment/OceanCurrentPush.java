@@ -44,8 +44,8 @@ public final class OceanCurrentPush
     public static void onLevelTick(TickEvent.LevelTickEvent event)
     {
         if (event.phase != TickEvent.Phase.START || !(event.level instanceof ServerLevel level)) return;
-        if (!Config.CURRENT_PUSH_ENTITIES.get()
-                || (Config.CURRENT_PUSH_SCALE.get() <= 0.0 && !Config.NATURAL_CURRENTS.get() && !Config.CURRENT_STREAMS.get())) return;
+        boolean legacy = Config.CURRENT_PUSH_ENTITIES.get() && (Config.CURRENT_PUSH_SCALE.get() > 0.0 || Config.NATURAL_CURRENTS.get());
+        if (!legacy && !Config.CURRENT_STREAMS.get()) return;
         for (Entity entity : level.getAllEntities())
         {
             // Players and what they steer are simulated by their client, which pushes them itself.
@@ -74,24 +74,25 @@ public final class OceanCurrentPush
         BlockPos pos = entity.blockPosition();
 
         Vec3 push = Vec3.ZERO;
-        Vec3 natural = Vec3.ZERO;
-        if (isOceanWater(level, pos))
+        boolean playerDriven = entity instanceof Player || entity.getControllingPassenger() instanceof Player;
+        // ocean_current.push_* gate only the legacy field and natural currents; CU01 streams use current_streams.affects_*.
+        if ((playerDriven ? Config.CURRENT_PUSH_PLAYERS.get() : Config.CURRENT_PUSH_ENTITIES.get()) && isOceanWater(level, pos))
         {
             if (Config.CURRENT_PUSH_SCALE.get() > 0.0) push = fieldPush(entity, level, pos, drag);
-            natural = naturalPush(entity, level, drag);
+            push = push.add(naturalPush(entity, level, drag));
         }
-        Vec3 stream = streamPush(entity, level, drag, exposure);
-        if (push == Vec3.ZERO && natural == Vec3.ZERO && stream == Vec3.ZERO) return;
-        push = push.add(natural).scale(exposure).add(stream);
+        Vec3 stream = streamPush(entity, level, drag);
+        if (push == Vec3.ZERO && stream == Vec3.ZERO) return;
+        push = push.add(stream).scale(exposure);
         // Boats float on the surface: up/downwelling would only fight their buoyancy.
         double vy = entity instanceof Boat ? 0.0 : push.y;
         Vec3 old = entity.getDeltaMovement();
         Vec3 next = old.add(push.x, vy, push.z);
-        // Where streams add up, never faster than the cap (nor slower than the entity already was).
-        if (natural != Vec3.ZERO || stream != Vec3.ZERO)
+        // Where a CU01 stream adds to the others, never faster than the cap (nor slower than the entity already was).
+        if (stream != Vec3.ZERO)
         {
-            double speed = next.length(), cap = Math.max(MAX_CURRENT_SPEED, old.length());
-            if (speed > cap) next = next.scale(cap / speed);
+            double speed = next.length(), before = old.length();
+            if (speed > MAX_CURRENT_SPEED && speed > before) next = next.scale(Math.max(MAX_CURRENT_SPEED, before) / speed);
         }
         entity.setDeltaMovement(next);
     }
@@ -102,7 +103,7 @@ public final class OceanCurrentPush
      * water drag; the other components are left alone. Brakes anything already faster downstream the same way.
      * Nothing in rock or out of water (body-centre block).
      */
-    private static Vec3 streamPush(Entity entity, Level level, double drag, double exposure)
+    private static Vec3 streamPush(Entity entity, Level level, double drag)
     {
         if (!CurrentStreams.affects(level, entity)) return Vec3.ZERO;
         CurrentStreams.Params params = CurrentStreams.params(level);
@@ -111,7 +112,7 @@ public final class OceanCurrentPush
         if (!level.getFluidState(BlockPos.containing(x, y, z)).is(FluidTags.WATER)) return Vec3.ZERO;
         CurrentStreams.Sample sample = CurrentStreams.sample(level, x, y, z);
         if (sample == null) return Vec3.ZERO;
-        double target = CurrentStreams.flowSpeed(params, sample.strength()) * sample.flowMultiplier() * exposure;
+        double target = CurrentStreams.flowSpeed(params, sample.strength()) * sample.flowMultiplier();
         Vec3 dir = sample.direction();
         double before = keptBeforeMove(entity, drag), after = (1.0 - drag) / before;
         double along = entity.getDeltaMovement().dot(dir);

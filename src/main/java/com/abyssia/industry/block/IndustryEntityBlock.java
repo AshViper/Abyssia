@@ -1,10 +1,12 @@
 package com.abyssia.industry.block;
 
+import com.abyssia.client.sound.MachineSounds;
 import com.abyssia.industry.MachineKind;
 import com.abyssia.industry.blockentity.IndustryBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -138,10 +140,22 @@ public abstract class IndustryEntityBlock extends BaseEntityBlock implements Sim
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type)
     {
-        if (level.isClientSide) return null;
+        if (level.isClientSide)
+        {
+            // running loop while LIT (working); LIT reaches the client with the block state
+            SoundEvent sound = kind.runningSound();
+            if (sound == null || !state.hasProperty(MachineBlock.LIT)) return null;
+            return (lvl, pos, st, be) -> MachineSounds.tick(lvl, pos, sound, 0.45f, 1.0f, IndustryEntityBlock::lit);
+        }
         return (lvl, pos, st, be) ->
         {
             if (be instanceof IndustryBlockEntity industry) industry.serverTick();
         };
+    }
+
+    private static boolean lit(Level level, BlockPos pos)
+    {
+        BlockState state = level.getBlockState(pos);
+        return state.hasProperty(MachineBlock.LIT) && state.getValue(MachineBlock.LIT);
     }
 }

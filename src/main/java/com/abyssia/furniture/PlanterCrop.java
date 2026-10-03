@@ -3,21 +3,43 @@ package com.abyssia.furniture;
 import com.abyssia.Abyssia;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
+import com.abyssia.registry.ModTags;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.GrowingPlantBlock;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * What a hydro planter cell grows (features PL01 / PL02, inbox/specs/PL02-planter-remake.md): the seedling item, the
  * harvest item, its amount range and the growth time. NONE is an empty cell. The cell renderer draws
  * block/planter_&lt;name&gt;_&lt;stage&gt; (stage 0..2, see {@link #stage}).
+ * <p>
+ * GENERIC (user 2026-10-04): any other edible plant ({@link #isEdiblePlant}) grows too and yields more of the planted
+ * item; the cell keeps that item and the renderer draws its plant block (or the item itself). Every crop is fully grown
+ * in {@link #GROW_TICKS} (3 minutes).
  */
 public enum PlanterCrop implements StringRepresentable
 {
     NONE("none", null, null, 0, 0, 0),
-    MUSHROOM("mushroom", "abyssal_mushroom", "mushroom_cap", 1, 2, 8 * 60 * 20),
-    GOURD("gourd", "pressure_gourd", "gourd_flesh", 1, 2, 12 * 60 * 20),
-    KELP("kelp", "deep_kelp", "kelp_leaf", 2, 3, 6 * 60 * 20);
+    MUSHROOM("mushroom", "abyssal_mushroom", "mushroom_cap", 1, 2, Const.GROW),
+    GOURD("gourd", "pressure_gourd", "gourd_flesh", 1, 2, Const.GROW),
+    KELP("kelp", "deep_kelp", "kelp_leaf", 2, 3, Const.GROW),
+    /** RS01: the amber fan block item is the seedling; one sea resin per harvest (less than a wild fan's 1..2). */
+    AMBER_FAN("amber_fan", "amber_fan", "plant_resin", 1, 1, Const.GROW),
+    /** Any other edible plant: seed and result are the planted item, kept per cell by the block entity. */
+    GENERIC("generic", null, null, 1, 3, Const.GROW);
+
+    /** Growth time of every crop: 3 minutes. */
+    public static final int GROW_TICKS = Const.GROW;
+
+    private static final class Const
+    {
+        static final int GROW = 3 * 60 * 20;
+    }
 
     private final String name;
     private final String seed;
@@ -43,15 +65,28 @@ public enum PlanterCrop implements StringRepresentable
         return name;
     }
 
-    /** The crop a seedling stack grows, or NONE. */
+    /** The crop a seedling stack grows: a dedicated crop, GENERIC for another edible plant, or NONE. */
     public static PlanterCrop of(ItemStack stack)
     {
         if (stack.isEmpty()) return NONE;
         ResourceLocation id = ForgeRegistries.ITEMS.getKey(stack.getItem());
-        if (id == null || !Abyssia.MODID.equals(id.getNamespace())) return NONE;
-        for (PlanterCrop crop : values())
-            if (crop.seed != null && crop.seed.equals(id.getPath())) return crop;
-        return NONE;
+        if (id != null && Abyssia.MODID.equals(id.getNamespace()))
+            for (PlanterCrop crop : values())
+                if (crop.seed != null && crop.seed.equals(id.getPath())) return crop;
+        return isEdiblePlant(stack) ? GENERIC : NONE;
+    }
+
+    /** Edible and a plant: in #abyssia:planter_crops (fruits, vegetables) or placing a plant block (carrot, berries). */
+    public static boolean isEdiblePlant(ItemStack stack)
+    {
+        if (stack.isEmpty() || !stack.isEdible()) return false;
+        if (stack.is(ModTags.PLANTER_CROPS)) return true;
+        return stack.getItem() instanceof BlockItem bi && isPlantBlock(bi.getBlock());
+    }
+
+    private static boolean isPlantBlock(Block block)
+    {
+        return block instanceof IPlantable || block instanceof BushBlock || block instanceof GrowingPlantBlock;
     }
 
     /** Growth stage 0 (planted), 1 (half grown) or 2 (ripe) for a progress in ticks. */

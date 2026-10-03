@@ -2,6 +2,7 @@ package com.abyssia.client.particle;
 
 import com.abyssia.client.ShaderCompat;
 import com.abyssia.environment.CurrentData;
+import com.abyssia.environment.CurrentStreams;
 import com.abyssia.environment.NaturalCurrents;
 import com.abyssia.environment.ParticleBudget;
 import com.abyssia.environment.ParticleBudget.Budget;
@@ -24,6 +25,10 @@ import org.joml.Vector3f;
  * Suspended matter carried by a natural current: a faint streak stretched along its own motion, so a stream reads as
  * fine particles sweeping one way rather than as glowing dots. Its speed follows the stream's local strength, with a
  * small sideways sway; it fades out once it leaves the stream or the water.
+ * <p>
+ * Spawned with a non-zero velocity it is a CU01 stream streak instead ({@code client.CurrentStreamClient}): a thin
+ * #EAF8FF line of set width and length riding the {@link CurrentStreams} band at its local speed, counted in the
+ * {@link Budget#STREAM} budget.
  */
 public class CurrentParticle extends TextureSheetParticle
 {
@@ -40,8 +45,11 @@ public class CurrentParticle extends TextureSheetParticle
     private float edge = 1f;
     private Vec3 flow = Vec3.ZERO;
     private Vec3 side = new Vec3(1, 0, 0);
+    private final boolean stream;
+    private final Budget budget;
+    private float streakWidth = 0.05f, streakLength = 1.5f;
 
-    protected CurrentParticle(ClientLevel level, double x, double y, double z, SpriteSet sprites)
+    protected CurrentParticle(ClientLevel level, double x, double y, double z, double dx, double dy, double dz, SpriteSet sprites)
     {
         super(level, x, y, z);
         pickSprite(sprites);
@@ -59,8 +67,49 @@ public class CurrentParticle extends TextureSheetParticle
         float tint = 0.85f + random.nextFloat() * 0.15f;
         setColor(0.72f * tint, 0.86f * tint, 0.95f * tint);
         alpha = 0f;
-        ParticleBudget.added(Budget.CURRENT);
-        sample();
+        stream = dx != 0.0 || dy != 0.0 || dz != 0.0;
+        budget = stream ? Budget.STREAM : Budget.CURRENT;
+        ParticleBudget.added(budget);
+        if (stream)
+        {
+            flow = new Vec3(dx, dy, dz);
+            xd = dx;
+            yd = dy;
+            zd = dz;
+            // #EAF8FF
+            setColor(234 / 255f, 248 / 255f, 1f);
+            lifetime = 20 + random.nextInt(41);
+        }
+        else
+        {
+            sample();
+        }
+    }
+
+    /** Stream streak look: width and length in blocks, peak alpha, lifetime in ticks. */
+    public void setStreak(float width, float length, float peakAlpha, int life)
+    {
+        streakWidth = width;
+        streakLength = length;
+        baseAlpha = peakAlpha;
+        lifetime = life;
+    }
+
+    private void sampleStream()
+    {
+        BlockPos pos = BlockPos.containing(x, y, z);
+        CurrentStreams.Params params = CurrentStreams.params(level);
+        CurrentStreams.Sample data = params != null && level.getFluidState(pos).is(FluidTags.WATER) ? CurrentStreams.sample(level, x, y, z) : null;
+        if (data == null)
+        {
+            if (lifetime - age > FADE_TICKS) lifetime = age + FADE_TICKS;
+            return;
+        }
+        // Rides the band at its local speed (a floor keeps edge streaks moving), turning with the centreline.
+        double speed = Math.max(CurrentStreams.flowSpeed(params, data.strength()) * data.flowMultiplier(), 0.3 * params.baseFlowSpeed() * data.strength()) * speedJitter;
+        flow = data.direction().scale(speed);
+        Vec3 s = new Vec3(-flow.z, 0, flow.x);
+        side = s.lengthSqr() < 1.0E-8 ? new Vec3(1, 0, 0) : s.normalize();
     }
 
     private void sample()
@@ -84,14 +133,14 @@ public class CurrentParticle extends TextureSheetParticle
     @Override
     public void remove()
     {
-        if (!removed) ParticleBudget.removed(Budget.CURRENT);
+        if (!removed) ParticleBudget.removed(budget);
         super.remove();
     }
 
     @Override
     public void tick()
     {
-        if (!removed) ParticleBudget.ticked(Budget.CURRENT);
+        if (!removed) ParticleBudget.ticked(budget);
         xo = x;
         yo = y;
         zo = z;
@@ -100,9 +149,13 @@ public class CurrentParticle extends TextureSheetParticle
             remove();
             return;
         }
-        if (age % SAMPLE_INTERVAL == 0) sample();
+        if (age % SAMPLE_INTERVAL == 0)
+        {
+            if (stream) sampleStream();
+            else sample();
+        }
         phase += swayFrequency;
-        double sway = Math.sin(phase) * swayAmplitude;
+        double sway = Math.sin(phase) * swayAmplitude * (stream ? 0.4 : 1.0);
         double bob = Math.cos(phase * 0.7) * swayAmplitude * 0.5;
         xd = flow.x + side.x * sway;
         yd = flow.y + bob;
@@ -134,9 +187,17 @@ public class CurrentParticle extends TextureSheetParticle
             super.render(buffer, camera, partialTicks);
             return;
         }
-        float size = getQuadSize(partialTicks);
-        width.normalize(size * 0.6f);
-        axis.mul(size * Math.min(6f, 1.5f + speed * 18f));
+        if (stream)
+        {
+            width.normalize(streakWidth * 0.5f);
+            axis.mul(streakLength * 0.5f);
+        }
+        else
+        {
+            float size = getQuadSize(partialTicks);
+            width.normalize(size * 0.6f);
+            axis.mul(size * Math.min(6f, 1.5f + speed * 18f));
+        }
 
         float u0 = getU0(), u1 = getU1(), v0 = getV0(), v1 = getV1();
         int light = getLightColor(partialTicks);
@@ -168,6 +229,6 @@ public class CurrentParticle extends TextureSheetParticle
 
     public static ParticleProvider<SimpleParticleType> provider(SpriteSet sprites)
     {
-        return (type, level, x, y, z, dx, dy, dz) -> new CurrentParticle(level, x, y, z, sprites);
+        return (type, level, x, y, z, dx, dy, dz) -> new CurrentParticle(level, x, y, z, dx, dy, dz, sprites);
     }
 }

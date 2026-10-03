@@ -296,12 +296,18 @@ public class Config
     public static final ForgeConfigSpec.IntValue CURRENT_STREAM_CELL = BUILDER
             .comment("Cell size in blocks (one candidate stream per cell and depth band)")
             .defineInRange("cell_size", 192, 64, 1024);
-    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MIN_LENGTH = BUILDER.defineInRange("min_length", 64.0, 16.0, 512.0);
-    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MAX_LENGTH = BUILDER.defineInRange("max_length", 256.0, 16.0, 512.0);
-    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MIN_WIDTH = BUILDER
-            .comment("Stream diameter range in blocks")
-            .defineInRange("min_width", 8.0, 2.0, 48.0);
-    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MAX_WIDTH = BUILDER.defineInRange("max_width", 20.0, 2.0, 48.0);
+    public static final ForgeConfigSpec.IntValue CURRENT_STREAM_MIN_LENGTH = BUILDER
+            .comment("Shortest stream in blocks")
+            .defineInRange("min_length", 64, 16, 512);
+    public static final ForgeConfigSpec.IntValue CURRENT_STREAM_MAX_LENGTH = BUILDER
+            .comment("Longest stream in blocks")
+            .defineInRange("max_length", 256, 16, 512);
+    public static final ForgeConfigSpec.IntValue CURRENT_STREAM_MIN_WIDTH = BUILDER
+            .comment("Narrowest stream diameter in blocks")
+            .defineInRange("min_width", 8, 2, 48);
+    public static final ForgeConfigSpec.IntValue CURRENT_STREAM_MAX_WIDTH = BUILDER
+            .comment("Widest stream diameter in blocks")
+            .defineInRange("max_width", 20, 2, 48);
     public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MIN_STRENGTH = BUILDER
             .comment("Strength range (WEAK 0.65-0.80, NORMAL 0.80-1.00 = most common, STRONG 1.00-1.20); turbines make 120 x strength FE/t")
             .defineInRange("min_strength", 0.65, 0.0, 4.0);

@@ -3,6 +3,8 @@ package com.abyssia.industry;
 import com.abyssia.industry.blockentity.GeneratorBlockEntity;
 import com.abyssia.industry.recipe.MachineRecipes;
 import com.abyssia.registry.ModIndustry;
+import com.abyssia.registry.ModSounds;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -102,6 +104,21 @@ public enum MachineKind
         if (this == AUXILIARY_GENERATOR) return GeneratorBlockEntity.fuelEnergy(stack) > 0;
         if (!hasOutput || level == null) return false;
         return MachineRecipes.get(level).isInput(this, stack);
+    }
+
+    /** The loop played while the block is LIT (working), or null for silent kinds. */
+    @Nullable
+    public SoundEvent runningSound()
+    {
+        return switch (this)
+        {
+            case CRUSHER -> ModSounds.MACHINE_CRUSHER.get();
+            case REFINERY_FURNACE, ALLOY_FURNACE, HIGH_TEMP_FURNACE -> ModSounds.MACHINE_FURNACE.get();
+            case SELECTIVE_LEACHING_SEPARATOR -> ModSounds.MACHINE_SEPARATOR.get();
+            case HYDROTHERMAL_GENERATOR -> ModSounds.MACHINE_GEOTHERMAL.get();
+            case AUXILIARY_GENERATOR -> ModSounds.MACHINE_BIOFUEL.get();
+            case ENERGY_DEVICE -> null;
+        };
     }
 
     public static MachineKind byOrdinal(int ordinal)

@@ -26,3 +26,10 @@ Minecraft 1.20.1 plant sprite, hand-drawn 16x16 pixel art in vanilla style (like
 4-6. planter_gourd_0..2: 圧力瓢箪 (暗い緑の蔓、くすんだ青緑の瓢箪の実)。0=双葉、1=蔓と小さな実、2=丸い実が熟す
 7-9. planter_kelp_0..2: 深海昆布 (暗い緑〜茶の葉)。0=短い葉、1=中くらい、2=背の高い葉が揺れる
 ```
+
+## シート PLT3 (3個 / 3列×1行、RS01)
+```
+Minecraft 1.20.1 plant sprite, hand-drawn 16x16 pixel art in vanilla style (like wheat/carrot crop stages), each sprite in its own square cell on flat solid magenta (#FF00FF) with wide magenta gutters, plant grows from the bottom edge, no labels, no text. Limited palette, hard pixel edges, no anti-aliasing, no outline box. Never use magenta inside a sprite. Small plants (they are drawn in a quarter of a block).
+左→右が 成長段階 0 / 1 / 2 (成熟):
+1-3. planter_amber_fan_0..2: アンバーファン (扇形の海のヤギ類、テラコッタ赤〜琥珀色の扇、表面に琥珀色の樹脂の粒)。0=小さな扇の芽、1=中くらいの扇、2=大きな扇に樹脂の粒が光る
+```

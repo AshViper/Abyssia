@@ -45,8 +45,9 @@ MATERIALS = [
              source_en="Abyssal grass, kelp, strandweed - forests and shallower seas",
              source_ja="深海草・コンブ・ストランド藻 ― 海藻林や浅めの海"),
     Material("plant_resin", "Sea Resin", "海樹脂", "common", "base", "resin",
-             source_en="Amber fans in seabed forests, resin roots on cave ceilings",
-             source_ja="海藻林のアンバーファン、洞窟天井の樹脂根"),
+             source_en="Amber fans in seabed forests (sparser in deep seas, trenches, crystal fields and caves), resin roots on cave"
+                       " ceilings; amber fans also grow in a hydro planter",
+             source_ja="海藻林のアンバーファン (深海・海溝・結晶原・洞窟にもまばらに生える)、洞窟天井の樹脂根。アンバーファンは水耕栽培プランターでも育つ"),
     Material("hard_stalk", "Hard Stalk", "硬質茎", "common", "base", "hard", burn=200,
              source_en="Knotstalk, black coral, cinder stalks, root colonies",
              source_ja="フシクキ・黒サンゴ・燠茎・根の群落"),
@@ -124,6 +125,8 @@ class Plant:
     light: int = 0             # block light when ripe (luminous plants only)
     real: str = ""             # real-world reference (design note)
     place: dict = field(default_factory=dict)   # worldgen: tries, spread, rarity | count | clustered, height
+    extra: tuple = ()          # extra seabed placements (RS01): (biome, (min, max) metres, tries) -> feature plant_<id>_<biome>,
+                               # same spread / density as place; the main feature stays on `biomes` only
 
 
 D = Drop
@@ -136,12 +139,16 @@ PLANTS = [
           harvest=(D("deep_fiber", 1, 2), D("abyssia:kelp_leaf", 1, 1, 0.3),), growth=0.12,
           real="filamentous brown / green algae tufts (game simplification: they grow far below the photic zone)",
           place=dict(tries=20, spread=5, clustered=2)),
-    Plant("amber_fan", "resin", "medium", "common", ("abyssal_forest", "deep_forest", "abyssal_ocean", "cave:forest"), (500, 5000),
+    Plant("amber_fan", "resin", "medium", "common", ("abyssal_forest", "deep_forest", "abyssal_ocean", "cave:forest", "cave:abyssal"), (500, 5000),
           (D("plant_resin", 1, 2),), ("resin", "adhesive", "coating"), new=True, en="Amber Fan", ja="アンバーファン", colour="TERRACOTTA_RED",
           harvest=(D("plant_resin", 1, 2),), growth=0.06,
           real="sea fans (gorgonians) that exude a sticky coat; the resin beads are a game simplification",
-          place=dict(tries=12, spread=5, clustered=1)),
-    Plant("resin_root", "resin", "medium", "uncommon", ("cave:abyssal", "cave:forest", "cave:cavern"), ANY,
+          place=dict(tries=12, spread=5, clustered=1),
+          # RS01: sparse fans outside the forests (cave:abyssal = a rare floor plant in gen_worldgen CAVE_ENVIRONMENTS)
+          extra=(("deep_sea", (1000, 5000), 4), ("abyssal_trench", (1000, 5000), 3), ("deep_crystal_fields", (1500, 5000), 2))),
+    # RS01: also cave:mineral, cave:thermal (deep caves only, max_y in CAVE_ENVIRONMENTS) and cave:luminous (rare)
+    Plant("resin_root", "resin", "medium", "uncommon", ("cave:abyssal", "cave:forest", "cave:cavern", "cave:mineral", "cave:thermal",
+                                                        "cave:luminous"), ANY,
           (D("plant_resin", 1, 2),), ("resin", "adhesive"), new=True, en="Resin Root", ja="樹脂根", form="hanging",
           per="tip", colour="TERRACOTTA_BROWN",
           real="roots / stolons hanging from overhangs; resin droplets are a game simplification"),
@@ -374,6 +381,9 @@ def check() -> list[str]:
             errors.append(f"{p.id}: harvestable but never regrows")
         if p.depth[0] >= p.depth[1]:
             errors.append(f"{p.id}: empty depth band")
+        for b, (lo, hi), tries in p.extra:
+            if not p.place or lo >= hi or tries < 1 or b in p.biomes:
+                errors.append(f"{p.id}: bad extra placement {b}")
         for d in (*p.drops, *p.harvest):
             if ":" not in d.item and d.item not in MATERIAL and d.item != "sulfur":
                 errors.append(f"{p.id}: unknown drop {d.item}")
@@ -386,7 +396,7 @@ def check() -> list[str]:
 def definition(p: Plant) -> dict:
     """The PlantDefinition JSON (data/abyssia/abyssia/plant/<id>.json)."""
     return {"block": "abyssia:" + p.id, "category": p.category, "size": p.size, "rarity": p.rarity,
-            "biomes": list(p.biomes), "min_depth": p.depth[0], "max_depth": p.depth[1],
+            "biomes": list(p.biomes) + [b for b, _, _ in p.extra], "min_depth": p.depth[0], "max_depth": p.depth[1],
             "growth_rate": p.growth,
             "drops": [{"item": d.id, "min": d.min, "max": d.max, "chance": d.chance} for d in p.drops],
             "harvest": [{"item": d.id, "min": d.min, "max": d.max, "chance": d.chance} for d in p.harvest],

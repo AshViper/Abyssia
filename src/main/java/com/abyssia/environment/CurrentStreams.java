@@ -85,10 +85,13 @@ public final class CurrentStreams
     {
         public static Params fromConfig()
         {
+            double minL = Config.CURRENT_STREAM_MIN_LENGTH.get(), maxL = Config.CURRENT_STREAM_MAX_LENGTH.get();
+            double minW = Config.CURRENT_STREAM_MIN_WIDTH.get(), maxW = Config.CURRENT_STREAM_MAX_WIDTH.get();
+            double minS = Config.CURRENT_STREAM_MIN_STRENGTH.get(), maxS = Config.CURRENT_STREAM_MAX_STRENGTH.get();
+            // Swapped min/max config values are sorted, as on NeoForge.
             return new Params(Config.CURRENT_STREAM_CHANCE.get(), Config.CURRENT_STREAM_CELL.get(),
-                    Config.CURRENT_STREAM_MIN_LENGTH.get(), Config.CURRENT_STREAM_MAX_LENGTH.get(),
-                    Config.CURRENT_STREAM_MIN_WIDTH.get(), Config.CURRENT_STREAM_MAX_WIDTH.get(),
-                    Config.CURRENT_STREAM_MIN_STRENGTH.get(), Config.CURRENT_STREAM_MAX_STRENGTH.get(),
+                    Math.min(minL, maxL), Math.max(minL, maxL), Math.min(minW, maxW), Math.max(minW, maxW),
+                    Math.min(minS, maxS), Math.max(minS, maxS),
                     Config.CURRENT_STREAM_BASE_SPEED.get(), Config.CURRENT_STREAM_MAX_SPEED.get());
         }
 

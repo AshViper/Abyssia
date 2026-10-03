@@ -69,7 +69,7 @@ public class GeneratorBlock extends BaseEntityBlock implements SimpleWaterlogged
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type)
     {
         if (!level.isClientSide) return createTickerHelper(type, ModGenerators.GENERATOR_ENTITY.get(), GeneratorBlockEntity::serverTick);
-        return kind == GeneratorKind.CURRENT_TURBINE ? createTickerHelper(type, ModGenerators.GENERATOR_ENTITY.get(), GeneratorBlockEntity::clientTick) : null;
+        return createTickerHelper(type, ModGenerators.GENERATOR_ENTITY.get(), GeneratorBlockEntity::clientTick);
     }
 
     @Override

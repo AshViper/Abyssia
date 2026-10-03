@@ -790,6 +790,8 @@ def resource_plants():
         density = ([clustered(pl["clustered"])] if "clustered" in pl else [rarity(pl["rarity"])] if "rarity" in pl
                    else [count(pl.get("count", 1))])
         feature("plant_" + p.id, patch(inner, pl["tries"], pl["spread"]), on_floor_depth(p.depth, V, *density))
+        for b, depth, tries in p.extra:   # RS01: sparser placements in further biomes, own tries + depth band
+            feature(f"plant_{p.id}_{b}", patch(inner, tries, pl["spread"]), on_floor_depth(depth, V, *density))
     L = plant_defs.LANDMARKS
     # Abyssal Root Colony: arches of ancient root; resin roots hang from them, knotstalk and amber fans shelter beneath.
     feature("abyssal_root_colony", {"type": A("root_arch"), "config": {
@@ -819,6 +821,9 @@ def add_resource_plants():
             assert b.startswith("cave:") or b in DEEP_BIOMES, (p.id, b)
             if p.place and b in DEEP_BIOMES:
                 wanted.setdefault(b, []).append("plant_" + p.id)
+        for b, _, _ in p.extra:
+            assert b in DEEP_BIOMES, (p.id, b)
+            wanted.setdefault(b, []).append(f"plant_{p.id}_{b}")
         for b in p.biomes:
             env = b[5:] if b.startswith("cave:") else None
             assert env is None or env in CAVE_ENVIRONMENTS or env == "cavern", (p.id, b)
@@ -826,7 +831,8 @@ def add_resource_plants():
         for b in biomes:
             wanted.setdefault(b, []).append(name)
     new = [n for n in ["abyssal_root_colony", "thermal_tube_forest", "deep_bloom_colony"]
-           + ["plant_" + p.id for p in plant_defs.NEW_PLANTS if p.place] if n not in VEG_ORDER]
+           + ["plant_" + p.id for p in plant_defs.NEW_PLANTS if p.place]
+           + [f"plant_{p.id}_{b}" for p in plant_defs.NEW_PLANTS for b, _, _ in p.extra] if n not in VEG_ORDER]
     i = VEG_ORDER.index("floating_blooms")
     VEG_ORDER[i:i] = new
     if "ancient_trees" not in VEG_ORDER:
@@ -869,13 +875,19 @@ def blocks(items):
     return weighted([(state(n), w) for n, w in items])
 
 
-def pl(name, lo=1, hi=1):
+def pl(name, lo=1, hi=1, max_y=None):
     e = {"state": state(name)}
     if lo != 1:
         e["min_height"] = lo
     if hi != 1:
         e["max_height"] = max(lo, hi)
+    if max_y is not None:   # placed only at or below this world Y (CaveEnvironment.PlantEntry max_y)
+        e["max_y"] = max_y
     return e
+
+
+# RS01: resin roots in thermal caves only below this Y (~3500 m, the abyssal zone; DepthZone: Y -80 ~1090 m, Y -300 ~5260 m)
+RESIN_ROOT_THERMAL_MAX_Y = -176
 
 
 def plants(items):
@@ -901,7 +913,7 @@ CAVE_ENVIRONMENTS = {
         [("wet_cave_rock", 3), ("dark_cave_rock", 2)],
         [("cave_mineral_crust", 3), ("layered_cave_rock", 2)], 0.08,
         flora=dict(floor=[(("cave_grass", 1, 3), 5), ("cave_fern", 3), (("cave_tube_plant", 2, 5), 2), ("cave_sponge", 1), ("cave_coral", 1),
-                          ("seafloor_pebbles", 1)],
+                          ("seafloor_pebbles", 1), ("amber_fan", 1)],
                    wall=[("wall_fern", 3), ("wall_mineral_vine", 1)],
                    ceiling=[(("cave_root", 1, 4), 3), (("cave_vine", 2, 6), 2), (("hanging_kelp", 2, 7), 1), (("resin_root", 1, 4), 1)],
                    glow=[("cave_crystal_plant", 2), ("glowtip_grass", 1), ("abyssal_mushroom", 1), (("cave_vine", 2, 5), 1), ("lumen_quill", 1)],
@@ -917,7 +929,8 @@ CAVE_ENVIRONMENTS = {
         [("crystal_cave_rock", 2), ("cave_mineral_crust", 1)], 0.08,
         flora=dict(floor=[(("cave_grass", 1, 3), 4), ("cave_fern", 2), (("teal_abyssal_grass", 1, 2), 2), (("cave_tube_plant", 2, 5), 2), ("cave_coral", 1)],
                    wall=[("wall_fern", 3)],
-                   ceiling=[(("cave_vine", 2, 7), 3), (("cave_root", 1, 3), 1), (("hanging_kelp", 2, 6), 1), ("luminous_moss", 1)],
+                   ceiling=[(("cave_vine", 2, 7), 6), (("cave_root", 1, 3), 2), (("hanging_kelp", 2, 6), 2), ("luminous_moss", 2),
+                            (("resin_root", 1, 3), 1)],   # RS01: rare resin roots
                    glow=[("cave_crystal_plant", 3), ("glowtip_grass", 2), ("abyssal_mushroom", 2), ("glow_anemone", 1), (("cave_vine", 3, 8), 2),
                          ("lumen_quill", 2)],
                    bright=[("cave_bloom", 3), (("abyssal_vine", 4, 10), 2), ("abyssal_bloom", 1)],
@@ -932,7 +945,7 @@ CAVE_ENVIRONMENTS = {
         [("sulfur_deposit", 3), ("cave_mineral_crust", 2), ("sulfur_vent_rock", 1)], 0.12,
         flora=dict(floor=[(("thermal_tube", 1, 4), 3), ("vent_grass", 3), ("heat_moss", 2), (("ashen_abyssal_grass", 1, 2), 1)],
                    wall=[("wall_mineral_vine", 3)],
-                   ceiling=[(("cave_root", 1, 3), 1)],
+                   ceiling=[(("cave_root", 1, 3), 6), (("resin_root", 1, 4, RESIN_ROOT_THERMAL_MAX_Y), 1)],   # RS01: deep thermal caves only
                    glow=[("thermal_plant", 3)],
                    density=0.3, glow_ratio=0.18, bright_ratio=0.0),
         speleothem="thermal_stalactite", speleothem_density=0.1,
@@ -960,7 +973,7 @@ CAVE_ENVIRONMENTS = {
         [("cave_mineral_crust", 4), ("iron_crust", 1), ("copper_crust", 1), ("manganese_crust", 1)], 0.18,
         flora=dict(floor=[(("cave_grass", 1, 2), 2), ("cave_fern", 1), ("seafloor_pebbles", 1)],
                    wall=[("wall_mineral_vine", 3), ("wall_fern", 1)],
-                   ceiling=[(("cave_root", 1, 3), 2)],
+                   ceiling=[(("cave_root", 1, 3), 6), (("resin_root", 1, 4), 1)],   # RS01: uncommon resin roots
                    glow=[("cave_crystal_plant", 1)],
                    density=0.15, glow_ratio=0.08, bright_ratio=0.0),
         speleothem="mineral_stalactite", speleothem_density=0.08,

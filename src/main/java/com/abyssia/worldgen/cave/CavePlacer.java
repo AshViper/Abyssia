@@ -34,6 +34,7 @@ final class CavePlacer
      */
     static boolean plant(CaveChunk ctx, int lx, int y, int lz, CaveEnvironment.PlantEntry entry, Direction support, double roll, int heightCap)
     {
+        if (y > entry.maxY()) return false;
         BlockState state = entry.state();
         Block block = state.getBlock();
         boolean water = ctx.water(lx, y, lz);

@@ -77,8 +77,8 @@ public final class ClientConfig
     }
 
     public static final ForgeConfigSpec.IntValue CURRENT_STREAM_RENDER_DISTANCE = BUILDER
-            .comment("Draw current stream streaks up to this many blocks from you")
-            .defineInRange("max_render_distance", 96, 16, 160);
+            .comment("Draw stream streaks up to this many blocks from you (near 0-32, mid 32-64, far 64-96; 0 = none)")
+            .defineInRange("max_render_distance", 96, 0, 160);
     public static final ForgeConfigSpec.IntValue CURRENT_STREAM_PARTICLE_BUDGET = BUILDER
             .comment("Most current stream streaks alive at once (nearest streams first)")
             .defineInRange("particle_budget", 600, 0, 4000);

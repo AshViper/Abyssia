@@ -958,8 +958,8 @@ ITEM_NAMES["oil_sac.source"] = ("Right-click or break a ripe Oil Kelp node. Oil 
                                 "熟した生体油昆布の節を右クリックまたは破壊で手に入る。Y-64〜-250の海底に自生し、種から栽培もできる。")
 ITEM_NAMES["oil_kelp_seed.source"] = ("5% from breaking Oil Kelp. Plant it on the underwater seabed.",
                                       "生体油昆布を壊すと5%の確率で落ちる。水中の海底に植える。")
-BLOCK_LANG_EXTRA["hydro_planter.source"] = ("Needs no water or power. Four plots: right-click a plot with a deep mushroom, pressure gourd or deep kelp seedling to plant it, right-click a ripe plot to harvest (it regrows), sneak-right-click with an empty hand to take the seedling back. Hoppers below take ripe produce.",
-                                 "水も電力も不要。4区画に分かれる。区画を深海キノコ・プレッシャーゴード・深海昆布の苗で右クリックして植え、熟した区画を右クリックで収穫 (苗は残って再び育つ)。素手でスニーク右クリックすると苗を回収。下のホッパーで熟した収穫物を取り出せる。")
+BLOCK_LANG_EXTRA["hydro_planter.source"] = ("Needs no water or power. Four plots: right-click a plot with a deep mushroom, pressure gourd, deep kelp, amber fan or any edible plant (carrot, potato, berries, fruit...) to plant it (an amber fan yields sea resin, other food plants yield more of themselves); every plot is fully grown in 3 minutes. Right-click a ripe plot to harvest (it regrows), sneak-right-click with an empty hand to take the seedling back. Hoppers below take ripe produce.",
+                                 "水も電力も不要。4区画に分かれる。区画を深海キノコ・プレッシャーゴード・深海昆布の苗・アンバーファン、または食べられる植物 (ニンジン・ジャガイモ・ベリー・果物など) で右クリックして植え (アンバーファンからは海樹脂、その他の食用植物からは同じ作物が採れる)、どの区画も3分で育ち切る。熟した区画を右クリックで収穫 (苗は残って再び育つ)。素手でスニーク右クリックすると苗を回収。下のホッパーで熟した収穫物を取り出せる。")
 ITEM_NAMES.update(plant_assets.ITEM_NAMES)
 # Material processing system (tools/material_spec.json via material_system.py)
 ITEM_NAMES.update(material_system.item_names())
