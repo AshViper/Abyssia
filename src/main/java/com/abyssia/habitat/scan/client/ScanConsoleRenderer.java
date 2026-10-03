@@ -12,10 +12,9 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import org.joml.Matrix4f;
 
-/** H07 hologram: the scan map at 1/40 scale above the console (slowly turning) and a light beam up into it. */
+/** H07 hologram: the scan map at 1/40 scale (level 0; bigger maps shrink to the same size) above the console (slowly turning) and a light beam up into it. */
 public class ScanConsoleRenderer implements BlockEntityRenderer<ScanConsoleBlockEntity>
 {
-    private static final float SCALE = 1.0f / 40.0f;
     /** map centre above the console block origin */
     private static final float CENTRE_Y = 1.85f;
     private static final float TOP = 14.0f / 16.0f;
@@ -33,7 +32,8 @@ public class ScanConsoleRenderer implements BlockEntityRenderer<ScanConsoleBlock
     {
         if (be.getLevel() == null) return;
         float time = be.getLevel().getGameTime() + partialTick;
-        float bottom = CENTRE_Y + ScanMapRenderer.MIN_Y * SCALE;
+        float scale = ScanMapRenderer.hologramScale(be.upgrade());
+        float bottom = CENTRE_Y + ScanMapRenderer.minY(be.upgrade()) * scale;
 
         // beam from the console top to the map floor
         VertexConsumer quads = buffers.getBuffer(RenderType.debugQuads());
@@ -46,7 +46,7 @@ public class ScanConsoleRenderer implements BlockEntityRenderer<ScanConsoleBlock
         pose.pushPose();
         pose.translate(0.5f, CENTRE_Y, 0.5f);
         pose.mulPose(Axis.YP.rotationDegrees(time * 0.5f));
-        pose.scale(SCALE, SCALE, SCALE);
+        pose.scale(scale, scale, scale);
         ScanMapRenderer.draw(pose, buffers, be, 1.0f);
         pose.popPose();
     }

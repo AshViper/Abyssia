@@ -3,8 +3,8 @@ package com.abyssia.habitat.client;
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.HabitatBuilder;
 import com.abyssia.habitat.HabitatConstructorItem;
-import com.abyssia.habitat.HabitatMode;
-import com.abyssia.habitat.HabitatPlan;
+import com.abyssia.habitat.build.BuildEntry;
+import com.abyssia.habitat.build.BuildPlacement;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
@@ -35,36 +35,59 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import org.joml.Matrix4f;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * H02 hologram while the constructor is in the main hand: the real shell blocks, translucent, tinted by state
- * (cyan = buildable, light blue = snapped to a hatch, red = blocked, yellow = missing materials), plus the connector
- * panels outlined. The mesh is a cached vertex buffer rebuilt only when the plan (mode / position / facing) changes;
- * the tint is the shader colour.
+ * H02 / BT01a hologram while the constructor is in the main hand: the selected entry's ghost blocks
+ * (BuildPlacement.ghost), translucent, tinted by state (cyan = buildable, light blue = snapped, red = blocked,
+ * yellow = missing materials, orange = dismantle preview via {@link #setDismantlePreview}), plus the outline and the
+ * placement's highlight boxes (connector panels). The mesh is a cached vertex buffer rebuilt only when the placement
+ * changes; the tint is the shader colour.
  */
 @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public final class HabitatHologram
 {
     private static final float ALPHA = 0.4f;
-    private static final float[] VALID = {0.35f, 1.0f, 0.95f}, SNAPPED = {0.55f, 0.8f, 1.0f}, INVALID = {1.0f, 0.3f, 0.3f},
-            MISSING = {1.0f, 0.9f, 0.3f};
+    public static final float[] VALID = {0.35f, 1.0f, 0.95f}, SNAPPED = {0.55f, 0.8f, 1.0f}, INVALID = {1.0f, 0.3f, 0.3f},
+            MISSING = {1.0f, 0.9f, 0.3f}, DISMANTLE = {1.0f, 0.55f, 0.15f};
 
-    private static HabitatPlan plan;
+    /** BT01b hook: a box to show in orange instead of the build hologram (null = no dismantle target). */
+    @FunctionalInterface
+    public interface DismantlePreview
+    {
+        @Nullable
+        AABB box(LocalPlayer player, ItemStack stack, float partialTick);
+    }
+
+    @Nullable
+    private static DismantlePreview dismantlePreview;
+
+    @Nullable
+    private static BuildPlacement plan;
     private static float[] tint = VALID;
     private static long planTick = Long.MIN_VALUE;
     private static float planYaw = Float.NaN, planPitch = Float.NaN;
-    private static int planRot = -1;
-    private static HabitatMode planMode;
+    private static int planRot = -1, planDist = -1;
+    private static BuildEntry planEntry;
 
     private static VertexBuffer mesh;
     /** one off-heap byte buffer for the session (a new one per rebuild would leak native memory) */
     private static ByteBufferBuilder bytes;
-    /** plan the mesh was built for (record equality: mode, origin, forward, snapped) */
-    private static HabitatPlan meshPlan;
+    /** entry + placement the mesh was built for (placements are records: value equality) */
+    private static BuildEntry meshEntry;
+    private static BuildPlacement meshPlan;
+    /** the last placement had no ghost blocks (TARGET entries): draw outlines only */
+    private static boolean meshEmpty;
 
     private HabitatHologram() {}
+
+    public static void setDismantlePreview(@Nullable DismantlePreview preview)
+    {
+        dismantlePreview = preview;
+    }
 
     @SubscribeEvent
     public static void onRenderLevelStage(RenderLevelStageEvent event)
@@ -75,54 +98,77 @@ public final class HabitatHologram
         if (player == null || mc.level == null || mc.options.hideGui) return;
         ItemStack stack = HabitatClient.heldConstructor();
         if (stack == null) return;
-        update(mc, player, stack, event.getPartialTick().getGameTimeDeltaPartialTick(false));
-
+        float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
         // 1.21: this stage has no pose stack; the view rotation is in the model-view matrix (RenderSystem's for buffers)
         PoseStack pose = new PoseStack();
         Vec3 cam = event.getCamera().getPosition();
-        drawMesh(pose, event, cam);
 
+        AABB dismantle = dismantlePreview == null ? null : dismantlePreview.box(player, stack, partialTick);
+        if (dismantle != null)
+        {
+            drawLines(mc, pose, cam, dismantle, DISMANTLE, null);
+            return;
+        }
+        update(mc, player, stack, partialTick);
+        if (plan == null) return;
+        drawMesh(pose, event, cam);
+        drawLines(mc, pose, cam, plan.box(), tint, plan);
+    }
+
+    private static void drawLines(Minecraft mc, PoseStack pose, Vec3 cam, AABB box, float[] colour, @Nullable BuildPlacement highlights)
+    {
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
         VertexConsumer lines = buffers.getBuffer(RenderType.lines());
         pose.pushPose();
         pose.translate(-cam.x, -cam.y, -cam.z);
-        LevelRenderer.renderLineBox(pose, lines, plan.box().inflate(0.002), tint[0], tint[1], tint[2], 1.0f);
-        for (AABB panel : plan.connectorPanels())
-            LevelRenderer.renderLineBox(pose, lines, panel.inflate(0.01), SNAPPED[0], SNAPPED[1], SNAPPED[2], 1.0f);
+        LevelRenderer.renderLineBox(pose, lines, box.inflate(0.002), colour[0], colour[1], colour[2], 1.0f);
+        if (highlights != null)
+            for (AABB panel : highlights.highlights())
+                LevelRenderer.renderLineBox(pose, lines, panel.inflate(0.01), SNAPPED[0], SNAPPED[1], SNAPPED[2], 1.0f);
         pose.popPose();
         buffers.endBatch(RenderType.lines());
     }
 
-    /** Re-plans at most once per tick (or when the view / mode / rotation changes); rebuilds the mesh on a new plan. */
+    /** Re-plans at most once per tick (or when the view / entry / rotation / distance changes); rebuilds the mesh on a new placement. */
     private static void update(Minecraft mc, LocalPlayer player, ItemStack stack, float partialTick)
     {
-        HabitatMode mode = HabitatConstructorItem.mode(stack);
+        BuildEntry entry = HabitatConstructorItem.entry(stack);
         int rot = HabitatConstructorItem.rotation(stack, player);
+        int dist = HabitatConstructorItem.distance(stack);
         long tick = mc.level.getGameTime();
-        if (plan == null || mode != planMode || rot != planRot || tick != planTick
+        if (entry != planEntry || rot != planRot || dist != planDist || tick != planTick
                 || player.getYRot() != planYaw || player.getXRot() != planPitch)
         {
-            plan = HabitatPlan.plan(player, mode, rot, partialTick);
-            boolean placeable = plan.check(mc.level, player, stack) == HabitatPlan.Problem.NONE;
-            boolean paid = player.getAbilities().instabuild || HabitatBuilder.missing(player, mode).isEmpty();
-            tint = !placeable ? INVALID : !paid ? MISSING : plan.snapped() ? SNAPPED : VALID;
-            planMode = mode;
+            plan = entry.plan(player, rot, dist, partialTick);
+            if (plan != null)
+            {
+                boolean placeable = entry.check(mc.level, player, plan).ok();
+                boolean paid = player.getAbilities().instabuild || HabitatBuilder.missing(player, entry.cost(mc.level, plan)).isEmpty();
+                tint = !placeable ? INVALID : !paid ? MISSING : plan.snapped() ? SNAPPED : VALID;
+            }
+            planEntry = entry;
             planRot = rot;
+            planDist = dist;
             planTick = tick;
             planYaw = player.getYRot();
             planPitch = player.getXRot();
         }
-        if (!plan.equals(meshPlan)) rebuild(mc, plan);
+        if (plan != null && (entry != meshEntry || !Objects.equals(plan, meshPlan))) rebuild(mc, entry, plan);
     }
 
-    private static void rebuild(Minecraft mc, HabitatPlan target)
+    private static void rebuild(Minecraft mc, BuildEntry entry, BuildPlacement target)
     {
+        Map<BlockPos, BlockState> ghost = target.ghost(mc.level);
+        meshEntry = entry;
+        meshPlan = target;
+        meshEmpty = ghost.isEmpty();
+        if (meshEmpty) return;
         BlockRenderDispatcher blocks = mc.getBlockRenderer();
         if (bytes == null) bytes = new ByteBufferBuilder(DefaultVertexFormat.BLOCK.getVertexSize() * 4 * 6 * 1024);
         BufferBuilder builder = new BufferBuilder(bytes, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
         PoseStack pose = new PoseStack();
         BlockPos origin = target.origin();
-        for (Map.Entry<BlockPos, BlockState> e : HabitatBuilder.shellStates(target, mc.level).entrySet())
+        for (Map.Entry<BlockPos, BlockState> e : ghost.entrySet())
         {
             BlockPos pos = e.getKey();
             pose.pushPose();
@@ -133,12 +179,10 @@ public final class HabitatHologram
         }
         if (mesh == null) mesh = new VertexBuffer(VertexBuffer.Usage.STATIC);
         MeshData data = builder.build();
-        meshPlan = target;
         if (data == null)
         {
-            // nothing to draw (no shell blocks): keep an empty mesh
-            mesh.close();
-            mesh = null;
+            // nothing to draw: draw outlines only
+            meshEmpty = true;
             return;
         }
         mesh.bind();
@@ -148,7 +192,7 @@ public final class HabitatHologram
 
     private static void drawMesh(PoseStack pose, RenderLevelStageEvent event, Vec3 cam)
     {
-        if (mesh == null || meshPlan == null) return;
+        if (mesh == null || meshPlan == null || meshEmpty) return;
         ShaderInstance shader = GameRenderer.getRendertypeTranslucentShader();
         if (shader == null) return;
         BlockPos origin = meshPlan.origin();

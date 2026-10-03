@@ -40,7 +40,7 @@ import java.util.TreeMap;
 
 /**
  * H07 scan console: 20,000 FE buffer (receive only, every face = a cable network consumer), 5,000 FE per scan.
- * A scan walks the cylinder (radius 32, +-24 Y) around the console in loaded chunks only, at most
+ * A scan walks the cylinder (radius 32..96, +-24..48 Y by upgrade level) around the console in loaded chunks only, at most
  * {@link #BLOCKS_PER_TICK} blocks per tick, and keeps the nearest {@link #MAX_HITS} targets plus the coarse terrain.
  * After the first manual scan it rescans every 5 s while a player is within 16 blocks and the energy suffices.
  * Results reach clients through the block entity update tag.
@@ -59,12 +59,11 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
     /** ContainerData: energy lo / hi, progress (0-1000), scanning (0 / 1) */
     public static final int DATA_ENERGY = 0, DATA_PROGRESS = 2, DATA_SCANNING = 3, DATA_COUNT = 4;
 
-    private static final int SIZE_X = ScanData.RADIUS * 2 + 1, SIZE_Y = ScanData.HALF_HEIGHT * 2 + 1;
-    private static final int TOTAL = SIZE_X * SIZE_X * SIZE_Y;
-
     private final IndustryEnergyStorage energy = new IndustryEnergyStorage(CAPACITY, MAX_RECEIVE, 0, this::setChanged);
 
     private ScanData result = ScanData.EMPTY;
+    /** BT01f radar upgrade level 0..3 (ScanData.radius / halfHeight) */
+    private int upgrade;
     /** null = every target */
     @Nullable private ResourceLocation target;
     /** set by the first manual scan: enables the automatic rescans */
@@ -83,7 +82,7 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
             {
                 case DATA_ENERGY -> energy.getEnergyStored() & 0xFFFF;
                 case DATA_ENERGY + 1 -> energy.getEnergyStored() >>> 16;
-                case DATA_PROGRESS -> scan == null ? 0 : (int) (1000L * scan.cursor / TOTAL);
+                case DATA_PROGRESS -> scan == null ? 0 : (int) (1000L * scan.cursor / scan.total);
                 case DATA_SCANNING -> scan == null ? 0 : 1;
                 default -> 0;
             };
@@ -127,6 +126,29 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
         return target;
     }
 
+    public int upgrade()
+    {
+        return upgrade;
+    }
+
+    public int radius()
+    {
+        return ScanData.radius(upgrade);
+    }
+
+    public int halfHeight()
+    {
+        return ScanData.halfHeight(upgrade);
+    }
+
+    /** BT01f (server): sets the upgrade level; a running scan finishes at its old size. */
+    public void setUpgrade(int tier)
+    {
+        upgrade = ScanData.clampTier(tier);
+        setChanged();
+        sync();
+    }
+
     public int version()
     {
         return version;
@@ -149,7 +171,7 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
         if (!(level instanceof ServerLevel) || scan != null || energy.getEnergyStored() < SCAN_COST) return false;
         energy.consume(SCAN_COST);
         active = true;
-        scan = new Scan(target);
+        scan = new Scan(target, upgrade);
         return true;
     }
 
@@ -205,16 +227,25 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
     {
         @Nullable final ResourceLocation filter;
         int cursor;
-        final short[] solid = new short[ScanData.GRID_X * ScanData.GRID_Y * ScanData.GRID_Z];
-        final short[] seen = new short[solid.length];
+        final int tier, radius, halfHeight, sizeX, sizeY, total;
+        final short[] solid;
+        final short[] seen;
         final Map<ResourceLocation, Integer> counts = new TreeMap<>();
         final List<Hit> hits = new ArrayList<>();
         @Nullable LevelChunk chunk;
         int chunkX = Integer.MIN_VALUE, chunkZ = Integer.MIN_VALUE;
 
-        Scan(@Nullable ResourceLocation filter)
+        Scan(@Nullable ResourceLocation filter, int tier)
         {
             this.filter = filter;
+            this.tier = tier;
+            this.radius = ScanData.radius(tier);
+            this.halfHeight = ScanData.halfHeight(tier);
+            this.sizeX = radius * 2 + 1;
+            this.sizeY = halfHeight * 2 + 1;
+            this.total = sizeX * sizeX * sizeY;
+            this.solid = new short[ScanData.gridXZ(tier) * ScanData.gridXZ(tier) * ScanData.gridY(tier)];
+            this.seen = new short[solid.length];
         }
 
         /** true when done */
@@ -222,15 +253,15 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
         {
             int budget = BLOCKS_PER_TICK;
             BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-            while (cursor < TOTAL && budget > 0)
+            while (cursor < total && budget > 0)
             {
-                int dx = cursor / (SIZE_X * SIZE_Y) - ScanData.RADIUS;
-                int rem = cursor % (SIZE_X * SIZE_Y);
-                int dz = rem / SIZE_Y - ScanData.RADIUS;
-                int dy = rem % SIZE_Y - ScanData.HALF_HEIGHT;
-                if (dx * dx + dz * dz > ScanData.RADIUS * ScanData.RADIUS)
+                int dx = cursor / (sizeX * sizeY) - radius;
+                int rem = cursor % (sizeX * sizeY);
+                int dz = rem / sizeY - radius;
+                int dy = rem % sizeY - halfHeight;
+                if (dx * dx + dz * dz > radius * radius)
                 {
-                    cursor += SIZE_Y - (dy + ScanData.HALF_HEIGHT);   // skip the rest of this column
+                    cursor += sizeY - (dy + halfHeight);   // skip the rest of this column
                     continue;
                 }
                 cursor++;
@@ -246,7 +277,7 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
                 }
                 if (chunk == null) continue;
                 BlockState state = chunk.getBlockState(pos);
-                int cell = ScanData.cellIndex(dx, dy, dz);
+                int cell = ScanData.cellIndex(tier, dx, dy, dz);
                 seen[cell]++;
                 if (state.isSolid()) solid[cell]++;
                 if (state.is(Tags.Blocks.ORES) || state.is(SCANNABLE))
@@ -257,7 +288,7 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
                         hits.add(new Hit(dx * dx + dy * dy + dz * dz, ScanData.pack(dx, dy, dz), id));
                 }
             }
-            return cursor >= TOTAL;
+            return cursor >= total;
         }
 
         ScanData build()
@@ -276,7 +307,7 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
             BitSet terrain = new BitSet(solid.length);
             for (int i = 0; i < solid.length; i++)
                 if (seen[i] > 0 && solid[i] * 2 >= seen[i]) terrain.set(i);
-            return new ScanData(palette, countArr, packed, kinds, terrain, true);
+            return new ScanData(palette, countArr, packed, kinds, terrain, true, tier);
         }
     }
 
@@ -292,6 +323,7 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
         tag.put("Scan", result.save());
         if (target != null) tag.putString("Target", target.toString());
         tag.putBoolean("Active", active);
+        tag.putInt("Upgrade", upgrade);
     }
 
     @Override
@@ -302,6 +334,7 @@ public class ScanConsoleBlockEntity extends BlockEntity implements MenuProvider
         result = tag.contains("Scan") ? ScanData.load(tag.getCompound("Scan")) : ScanData.EMPTY;
         target = tag.contains("Target") ? ResourceLocation.tryParse(tag.getString("Target")) : null;
         active = tag.getBoolean("Active");
+        upgrade = ScanData.clampTier(tag.getInt("Upgrade"));
         version++;
     }
 

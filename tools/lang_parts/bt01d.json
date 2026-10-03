@@ -1,0 +1,20 @@
+{
+  "habitat.abyssia.mode.current_turbine": ["Current Turbine", "海流発電機"],
+  "habitat.abyssia.mode.geothermal_generator": ["Geothermal Generator", "地熱発電機"],
+  "habitat.abyssia.mode.biofuel_generator": ["Biofuel Generator", "バイオ燃料発電機"],
+  "habitat.abyssia.generator.detail.current_turbine": ["%s x %s x %s - 120 FE/t x current strength (max 240), against the base wall", "%s x %s x %s - 120 FE/t x 海流強度 (最大 240)、拠点の外壁に接して設置"],
+  "habitat.abyssia.generator.detail.geothermal_generator": ["%s x %s x %s - over a thermal vent touching the base, 0-160 FE/t by vent activity", "%s x %s x %s - 拠点に接する熱水噴出孔の真上、活動度で 0〜160 FE/t"],
+  "habitat.abyssia.generator.detail.biofuel_generator": ["%s x %s x %s - burns bio-oil at 100 FE/t (1 bio-oil = 100,000 FE)", "%s x %s x %s - 生体油を 100 FE/t で燃焼 (生体油 1 個 = 100,000 FE)"],
+  "block.abyssia.current_turbine": ["Current Turbine", "海流発電機"],
+  "block.abyssia.geothermal_generator": ["Geothermal Generator", "地熱発電機"],
+  "block.abyssia.biofuel_generator": ["Biofuel Generator", "バイオ燃料発電機"],
+  "block.abyssia.generator_part": ["Generator Structure", "発電機の構造体"],
+  "message.abyssia.habitat.not_shell": ["Must touch the outer wall of a habitat base.", "拠点の外壁に接する位置に設置してください。"],
+  "message.abyssia.habitat.no_vent": ["Needs an active thermal vent right under the core.", "中心の真下に活動中の熱水噴出孔が必要です。"],
+  "message.abyssia.habitat.generator_built": ["%s built. It feeds the base power directly.", "%s を建設しました。拠点の共有電力へ直接供給します。"],
+  "message.abyssia.generator.output": ["%s: %s FE/t to the base (can make %s FE/t)", "%s: 拠点へ %s FE/t (発電能力 %s FE/t)"],
+  "message.abyssia.generator.disconnected": ["%s: not touching a habitat base - 0 FE/t", "%s: 拠点に接していないため 0 FE/t"],
+  "message.abyssia.generator.current": ["Current strength at the rotor: %s", "ローター位置の海流強度: %s"],
+  "message.abyssia.generator.vent": ["Vent activity multiplier: x%s", "噴出孔の活動倍率: x%s"],
+  "message.abyssia.generator.fuel": ["Fuel: %s FE burning, %s oil in the slot (about %s s left)", "燃料: 燃焼中 %s FE、スロットの油 %s 個 (残り約 %s 秒)"]
+}

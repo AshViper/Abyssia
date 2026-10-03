@@ -1,0 +1,193 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "abyssia:block/gen_frame",
+    "copper": "abyssia:block/gen_copper",
+    "frame": "abyssia:block/gen_frame"
+  },
+  "elements": [
+    {
+      "from": [
+        -16,
+        15,
+        -16
+      ],
+      "to": [
+        -15,
+        16,
+        -4
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            0,
+            4,
+            1,
+            16
+          ],
+          "texture": "#frame"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#frame"
+        },
+        "east": {
+          "uv": [
+            4,
+            0,
+            16,
+            1
+          ],
+          "texture": "#frame"
+        }
+      }
+    },
+    {
+      "from": [
+        -16,
+        16,
+        -16
+      ],
+      "to": [
+        -15,
+        32,
+        -4
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ],
+          "texture": "#frame"
+        },
+        "east": {
+          "uv": [
+            4,
+            0,
+            16,
+            16
+          ],
+          "texture": "#frame"
+        }
+      }
+    },
+    {
+      "from": [
+        -15,
+        20,
+        -16
+      ],
+      "to": [
+        -12,
+        24,
+        -6
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            1,
+            6,
+            4,
+            16
+          ],
+          "texture": "#copper"
+        },
+        "up": {
+          "uv": [
+            1,
+            0,
+            4,
+            10
+          ],
+          "texture": "#copper"
+        },
+        "south": {
+          "uv": [
+            1,
+            8,
+            4,
+            12
+          ],
+          "texture": "#copper"
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            10,
+            12
+          ],
+          "texture": "#copper"
+        },
+        "east": {
+          "uv": [
+            6,
+            8,
+            16,
+            12
+          ],
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        -16,
+        -16,
+        -16
+      ],
+      "to": [
+        -12,
+        -12,
+        -12
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#frame"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": "#frame"
+        },
+        "south": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#frame"
+        },
+        "east": {
+          "uv": [
+            12,
+            12,
+            16,
+            16
+          ],
+          "texture": "#frame"
+        }
+      }
+    }
+  ]
+}

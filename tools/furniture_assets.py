@@ -1,6 +1,6 @@
 """Base furniture (features H04 large locker / H05 wall workbench, spec inbox/specs/H04-base-equipment.md).
 
-Data plus the JSON writers (blockstates, block + item models, loot tables, recipes) and the names / pickaxe list;
+Data plus the JSON writers (blockstates, block + item models, loot tables) and the names / pickaxe list;
 gen_deep_assets.main() calls generate() and merges LANG / pickaxe_blocks().  The Java side is com.abyssia.furniture +
 registry/ModFurniture.  Models come from tools/furniture_models/parts.json (build_models.py binds the texture
 variables per variant).  Textures (textures/block/large_locker_*.png, wall_workbench_*.png) are imported from the
@@ -33,6 +33,10 @@ LANG = {
     f"gui.{MOD}.{WORKBENCH}.charge": ("Charge slot (any FE item)", "充電スロット (FE 対応アイテム)"),
 }
 LANG.update({f"block.{MOD}.{k}": v for k, v in NAMES.items()})
+# BT01h: no crafting recipe any more - built with the habitat constructor (JEI info line)
+_SOURCE = ("Built with the habitat constructor (Equipment tab); no crafting recipe.",
+           "拠点建設装置の「設備」タブで建設する (クラフト不可)。")
+LANG.update({f"block.{MOD}.{k}.source": _SOURCE for k in NAMES})
 
 # model north -> blockstate facing
 FACING_Y = {"north": 0, "east": 90, "south": 180, "west": 270}
@@ -105,24 +109,10 @@ def _loot(write, data_dir):
         "random_sequence": f"{MOD}:blocks/{WORKBENCH}"})
 
 
-def _recipes(write, data_dir):
-    rd = lambda n: os.path.join(data_dir, MOD, "recipes", n + ".json")
-    item = lambda n: {"item": n if ":" in n else f"{MOD}:{n}"}
-
-    def shaped(out, pattern, key):
-        write(rd(out), {"type": "minecraft:crafting_shaped", "category": "misc", "pattern": pattern,
-                        "key": {k: item(v) for k, v in key.items()}, "result": {"item": f"{MOD}:{out}", "count": 1}})
-
-    shaped(LOCKER, ["PPP", "AMA", "PPP"], {"P": "iron_plate", "A": "corrosion_alloy_ingot", "M": "machine_frame"})
-    shaped(WORKBENCH, ["PPP", "IMI", "CKC"], {"P": "iron_plate", "I": "industrial_panel", "M": "machine_frame",
-                                              "C": "conductive_alloy_ingot", "K": "minecraft:crafting_table"})
-
-
 def generate(write, bs, bm, im, data_dir):
     """Writes blockstates, block + item models, loot tables and recipes.  The pickaxe tag entries come from
     gen_deep_assets.tags() via pickaxe_blocks().  Returns the number of block models."""
     models = _models(write, bm, im)
     _blockstates(write, bs)
     _loot(write, data_dir)
-    _recipes(write, data_dir)
     return len(models)

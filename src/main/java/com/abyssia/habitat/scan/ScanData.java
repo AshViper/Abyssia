@@ -17,9 +17,37 @@ import java.util.List;
  */
 public final class ScanData
 {
-    public static final int RADIUS = 32, HALF_HEIGHT = 24, CELL = 4;
-    public static final int GRID_X = 17, GRID_Y = 13, GRID_Z = 17;
-    public static final ScanData EMPTY = new ScanData(List.of(), new int[0], new int[0], new int[0], new BitSet(), false);
+    public static final int CELL = 4;
+    /** BT01f upgrade levels 0..3: horizontal radius / half height */
+    public static final int MAX_TIER = 3;
+    private static final int[] RADII = {32, 48, 64, 96}, HALF_HEIGHTS = {24, 32, 40, 48};
+    public static final ScanData EMPTY = new ScanData(List.of(), new int[0], new int[0], new int[0], new BitSet(), false, 0);
+
+    public static int clampTier(int tier)
+    {
+        return Math.max(0, Math.min(MAX_TIER, tier));
+    }
+
+    public static int radius(int tier)
+    {
+        return RADII[clampTier(tier)];
+    }
+
+    public static int halfHeight(int tier)
+    {
+        return HALF_HEIGHTS[clampTier(tier)];
+    }
+
+    /** terrain cells along x / z (cells of 4 around the block centres, 2 blocks of margin) */
+    public static int gridXZ(int tier)
+    {
+        return Math.floorDiv(radius(tier) * 2 + 2, CELL) + 1;
+    }
+
+    public static int gridY(int tier)
+    {
+        return Math.floorDiv(halfHeight(tier) * 2 + 2, CELL) + 1;
+    }
 
     /** block ids, sorted */
     public final List<ResourceLocation> palette;
@@ -31,9 +59,12 @@ public final class ScanData
     public final int[] kinds;
     public final BitSet terrain;
     public final boolean done;
+    /** upgrade level this result was scanned at (sizes the terrain grid) */
+    public final int tier;
 
-    public ScanData(List<ResourceLocation> palette, int[] counts, int[] hits, int[] kinds, BitSet terrain, boolean done)
+    public ScanData(List<ResourceLocation> palette, int[] counts, int[] hits, int[] kinds, BitSet terrain, boolean done, int tier)
     {
+        this.tier = clampTier(tier);
         this.palette = palette;
         this.counts = counts;
         this.hits = hits;
@@ -53,21 +84,24 @@ public final class ScanData
 
     public static int dz(int packed) { return (packed & 0xFF) - 128; }
 
-    public static int cellIndex(int dx, int dy, int dz)
+    public static int cellIndex(int tier, int dx, int dy, int dz)
     {
-        int cx = Math.floorDiv(dx + RADIUS + 2, CELL), cy = Math.floorDiv(dy + HALF_HEIGHT + 2, CELL), cz = Math.floorDiv(dz + RADIUS + 2, CELL);
-        return cell(cx, cy, cz);
+        int r = radius(tier);
+        int cx = Math.floorDiv(dx + r + 2, CELL), cy = Math.floorDiv(dy + halfHeight(tier) + 2, CELL), cz = Math.floorDiv(dz + r + 2, CELL);
+        return cell(tier, cx, cy, cz);
     }
 
-    public static int cell(int cx, int cy, int cz)
+    public static int cell(int tier, int cx, int cy, int cz)
     {
-        return (cy * GRID_Z + cz) * GRID_X + cx;
+        int gx = gridXZ(tier);
+        return (cy * gx + cz) * gx + cx;
     }
 
     public boolean solid(int cx, int cy, int cz)
     {
-        if (cx < 0 || cy < 0 || cz < 0 || cx >= GRID_X || cy >= GRID_Y || cz >= GRID_Z) return false;
-        return terrain.get(cell(cx, cy, cz));
+        int gx = gridXZ(tier);
+        if (cx < 0 || cy < 0 || cz < 0 || cx >= gx || cy >= gridY(tier) || cz >= gx) return false;
+        return terrain.get(cell(tier, cx, cy, cz));
     }
 
     public int total()
@@ -88,6 +122,7 @@ public final class ScanData
         tag.putIntArray("Kinds", kinds);
         tag.putLongArray("Terrain", terrain.toLongArray());
         tag.putBoolean("Done", done);
+        tag.putInt("Tier", tier);
         return tag;
     }
 
@@ -102,6 +137,6 @@ public final class ScanData
         int[] hits = tag.getIntArray("Hits"), kinds = tag.getIntArray("Kinds");
         if (kinds.length != hits.length) kinds = new int[hits.length];
         return new ScanData(palette, tag.getIntArray("Counts"), hits, kinds, BitSet.valueOf(tag.getLongArray("Terrain")),
-                tag.getBoolean("Done"));
+                tag.getBoolean("Done"), tag.getInt("Tier"));
     }
 }

@@ -1,0 +1,200 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "abyssia:block/gen_frame",
+    "burner": "abyssia:block/bio_burner",
+    "glow": "abyssia:block/gen_glow"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        -10,
+        30
+      ],
+      "to": [
+        14,
+        0,
+        31
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            2,
+            1,
+            14,
+            2
+          ],
+          "texture": "#burner"
+        },
+        "up": {
+          "uv": [
+            2,
+            14,
+            14,
+            15
+          ],
+          "texture": "#burner"
+        },
+        "north": {
+          "uv": [
+            2,
+            0,
+            14,
+            10
+          ],
+          "texture": "#burner"
+        },
+        "south": {
+          "uv": [
+            2,
+            0,
+            14,
+            10
+          ],
+          "texture": "#burner"
+        },
+        "west": {
+          "uv": [
+            14,
+            0,
+            15,
+            10
+          ],
+          "texture": "#burner"
+        },
+        "east": {
+          "uv": [
+            1,
+            0,
+            2,
+            10
+          ],
+          "texture": "#burner"
+        }
+      },
+      "shade": false
+    },
+    {
+      "from": [
+        -15,
+        4,
+        10
+      ],
+      "to": [
+        -14,
+        14,
+        16
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            1,
+            0,
+            2,
+            6
+          ],
+          "texture": "#glow"
+        },
+        "up": {
+          "uv": [
+            1,
+            10,
+            2,
+            16
+          ],
+          "texture": "#glow"
+        },
+        "north": {
+          "uv": [
+            14,
+            2,
+            15,
+            12
+          ],
+          "texture": "#glow"
+        },
+        "west": {
+          "uv": [
+            10,
+            2,
+            16,
+            12
+          ],
+          "texture": "#glow"
+        },
+        "east": {
+          "uv": [
+            0,
+            2,
+            6,
+            12
+          ],
+          "texture": "#glow"
+        }
+      },
+      "shade": false
+    },
+    {
+      "from": [
+        -15,
+        4,
+        16
+      ],
+      "to": [
+        -14,
+        14,
+        22
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            1,
+            10,
+            2,
+            16
+          ],
+          "texture": "#glow"
+        },
+        "up": {
+          "uv": [
+            1,
+            0,
+            2,
+            6
+          ],
+          "texture": "#glow"
+        },
+        "south": {
+          "uv": [
+            1,
+            2,
+            2,
+            12
+          ],
+          "texture": "#glow"
+        },
+        "west": {
+          "uv": [
+            0,
+            2,
+            6,
+            12
+          ],
+          "texture": "#glow"
+        },
+        "east": {
+          "uv": [
+            10,
+            2,
+            16,
+            12
+          ],
+          "texture": "#glow"
+        }
+      },
+      "shade": false
+    }
+  ]
+}

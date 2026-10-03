@@ -123,10 +123,13 @@ public final class HabitatPower
 
     // ---------------------------------------------------------------- registration
 
-    /** Called by the builder when a module is complete: registers its box and joins the bases it opened into. */
-    public static void register(Level level, HabitatPlan plan, List<BlockPos> neighbours)
+    /**
+     * Called by the builder when a module is complete: registers its box and joins the bases it opened into. Returns
+     * the new module id (-1 on the client).
+     */
+    public static int register(Level level, HabitatPlan plan, List<BlockPos> neighbours)
     {
-        if (!(level instanceof ServerLevel server)) return;
+        if (!(level instanceof ServerLevel server)) return -1;
         HabitatBases data = HabitatBases.get(server);
         List<Integer> joined = new ArrayList<>();
         for (BlockPos pos : neighbours)
@@ -141,6 +144,20 @@ public final class HabitatPower
         Map<Integer, Runtime> rts = RUNTIME.get(server);
         if (rts != null) rts.clear();
         CableNetworkManager.markAllDirty(server);
+        return id;
+    }
+
+    /**
+     * BT01b: removes a dismantled module (HabitatBases.remove: edges, union-find rebuilt, FE split by volume), drops the
+     * runtime caches and re-resolves cable endpoints. False when the module was unknown or already removed.
+     */
+    public static boolean remove(ServerLevel level, int moduleId)
+    {
+        if (!HabitatBases.get(level).remove(moduleId)) return false;
+        Map<Integer, Runtime> rts = RUNTIME.get(level);
+        if (rts != null) rts.clear();
+        CableNetworkManager.markAllDirty(level);
+        return true;
     }
 
     // ---------------------------------------------------------------- cable input

@@ -38,6 +38,8 @@ public class Abyssia
         ModIndustry.register(modEventBus);
         ModHabitat.register(modEventBus);
         ModFurniture.register(modEventBus);
+        // BT01 constructor build menu entries (sub-specs add theirs in BuildContent)
+        com.abyssia.habitat.build.BuildContent.register(modEventBus);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
         ModSounds.register(modEventBus);

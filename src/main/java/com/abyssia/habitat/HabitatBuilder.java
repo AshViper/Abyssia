@@ -3,6 +3,15 @@ package com.abyssia.habitat;
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.HabitatLayout.Part;
 import com.abyssia.habitat.HabitatMode.Face;
+import com.abyssia.habitat.build.BuildCheck;
+import com.abyssia.habitat.build.BuildEntry;
+import com.abyssia.habitat.build.BuildLayout;
+import com.abyssia.habitat.build.BuildPlacement;
+import com.abyssia.habitat.build.BuildRegistry;
+import com.abyssia.habitat.build.BuildStep;
+import com.abyssia.habitat.build.BuiltUnits;
+import com.abyssia.habitat.build.ModuleEntry;
+import com.abyssia.habitat.power.HabitatBases;
 import com.abyssia.habitat.power.HabitatPower;
 import com.abyssia.registry.ModHabitat;
 import net.minecraft.core.BlockPos;
@@ -29,6 +38,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -47,8 +58,9 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 /**
- * Server side of the habitat constructor (H02): validation, materials paid up front, a {@link #DURATION}-tick
- * bottom-up assembly, auto-connection, and cancel with full refund (shell reverted to water).
+ * Server side of the habitat constructor (H02, BT01a): validation, materials paid up front, a {@link #DURATION}-tick
+ * bottom-up assembly, auto-connection, and cancel with full refund (shell reverted to water). Runs any BuildEntry;
+ * a finished build is recorded in BuiltUnits.
  */
 @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class HabitatBuilder
@@ -57,7 +69,7 @@ public final class HabitatBuilder
     public static final double CANCEL_DISTANCE = 16.0;
     private static final String MSG = "message." + Abyssia.MODID + ".habitat.";
 
-    public enum Result { STARTED, BUSY, NOT_WATER, ENTITY, PERMISSION, MISSING }
+    public enum Result { STARTED, BUSY, NOT_WATER, ENTITY, PERMISSION, MISSING, INVALID }
 
     private static final Map<UUID, Job> JOBS = new HashMap<>();
 
@@ -65,49 +77,79 @@ public final class HabitatBuilder
 
     // ---------------------------------------------------------------- entry points
 
-    /**
-     * Plans from the player's aim with this mode / rotation, checks it, takes the materials (not in creative) and
-     * starts the assembly. Sends the action-bar message. Usable without a client (test harness).
-     */
+    /** H02 entry point (test harness): this module at the constructor's distance (default when not holding one). */
     public static Result startBuild(ServerPlayer player, HabitatMode mode, int rot)
+    {
+        ItemStack held = player.getMainHandItem();
+        int distance = held.getItem() instanceof HabitatConstructorItem ? HabitatConstructorItem.distance(held) : HabitatPlan.DEFAULT_DISTANCE;
+        return startBuild(player, BuildRegistry.getOrDefault(mode.id), rot, distance);
+    }
+
+    /**
+     * Plans the entry from the player's aim (distance clamped 3..12), checks it, takes the materials (not in creative)
+     * and starts the timed assembly. Sends the action-bar message. Usable without a client (test harness).
+     */
+    public static Result startBuild(ServerPlayer player, BuildEntry entry, int rot, int distance)
     {
         if (JOBS.containsKey(player.getUUID()))
         {
             message(player, Component.translatable(MSG + "busy"));
             return Result.BUSY;
         }
-        HabitatPlan plan = HabitatPlan.plan(player, mode, rot, 1.0f);
-        HabitatPlan.Problem problem = plan.check(player.level(), player, player.getMainHandItem());
-        if (problem != HabitatPlan.Problem.NONE)
+        BuildPlacement placement = entry.plan(player, Math.floorMod(rot, 4), HabitatPlan.clampDistance(distance), 1.0f);
+        BuildCheck check = placement == null ? BuildCheck.NO_TARGET : entry.check(player.level(), player, placement);
+        if (!check.ok())
         {
-            message(player, Component.translatable(MSG + problem.name().toLowerCase()));
-            return Result.valueOf(problem.name());
+            message(player, check.message());
+            return result(check);
         }
         boolean free = player.getAbilities().instabuild;
-        List<HabitatMode.Cost> missing = free ? List.of() : missing(player, mode);
+        List<ItemStack> cost = entry.cost(player.level(), placement);
+        List<ItemStack> missing = free ? List.of() : missing(player, cost);
         if (!missing.isEmpty())
         {
             MutableComponent list = Component.empty();
             for (int i = 0; i < missing.size(); i++)
             {
                 if (i > 0) list.append(", ");
-                list.append(missing.get(i).count() + "x ").append(missing.get(i).item().get().getDescription());
+                list.append(missing.get(i).getCount() + "x ").append(missing.get(i).getHoverName());
             }
             message(player, Component.translatable(MSG + "missing", list));
             return Result.MISSING;
         }
-        List<ItemStack> paid = free ? List.of() : consume(player, mode);
+        List<ItemStack> paid = free ? List.of() : consume(player, cost);
         boolean holding = player.getMainHandItem().getItem() instanceof HabitatConstructorItem;
-        JOBS.put(player.getUUID(), new Job(player.getUUID(), player.serverLevel(), plan, paid, holding));
-        message(player, Component.translatable(MSG + "started", mode.displayName()));
+        BuildLayout layout = entry.layout(player.serverLevel(), placement);
+        JOBS.put(player.getUUID(), new Job(player.getUUID(), player.serverLevel(), entry, placement, layout, paid, holding));
+        message(player, Component.translatable(MSG + (isDismantle(entry) ? "started_dismantle" : "started"), entry.displayName()));
         return Result.STARTED;
     }
 
-    /** The plan being assembled for this player, if any. */
+    /** BT01h: the dismantle tool returns nothing at cancel and is not a "build" in the messages */
+    private static boolean isDismantle(BuildEntry entry)
+    {
+        return entry instanceof com.abyssia.habitat.dismantle.DismantleEntry;
+    }
+
+    private static Result result(BuildCheck check)
+    {
+        for (Result r : Result.values())
+            if (r.name().equalsIgnoreCase(check.problem())) return r;
+        return Result.INVALID;
+    }
+
+    /** The placement being assembled for this player, if any. */
+    public static Optional<BuildPlacement> activePlacement(UUID player)
+    {
+        Job job = JOBS.get(player);
+        return job == null ? Optional.empty() : Optional.of(job.placement);
+    }
+
+    /** The module plan being assembled for this player, if any (empty for other entries). */
     public static Optional<HabitatPlan> activeBuild(UUID player)
     {
         Job job = JOBS.get(player);
-        return job == null ? Optional.empty() : Optional.of(job.plan);
+        return job != null && job.placement instanceof ModuleEntry.Placement p ? Optional.of(p.plan()) : Optional.empty();
     }
 
     public static boolean isBuilding(UUID player)
@@ -165,38 +207,55 @@ public final class HabitatBuilder
         return player.getInventory().clearOrCountMatchingItems(s -> s.is(item), 0, player.inventoryMenu.getCraftSlots());
     }
 
-    /** Costs not covered by the inventory, with the missing amount. */
-    public static List<HabitatMode.Cost> missing(Player player, HabitatMode mode)
+    /** Costs not covered by the inventory, with the missing amount (matched by item; same items summed). */
+    public static List<ItemStack> missing(Player player, List<ItemStack> cost)
     {
-        List<HabitatMode.Cost> out = new ArrayList<>();
-        for (HabitatMode.Cost cost : mode.cost)
+        List<ItemStack> out = new ArrayList<>();
+        for (ItemStack need : merge(cost))
         {
-            Item item = cost.item().get();
-            int have = count(player, item);
-            if (have < cost.count()) out.add(new HabitatMode.Cost(cost.item(), cost.count() - have));
+            int have = count(player, need.getItem());
+            if (have < need.getCount()) out.add(new ItemStack(need.getItem(), need.getCount() - have));
         }
         return out;
     }
 
-    private static List<ItemStack> consume(Player player, HabitatMode mode)
+    private static List<ItemStack> consume(Player player, List<ItemStack> cost)
     {
         List<ItemStack> paid = new ArrayList<>();
-        for (HabitatMode.Cost cost : mode.cost)
+        for (ItemStack need : merge(cost))
         {
-            Item item = cost.item().get();
-            int taken = player.getInventory().clearOrCountMatchingItems(s -> s.is(item), cost.count(), player.inventoryMenu.getCraftSlots());
+            Item item = need.getItem();
+            int taken = player.getInventory().clearOrCountMatchingItems(s -> s.is(item), need.getCount(), player.inventoryMenu.getCraftSlots());
             if (taken > 0) paid.add(new ItemStack(item, taken));
         }
         player.inventoryMenu.broadcastChanges();
         return paid;
     }
 
+    /** one stack per item, counts summed (order kept) */
+    private static List<ItemStack> merge(List<ItemStack> cost)
+    {
+        Map<Item, Integer> sum = new java.util.LinkedHashMap<>();
+        for (ItemStack stack : cost)
+            if (!stack.isEmpty()) sum.merge(stack.getItem(), stack.getCount(), Integer::sum);
+        List<ItemStack> out = new ArrayList<>();
+        for (Map.Entry<Item, Integer> e : sum.entrySet()) out.add(new ItemStack(e.getKey(), e.getValue()));
+        return out;
+    }
+
     // ---------------------------------------------------------------- layout to block states
 
-    private record Step(BlockPos pos, BlockState state, BlockState upper) {}
+    /** The H01 module's timed build: shell steps bottom-up, interior air, kept water (BT01a ModuleEntry). */
+    public static BuildLayout moduleLayout(HabitatPlan plan)
+    {
+        List<BuildStep> shell = new ArrayList<>();
+        List<BlockPos> air = new ArrayList<>(), water = new ArrayList<>();
+        layout(plan, shell, air, water);
+        return new BuildLayout(shell, air, water);
+    }
 
     /** Shell blocks bottom-up (doors as one step with their upper half), interior air, kept water. */
-    private static void layout(HabitatPlan plan, List<Step> shell, List<BlockPos> air, List<BlockPos> water)
+    private static void layout(HabitatPlan plan, List<BuildStep> shell, List<BlockPos> air, List<BlockPos> water)
     {
         HabitatMode mode = plan.mode();
         int hw = HabitatLayout.halfWidth(mode);
@@ -212,22 +271,22 @@ public final class HabitatBuilder
                         case KEEP, DOOR_UPPER -> {}
                         case AIR -> air.add(pos);
                         case WATER -> water.add(pos);
-                        case DOOR_LOWER -> shell.add(new Step(pos, door(out, DoubleBlockHalf.LOWER), door(out, DoubleBlockHalf.UPPER)));
-                        default -> shell.add(new Step(pos, stateFor(part, out), null));
+                        case DOOR_LOWER -> shell.add(new BuildStep(pos, door(out, DoubleBlockHalf.LOWER), door(out, DoubleBlockHalf.UPPER)));
+                        default -> shell.add(new BuildStep(pos, stateFor(part, out), null));
                     }
                 }
         // connected-texture blocks (window + hull blocks): connection booleans from the other steps of the same block
         java.util.Map<BlockPos, net.minecraft.world.level.block.Block> linked = new java.util.HashMap<>();
-        for (Step step : shell)
-            if (step.state.hasProperty(PipeBlock.NORTH) && step.state.hasProperty(PipeBlock.DOWN)
-                    && (step.state.is(ModHabitat.WINDOW.get()) || step.state.getBlock() instanceof HabitatConnectedBlock))
-                linked.put(step.pos, step.state.getBlock());
+        for (BuildStep step : shell)
+            if (step.state().hasProperty(PipeBlock.NORTH) && step.state().hasProperty(PipeBlock.DOWN)
+                    && (step.state().is(ModHabitat.WINDOW.get()) || step.state().getBlock() instanceof HabitatConnectedBlock))
+                linked.put(step.pos(), step.state().getBlock());
         for (int i = 0; i < shell.size(); i++)
         {
-            Step step = shell.get(i);
-            net.minecraft.world.level.block.Block block = linked.get(step.pos);
+            BuildStep step = shell.get(i);
+            net.minecraft.world.level.block.Block block = linked.get(step.pos());
             if (block != null)
-                shell.set(i, new Step(step.pos, connectWindow(step.state, d -> linked.get(step.pos.relative(d)) == block), null));
+                shell.set(i, new BuildStep(step.pos(), connectWindow(step.state(), d -> linked.get(step.pos().relative(d)) == block), null));
         }
     }
 
@@ -378,13 +437,13 @@ public final class HabitatBuilder
     /** Every block state of the finished shell (for the client hologram). */
     public static Map<BlockPos, BlockState> shellStates(HabitatPlan plan)
     {
-        List<Step> shell = new ArrayList<>();
+        List<BuildStep> shell = new ArrayList<>();
         layout(plan, shell, new ArrayList<>(), new ArrayList<>());
         Map<BlockPos, BlockState> out = new HashMap<>();
-        for (Step step : shell)
+        for (BuildStep step : shell)
         {
-            out.put(step.pos, step.state);
-            if (step.upper != null) out.put(step.pos.above(), step.upper);
+            out.put(step.pos(), step.state());
+            if (step.upper() != null) out.put(step.pos().above(), step.upper());
         }
         return out;
     }
@@ -576,31 +635,78 @@ public final class HabitatBuilder
                 || state.is(ModHabitat.DOOR_FRAME.get()) || state.is(ModHabitat.HATCH.get());
     }
 
+    // ---------------------------------------------------------------- module completion
+
+    /**
+     * Finishes an H01 module after its last tick (BT01a ModuleEntry.complete): connect hatches / walls, register with
+     * HabitatPower, legs. Returns the HabitatBases module id it registered and the "built" message.
+     */
+    public static BuildEntry.Completion completeModule(ServerLevel level, HabitatPlan plan)
+    {
+        List<BlockPos> neighbours = new ArrayList<>();
+        int opened = connect(level, plan, neighbours);
+        HabitatPower.register(level, plan, neighbours);
+        // register() appends the new module last (HabitatBases.add)
+        int moduleId = HabitatBases.get(level).lastAdded();
+        for (BlockPos pos : legs(level, plan))
+            if (HabitatPlan.replaceable(level.getBlockState(pos)))
+                level.setBlock(pos, support(level.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER)), Block.UPDATE_ALL);
+        trimNeighbourLegs(level, plan);
+        return new BuildEntry.Completion(moduleId, Component.translatable(MSG + "built", plan.mode().displayName(), opened));
+    }
+
+    private static BoundingBox blockBox(AABB b)
+    {
+        return new BoundingBox((int) Math.floor(b.minX), (int) Math.floor(b.minY), (int) Math.floor(b.minZ),
+                (int) Math.ceil(b.maxX) - 1, (int) Math.ceil(b.maxY) - 1, (int) Math.ceil(b.maxZ) - 1);
+    }
+
     // ---------------------------------------------------------------- a running build
 
     private static final class Job
     {
         final UUID owner;
         final ServerLevel level;
-        final HabitatPlan plan;
+        final BuildEntry entry;
+        final BuildPlacement placement;
         final List<ItemStack> paid;
         final boolean needsItem;
-        final List<Step> shell = new ArrayList<>();
-        final List<BlockPos> air = new ArrayList<>();
-        final List<BlockPos> water = new ArrayList<>();
+        final List<BuildStep> shell;
+        final List<BlockPos> air;
+        final List<BlockPos> water;
         final Vec3 centre;
+        final int duration;
         int placed;
         int ticks;
 
-        Job(UUID owner, ServerLevel level, HabitatPlan plan, List<ItemStack> paid, boolean needsItem)
+        Job(UUID owner, ServerLevel level, BuildEntry entry, BuildPlacement placement, BuildLayout layout, List<ItemStack> paid, boolean needsItem)
         {
             this.owner = owner;
             this.level = level;
-            this.plan = plan;
+            this.entry = entry;
+            this.placement = placement;
             this.paid = paid;
             this.needsItem = needsItem;
-            this.centre = plan.box().getCenter();
-            layout(plan, shell, air, water);
+            this.centre = placement.box().getCenter();
+            this.shell = new ArrayList<>(layout.steps());
+            this.air = new ArrayList<>(layout.air());
+            this.water = new ArrayList<>(layout.water());
+            this.duration = Math.max(1, entry.duration());
+            // BT01b: a dismantle opens the shell step by step, so the room floods during the job; remember its dry cells
+            this.dry = new ArrayList<>();
+            if (isDismantle(entry))
+                for (BlockPos pos : water)
+                    if (level.getBlockState(pos).isAir()) dry.add(pos);
+        }
+
+        /** cells of {@link #water} that were air when a dismantle started (dried again on cancel) */
+        final List<BlockPos> dry;
+
+        /** the cell still holds what the step expects to replace */
+        private boolean untouched(BlockPos pos, BuildStep step)
+        {
+            BlockState now = level.getBlockState(pos);
+            return step.revert() == null ? HabitatPlan.replaceable(now) : now.is(step.revert().getBlock());
         }
 
         /** null = keep going */
@@ -611,9 +717,9 @@ public final class HabitatBuilder
             if (needsItem && !(player.getMainHandItem().getItem() instanceof HabitatConstructorItem)) return "switched";
             for (int i = placed; i < shell.size(); i++)
             {
-                Step step = shell.get(i);
-                if (!HabitatPlan.replaceable(level.getBlockState(step.pos))) return "blocked";
-                if (step.upper != null && !HabitatPlan.replaceable(level.getBlockState(step.pos.above()))) return "blocked";
+                BuildStep step = shell.get(i);
+                if (!untouched(step.pos(), step)) return "blocked";
+                if (step.upper() != null && !untouched(step.pos().above(), step)) return "blocked";
             }
             for (BlockPos pos : air)
                 if (!HabitatPlan.replaceable(level.getBlockState(pos))) return "blocked";
@@ -624,38 +730,34 @@ public final class HabitatBuilder
         boolean tick(ServerPlayer player)
         {
             ticks++;
-            int target = (int) Math.ceil(shell.size() * (double) ticks / DURATION);
+            int target = (int) Math.ceil(shell.size() * (double) ticks / duration);
             int from = placed;
             for (; placed < Math.min(target, shell.size()); placed++)
             {
-                Step step = shell.get(placed);
-                level.setBlock(step.pos, step.state, Block.UPDATE_ALL);
-                if (step.upper != null) level.setBlock(step.pos.above(), step.upper, Block.UPDATE_ALL);
+                BuildStep step = shell.get(placed);
+                level.setBlock(step.pos(), step.state(), Block.UPDATE_ALL);
+                if (step.upper() != null) level.setBlock(step.pos().above(), step.upper(), Block.UPDATE_ALL);
             }
             effects(from);
-            if (ticks < DURATION) return false;
+            if (ticks < duration) return false;
 
             for (BlockPos pos : air) level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             for (BlockPos pos : water)
                 if (!level.getFluidState(pos).isSource()) level.setBlock(pos, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
-            List<BlockPos> neighbours = new ArrayList<>();
-            int opened = connect(level, plan, neighbours);
-            HabitatPower.register(level, plan, neighbours);
-            for (BlockPos pos : legs(level, plan))
-                if (HabitatPlan.replaceable(level.getBlockState(pos)))
-                    level.setBlock(pos, support(level.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER)), Block.UPDATE_ALL);
-            trimNeighbourLegs(level, plan);
+            BuildEntry.Completion done = entry.complete(level, player, placement);
+            if (entry.recordsUnit())
+                BuiltUnits.get(level).add(entry.id(), placement.origin(), placement.rot(), blockBox(placement.box()), paid, done.moduleId());
             BlockPos at = BlockPos.containing(centre);
             level.playSound(null, at, SoundType.METAL.getPlaceSound(), SoundSource.BLOCKS, 1.0f, 0.8f);
             level.playSound(null, at, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 0.3f, 1.4f);
-            message(player, Component.translatable(MSG + "built", plan.mode().displayName(), opened));
+            message(player, done.message() != null ? done.message() : Component.translatable(MSG + "built", entry.displayName(), 0));
             return true;
         }
 
         private void effects(int from)
         {
             if (placed == from) return;
-            BlockPos at = shell.get(placed - 1).pos;
+            BlockPos at = shell.get(placed - 1).pos();
             if (ticks % 2 == 0)
                 level.playSound(null, at, SoundType.METAL.getPlaceSound(), SoundSource.BLOCKS, 0.6f, 0.8f + level.random.nextFloat() * 0.4f);
             if (ticks % 5 == 0)
@@ -663,20 +765,27 @@ public final class HabitatBuilder
             int step = Math.max(1, (placed - from) / 6);
             for (int i = from; i < placed; i += step)
             {
-                Vec3 p = Vec3.atCenterOf(shell.get(i).pos);
+                Vec3 p = Vec3.atCenterOf(shell.get(i).pos());
                 level.sendParticles(ParticleTypes.END_ROD, p.x, p.y, p.z, 1, 0.3, 0.3, 0.3, 0.01);
                 level.sendParticles(ParticleTypes.GLOW, p.x, p.y, p.z, 1, 0.3, 0.3, 0.3, 0.01);
             }
         }
 
-        /** Shell placed so far back to water, materials back to the player (dropped when full / gone). */
+        /** Blocks placed so far back to what they were (water by default), materials back to the player (dropped when full / gone). */
         void cancel(Player player, String reason)
         {
             for (int i = placed - 1; i >= 0; i--)
             {
-                Step step = shell.get(i);
-                if (step.upper != null) revert(step.pos.above(), step.upper);
-                revert(step.pos, step.state);
+                BuildStep step = shell.get(i);
+                if (step.upper() != null) revert(step.pos().above(), step.upper(), upperHalf(step.revert()));
+                revert(step.pos(), step.state(), step.revert());
+            }
+            // the shell is whole again: water that flowed into the room during the dismantle is drained
+            for (BlockPos pos : dry)
+            {
+                BlockState now = level.getBlockState(pos);
+                if (!now.getFluidState().isEmpty() && (now.getBlock() instanceof net.minecraft.world.level.block.LiquidBlock || now.is(Blocks.BUBBLE_COLUMN)))
+                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
             for (ItemStack stack : paid)
             {
@@ -690,14 +799,27 @@ public final class HabitatBuilder
             if (player != null)
             {
                 player.inventoryMenu.broadcastChanges();
-                message(player, Component.translatable(MSG + "cancelled", Component.translatable(MSG + "cancel." + reason)));
+                String key = isDismantle(entry) ? "cancelled_dismantle" : paid.isEmpty() ? "cancelled_plain" : "cancelled";
+                message(player, Component.translatable(MSG + key, Component.translatable(MSG + "cancel." + reason)));
             }
         }
 
-        private void revert(BlockPos pos, BlockState ours)
+        /** the revert state for the upper cell of a two-high step: a door's lower half becomes its upper half */
+        private static BlockState upperHalf(BlockState previous)
+        {
+            if (previous != null && previous.getBlock() instanceof DoorBlock && previous.hasProperty(DoorBlock.HALF))
+                return previous.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER);
+            return previous;
+        }
+
+        private void revert(BlockPos pos, BlockState ours, BlockState previous)
         {
             BlockState now = level.getBlockState(pos);
-            if (now.is(ours.getBlock()) || now.isAir()) level.setBlock(pos, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
+            if (previous == null)
+            {
+                if (now.is(ours.getBlock()) || now.isAir()) level.setBlock(pos, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
+            }
+            else if (now.is(ours.getBlock())) level.setBlock(pos, previous, Block.UPDATE_ALL);
         }
     }
 }

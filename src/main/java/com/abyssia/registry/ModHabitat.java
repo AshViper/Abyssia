@@ -74,6 +74,9 @@ public final class ModHabitat
             .registerComponentType("habitat_mode", b -> b.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> HABITAT_ROT = DATA_COMPONENTS
             .registerComponentType("habitat_rot", b -> b.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+    /** BT01a placement distance (3..12) */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> HABITAT_DIST = DATA_COMPONENTS
+            .registerComponentType("habitat_dist", b -> b.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
     public static DeferredItem<Item> CONSTRUCTOR;
 
