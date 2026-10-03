@@ -198,7 +198,7 @@ public final class GeneratedFaunaRenderers
         event.registerEntityRenderer(GeneratedFauna.ALFONSINO.get(), FaunaRenderer.<GenericSwimmer>spec("alfonsino", ALFONSINO,
                         root -> new FaunaModel<>(root, AlfonsinoGeometry.ALFONSINO, Map.ofEntries(Map.entry("idle", AlfonsinoAnimations.IDLE), Map.entry("swim", AlfonsinoAnimations.SWIM), Map.entry("hurt", AlfonsinoAnimations.HURT), Map.entry("death", AlfonsinoAnimations.DEATH), Map.entry("mouth_open", AlfonsinoAnimations.MOUTH_OPEN), Map.entry("mouth_close", AlfonsinoAnimations.MOUTH_CLOSE)),
                                 Set.of(), true))
-                .scale(0.696F, 0.22F).fish()
+                .scale(0.655F, 0.22F).fish()
                 .eyeshine(0.9F, AlfonsinoGeometry.RIGHT_EYE, AlfonsinoGeometry.LEFT_EYE)
                 .provider());
         // Bigfin Squid / ミズヒキイカ
@@ -247,7 +247,7 @@ public final class GeneratedFaunaRenderers
         event.registerEntityRenderer(GeneratedFauna.BLUE_LING.get(), FaunaRenderer.<GenericSwimmer>spec("blue_ling", BLUE_LING,
                         root -> new FaunaModel<>(root, BlueLingGeometry.BLUE_LING, Map.ofEntries(Map.entry("idle", BlueLingAnimations.IDLE), Map.entry("swim", BlueLingAnimations.SWIM), Map.entry("hurt", BlueLingAnimations.HURT), Map.entry("death", BlueLingAnimations.DEATH), Map.entry("mouth_open", BlueLingAnimations.MOUTH_OPEN), Map.entry("mouth_close", BlueLingAnimations.MOUTH_CLOSE)),
                                 Set.of(), true))
-                .scale(0.476F, 0.33F).fish()
+                .scale(0.463F, 0.33F).fish()
                 .eyeshine(0.6F, BlueLingGeometry.RIGHT_EYE, BlueLingGeometry.LEFT_EYE)
                 .provider());
         // Bluntnose Sixgill Shark / カグラザメ
@@ -288,7 +288,7 @@ public final class GeneratedFaunaRenderers
         event.registerEntityRenderer(GeneratedFauna.DEEPWATER_REDFISH.get(), FaunaRenderer.<GenericSwimmer>spec("deepwater_redfish", DEEPWATER_REDFISH,
                         root -> new FaunaModel<>(root, DeepwaterRedfishGeometry.DEEPWATER_REDFISH, Map.ofEntries(Map.entry("idle", DeepwaterRedfishAnimations.IDLE), Map.entry("swim", DeepwaterRedfishAnimations.SWIM), Map.entry("hurt", DeepwaterRedfishAnimations.HURT), Map.entry("death", DeepwaterRedfishAnimations.DEATH), Map.entry("mouth_open", DeepwaterRedfishAnimations.MOUTH_OPEN), Map.entry("mouth_close", DeepwaterRedfishAnimations.MOUTH_CLOSE)),
                                 Set.of(), true))
-                .scale(0.673F, 0.25F).fish()
+                .scale(0.531F, 0.22F).fish()
                 .eyeshine(0.7F, DeepwaterRedfishGeometry.RIGHT_EYE, DeepwaterRedfishGeometry.LEFT_EYE)
                 .provider());
         // Flapjack Octopus / メンダコ
@@ -373,7 +373,7 @@ public final class GeneratedFaunaRenderers
         event.registerEntityRenderer(GeneratedFauna.ORANGE_ROUGHY.get(), FaunaRenderer.<GenericSwimmer>spec("orange_roughy", ORANGE_ROUGHY,
                         root -> new FaunaModel<>(root, OrangeRoughyGeometry.ORANGE_ROUGHY, Map.ofEntries(Map.entry("idle", OrangeRoughyAnimations.IDLE), Map.entry("swim", OrangeRoughyAnimations.SWIM), Map.entry("hurt", OrangeRoughyAnimations.HURT), Map.entry("death", OrangeRoughyAnimations.DEATH), Map.entry("mouth_open", OrangeRoughyAnimations.MOUTH_OPEN), Map.entry("mouth_close", OrangeRoughyAnimations.MOUTH_CLOSE)),
                                 Set.of(), true))
-                .scale(0.889F, 0.3F).fish()
+                .scale(0.929F, 0.3F).fish()
                 .eyeshine(0.7F, OrangeRoughyGeometry.RIGHT_EYE, OrangeRoughyGeometry.LEFT_EYE)
                 .provider());
         // Pacific Sleeper Shark / オンデンザメ
@@ -387,7 +387,7 @@ public final class GeneratedFaunaRenderers
         event.registerEntityRenderer(GeneratedFauna.PATAGONIAN_TOOTHFISH.get(), FaunaRenderer.<GenericSwimmer>spec("patagonian_toothfish", PATAGONIAN_TOOTHFISH,
                         root -> new FaunaModel<>(root, PatagonianToothfishGeometry.PATAGONIAN_TOOTHFISH, Map.ofEntries(Map.entry("idle", PatagonianToothfishAnimations.IDLE), Map.entry("swim", PatagonianToothfishAnimations.SWIM), Map.entry("hurt", PatagonianToothfishAnimations.HURT), Map.entry("death", PatagonianToothfishAnimations.DEATH), Map.entry("mouth_open", PatagonianToothfishAnimations.MOUTH_OPEN), Map.entry("mouth_close", PatagonianToothfishAnimations.MOUTH_CLOSE)),
                                 Set.of(), true))
-                .scale(0.7F, 0.4F).fish()
+                .scale(0.68F, 0.4F).fish()
                 .eyeshine(0.6F, PatagonianToothfishGeometry.RIGHT_EYE, PatagonianToothfishGeometry.LEFT_EYE)
                 .provider());
         // Sablefish / ギンダラ

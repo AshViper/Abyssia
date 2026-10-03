@@ -50,10 +50,8 @@ public final class DeepOceanClientEffects
     private static final float SURFACE_FOG_START = 0.4f;
     private static final float BOUNDARY_FOG_START = 0.12f;
     private static final float ABYSS_FOG_START = -0.05f;
-    /** Marine snow, vent haze and caverns together shorten the fog to no less than this share of the configured distance. */
+    /** Vent haze and caverns together shorten the fog to no less than this share of the configured distance. */
     private static final float MIN_FOG_FACTOR = 0.6f;
-    /** Fraction of the fog distance removed at full marine snow density. */
-    private static final float MARINE_SNOW_FOG = 0.2f;
     /** Fraction of the fog distance removed, and how far fog turns milky grey, at full vent temperature. */
     private static final float VENT_FOG = 0.35f;
     private static final float VENT_HAZE_COLOR = 0.35f;
@@ -142,8 +140,8 @@ public final class DeepOceanClientEffects
         double y = player.getEyeY();
         if (!abyssiaFog(player.level(), y)) return -1;
         float end = ClientConfig.DEEP_SEA_FOG_DISTANCE.get();
-        // Denser marine snow scatters more light: thicken fog with it (eased, so never a sudden change).
-        float factor = 1f - MARINE_SNOW_FOG * smoothstep(Mth.clamp(MarineSnowClientManager.currentDensity(), 0f, 1f));
+        // Marine snow does not shorten the view: the configured distance is what open deep water shows (VD01 review).
+        float factor = 1f;
         // Hot vent water is cloudy with minerals.
         factor *= 1f - VENT_FOG * ventHaze;
         // Large caverns: a little hazier, so the far walls dissolve instead of closing the space off like a box.

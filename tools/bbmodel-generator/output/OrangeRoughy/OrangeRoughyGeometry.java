@@ -41,47 +41,47 @@ public final class OrangeRoughyGeometry
 			PartPose.offset(0.0F, 24.0F, 0.0F));
 		PartDefinition body = orangeRoughy.addOrReplaceChild(BODY, CubeListBuilder.create()
 			.texOffs(0, 0).addBox(-2.0F, -4.0F, -1.0F, 4.0F, 8.0F, 8.0F, new CubeDeformation(0.0F))
-			.texOffs(18, 24).addBox(-1.0F, -5.0F, -1.0F, 2.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
-			.texOffs(18, 16).addBox(-1.0F, 4.0F, -1.0F, 2.0F, 1.0F, 7.0F, new CubeDeformation(0.0F)),
+			.texOffs(0, 24).addBox(-1.0F, -5.0F, -1.0F, 2.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
+			.texOffs(0, 16).addBox(-1.0F, 4.0F, -1.0F, 2.0F, 1.0F, 7.0F, new CubeDeformation(0.0F)),
 			PartPose.offset(0.0F, -7.2214F, -2.0F));
 		PartDefinition head = body.addOrReplaceChild(HEAD, CubeListBuilder.create()
-			.texOffs(0, 16).addBox(-2.0F, -4.0F, -5.0F, 4.0F, 6.0F, 5.0F, new CubeDeformation(0.0F))
-			.texOffs(0, 27).addBox(-1.0F, -5.0F, -4.0F, 2.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-			.texOffs(56, 13).addBox(-0.5F, 2.0F, -3.0F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)),
+			.texOffs(18, 16).addBox(-2.0F, -3.0F, -4.0F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
+			.texOffs(56, 0).addBox(-1.0F, -4.0F, -3.0F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
+			.texOffs(30, 12).addBox(-0.5F, 2.0F, -2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
 			PartPose.offset(0.0F, 0.0F, 0.0F));
 		PartDefinition mouth = head.addOrReplaceChild(MOUTH, CubeListBuilder.create()
-			.texOffs(24, 0).addBox(-1.5F, 0.0F, -4.0F, 3.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)),
+			.texOffs(18, 25).addBox(-1.5F, 0.0F, -3.0F, 3.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
 			PartPose.offset(0.0F, 2.0F, -1.0F));
 		PartDefinition rightEye = head.addOrReplaceChild(RIGHT_EYE, CubeListBuilder.create()
-			.texOffs(52, 0).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
-			PartPose.offset(-2.0F, -2.5F, -2.5F));
+			.texOffs(24, 6).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
+			PartPose.offset(-2.0F, -1.5F, -2.5F));
 		PartDefinition leftEye = head.addOrReplaceChild(LEFT_EYE, CubeListBuilder.create()
-			.texOffs(40, 0).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
-			PartPose.offset(2.0F, -2.5F, -2.5F));
+			.texOffs(44, 0).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
+			PartPose.offset(2.0F, -1.5F, -2.5F));
 		PartDefinition rightFin = body.addOrReplaceChild(RIGHT_FIN, CubeListBuilder.create()
-			.texOffs(10, 25).addBox(0.0F, -1.0F, -1.0F, 0.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
+			.texOffs(56, 0).addBox(0.0F, -1.0F, -1.0F, 0.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
 			PartPose.offsetAndRotation(-2.0F, 1.0F, 0.0F, 0.0F, -0.5236F, -0.2618F));
 		PartDefinition leftFin = body.addOrReplaceChild(LEFT_FIN, CubeListBuilder.create()
-			.texOffs(10, 23).addBox(0.0F, -1.0F, -1.0F, 0.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
+			.texOffs(24, 0).addBox(0.0F, -1.0F, -1.0F, 0.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)),
 			PartPose.offsetAndRotation(2.0F, 1.0F, 0.0F, 0.0F, 0.5236F, 0.2618F));
 		PartDefinition rightPelvicFin = body.addOrReplaceChild(RIGHT_PELVIC_FIN, CubeListBuilder.create()
-			.texOffs(50, 10).addBox(0.0F, -1.0F, -1.0F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
+			.texOffs(40, 17).addBox(0.0F, -1.0F, -1.0F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
 			PartPose.offsetAndRotation(-1.0F, 5.0F, 2.0F, 0.3491F, -0.3491F, 0.0F));
 		PartDefinition leftPelvicFin = body.addOrReplaceChild(LEFT_PELVIC_FIN, CubeListBuilder.create()
-			.texOffs(30, 10).addBox(0.0F, -1.0F, -1.0F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
+			.texOffs(34, 17).addBox(0.0F, -1.0F, -1.0F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
 			PartPose.offsetAndRotation(1.0F, 5.0F, 2.0F, 0.3491F, 0.3491F, 0.0F));
 		PartDefinition dorsalFin = body.addOrReplaceChild(DORSAL_FIN, CubeListBuilder.create()
-			.texOffs(24, 1).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)),
+			.texOffs(32, 19).addBox(0.0F, -5.0F, 0.0F, 0.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)),
 			PartPose.offset(0.0F, -5.0F, 0.0F));
 		PartDefinition analFin = body.addOrReplaceChild(ANAL_FIN, CubeListBuilder.create()
-			.texOffs(24, 10).addBox(0.0F, -1.0F, 0.0F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
+			.texOffs(24, 9).addBox(0.0F, -1.0F, 0.0F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)),
 			PartPose.offset(0.0F, 5.0F, 3.0F));
 		PartDefinition tail = body.addOrReplaceChild(TAIL, CubeListBuilder.create()
-			.texOffs(50, 6).addBox(-1.0F, -2.0F, 0.0F, 2.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)),
+			.texOffs(36, 0).addBox(-1.0F, -2.0F, 0.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)),
 			PartPose.offset(0.0F, 0.0F, 6.0F));
 		PartDefinition tailFin = tail.addOrReplaceChild(TAIL_FIN, CubeListBuilder.create()
-			.texOffs(40, 1).addBox(0.0F, -4.0F, -1.0F, 0.0F, 8.0F, 5.0F, new CubeDeformation(0.0F)),
-			PartPose.offset(0.0F, 0.0F, 3.0F));
+			.texOffs(34, 7).addBox(0.0F, -4.0F, -1.0F, 0.0F, 8.0F, 5.0F, new CubeDeformation(0.0F)),
+			PartPose.offset(0.0F, 0.0F, 2.0F));
 		return LayerDefinition.create(mesh, 64, 32);
 	}
 }
