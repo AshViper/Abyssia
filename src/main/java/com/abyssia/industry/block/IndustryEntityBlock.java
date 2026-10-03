@@ -1,10 +1,12 @@
 package com.abyssia.industry.block;
 
+import com.abyssia.client.sound.MachineSounds;
 import com.abyssia.industry.MachineKind;
 import com.abyssia.industry.blockentity.IndustryBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
