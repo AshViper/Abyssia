@@ -216,14 +216,18 @@ public final class HabitatBuilder
                         default -> shell.add(new Step(pos, stateFor(part, out), null));
                     }
                 }
-        Set<BlockPos> windows = new HashSet<>();
+        // connected-texture blocks (window + hull blocks): connection booleans from the other steps of the same block
+        java.util.Map<BlockPos, net.minecraft.world.level.block.Block> linked = new java.util.HashMap<>();
         for (Step step : shell)
-            if (step.state.is(ModHabitat.WINDOW.get())) windows.add(step.pos);
+            if (step.state.hasProperty(PipeBlock.NORTH) && step.state.hasProperty(PipeBlock.DOWN)
+                    && (step.state.is(ModHabitat.WINDOW.get()) || step.state.getBlock() instanceof HabitatConnectedBlock))
+                linked.put(step.pos, step.state.getBlock());
         for (int i = 0; i < shell.size(); i++)
         {
             Step step = shell.get(i);
-            if (windows.contains(step.pos))
-                shell.set(i, new Step(step.pos, connectWindow(step.state, d -> windows.contains(step.pos.relative(d))), null));
+            net.minecraft.world.level.block.Block block = linked.get(step.pos);
+            if (block != null)
+                shell.set(i, new Step(step.pos, connectWindow(step.state, d -> linked.get(step.pos.relative(d)) == block), null));
         }
     }
 

@@ -31,6 +31,7 @@ public class Abyssia
         GeneratedFauna.init();
         modEventBus.addListener(AbyssiaNetwork::register);
         ModDataComponents.register(modEventBus);
+        com.abyssia.guide.GuideBookRegistry.register(modEventBus);
         modEventBus.addListener(com.abyssia.item.electric.ElectricTools::registerCapabilities);
         ModBlocks.register(modEventBus);
         // industrial blocks, block entities and menu (I01); their block items join ModItems
