@@ -40,6 +40,14 @@ public final class GeneratedFauna
                     .sized(0.68F, 0.39F).clientTrackingRange(8).build("abyssal_grenadier"));
     public static final DeferredItem<Item> ABYSSAL_GRENADIER_SPAWN_EGG = ModItems.spawnEgg("abyssal_grenadier_spawn_egg", ABYSSAL_GRENADIER, 0x6B5A4A, 0x5A6A80);
 
+    // ---- alfonsino: Alfonsino / キンメダイ
+    public static final ModSounds.Voice ALFONSINO_VOICE = ModSounds.voice("alfonsino", "ambient", "hurt", "death", "flop");
+    public static final SwimmerTraits ALFONSINO_TRAITS = SwimmerTraits.of(ALFONSINO_VOICE).steering(20, 6, 0.0022F).zone(SwimmerTraits.Zone.OPEN_WATER, 0.9, 140).schools(4.0).flees(3.0, 10).home(32).ambient(400);
+    public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> ALFONSINO = ModEntities.ENTITIES.register("alfonsino",
+            () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, ALFONSINO_TRAITS), MobCategory.WATER_CREATURE)
+                    .sized(0.38F, 0.43F).clientTrackingRange(8).build("alfonsino"));
+    public static final DeferredItem<Item> ALFONSINO_SPAWN_EGG = ModItems.spawnEgg("alfonsino_spawn_egg", ALFONSINO, 0xE02A2E, 0xF0C040);
+
     // ---- bigfin_squid: Bigfin Squid / ミズヒキイカ
     public static final ModSounds.Voice BIGFIN_SQUID_VOICE = ModSounds.voice("bigfin_squid", "ambient", "hurt", "death", "flop");
     public static final SwimmerTraits BIGFIN_SQUID_TRAITS = SwimmerTraits.of(BIGFIN_SQUID_VOICE).steering(4, 2, 0.001F).zone(SwimmerTraits.Zone.NEAR_FLOOR, 0.3, 400).flees(1.2, 5).hangsStill().home(24).ambient(500);
@@ -56,6 +64,14 @@ public final class GeneratedFauna
             () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, BLACK_DRAGONFISH_TRAITS), MobCategory.WATER_CREATURE)
                     .sized(0.45F, 0.2F).clientTrackingRange(8).build("black_dragonfish"));
     public static final DeferredItem<Item> BLACK_DRAGONFISH_SPAWN_EGG = ModItems.spawnEgg("black_dragonfish_spawn_egg", BLACK_DRAGONFISH, 0x0E1014, 0x8FD0FF);
+
+    // ---- black_scabbardfish: Black Scabbardfish / クロタチカマス
+    public static final ModSounds.Voice BLACK_SCABBARDFISH_VOICE = ModSounds.voice("black_scabbardfish", "ambient", "hurt", "death", "flop");
+    public static final SwimmerTraits BLACK_SCABBARDFISH_TRAITS = SwimmerTraits.of(BLACK_SCABBARDFISH_VOICE).steering(12, 4, 0.0016F).zone(SwimmerTraits.Zone.OPEN_WATER, 0.7, 200).schools(3.0).flees(2.0, 8).home(40).ambient(450);
+    public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> BLACK_SCABBARDFISH = ModEntities.ENTITIES.register("black_scabbardfish",
+            () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, BLACK_SCABBARDFISH_TRAITS), MobCategory.WATER_CREATURE)
+                    .sized(0.66F, 0.2F).clientTrackingRange(8).build("black_scabbardfish"));
+    public static final DeferredItem<Item> BLACK_SCABBARDFISH_SPAWN_EGG = ModItems.spawnEgg("black_scabbardfish_spawn_egg", BLACK_SCABBARDFISH, 0x1E1C1E, 0xB8A060);
 
     // ---- black_swallower: Black Swallower / オニボウズギス
     public static final ModSounds.Voice BLACK_SWALLOWER_VOICE = ModSounds.voice("black_swallower", "ambient", "hurt", "death", "flop", "snap");
@@ -80,6 +96,14 @@ public final class GeneratedFauna
             () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, BLOBFISH_TRAITS), MobCategory.WATER_CREATURE)
                     .sized(0.45F, 0.26F).clientTrackingRange(8).build("blobfish"));
     public static final DeferredItem<Item> BLOBFISH_SPAWN_EGG = ModItems.spawnEgg("blobfish_spawn_egg", BLOBFISH, 0xC9A3A0, 0x7A6A70);
+
+    // ---- blue_ling: Blue Ling / ブルーリング
+    public static final ModSounds.Voice BLUE_LING_VOICE = ModSounds.voice("blue_ling", "ambient", "hurt", "death", "flop");
+    public static final SwimmerTraits BLUE_LING_TRAITS = SwimmerTraits.of(BLUE_LING_VOICE).steering(12, 4, 0.0018F).zone(SwimmerTraits.Zone.NEAR_FLOOR, 0.6, 200).flees(2.0, 8).home(32).ambient(500);
+    public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> BLUE_LING = ModEntities.ENTITIES.register("blue_ling",
+            () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, BLUE_LING_TRAITS), MobCategory.WATER_CREATURE)
+                    .sized(0.61F, 0.2F).clientTrackingRange(8).build("blue_ling"));
+    public static final DeferredItem<Item> BLUE_LING_SPAWN_EGG = ModItems.spawnEgg("blue_ling_spawn_egg", BLUE_LING, 0x5A6E80, 0xB4BEC8);
 
     // ---- bluntnose_sixgill_shark: Bluntnose Sixgill Shark / カグラザメ
     public static final ModSounds.Voice BLUNTNOSE_SIXGILL_SHARK_VOICE = ModSounds.voice("bluntnose_sixgill_shark", "ambient", "hurt", "death", "flop", "bite");
@@ -120,6 +144,14 @@ public final class GeneratedFauna
                     .sized(0.63F, 0.83F).clientTrackingRange(8).build("deepstaria"));
     public static final DeferredItem<Item> DEEPSTARIA_SPAWN_EGG = ModItems.spawnEgg("deepstaria_spawn_egg", DEEPSTARIA, 0xB8A8B4, 0x9A6A4E);
 
+    // ---- deepwater_redfish: Deepwater Redfish / アラスカメヌケ
+    public static final ModSounds.Voice DEEPWATER_REDFISH_VOICE = ModSounds.voice("deepwater_redfish", "ambient", "hurt", "death", "flop");
+    public static final SwimmerTraits DEEPWATER_REDFISH_TRAITS = SwimmerTraits.of(DEEPWATER_REDFISH_VOICE).steering(18, 5, 0.002F).zone(SwimmerTraits.Zone.OPEN_WATER, 0.8, 140).migrates(0.2).schools(4.0).flees(2.6, 9).home(32).ambient(400);
+    public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> DEEPWATER_REDFISH = ModEntities.ENTITIES.register("deepwater_redfish",
+            () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, DEEPWATER_REDFISH_TRAITS), MobCategory.WATER_CREATURE)
+                    .sized(0.44F, 0.48F).clientTrackingRange(8).build("deepwater_redfish"));
+    public static final DeferredItem<Item> DEEPWATER_REDFISH_SPAWN_EGG = ModItems.spawnEgg("deepwater_redfish_spawn_egg", DEEPWATER_REDFISH, 0xC8402E, 0xE88A6A);
+
     // ---- dumbo_octopus: Flapjack Octopus / メンダコ
     public static final ModSounds.Voice DUMBO_OCTOPUS_VOICE = ModSounds.voice("dumbo_octopus", "ambient", "hurt", "death", "flop");
     public static final SwimmerTraits DUMBO_OCTOPUS_TRAITS = SwimmerTraits.of(DUMBO_OCTOPUS_VOICE).steering(10, 4, 0.0012F).zone(SwimmerTraits.Zone.NEAR_FLOOR, 0.4, 300).flees(1.2, 5).hangsStill().home(16).ambient(600);
@@ -151,6 +183,14 @@ public final class GeneratedFauna
             () -> EntityType.Builder.<GenericWalker>of((type, level) -> new GenericWalker(type, level, GIANT_SEA_SPIDER_VOICE, "tentacle_move", 0.4, 200, 16, 600), MobCategory.WATER_CREATURE)
                     .sized(0.63F, 0.24F).clientTrackingRange(8).build("giant_sea_spider"));
     public static final DeferredItem<Item> GIANT_SEA_SPIDER_SPAWN_EGG = ModItems.spawnEgg("giant_sea_spider_spawn_egg", GIANT_SEA_SPIDER, 0xA8452C, 0xE0A080);
+
+    // ---- greenland_halibut: Greenland Halibut / カラスガレイ
+    public static final ModSounds.Voice GREENLAND_HALIBUT_VOICE = ModSounds.voice("greenland_halibut", "ambient", "hurt", "death", "flop");
+    public static final SwimmerTraits GREENLAND_HALIBUT_TRAITS = SwimmerTraits.of(GREENLAND_HALIBUT_VOICE).steering(8, 2, 0.0015F).zone(SwimmerTraits.Zone.NEAR_FLOOR, 0.5, 240).flees(1.8, 6).home(32).ambient(550);
+    public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> GREENLAND_HALIBUT = ModEntities.ENTITIES.register("greenland_halibut",
+            () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, GREENLAND_HALIBUT_TRAITS), MobCategory.WATER_CREATURE)
+                    .sized(0.71F, 0.33F).clientTrackingRange(8).build("greenland_halibut"));
+    public static final DeferredItem<Item> GREENLAND_HALIBUT_SPAWN_EGG = ModItems.spawnEgg("greenland_halibut_spawn_egg", GREENLAND_HALIBUT, 0x4A443C, 0x8A8060);
 
     // ---- hagfish: Hagfish / ヌタウナギ
     public static final ModSounds.Voice HAGFISH_VOICE = ModSounds.voice("hagfish", "ambient", "hurt", "death", "flop");
@@ -199,6 +239,14 @@ public final class GeneratedFauna
                     .sized(1.72F, 0.66F).clientTrackingRange(8).build("oarfish"));
     public static final DeferredItem<Item> OARFISH_SPAWN_EGG = ModItems.spawnEgg("oarfish_spawn_egg", OARFISH, 0xB9C3CC, 0xC8303A);
 
+    // ---- orange_roughy: Orange Roughy / オレンジラフィー
+    public static final ModSounds.Voice ORANGE_ROUGHY_VOICE = ModSounds.voice("orange_roughy", "ambient", "hurt", "death", "flop");
+    public static final SwimmerTraits ORANGE_ROUGHY_TRAITS = SwimmerTraits.of(ORANGE_ROUGHY_VOICE).steering(14, 4, 0.0018F).zone(SwimmerTraits.Zone.OPEN_WATER, 0.7, 160).schools(3.0).flees(2.0, 8).home(32).ambient(450);
+    public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> ORANGE_ROUGHY = ModEntities.ENTITIES.register("orange_roughy",
+            () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, ORANGE_ROUGHY_TRAITS), MobCategory.WATER_CREATURE)
+                    .sized(0.55F, 0.77F).clientTrackingRange(8).build("orange_roughy"));
+    public static final DeferredItem<Item> ORANGE_ROUGHY_SPAWN_EGG = ModItems.spawnEgg("orange_roughy_spawn_egg", ORANGE_ROUGHY, 0xD8582C, 0x7A2E22);
+
     // ---- pacific_sleeper_shark: Pacific Sleeper Shark / オンデンザメ
     public static final ModSounds.Voice PACIFIC_SLEEPER_SHARK_VOICE = ModSounds.voice("pacific_sleeper_shark", "ambient", "hurt", "death", "flop", "bite");
     public static final TagKey<EntityType<?>> PACIFIC_SLEEPER_SHARK_PREY = ModTags.entity("pacific_sleeper_shark_prey");
@@ -206,6 +254,22 @@ public final class GeneratedFauna
             () -> EntityType.Builder.<GenericShark>of((type, level) -> new GenericShark(type, level, PACIFIC_SLEEPER_SHARK_VOICE, 8, 2, 0.0025F, 3.0, PACIFIC_SLEEPER_SHARK_PREY, 1.2), MobCategory.WATER_CREATURE)
                     .sized(1.64F, 0.89F).clientTrackingRange(8).build("pacific_sleeper_shark"));
     public static final DeferredItem<Item> PACIFIC_SLEEPER_SHARK_SPAWN_EGG = ModItems.spawnEgg("pacific_sleeper_shark_spawn_egg", PACIFIC_SLEEPER_SHARK, 0x3E3A37, 0x6A625C);
+
+    // ---- patagonian_toothfish: Patagonian Toothfish / マジェランアイナメ
+    public static final ModSounds.Voice PATAGONIAN_TOOTHFISH_VOICE = ModSounds.voice("patagonian_toothfish", "ambient", "hurt", "death", "flop");
+    public static final SwimmerTraits PATAGONIAN_TOOTHFISH_TRAITS = SwimmerTraits.of(PATAGONIAN_TOOTHFISH_VOICE).steering(10, 3, 0.0016F).zone(SwimmerTraits.Zone.NEAR_FLOOR, 0.9, 180).flees(1.8, 6).home(48).ambient(550);
+    public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> PATAGONIAN_TOOTHFISH = ModEntities.ENTITIES.register("patagonian_toothfish",
+            () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, PATAGONIAN_TOOTHFISH_TRAITS), MobCategory.WATER_CREATURE)
+                    .sized(0.77F, 0.43F).clientTrackingRange(8).build("patagonian_toothfish"));
+    public static final DeferredItem<Item> PATAGONIAN_TOOTHFISH_SPAWN_EGG = ModItems.spawnEgg("patagonian_toothfish_spawn_egg", PATAGONIAN_TOOTHFISH, 0x4E4A44, 0x8A8A86);
+
+    // ---- sablefish: Sablefish / ギンダラ
+    public static final ModSounds.Voice SABLEFISH_VOICE = ModSounds.voice("sablefish", "ambient", "hurt", "death", "flop");
+    public static final SwimmerTraits SABLEFISH_TRAITS = SwimmerTraits.of(SABLEFISH_VOICE).steering(15, 4, 0.002F).zone(SwimmerTraits.Zone.NEAR_FLOOR, 0.8, 160).flees(2.2, 8).home(32).ambient(500);
+    public static final DeferredHolder<EntityType<?>, EntityType<GenericSwimmer>> SABLEFISH = ModEntities.ENTITIES.register("sablefish",
+            () -> EntityType.Builder.<GenericSwimmer>of((type, level) -> new GenericSwimmer(type, level, SABLEFISH_TRAITS), MobCategory.WATER_CREATURE)
+                    .sized(0.61F, 0.33F).clientTrackingRange(8).build("sablefish"));
+    public static final DeferredItem<Item> SABLEFISH_SPAWN_EGG = ModItems.spawnEgg("sablefish_spawn_egg", SABLEFISH, 0x2C3036, 0x7A8088);
 
     // ---- sea_lily: Sea Lily / トリノアシ
     public static final ModSounds.Voice SEA_LILY_VOICE = ModSounds.voice("sea_lily", "retract", "hurt", "death");
@@ -273,27 +337,35 @@ public final class GeneratedFauna
     public static void attributes(EntityAttributeCreationEvent event)
     {
         event.put(ABYSSAL_GRENADIER.get(), GenericSwimmer.attributes(10.0, 1.0, 0.0).build());
+        event.put(ALFONSINO.get(), GenericSwimmer.attributes(5.0, 0.0, 0.0).build());
         event.put(BIGFIN_SQUID.get(), GenericSwimmer.attributes(12.0, 0.0, 0.0).build());
         event.put(BLACK_DRAGONFISH.get(), GenericSwimmer.attributes(6.0, 1.0, 0.0).build());
+        event.put(BLACK_SCABBARDFISH.get(), GenericSwimmer.attributes(10.0, 0.0, 0.0).build());
         event.put(BLACK_SWALLOWER.get(), GenericSwimmer.attributes(5.0, 1.0, 0.0).build());
         event.put(BLIND_LOBSTER.get(), GenericWalker.attributes(6.0, 0.0, 2.0).build());
         event.put(BLOBFISH.get(), GenericSwimmer.attributes(8.0, 0.0, 0.0).build());
+        event.put(BLUE_LING.get(), GenericSwimmer.attributes(10.0, 0.0, 0.0).build());
         event.put(BLUNTNOSE_SIXGILL_SHARK.get(), GenericShark.attributes(50.0, 7.0, 2.0).build());
         event.put(BRITTLE_STAR.get(), GenericWalker.attributes(4.0, 0.0, 0.0).build());
         event.put(CHIMAERA.get(), GenericSwimmer.attributes(16.0, 0.0, 1.0).build());
         event.put(COOKIECUTTER_SHARK.get(), GenericShark.attributes(8.0, 3.0, 0.0).build());
         event.put(DEEPSTARIA.get(), GenericMedusa.attributes(12.0).build());
+        event.put(DEEPWATER_REDFISH.get(), GenericSwimmer.attributes(6.0, 0.0, 0.0).build());
         event.put(DUMBO_OCTOPUS.get(), GenericSwimmer.attributes(5.0, 0.0, 0.0).build());
         event.put(FANGTOOTH.get(), GenericSwimmer.attributes(5.0, 1.0, 0.0).build());
         event.put(FIREFLY_SQUID.get(), GenericSwimmer.attributes(3.0, 0.0, 0.0).build());
         event.put(GIANT_SEA_SPIDER.get(), GenericWalker.attributes(6.0, 0.0, 0.0).build());
+        event.put(GREENLAND_HALIBUT.get(), GenericSwimmer.attributes(12.0, 0.0, 0.0).build());
         event.put(HAGFISH.get(), GenericSwimmer.attributes(8.0, 0.0, 0.0).build());
         event.put(HATCHETFISH.get(), GenericSwimmer.attributes(3.0, 0.0, 0.0).build());
         event.put(JAPANESE_SPIDER_CRAB.get(), GenericWalker.attributes(30.0, 0.0, 6.0).build());
         event.put(LANTERNFISH.get(), GenericSwimmer.attributes(3.0, 0.0, 0.0).build());
         event.put(MARIANA_SNAILFISH.get(), GenericSwimmer.attributes(5.0, 0.0, 0.0).build());
         event.put(OARFISH.get(), GenericSwimmer.attributes(16.0, 0.0, 0.0).build());
+        event.put(ORANGE_ROUGHY.get(), GenericSwimmer.attributes(8.0, 0.0, 0.0).build());
         event.put(PACIFIC_SLEEPER_SHARK.get(), GenericShark.attributes(50.0, 6.0, 3.0).build());
+        event.put(PATAGONIAN_TOOTHFISH.get(), GenericSwimmer.attributes(16.0, 0.0, 1.0).build());
+        event.put(SABLEFISH.get(), GenericSwimmer.attributes(10.0, 0.0, 0.0).build());
         event.put(SEA_LILY.get(), Tubeworm.createAttributes().build());
         event.put(SEA_PIG.get(), GenericWalker.attributes(4.0, 0.0, 0.0).build());
         event.put(SNIPE_EEL.get(), GenericSwimmer.attributes(6.0, 0.0, 0.0).build());
@@ -307,6 +379,6 @@ public final class GeneratedFauna
     /** Entity types for the spawn placement registration (in water; the fauna spawner does the rest). */
     public static List<DeferredHolder<EntityType<?>, ? extends EntityType<?>>> types()
     {
-        return List.of(ABYSSAL_GRENADIER, BIGFIN_SQUID, BLACK_DRAGONFISH, BLACK_SWALLOWER, BLIND_LOBSTER, BLOBFISH, BLUNTNOSE_SIXGILL_SHARK, BRITTLE_STAR, CHIMAERA, COOKIECUTTER_SHARK, DEEPSTARIA, DUMBO_OCTOPUS, FANGTOOTH, FIREFLY_SQUID, GIANT_SEA_SPIDER, HAGFISH, HATCHETFISH, JAPANESE_SPIDER_CRAB, LANTERNFISH, MARIANA_SNAILFISH, OARFISH, PACIFIC_SLEEPER_SHARK, SEA_LILY, SEA_PIG, SNIPE_EEL, STOPLIGHT_LOOSEJAW, SUPERGIANT_AMPHIPOD, TRIPOD_FISH, VAMPIRE_SQUID, VENUS_FLOWER_BASKET);
+        return List.of(ABYSSAL_GRENADIER, ALFONSINO, BIGFIN_SQUID, BLACK_DRAGONFISH, BLACK_SCABBARDFISH, BLACK_SWALLOWER, BLIND_LOBSTER, BLOBFISH, BLUE_LING, BLUNTNOSE_SIXGILL_SHARK, BRITTLE_STAR, CHIMAERA, COOKIECUTTER_SHARK, DEEPSTARIA, DEEPWATER_REDFISH, DUMBO_OCTOPUS, FANGTOOTH, FIREFLY_SQUID, GIANT_SEA_SPIDER, GREENLAND_HALIBUT, HAGFISH, HATCHETFISH, JAPANESE_SPIDER_CRAB, LANTERNFISH, MARIANA_SNAILFISH, OARFISH, ORANGE_ROUGHY, PACIFIC_SLEEPER_SHARK, PATAGONIAN_TOOTHFISH, SABLEFISH, SEA_LILY, SEA_PIG, SNIPE_EEL, STOPLIGHT_LOOSEJAW, SUPERGIANT_AMPHIPOD, TRIPOD_FISH, VAMPIRE_SQUID, VENUS_FLOWER_BASKET);
     }
 }

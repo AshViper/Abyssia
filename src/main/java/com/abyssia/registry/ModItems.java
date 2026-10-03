@@ -143,6 +143,23 @@ public final class ModItems
     public static final DeferredItem<Item> ANGLER_FLESH = food("angler_flesh", 2, 0.3f, Rarity.UNCOMMON,
             new FoodEffect(MobEffects.NIGHT_VISION, 15 * 20, 0.5f));
     public static final DeferredItem<Item> COOKED_ANGLER_FLESH = food("cooked_angler_flesh", 6, 9.6f, Rarity.UNCOMMON);
+    // FS01 edible fish: each species drops its own raw fillet; no effects. Saturation = 2 * nutrition * modifier.
+    public static final DeferredItem<Item> RAW_ORANGE_ROUGHY = food("raw_orange_roughy", 3, 2.4f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_ORANGE_ROUGHY = food("cooked_orange_roughy", 7, 12.6f, Rarity.COMMON);
+    public static final DeferredItem<Item> RAW_SABLEFISH = food("raw_sablefish", 3, 3.0f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_SABLEFISH = food("cooked_sablefish", 8, 16.0f, Rarity.COMMON);
+    public static final DeferredItem<Item> RAW_PATAGONIAN_TOOTHFISH = food("raw_patagonian_toothfish", 4, 4.0f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_PATAGONIAN_TOOTHFISH = food("cooked_patagonian_toothfish", 9, 19.8f, Rarity.COMMON);
+    public static final DeferredItem<Item> RAW_BLACK_SCABBARDFISH = food("raw_black_scabbardfish", 3, 2.4f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_BLACK_SCABBARDFISH = food("cooked_black_scabbardfish", 8, 14.4f, Rarity.COMMON);
+    public static final DeferredItem<Item> RAW_GREENLAND_HALIBUT = food("raw_greenland_halibut", 4, 4.0f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_GREENLAND_HALIBUT = food("cooked_greenland_halibut", 9, 19.8f, Rarity.COMMON);
+    public static final DeferredItem<Item> RAW_ALFONSINO = food("raw_alfonsino", 3, 2.4f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_ALFONSINO = food("cooked_alfonsino", 7, 12.6f, Rarity.COMMON);
+    public static final DeferredItem<Item> RAW_BLUE_LING = food("raw_blue_ling", 3, 2.4f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_BLUE_LING = food("cooked_blue_ling", 8, 16.0f, Rarity.COMMON);
+    public static final DeferredItem<Item> RAW_DEEPWATER_REDFISH = food("raw_deepwater_redfish", 3, 2.4f, Rarity.COMMON);
+    public static final DeferredItem<Item> COOKED_DEEPWATER_REDFISH = food("cooked_deepwater_redfish", 7, 12.6f, Rarity.COMMON);
     public static final DeferredItem<Item> JELLY_TENTACLE = item("jelly_tentacle", Rarity.COMMON);
     public static final DeferredItem<Item> ATOLLA_TENTACLE = item("atolla_tentacle", Rarity.UNCOMMON);
     public static final DeferredItem<Item> PHANTOM_TENTACLE = item("phantom_tentacle", Rarity.UNCOMMON);

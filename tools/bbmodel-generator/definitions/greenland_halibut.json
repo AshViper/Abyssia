@@ -1,0 +1,121 @@
+{
+	"id": "greenland_halibut",
+	"name": "Greenland Halibut",
+	"name_ja": "カラスガレイ",
+	"scientific_name": "Reinhardtius hippoglossoides",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "continental_slope",
+	"order": 80,
+	"notes": "Flatfish lying horizontally: a broad, flat oval body with both eyes on the top side (the left eye sits on the head's upper edge), a large mouth, long low dorsal and anal fins along the edges, a broad slightly concave tail; dark grey-brown above, the underside also fairly dark. Approximation: the template's dorsal and anal fins stay vertical, so they are kept low and long.",
+	"body": {
+		"length": 12,
+		"width": 10,
+		"height": 2,
+		"round": 0
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 5,
+			"width": 8,
+			"height": 2,
+			"drop": 0,
+			"round": 0
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"underbite": 0,
+			"gape": 25,
+			"rest_gape": 0,
+			"width": 0.6,
+			"round": 0
+		},
+		"eye": {
+			"size": 2,
+			"height": 1.0,
+			"forward": 0.45,
+			"protrude": 1.0
+		},
+		"tail": {
+			"segments": 1,
+			"length": 3,
+			"width": 4,
+			"height": 2,
+			"taper": 0.7
+		},
+		"caudal": {
+			"length": 4,
+			"height": 7,
+			"shape": "fan"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 2,
+			"height": 2,
+			"angle": 20,
+			"droop": 0,
+			"position": 0.1
+		},
+		"pelvic": {
+			"enabled": false
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 10,
+			"height": 1,
+			"position": 0.05,
+			"apex": 0.5
+		},
+		"anal": {
+			"enabled": true,
+			"length": 9,
+			"height": 1,
+			"position": 0.5
+		}
+	},
+	"palette": {
+		"body": "#4a443c",
+		"belly": "#5e5a52",
+		"fin": "#3a3630",
+		"mouth": "#5a4440",
+		"lip": "#504a42",
+		"eye": "#0c0e10",
+		"eye_iris": "#8a8060",
+		"eye_ring": "#3a3630"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.4,
+		"countershade": 0.2
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.6,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.12,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

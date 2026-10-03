@@ -1,0 +1,125 @@
+{
+	"id": "blue_ling",
+	"name": "Blue Ling",
+	"name_ja": "ブルーリング",
+	"scientific_name": "Molva dypterygia",
+	"category": "eel",
+	"template": "eel",
+	"habitat": "continental_slope",
+	"order": 82,
+	"notes": "Long, slender cod-like fish, thicker than an eel, with an ordinary fish head (large mouth, projecting lower jaw, small chin barbel); a short first dorsal and one very long second dorsal and anal fin running to a small rounded tail; blue-grey to bronze-grey above, silvery-grey sides and belly, dark-edged fins. Approximation: no barbel; the two dorsals are one ribbon fin.",
+	"body": {
+		"length": 28,
+		"width": 4,
+		"height": 5,
+		"segments": 6,
+		"taper": 0.45
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 6,
+			"width": 4,
+			"height": 5,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"jaw_length": 4,
+			"upper_length": 4,
+			"width": 1,
+			"gape": 35,
+			"rest_gape": 0,
+			"pouch": 0
+		},
+		"teeth": {
+			"count": 0
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.7,
+			"forward": 0.3,
+			"protrude": 0.4
+		},
+		"gills": {
+			"frills": 0
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 35
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"position": 0.05
+		},
+		"dorsal": {
+			"enabled": true,
+			"start": 0.15,
+			"end": 0.97,
+			"height": 2
+		},
+		"anal": {
+			"enabled": true,
+			"start": 0.35,
+			"end": 0.97,
+			"height": 2
+		},
+		"caudal": {
+			"enabled": true,
+			"length": 3,
+			"height": 4,
+			"shape": "round"
+		},
+		"tail_tip": {
+			"enabled": false
+		}
+	},
+	"palette": {
+		"body": "#5a6e80",
+		"belly": "#b4bec8",
+		"fin": "#3a4654",
+		"mouth": "#5a4a52",
+		"lip": "#6a7a88",
+		"eye": "#0a0c10",
+		"eye_iris": "#9aa8b4",
+		"eye_ring": "#4a5664"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.25,
+		"countershade": 1.0
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.9,
+		"amplitude": 0.8
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"mouth": 0.1,
+		"fin": 0.12,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

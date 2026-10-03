@@ -404,6 +404,24 @@ CAVE_CRYSTAL = cavern_set("crystal", mix(("crystal_cave_rock", 3), ("layered_cav
 CAVE_THERMAL = cavern_set("thermal", mix(("thermal_cave_rock", 3), ("mineral_cave_rock", 2)), mix("black_mineral_deposit"),
                           mobs=MOBS("vent_eelpout"))
 
+# ================================================================ Ancient wood (rotten_tree, fallen_log)
+# Dead standing trunks and toppled logs in the ancient wood set; breaking them yields ancient wood.
+
+ANCIENT_LOG = mix(("ancient_stem", 6), ("ancient_wood", 2))
+ANCIENT_STRIPPED = mix(("stripped_ancient_stem", 3), ("stripped_ancient_wood", 1))
+ANCIENT_ROOTS = mix(("ancient_root", 3), ("ancient_wood", 1))
+ANCIENT_FROND = mix(state("ancient_frond", waterlogged=True))
+ANCIENT_PLANKS = mix("ancient_planks")
+# Overworld Y -340..-80 (old deep-ocean Y -100..160 here).
+structure("rotten_tree", "vegetation", "small", 8, 10,
+          f("rotten_tree", height=span(3, 8), thick=0.35, branches=span(0, 3), branch_length=span(1, 3), roots=span(1, 3), frond_chance=0.5,
+            wood=ANCIENT_LOG, stripped=ANCIENT_STRIPPED, root=ANCIENT_ROOTS, frond=ANCIENT_FROND, planks=ANCIENT_PLANKS),
+          max_slope=1.0, min_y=-100, max_y=160, max_top_y=170)
+structure("fallen_log", "vegetation", "small", 12, 6,
+          f("fallen_log", length=span(5, 14), thick=0.3, branches=span(0, 4), branch_length=span(1, 3), jog_chance=0.7, bury_chance=0.4,
+            stripped_chance=0.2, wood=ANCIENT_LOG, stripped=ANCIENT_STRIPPED, root=ANCIENT_ROOTS, planks=ANCIENT_PLANKS),
+          max_slope=0.8, min_y=-100, max_y=160, max_top_y=170)
+
 # ================================================================ profiles
 
 SMALL, MEDIUM, LARGE, COLOSSAL = (20, 40), (64, 128), (160, 288), (640, 1280)
@@ -430,10 +448,12 @@ PROFILES = {
         e("holothurian_mud_flat", 0.35, (80, 160)),
         e("abyssal_rock_spire", 0.6, (160, 288)), e("sediment_swell", 0.3, LARGE),
         e("abyssal_tower", 0.45, (700, 1280)),
+        e("rotten_tree", 0.35, SMALL), e("fallen_log", 0.35, SMALL),
         *cavern_entries(CAVE_ABYSSAL)]),
     "deep_sea": (["deep_sea"], 1.0, [
         e("sea_boulder", 0.4, SMALL), e("mud_mounds", 0.3, SMALL), e("rock_ridge", 0.4, MEDIUM), e("holothurian_mud_flat", 0.2, (72, 144)),
         e("sediment_swell", 0.25, LARGE),
+        e("rotten_tree", 0.35, SMALL), e("fallen_log", 0.35, SMALL),
         *cavern_entries(CAVE_ABYSSAL, 0.6)]),
     "abyssal_trench": (["abyssal_trench"], 1.0, [
         e("collapsed_blocks", 0.45, SMALL), e("trench_fissure", 0.55, (72, 144)), e("trench_cliff", 0.4, MEDIUM),
@@ -464,10 +484,12 @@ PROFILES = {
         e("kelp_wall", 0.45, (72, 144)), e("kelp_tunnel", 0.4, (80, 160)), e("overgrown_hill", 0.45, MEDIUM),
         e("giant_kelp_forest", 0.6, (192, 352)),
         e("ancient_kelp_forest", 0.45, (700, 1280)),
+        e("rotten_tree", 0.5, SMALL), e("fallen_log", 0.5, SMALL),
         *cavern_entries(CAVE_FOREST)]),
     "deep_forest": (["deep_forest"], 1.0, [
         e("giant_tube_grove", 0.5, MEDIUM), e("overgrown_hill", 0.4, MEDIUM), e("kelp_wall", 0.3, (72, 144)),
         e("giant_kelp_forest", 0.4, LARGE),
+        e("rotten_tree", 0.5, SMALL), e("fallen_log", 0.5, SMALL),
         *cavern_entries(CAVE_FOREST, 0.6)]),
 }
 
