@@ -580,6 +580,15 @@ def soft_dot(size, radius, rgb, core=None):
 
 # ================================================================ block catalogue
 
+# CB01: main rocks drop a cobbled variant without Silk Touch; rock -> (English, Japanese) of the cobbled block
+COBBLED = {
+    "deep_sea_rock": ("Deep Sea Rock", "深海岩"), "abyssal_rock": ("Abyssal Rock", "深淵岩"),
+    "trench_rock": ("Trench Rock", "海溝岩"), "thermal_rock": ("Thermal Rock", "熱水岩"),
+    "volcanic_rock": ("Volcanic Rock", "火山岩"), "crystal_rock": ("Crystal Rock", "結晶岩"),
+    "mineral_host_rock": ("Mineral Host Rock", "鉱物母岩"),
+}
+COBBLED_CUBES = ["cobbled_" + _r for _r in COBBLED]
+
 CUBES = ["deep_sea_rock", "abyssal_rock", "trench_rock", "thermal_rock", "volcanic_rock", "molten_volcanic_rock",
          "volcanic_glass", "crystal_rock", "mineral_host_rock", "deep_sediment", "abyssal_mud", "deep_mud",
          "mineral_sediment", "crystal_sediment", "organic_sediment", "volcanic_ash", "thermal_vent", "vent_rock",
@@ -588,7 +597,7 @@ CUBES = ["deep_sea_rock", "abyssal_rock", "trench_rock", "thermal_rock", "volcan
          "brine_silt", "salt_rock", "lumen_sand", "glow_silt", "lumen_rock", "frost_silt", "icy_sediment", "frozen_rock",
          "abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "thermal_crystal_ore", "abyssal_crystal_ore",
          "manganese_ore", "cobalt_ore", "deep_nickel_ore", "manganese_crust", "cobalt_crust", "nickel_crust",
-         "iron_crust", "copper_crust", "deep_crystal_block"] + RARE_ORES + VANILLA_ORES + VANILLA_CRUSTS
+         "iron_crust", "copper_crust", "deep_crystal_block"] + RARE_ORES + VANILLA_ORES + VANILLA_CRUSTS + COBBLED_CUBES
 SOFT = ["deep_sediment", "abyssal_mud", "deep_mud", "mineral_sediment", "crystal_sediment", "organic_sediment", "volcanic_ash",
         "ruin_gravel", "ruin_sediment", "bone_sediment", "fossil_silt", "salt_crust", "brine_silt", "lumen_sand", "glow_silt",
         "frost_silt", "icy_sediment"]
@@ -726,6 +735,77 @@ FAUNA_DROP_ITEMS = (
 for _id, _en, _ja in FAUNA_DROP_ITEMS:
     ITEMS[_id] = (lambda n: lambda: Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "texture_locks",
                                                             "assets", "textures", "item", n + ".png")).convert("RGBA"))(_id)
+# FD01 deep-sea cooking (ModItems mirrors this table). Item models + lang + recipes come from here; the textures are
+# imported from ChatGPT sheets (texture_locks), never drawn, so these are not in ITEMS.
+# FD01 food table. effect: NV night_vision, WB water_breathing, RG regeneration; (effect, seconds, chance)
+NV = lambda c, s=10: ("night_vision", s, c)
+WB = lambda c, s=15: ("water_breathing", s, c)
+RG = lambda c, s=10: ("regeneration", s, c)
+FOOD_INGREDIENTS = (
+    ("mushroom_cap", "Deep Mushroom Cap", "深海キノコ傘", 1, 0.3),
+    ("gourd_flesh", "Gourd Flesh", "ゴード果肉", 2, 0.4),
+    ("kelp_leaf", "Deep Kelp Leaf", "深海海藻葉", 1, 0.2),
+)
+# id, en, ja, nutrition, saturation modifier, effects, bowl, recipe
+# recipe: ("s", [ingredients]) shapeless | ("p", rows, key) shaped | ("c", ingredient, kinds) cooking
+_C = "smelting smoking campfire"
+FOODS = (
+    ("fish_mushroom_skewer", "Fish Mushroom Skewer", "魚とキノコの串焼き", 6, 0.8, [NV(0.1)], False, ("s", ["mushroom_cap", "cooked_abyssal_fish", "minecraft:stick"])),
+    ("gourd_fish_skewer", "Gourd Fish Skewer", "ゴード魚串", 7, 0.9, [WB(0.1)], False, ("s", ["gourd_flesh", "cooked_shark_flesh", "minecraft:stick"])),
+    ("kelp_fish_skewer", "Kelp Fish Skewer", "海藻魚串", 5, 0.7, [], False, ("s", ["kelp_leaf", "cooked_eelpout_flesh", "minecraft:stick"])),
+    ("mushroom_stew", "Abyssal Mushroom Stew", "深海キノコシチュー", 7, 0.8, [NV(0.15)], True, ("s", ["mushroom_cap"] * 2 + ["organic_matter", "minecraft:bowl"])),
+    ("gourd_soup", "Gourd Soup", "ゴードスープ", 6, 0.8, [WB(0.15)], True, ("s", ["gourd_flesh"] * 2 + ["deep_fiber", "minecraft:bowl"])),
+    ("kelp_soup", "Deep Kelp Soup", "深海海藻スープ", 5, 0.7, [], True, ("s", ["kelp_leaf"] * 3 + ["plant_resin", "minecraft:bowl"])),
+    ("fish_soup", "Abyssal Fish Soup", "深海魚スープ", 8, 1.0, [WB(0.15)], True, ("s", ["cooked_abyssal_fish", "deep_fiber", "organic_matter", "minecraft:bowl"])),
+    ("mushroom_fish_stew", "Fish Mushroom Stew", "魚キノコ煮込み", 9, 1.0, [RG(0.05)], True, ("s", ["mushroom_cap", "cooked_viper_flesh", "organic_matter", "minecraft:bowl"])),
+    ("gourd_fish_stew", "Gourd Fish Stew", "ゴード魚煮込み", 9, 1.0, [WB(0.2)], True, ("s", ["gourd_flesh", "cooked_shark_flesh", "organic_matter", "minecraft:bowl"])),
+    ("kelp_fish_stew", "Kelp Fish Stew", "海藻魚煮込み", 8, 0.9, [], True, ("s", ["kelp_leaf"] * 2 + ["cooked_eelpout_flesh", "organic_matter", "minecraft:bowl"])),
+    ("mushroom_pie", "Deep Mushroom Pie", "深海キノコパイ", 8, 0.8, [], False, ("p", ["MMM", "MCM", "MMM"], {"M": "mushroom_cap", "C": "crystal_sap"})),
+    ("gourd_pie", "Gourd Pie", "ゴードパイ", 8, 0.9, [NV(0.1)], False, ("p", ["GGG", "GCG", "GGG"], {"G": "gourd_flesh", "C": "crystal_sap"})),
+    ("fish_pie", "Abyssal Fish Pie", "深海魚パイ", 10, 1.0, [RG(0.05)], False, ("p", ["FFF", "FCF", "FFF"], {"F": "cooked_abyssal_fish", "C": "crystal_sap"})),
+    ("mushroom_fish_pie", "Fish Mushroom Pie", "魚キノコパイ", 10, 1.1, [NV(0.15)], False, ("p", ["MFM", "FCF", "MFM"], {"M": "mushroom_cap", "F": "cooked_viper_flesh", "C": "crystal_sap"})),
+    ("gourd_fish_pie", "Gourd Fish Pie", "ゴード魚パイ", 10, 1.1, [WB(0.15)], False, ("p", ["GFG", "FCF", "GFG"], {"G": "gourd_flesh", "F": "cooked_shark_flesh", "C": "crystal_sap"})),
+    ("kelp_fish_pie", "Kelp Fish Pie", "海藻魚パイ", 9, 1.0, [], False, ("p", ["KFK", "FCF", "KFK"], {"K": "kelp_leaf", "F": "cooked_eelpout_flesh", "C": "crystal_sap"})),
+    ("preserved_fish", "Preserved Abyssal Fish", "深海魚保存食", 7, 1.0, [], False, ("s", ["abyssal_fish_fillet", "plant_resin", "organic_matter"])),
+    ("smoked_mushroom", "Smoked Deep Mushroom", "燻製深海キノコ", 4, 0.7, [], False, ("c", "mushroom_cap", "smoking campfire")),
+    ("smoked_gourd", "Smoked Gourd", "燻製ゴード", 5, 0.8, [WB(0.05)], False, ("c", "gourd_flesh", "smoking campfire")),
+    ("grilled_kelp", "Grilled Deep Kelp", "焼き深海海藻", 4, 0.6, [], False, ("c", "kelp_leaf", _C)),
+    ("mushroom_fish_grill", "Mushroom Fish Grill", "キノコ魚焼き", 8, 0.9, [NV(0.1)], False, ("s", ["mushroom_cap", "cooked_abyssal_fish", "hard_stalk"])),
+    ("gourd_fish_grill", "Gourd Fish Grill", "ゴード魚焼き", 9, 1.0, [WB(0.1)], False, ("s", ["gourd_flesh", "cooked_shark_flesh", "hard_stalk"])),
+    ("kelp_fish_grill", "Kelp Fish Grill", "海藻魚焼き", 7, 0.8, [], False, ("s", ["kelp_leaf", "cooked_angler_flesh", "hard_stalk"])),
+    ("jellyfish_skewer", "Jellyfish Tentacle Skewer", "クラゲ触手串", 6, 0.8, [WB(0.1)], False, ("s", ["jelly_tentacle", "kelp_leaf", "minecraft:stick"])),
+    ("jellyfish_stew", "Jellyfish Tentacle Soup", "クラゲ触手スープ", 7, 0.9, [RG(0.05)], True, ("s", ["jelly_tentacle", "deep_fiber", "lumen_gel", "minecraft:bowl"])),
+    ("abyssal_survival_ration", "Abyssal Survival Ration", "深海保存食", 10, 1.2, [NV(0.1), WB(0.1)], False, ("s", ["cooked_shark_flesh", "hard_stalk", "organic_matter", "bio_oil"])),
+    ("thermal_ration", "Thermal Fiber Ration", "熱水保存食", 9, 1.1, [RG(0.05)], False, ("s", ["cooked_angler_flesh", "thermal_fiber", "organic_matter"])),
+    ("mushroom_salad", "Deep Mushroom Salad", "深海キノコサラダ", 5, 0.7, [], True, ("s", ["mushroom_cap"] * 2 + ["kelp_leaf", "deep_fiber", "minecraft:bowl"])),
+    ("gourd_kelp_salad", "Gourd Kelp Salad", "ゴード海藻サラダ", 5, 0.7, [WB(0.05)], True, ("s", ["gourd_flesh"] + ["kelp_leaf"] * 2 + ["crystal_sap", "minecraft:bowl"])),
+    ("abyssal_vegetable_stew", "Abyssal Vegetable Stew", "深海野菜煮込み", 7, 0.9, [NV(0.1)], True, ("s", ["mushroom_cap", "gourd_flesh", "kelp_leaf", "organic_matter", "minecraft:bowl"])),
+)
+FOOD_NAMES = {_i: (_en, _ja) for _i, _en, _ja, *_ in FOOD_INGREDIENTS}
+FOOD_NAMES.update({_i: (_en, _ja) for _i, _en, _ja, *_ in FOODS})
+
+
+def _food_ing(n):
+    return {"item": n if ":" in n else "abyssia:" + n}
+
+
+def food_recipes(rd):
+    for fid, _en, _ja, _n, _m, _e, _bowl, rec in FOODS:
+        if rec[0] == "s":
+            data = {"type": "minecraft:crafting_shapeless", "category": "misc", "ingredients": [_food_ing(i) for i in rec[1]],
+                    "result": {"item": "abyssia:" + fid}}
+        elif rec[0] == "p":
+            data = {"type": "minecraft:crafting_shaped", "category": "misc", "pattern": rec[1],
+                    "key": {k: _food_ing(v) for k, v in rec[2].items()}, "result": {"item": "abyssia:" + fid}}
+        else:
+            for kind, suffix, time in (("smelting", "smelting", 200), ("smoking", "smoking", 100), ("campfire_cooking", "campfire", 600)):
+                if suffix in rec[2]:
+                    write(rd(f"{fid}_from_{suffix}"), {"type": "minecraft:" + kind, "category": "food",
+                          "ingredient": _food_ing(rec[1]), "result": "abyssia:" + fid, "experience": 0.35, "cookingtime": time})
+            continue
+        write(rd(fid), data)
+
+
 for _m in RARE_METALS:
     ITEMS["raw_" + _m] = (lambda m: lambda: lump("raw_" + m, MINERAL[m]))(_m)
     ITEMS[_m + "_ingot"] = (lambda m: lambda: ingot(m + "_ingot", MINERAL[m]))(_m)
@@ -791,6 +871,7 @@ ITEM_NAMES = {
     "crust_powder": ("Crust Powder", "クラスト粉末"),
 }
 ITEM_NAMES.update({_id: (_en, _ja) for _id, _en, _ja in FAUNA_DROP_ITEMS})
+ITEM_NAMES.update(FOOD_NAMES)
 ITEM_NAMES.update({
     "abyssal_alloy_ingot": ("Abyssal Alloy Ingot", "深海合金インゴット"),
     "abyssal_alloy_pickaxe": ("Abyssal Alloy Pickaxe", "深海合金のツルハシ"),
@@ -818,8 +899,10 @@ NAMES.update({
     "frost_silt": ("Frost Silt", "霜のシルト"), "icy_sediment": ("Icy Sediment", "氷質堆積物"),
     "frozen_rock": ("Frozen Rock", "凍結岩"),
 })
+NAMES.update({"cobbled_" + _r: (f"Cobbled {_en}", f"{_ja}の丸石") for _r, (_en, _ja) in COBBLED.items()})
 NAMES.update(cave_assets.CAVE_NAMES)
 NAMES.update(plant_assets.BLOCK_NAMES)
+NAMES["ancient_sapling"] = ("Ancient Sapling", "古代樹の苗")   # TR01
 ITEM_NAMES.update(plant_assets.ITEM_NAMES)
 # Material processing system (tools/material_spec.json via material_system.py)
 ITEM_NAMES.update(material_system.item_names())
@@ -954,6 +1037,11 @@ def main():
     write(bm("floating_bloom"), cross_model(ref("floating_bloom"), ref("floating_bloom_glow")))
     write(im("floating_bloom"), {"parent": "minecraft:item/generated", "textures": {"layer0": ref("floating_bloom")}})
 
+    # TR01 ancient sapling: both stages share one cross model; the texture (TREE1 sheet) is imported by hand, never drawn here.
+    write(bs("ancient_sapling"), {"variants": {"stage=0": {"model": ref("ancient_sapling")}, "stage=1": {"model": ref("ancient_sapling")}}})
+    write(bm("ancient_sapling"), cross_model(ref("ancient_sapling")))
+    write(im("ancient_sapling"), {"parent": "minecraft:item/generated", "textures": {"layer0": ref("ancient_sapling")}})
+
     _save(kelp("void_kelp", PLANT["void"], True), tex("void_kelp"))
     _save(kelp("void_kelp_plant", PLANT["void"], False), tex("void_kelp_plant"))
     for name in ("void_kelp", "void_kelp_plant"):
@@ -976,6 +1064,8 @@ def main():
 
     for name, make in ITEMS.items():
         _emit(make, os.path.join(ITEM_TEX, name + ".png"))
+        write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": "abyssia:item/" + name}})
+    for name in FOOD_NAMES:
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": "abyssia:item/" + name}})
     # Material system items: models only.  Their PNGs are placeholders / hand-made art, never drawn here.
     for name, model in material_system.item_models().items():
@@ -1056,7 +1146,11 @@ def rare_pools(name):
              "conditions": [{"condition": "minecraft:inverted", "term": silk()[0]},
                             {"condition": "minecraft:table_bonus", "enchantment": "minecraft:fortune", "chances": chances},
                             {"condition": "minecraft:survives_explosion"}]}
-            for metal, chances in CRUST_RARE_DROPS.get(name, [])]
+            for metal, chances in CRUST_RARE_DROPS.get(name, [])] + (
+        # TR01: ancient fronds give a sapling 5% of the time, with or without silk touch.
+        [{"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:ancient_sapling"}],
+          "conditions": [{"condition": "minecraft:random_chance", "chance": 0.05}, {"condition": "minecraft:survives_explosion"}]}]
+        if name == "ancient_frond" else [])
 
 
 def loot_tables():
@@ -1075,6 +1169,12 @@ def loot_tables():
         elif name in cave_assets.CAVERN_NO_DROP or name in industrial_assets.NO_DROP:
             write(lt(name), {"type": "minecraft:block", "pools": [], "random_sequence": "abyssia:blocks/" + name})
             continue
+        elif name in COBBLED:
+            # CB01: Silk Touch -> the rock, otherwise its cobbled block (Fortune does not add more)
+            pool = {"rolls": 1, "bonus_rolls": 0, "conditions": [{"condition": "minecraft:survives_explosion"}],
+                    "entries": [{"type": "minecraft:alternatives", "children": [
+                        {"type": "minecraft:item", "name": "abyssia:" + name, "conditions": silk()},
+                        {"type": "minecraft:item", "name": "abyssia:cobbled_" + name}]}]}
         elif name in SILK_ONLY:
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:" + name}], "conditions": silk()}
         else:
@@ -1091,7 +1191,7 @@ def tags():
     rocks = ["deep_sea_rock", "abyssal_rock", "trench_rock", "thermal_rock", "volcanic_rock", "molten_volcanic_rock",
              "volcanic_glass", "crystal_rock", "mineral_host_rock", "vent_rock", "black_vent_rock", "sulfur_vent_rock",
              "mineral_vent_rock", "sulfur_deposit", "black_mineral_deposit", "deep_crystal_block", "thermal_vent",
-             "ancient_masonry", "fossil_rock", "salt_rock", "lumen_rock", "frozen_rock"]
+             "ancient_masonry", "fossil_rock", "salt_rock", "lumen_rock", "frozen_rock"] + COBBLED_CUBES
     ores = [n for n in CUBES if n.endswith("_ore")]
     crusts = [n for n in CUBES if n.endswith("_crust")]
     speleothems = list(cave_assets.SPELEOTHEM)
@@ -1192,6 +1292,8 @@ def recipes():
         write(rd(f"{out}_from_{tentacle}"), {"type": "minecraft:crafting_shapeless", "category": "misc",
               "ingredients": [{"item": "abyssia:" + tentacle}] * tn + [{"item": "abyssia:" + other}] * on,
               "result": {"item": "abyssia:" + out}})
+
+    food_recipes(rd)
 
     write(rd("abyssal_alloy_ingot"), {"type": "minecraft:crafting_shapeless", "category": "misc",
           "ingredients": [{"item": f"abyssia:{m}_ingot"} for m in ("vanadium", "cobalt", "nickel")],

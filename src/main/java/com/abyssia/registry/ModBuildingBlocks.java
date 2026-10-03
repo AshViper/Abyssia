@@ -61,6 +61,15 @@ public final class ModBuildingBlocks
     public static final Shapes ORGANIC_CAVE_ROCK = shapes("organic_cave_rock", ModBlocks.ORGANIC_CAVE_ROCK);
     public static final Shapes ERODED_CAVE_ROCK = shapes("eroded_cave_rock", ModBlocks.ERODED_CAVE_ROCK);
 
+    // ---------- Cobbled rocks: stairs, slabs and walls ----------
+    public static final Shapes COBBLED_DEEP_SEA_ROCK = shapes("cobbled_deep_sea_rock", ModBlocks.COBBLED_DEEP_SEA_ROCK);
+    public static final Shapes COBBLED_ABYSSAL_ROCK = shapes("cobbled_abyssal_rock", ModBlocks.COBBLED_ABYSSAL_ROCK);
+    public static final Shapes COBBLED_TRENCH_ROCK = shapes("cobbled_trench_rock", ModBlocks.COBBLED_TRENCH_ROCK);
+    public static final Shapes COBBLED_THERMAL_ROCK = shapes("cobbled_thermal_rock", ModBlocks.COBBLED_THERMAL_ROCK);
+    public static final Shapes COBBLED_VOLCANIC_ROCK = shapes("cobbled_volcanic_rock", ModBlocks.COBBLED_VOLCANIC_ROCK);
+    public static final Shapes COBBLED_CRYSTAL_ROCK = shapes("cobbled_crystal_rock", ModBlocks.COBBLED_CRYSTAL_ROCK);
+    public static final Shapes COBBLED_MINERAL_HOST_ROCK = shapes("cobbled_mineral_host_rock", ModBlocks.COBBLED_MINERAL_HOST_ROCK);
+
     // ---------- Metal crusts: polished (reusing the crust art) and bricks, each with stairs / slab / wall ----------
     public static final CrustFamily MANGANESE_CRUST = crustFamily("manganese_crust", ModBlocks.MANGANESE_CRUST);
     public static final CrustFamily COBALT_CRUST = crustFamily("cobalt_crust", ModBlocks.COBALT_CRUST);
