@@ -722,6 +722,43 @@ FAUNA_DROP_ITEMS = (
 for _id, _en, _ja in FAUNA_DROP_ITEMS:
     ITEMS[_id] = (lambda n: lambda: Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "texture_locks",
                                                             "assets", "textures", "item", n + ".png")).convert("RGBA"))(_id)
+# FS01 edible fish: one raw/cooked pair per species (tools/fauna/<id>.py INFO["loot"]).  Final icons come from a
+# ChatGPT sheet into texture_locks; until then each is a PLACEHOLDER: the F01 fillet / cooked fish icon tinted with
+# the species colour and marked with a magenta corner pixel.  Not locked, and only drawn while the PNG is missing.
+FS01_FISH = (
+    # id, English, Japanese, species colour
+    ("orange_roughy", "Orange Roughy", "オレンジラフィー", "#d8582c"),
+    ("sablefish", "Sablefish", "ギンダラ", "#3a3e46"),
+    ("patagonian_toothfish", "Patagonian Toothfish", "マジェランアイナメ", "#6a6258"),
+    ("black_scabbardfish", "Black Scabbardfish", "クロタチカマス", "#2a2628"),
+    ("greenland_halibut", "Greenland Halibut", "カラスガレイ", "#5e5648"),
+    ("alfonsino", "Alfonsino", "キンメダイ", "#e02a2e"),
+    ("blue_ling", "Blue Ling", "ブルーリング", "#5a6e80"),
+    ("deepwater_redfish", "Deepwater Redfish", "アラスカメヌケ", "#c8402e"),
+)
+FS01_FOODS = [("raw_" + _f, "cooked_" + _f) for _f, *_ in FS01_FISH]
+
+
+def fs01_placeholder(base, colour):
+    """Placeholder icon: ``base`` (a locked F01 icon) half-tinted toward ``colour``, magenta pixel top-left."""
+    src = Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "texture_locks", "assets", "textures",
+                                  "item", base + ".png")).convert("RGBA")
+    tr, tg, tb = hexrgb(colour)
+    out = Image.new("RGBA", src.size)
+    for y in range(src.height):
+        for x in range(src.width):
+            r, g, b, a = src.getpixel((x, y))
+            if a:
+                lum = (0.299 * r + 0.587 * g + 0.114 * b) / 160.0
+                r, g, b = (min(255, int(0.4 * c + 0.6 * t * lum)) for c, t in ((r, tr), (g, tg), (b, tb)))
+            out.putpixel((x, y), (r, g, b, a))
+    out.putpixel((0, 0), (255, 0, 255, 255))
+    return out
+
+
+for _f, _en, _ja, _col in FS01_FISH:
+    ITEMS["raw_" + _f] = (lambda c: lambda: fs01_placeholder("abyssal_fish_fillet", c))(_col)
+    ITEMS["cooked_" + _f] = (lambda c: lambda: fs01_placeholder("cooked_abyssal_fish", c))(_col)
 for _m in RARE_METALS:
     ITEMS["raw_" + _m] = (lambda m: lambda: lump("raw_" + m, MINERAL[m]))(_m)
     ITEMS[_m + "_ingot"] = (lambda m: lambda: ingot(m + "_ingot", MINERAL[m]))(_m)
@@ -787,6 +824,9 @@ ITEM_NAMES = {
     "crust_powder": ("Crust Powder", "クラスト粉末"),
 }
 ITEM_NAMES.update({_id: (_en, _ja) for _id, _en, _ja in FAUNA_DROP_ITEMS})
+for _f, _en, _ja, _ in FS01_FISH:
+    ITEM_NAMES["raw_" + _f] = (f"Raw {_en}", f"生の{_ja}")
+    ITEM_NAMES["cooked_" + _f] = (f"Cooked {_en}", f"焼き{_ja}")
 ITEM_NAMES.update({
     "abyssal_alloy_ingot": ("Abyssal Alloy Ingot", "深海合金インゴット"),
     "abyssal_alloy_pickaxe": ("Abyssal Alloy Pickaxe", "深海合金のツルハシ"),
@@ -1161,6 +1201,14 @@ def recipes():
                   "ingredient": {"item": "abyssia:" + crust}, "result": {"item": result, "count": count},
                   "experience": 0.5, "cookingtime": time})
 
+    # GL01: sandy / silty inorganic sediments fuse into vanilla glass (no mud, organic, ash, bone, salt or gravel).
+    for src in ("deep_sediment", "mineral_sediment", "crystal_sediment", "ruin_sediment", "icy_sediment",
+                "cave_sediment", "lumen_sand", "fossil_silt", "frost_silt", "glow_silt"):
+        for kind, time in (("smelting", 200), ("blasting", 100)):
+            write(rd(f"glass_from_{kind}_{src}"), {
+                "type": "minecraft:" + kind, "category": "misc", "ingredient": {"item": "abyssia:" + src},
+                "result": "minecraft:glass", "experience": 0.1, "cookingtime": time})
+
     # Crust powder: ground from any crust; a mild pigment / adhesive helper.
     cp = {"item": "abyssia:crust_powder"}
     write(rd("crust_powder_from_crusts"), {"type": "minecraft:crafting_shapeless", "category": "misc",
@@ -1173,7 +1221,8 @@ def recipes():
     # F01 fauna drops: raw flesh -> cooked (furnace / smoker / campfire), and tentacle crafts.
     for raw, cooked in (("abyssal_fish_fillet", "cooked_abyssal_fish"), ("viper_flesh", "cooked_viper_flesh"),
                         ("shark_flesh", "cooked_shark_flesh"), ("eelpout_flesh", "cooked_eelpout_flesh"),
-                        ("blobfish_flesh", "cooked_blobfish"), ("angler_flesh", "cooked_angler_flesh")):
+                        ("blobfish_flesh", "cooked_blobfish"), ("angler_flesh", "cooked_angler_flesh"),
+                        *FS01_FOODS):
         for kind, suffix, time in (("smelting", "smelting", 200), ("smoking", "smoking", 100),
                                    ("campfire_cooking", "campfire", 600)):
             write(rd(f"{cooked}_from_{suffix}"), {"type": "minecraft:" + kind, "category": "food",

@@ -1,0 +1,581 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "sablefish",
+  "name": "Sablefish",
+  "template": "fish",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      64
+    ],
+    "texture_image": [
+      64,
+      64
+    ],
+    "glow_texture": false,
+    "size_units": [
+      7.42,
+      10,
+      27
+    ],
+    "size_blocks": [
+      0.46,
+      0.63,
+      1.69
+    ],
+    "core_size_blocks": [
+      0.25,
+      0.31,
+      1.44
+    ],
+    "cubes": 19
+  },
+  "bones": [
+    {
+      "name": "sablefish",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "sablefish",
+      "role": "body",
+      "pivot": [
+        0,
+        4,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        4,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "snout",
+      "parent": "head",
+      "role": "snout",
+      "pivot": [
+        0,
+        5,
+        -12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mouth",
+      "parent": "head",
+      "role": "jaw",
+      "pivot": [
+        0,
+        3,
+        -8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        1.8,
+        6,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        -1.8,
+        6,
+        -10
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        2,
+        4,
+        -7
+      ],
+      "rotation": [
+        0,
+        30,
+        -15
+      ]
+    },
+    {
+      "name": "left_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        -2,
+        4,
+        -7
+      ],
+      "rotation": [
+        0,
+        -30,
+        15
+      ]
+    },
+    {
+      "name": "right_pelvic_fin",
+      "parent": "body",
+      "role": "pelvic",
+      "pivot": [
+        1,
+        2,
+        -4
+      ],
+      "rotation": [
+        -20,
+        20,
+        0
+      ]
+    },
+    {
+      "name": "left_pelvic_fin",
+      "parent": "body",
+      "role": "pelvic",
+      "pivot": [
+        -1,
+        2,
+        -4
+      ],
+      "rotation": [
+        -20,
+        -20,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin",
+      "parent": "body",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        7,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_2",
+      "parent": "body",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin",
+      "parent": "body",
+      "role": "anal",
+      "pivot": [
+        0,
+        2,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail",
+      "parent": "body",
+      "role": "tail",
+      "pivot": [
+        0,
+        4,
+        5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_2",
+      "parent": "tail",
+      "role": "tail",
+      "pivot": [
+        0,
+        4,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_fin",
+      "parent": "tail_2",
+      "role": "tail_fin",
+      "pivot": [
+        0,
+        4,
+        11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 3.33,
+      "bones": [
+        "body",
+        "tail",
+        "tail_2",
+        "tail_fin",
+        "right_fin",
+        "left_fin",
+        "right_pelvic_fin",
+        "left_pelvic_fin",
+        "dorsal_fin",
+        "dorsal_fin_2",
+        "mouth"
+      ],
+      "description": "Hovering: slow bob, breathing jaw, fluttering fins, swaying lure"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 1.33,
+      "bones": [
+        "body",
+        "head",
+        "tail",
+        "tail_2",
+        "tail_fin",
+        "right_fin",
+        "left_fin",
+        "right_pelvic_fin",
+        "left_pelvic_fin",
+        "dorsal_fin",
+        "dorsal_fin_2",
+        "anal_fin",
+        "mouth"
+      ],
+      "description": "Swimming: tail beat with body counter-sway, paddling fins, lure dragging back"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.56,
+      "bones": [
+        "body",
+        "mouth",
+        "tail",
+        "tail_2",
+        "right_fin",
+        "left_fin"
+      ],
+      "description": "Flinch: twist, jolt and snap"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 1.78,
+      "bones": [
+        "body",
+        "mouth",
+        "tail",
+        "tail_2",
+        "right_fin",
+        "left_fin"
+      ],
+      "description": "Rolls onto its side and sinks, jaw slack, lure drooping, light fading"
+    },
+    {
+      "name": "mouth_open",
+      "loop": "hold",
+      "length": 0.56,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Opens the jaw to full gape and holds"
+    },
+    {
+      "name": "mouth_close",
+      "loop": "once",
+      "length": 0.39,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Snaps the jaw shut from full gape"
+    }
+  ],
+  "definition": {
+    "template": "fish",
+    "category": "deep_sea_fish",
+    "body": {
+      "length": 14,
+      "width": 4,
+      "height": 5,
+      "round": 1
+    },
+    "parts": [
+      "body",
+      "head",
+      "mouth",
+      "eye",
+      "fin",
+      "tail"
+    ],
+    "params": {
+      "head": {
+        "length": 5,
+        "width": 4,
+        "height": 5,
+        "drop": 0,
+        "round": 1
+      },
+      "snout": {
+        "length": 1,
+        "width": 2,
+        "height": 2
+      },
+      "mouth": {
+        "enabled": true,
+        "jaw_height": 1,
+        "underbite": 0,
+        "gape": 30,
+        "rest_gape": 0,
+        "width": 0.7,
+        "protrude": 0,
+        "round": 0
+      },
+      "teeth": {
+        "count": 4,
+        "length": 1,
+        "vary": 1,
+        "side": 1,
+        "upper": true,
+        "lower": true,
+        "fangs": 0,
+        "fang_length": 3
+      },
+      "eye": {
+        "size": 2,
+        "height": 0.65,
+        "forward": 0.4,
+        "protrude": 0.4,
+        "tubular": 0
+      },
+      "lure": {
+        "enabled": false,
+        "base": "head",
+        "position": 0.2,
+        "length": 6,
+        "segments": 3,
+        "lean": 15,
+        "arc": 120,
+        "esca": 2
+      },
+      "dome": {
+        "enabled": false,
+        "height": 3
+      },
+      "tail": {
+        "segments": 2,
+        "length": 6,
+        "width": 3,
+        "height": 3,
+        "taper": 0.6
+      },
+      "caudal": {
+        "length": 3,
+        "height": 6,
+        "shape": "fork"
+      },
+      "pectoral": {
+        "enabled": true,
+        "length": 3,
+        "height": 2,
+        "angle": 30,
+        "droop": 15,
+        "position": 0.1
+      },
+      "pelvic": {
+        "enabled": true,
+        "length": 2,
+        "height": 1,
+        "position": 0.3
+      },
+      "dorsal": {
+        "count": 2,
+        "length": 4,
+        "height": 3,
+        "position": 0.2,
+        "apex": 0.5,
+        "second_position": 0.75
+      },
+      "anal": {
+        "enabled": true,
+        "length": 4,
+        "height": 2,
+        "position": 0.75
+      },
+      "photophores": {
+        "enabled": false,
+        "spacing": 2,
+        "radius": 0.6,
+        "rows": 1,
+        "head": true
+      },
+      "gills": {
+        "slits": 0
+      }
+    },
+    "palette": {
+      "body": "#2c3036",
+      "belly": "#7a8088",
+      "fin": "#24282e",
+      "mouth": "#4a3a3e",
+      "lip": "#3a3e44",
+      "eye": "#0a0c10",
+      "eye_iris": "#5a6a70",
+      "eye_ring": "#3a3e44"
+    },
+    "texture": {
+      "pattern": "speckle",
+      "pattern_strength": 0.25,
+      "countershade": 1
+    },
+    "glow": [],
+    "animations": [
+      "idle",
+      "swim",
+      "hurt",
+      "death",
+      "mouth_open",
+      "mouth_close"
+    ],
+    "animation": {
+      "speed": 0.9,
+      "amplitude": 1
+    },
+    "variation": {
+      "body": 0.08,
+      "head": 0.06,
+      "fin": 0.12,
+      "tail": 0.08,
+      "eye": 0.1,
+      "glow": 0.2,
+      "lure": 0.1,
+      "hue": 4,
+      "lightness": 0.03
+    },
+    "id": "sablefish",
+    "name": "Sablefish",
+    "name_ja": "ギンダラ",
+    "scientific_name": "Anoplopoma fimbria",
+    "habitat": "continental_slope",
+    "order": 77,
+    "notes": "Long, slender, cigar-shaped body with a pointed conical head; two well-separated dorsal fins of similar size, an anal fin under the second; slightly forked tail; slate-black to dark grey above, lighter grey sides and belly."
+  }
+}

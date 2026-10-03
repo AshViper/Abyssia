@@ -138,7 +138,9 @@ DEEP_GRAD = grad(dy(-128), dy(256), 2.0, -4.0)
 # and never switch the biome.
 MACRO_SCALE = 2.5    # ocean basins, shelves, mountain chains and trench lines, x the vanilla-sized original
 CLIMATE_SCALE = 2.0  # ocean world temperature belts
-REGION_SCALE = 9.0   # deep ocean habitat, volcanic and crystal provinces (about 1-3k blocks across)
+REGION_SCALE = 9.0   # trench_region only (terrain)
+BIOME_REGION_SCALE = 9.0  # deep biome provinces: habitat, volcanic / crystal, water-mass, relic (noise lattice ~2300 blocks; measured median patch 7.0 -> 1230, 8.5 -> 1420 blocks)
+ZONE_FUZZ = 0.3      # medium-scale wobble of the deep depth-zone borders (biome only, not terrain)
 
 # ---------------------------------------------------------------- deep ocean relief (old deep-ocean Y; overworld Y = dy())
 # The deep ocean is one open ocean: its seabed lies mostly below Y 100 with open water above. The ocean world's macro
@@ -224,6 +226,7 @@ def terrain():
     write("noise/hills", {"firstOctave": -6, "amplitudes": [1.0, 0.5, 0.25]})
     write("noise/deep_ridge", {"firstOctave": -7, "amplitudes": [1.0, 0.5, 0.25]})
     write("noise/canyon", {"firstOctave": -7, "amplitudes": [1.0, 0.4]})
+    write("noise/biome_zone", {"firstOctave": -8, "amplitudes": [1.0, 0.5]})
     write("noise/biome_fuzz", {"firstOctave": -7, "amplitudes": [1.0, 0.5]})
     write("noise/cavern", {"firstOctave": -7, "amplitudes": [1.0, 0.5, 0.5]})
     write("noise/rift", {"firstOctave": -4, "amplitudes": [1.0]})  # only seeds rift placement per world
@@ -260,11 +263,11 @@ def terrain():
                                          "max_seabed": r["max_seabed"]}))
 
     # ---- deep ocean
-    write("density_function/region_volcanic", flat(snoise(A("region_volcanic"), 1.0 / REGION_SCALE)))
-    write("density_function/region_habitat", flat(snoise(A("region_habitat"), 1.0 / REGION_SCALE)))
+    write("density_function/region_volcanic", flat(snoise(A("region_volcanic"), 1.0 / BIOME_REGION_SCALE)))
+    write("density_function/region_habitat", flat(snoise(A("region_habitat"), 1.0 / BIOME_REGION_SCALE)))
     # Water-mass and relic provinces (biome choice only, no terrain): cold / warm-brine water, ruin and bone fields.
-    write("density_function/region_temperature", flat(snoise(A("region_temperature"), 1.0 / REGION_SCALE)))
-    write("density_function/region_erosion", flat(snoise(A("region_erosion"), 1.0 / REGION_SCALE)))
+    write("density_function/region_temperature", flat(snoise(A("region_temperature"), 1.0 / BIOME_REGION_SCALE)))
+    write("density_function/region_erosion", flat(snoise(A("region_erosion"), 1.0 / BIOME_REGION_SCALE)))
     y = lambda blocks: blocks / 64.0
     d = DEEP
     write("density_function/deep_shelf", flat(ramp(A("seabed_macro"), *d["shelf"])))
@@ -1399,13 +1402,13 @@ def biome_sources():
     # plains, trench system flanks and basins, hadal floors.
     Y = lambda lo, hi: (lo / 160 if lo > -300 else -2, hi / 160 if hi < 300 else 2)
     # Province thresholds sit in the noises' tails (std ~0.27): each province type covers roughly 7-10% of the seabed.
-    H, W = (-0.42, 0.36), (-0.37, 0.38)
+    H, W = (-0.36, 0.30), (-0.33, 0.33)
     normal = dict(humidity=H, weirdness=W)
     # Water-mass / relic provinces (temperature = region_temperature, erosion = region_erosion; same noise shape, std
     # ~0.28) only replace abyssal_ocean, the dominant plains zone (~50% of the seabed): every other biome keeps its area.
     # Cold tail -> frost_abyss; warm tail -> brine_lakes (dry habitat side) / glow_gardens (humid side); off-tail
     # temperatures: erosion tails -> sunken_ruins (low) / bone_graveyard (high). Each ends up ~4-6% of the seabed.
-    T, E, HS = (-0.36, 0.27), (-0.32, 0.32), -0.03
+    T, E, HS = (-0.30, 0.24), (-0.27, 0.27), -0.03
     plains = dict(continentalness=Y(0, 80), weirdness=W)
     deep = [
         params(A("deep_sea"), continentalness=Y(80, 999), **normal),
@@ -1455,7 +1458,8 @@ def biome_sources():
 DEEP_CLIMATE = dict(
     temperature=A("region_temperature"),
     vegetation=A("region_habitat"),
-    continents=add(mul(0.4, A("deep_macro_offset")), mul(0.04, snoise(A("biome_fuzz"), 1.0))),
+    continents=add(add(mul(0.4, A("deep_macro_offset")), mul(0.04, snoise(A("biome_fuzz"), 1.0))),
+                   mul(ZONE_FUZZ, snoise(A("biome_zone"), 1.0 / BIOME_REGION_SCALE))),
     erosion=A("region_erosion"),
     ridges=A("region_volcanic"),
 )

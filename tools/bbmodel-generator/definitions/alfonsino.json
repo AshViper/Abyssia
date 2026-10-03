@@ -1,0 +1,125 @@
+{
+	"id": "alfonsino",
+	"name": "Alfonsino",
+	"name_ja": "キンメダイ",
+	"scientific_name": "Beryx decadactylus",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "seamount",
+	"order": 81,
+	"notes": "Small, deep-bodied, laterally compressed fish with a huge golden-rimmed eye taking up much of the head, a short blunt snout and oblique mouth, a single short dorsal fin, a deeply forked large tail; bright scarlet red all over, silvery-pink sides.",
+	"body": {
+		"length": 6,
+		"width": 3,
+		"height": 7,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 4,
+			"width": 3,
+			"height": 7,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": 0,
+			"gape": 30,
+			"rest_gape": 0,
+			"width": 0.8,
+			"round": 0
+		},
+		"eye": {
+			"size": 3,
+			"height": 0.6,
+			"forward": 0.5,
+			"protrude": 0.4
+		},
+		"tail": {
+			"segments": 1,
+			"length": 3,
+			"width": 2,
+			"height": 3,
+			"taper": 0.6
+		},
+		"caudal": {
+			"length": 5,
+			"height": 10,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 30,
+			"droop": 15,
+			"position": 0.15
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 2,
+			"position": 0.4
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 4,
+			"height": 3,
+			"position": 0.4,
+			"apex": 0.4
+		},
+		"anal": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 0.85
+		}
+	},
+	"palette": {
+		"body": "#e02a2e",
+		"belly": "#f0a0a0",
+		"fin": "#e8383a",
+		"mouth": "#8a1e22",
+		"lip": "#d03034",
+		"eye": "#0a0a0c",
+		"eye_iris": "#f0c040",
+		"eye_ring": "#a8282a"
+	},
+	"texture": {
+		"pattern": "scales",
+		"pattern_strength": 0.35,
+		"pattern_scale": 1,
+		"countershade": 0.5
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 1.2,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.12,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

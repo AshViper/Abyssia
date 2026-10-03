@@ -1,0 +1,135 @@
+{
+	"id": "patagonian_toothfish",
+	"name": "Patagonian Toothfish",
+	"name_ja": "マジェランアイナメ",
+	"scientific_name": "Dissostichus eleginoides",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "continental_slope",
+	"order": 78,
+	"notes": "Large, heavy, torpedo-shaped notothenioid: big broad head, large mouth with a protruding lower jaw and rows of small sharp teeth, two dorsal fins (short first, long second matching the anal fin), big fan pectorals, square tail; dark grey-brown mottled back, paler grey belly.",
+	"body": {
+		"length": 15,
+		"width": 6,
+		"height": 7,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 7,
+			"width": 7,
+			"height": 7,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 3,
+			"underbite": 1,
+			"gape": 40,
+			"rest_gape": 0,
+			"width": 1,
+			"round": 1
+		},
+		"teeth": {
+			"count": 4,
+			"length": 1,
+			"vary": 0,
+			"side": 1,
+			"upper": true,
+			"lower": true
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.72,
+			"forward": 0.35,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 2,
+			"length": 7,
+			"width": 4,
+			"height": 5,
+			"taper": 0.55
+		},
+		"caudal": {
+			"length": 4,
+			"height": 7,
+			"shape": "rect"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 5,
+			"height": 4,
+			"angle": 35,
+			"droop": 20,
+			"position": 0.1
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 2,
+			"position": 0.25
+		},
+		"dorsal": {
+			"count": 2,
+			"length": 3,
+			"height": 3,
+			"position": 0.15,
+			"second_position": 0.6,
+			"apex": 0.4
+		},
+		"anal": {
+			"enabled": true,
+			"length": 6,
+			"height": 2,
+			"position": 0.6
+		}
+	},
+	"palette": {
+		"body": "#4e4a44",
+		"belly": "#8a8a86",
+		"fin": "#3c3a36",
+		"mouth": "#5a3a36",
+		"lip": "#5e5852",
+		"teeth": "#e8e2d2",
+		"eye": "#0c0e10",
+		"eye_iris": "#7a7a60",
+		"eye_ring": "#3a3632"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.35,
+		"countershade": 1.0
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.6,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.12,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

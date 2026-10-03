@@ -1,0 +1,130 @@
+{
+	"id": "sablefish",
+	"name": "Sablefish",
+	"name_ja": "ギンダラ",
+	"scientific_name": "Anoplopoma fimbria",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "continental_slope",
+	"order": 77,
+	"notes": "Long, slender, cigar-shaped body with a pointed conical head; two well-separated dorsal fins of similar size, an anal fin under the second; slightly forked tail; slate-black to dark grey above, lighter grey sides and belly.",
+	"body": {
+		"length": 14,
+		"width": 4,
+		"height": 5,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 5,
+			"width": 4,
+			"height": 5,
+			"drop": 0,
+			"round": 1
+		},
+		"snout": {
+			"length": 1,
+			"width": 2,
+			"height": 2
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"underbite": 0,
+			"gape": 30,
+			"rest_gape": 0,
+			"width": 0.7,
+			"round": 0
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.65,
+			"forward": 0.4,
+			"protrude": 0.4
+		},
+		"tail": {
+			"segments": 2,
+			"length": 6,
+			"width": 3,
+			"height": 3,
+			"taper": 0.6
+		},
+		"caudal": {
+			"length": 3,
+			"height": 6,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 30,
+			"droop": 15,
+			"position": 0.1
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"position": 0.3
+		},
+		"dorsal": {
+			"count": 2,
+			"length": 4,
+			"height": 3,
+			"position": 0.2,
+			"second_position": 0.75,
+			"apex": 0.5
+		},
+		"anal": {
+			"enabled": true,
+			"length": 4,
+			"height": 2,
+			"position": 0.75
+		}
+	},
+	"palette": {
+		"body": "#2c3036",
+		"belly": "#7a8088",
+		"fin": "#24282e",
+		"mouth": "#4a3a3e",
+		"lip": "#3a3e44",
+		"eye": "#0a0c10",
+		"eye_iris": "#5a6a70",
+		"eye_ring": "#3a3e44"
+	},
+	"texture": {
+		"pattern": "speckle",
+		"pattern_strength": 0.25,
+		"countershade": 1.0
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.9,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.12,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

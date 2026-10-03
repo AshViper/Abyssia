@@ -1,0 +1,81 @@
+{
+  "category": "vegetation",
+  "tier": "small",
+  "footprint_radius": 12,
+  "max_height": 6,
+  "formation": {
+    "type": "fallen_log",
+    "length": [
+      5,
+      14
+    ],
+    "thick": 0.3,
+    "branches": [
+      0,
+      4
+    ],
+    "branch_length": [
+      1,
+      3
+    ],
+    "jog_chance": 0.7,
+    "bury_chance": 0.4,
+    "stripped_chance": 0.2,
+    "wood": [
+      {
+        "data": {
+          "Name": "abyssia:ancient_stem"
+        },
+        "weight": 6
+      },
+      {
+        "data": {
+          "Name": "abyssia:ancient_wood"
+        },
+        "weight": 2
+      }
+    ],
+    "stripped": [
+      {
+        "data": {
+          "Name": "abyssia:stripped_ancient_stem"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:stripped_ancient_wood"
+        },
+        "weight": 1
+      }
+    ],
+    "root": [
+      {
+        "data": {
+          "Name": "abyssia:ancient_root"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:ancient_wood"
+        },
+        "weight": 1
+      }
+    ],
+    "planks": [
+      {
+        "data": {
+          "Name": "abyssia:ancient_planks"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 0.8,
+    "min_y": -340,
+    "max_y": -80,
+    "max_top_y": -92
+  }
+}

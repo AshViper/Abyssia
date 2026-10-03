@@ -1,0 +1,747 @@
+{
+  "generator": "bbmodel-generator 1.0",
+  "id": "black_scabbardfish",
+  "name": "Black Scabbardfish",
+  "template": "eel",
+  "preset": "rich_deep_sea",
+  "seed": 1,
+  "variation": 0,
+  "settings": {
+    "seed": 1,
+    "textureSeed": 0,
+    "variation": 0,
+    "preset": "rich_deep_sea",
+    "detail": "high",
+    "pixelScale": 16,
+    "blockCount": 0,
+    "textureSize": "auto",
+    "uvMode": "box",
+    "modelFormat": "modded_entity",
+    "formatVersion": "5.0",
+    "animationReady": true,
+    "generateTexture": true,
+    "generateUV": true,
+    "generateAnimation": true,
+    "glowLayer": true,
+    "mirrorUV": false,
+    "size": {
+      "width": 0,
+      "height": 0,
+      "length": 0
+    },
+    "animationNaming": "auto",
+    "modId": "abyssia"
+  },
+  "model": {
+    "format": "modded_entity",
+    "format_version": "5.0",
+    "uv_mode": "box",
+    "texture_resolution": [
+      64,
+      32
+    ],
+    "texture_image": [
+      64,
+      32
+    ],
+    "glow_texture": false,
+    "size_units": [
+      4.19,
+      6.28,
+      49
+    ],
+    "size_blocks": [
+      0.26,
+      0.39,
+      3.06
+    ],
+    "core_size_blocks": [
+      0.13,
+      0.27,
+      2.88
+    ],
+    "cubes": 30
+  },
+  "bones": [
+    {
+      "name": "black_scabbardfish",
+      "parent": null,
+      "role": "root",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body",
+      "parent": "black_scabbardfish",
+      "role": "body",
+      "pivot": [
+        0,
+        2.2766,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_2",
+      "parent": "body",
+      "role": "segment",
+      "pivot": [
+        0,
+        2.2766,
+        -12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_3",
+      "parent": "body_2",
+      "role": "segment",
+      "pivot": [
+        0,
+        2.2766,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_4",
+      "parent": "body_3",
+      "role": "segment",
+      "pivot": [
+        0,
+        2.2766,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_5",
+      "parent": "body_4",
+      "role": "segment",
+      "pivot": [
+        0,
+        2.2766,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_6",
+      "parent": "body_5",
+      "role": "segment",
+      "pivot": [
+        0,
+        2.2766,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_7",
+      "parent": "body_6",
+      "role": "segment",
+      "pivot": [
+        0,
+        2.2766,
+        13
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "body_8",
+      "parent": "body_7",
+      "role": "segment",
+      "pivot": [
+        0,
+        2.2766,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "body",
+      "role": "head",
+      "pivot": [
+        0,
+        2.2766,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "mouth",
+      "parent": "head",
+      "role": "jaw",
+      "pivot": [
+        0,
+        1.2766,
+        -18
+      ],
+      "rotation": [
+        -4,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "lower_teeth",
+      "parent": "mouth",
+      "role": "teeth",
+      "pivot": [
+        0,
+        1.2766,
+        -22
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper_teeth",
+      "parent": "head",
+      "role": "teeth",
+      "pivot": [
+        0,
+        1.2766,
+        -23
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        0.8,
+        3.2766,
+        -21
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "left_eye",
+      "parent": "head",
+      "role": "eye",
+      "pivot": [
+        -0.8,
+        3.2766,
+        -21
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "right_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        1,
+        2.7766,
+        -16
+      ],
+      "rotation": [
+        0,
+        30,
+        -15
+      ]
+    },
+    {
+      "name": "left_fin",
+      "parent": "body",
+      "role": "fin",
+      "pivot": [
+        -1,
+        2.7766,
+        -16
+      ],
+      "rotation": [
+        0,
+        -30,
+        15
+      ]
+    },
+    {
+      "name": "dorsal_fin",
+      "parent": "body",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        4.2766,
+        -17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_2",
+      "parent": "body_2",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        4.2766,
+        -12
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_3",
+      "parent": "body_3",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        4.2766,
+        -7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_4",
+      "parent": "body_4",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        4.2766,
+        -2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_5",
+      "parent": "body_5",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        3.2766,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_6",
+      "parent": "body_6",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        3.2766,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_7",
+      "parent": "body_7",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        3.2766,
+        13
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dorsal_fin_8",
+      "parent": "body_8",
+      "role": "dorsal",
+      "pivot": [
+        0,
+        3.2766,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin",
+      "parent": "body_5",
+      "role": "anal",
+      "pivot": [
+        0,
+        1.2766,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin_2",
+      "parent": "body_6",
+      "role": "anal",
+      "pivot": [
+        0,
+        1.2766,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin_3",
+      "parent": "body_7",
+      "role": "anal",
+      "pivot": [
+        0,
+        1.2766,
+        13
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "anal_fin_4",
+      "parent": "body_8",
+      "role": "anal",
+      "pivot": [
+        0,
+        2.2766,
+        18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "tail_fin",
+      "parent": "body_8",
+      "role": "tail_fin",
+      "pivot": [
+        0,
+        2.2766,
+        23
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "idle",
+      "loop": "loop",
+      "length": 5,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body_8",
+        "head",
+        "mouth",
+        "right_fin",
+        "left_fin"
+      ],
+      "description": "Hovering: slow shallow undulation, breathing jaw, drifting fins"
+    },
+    {
+      "name": "swim",
+      "loop": "loop",
+      "length": 1.75,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body_8",
+        "head",
+        "tail_fin",
+        "right_fin",
+        "left_fin",
+        "mouth"
+      ],
+      "description": "Swimming: travelling wave from head to tail"
+    },
+    {
+      "name": "hurt",
+      "loop": "once",
+      "length": 0.69,
+      "bones": [
+        "body",
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body_8",
+        "mouth"
+      ],
+      "description": "Recoil: the body kinks and snaps back"
+    },
+    {
+      "name": "death",
+      "loop": "hold",
+      "length": 2.25,
+      "bones": [
+        "body_2",
+        "body_3",
+        "body_4",
+        "body_5",
+        "body_6",
+        "body_7",
+        "body_8",
+        "body",
+        "mouth"
+      ],
+      "description": "Coils up, rolls onto its side and sinks"
+    },
+    {
+      "name": "mouth_open",
+      "loop": "hold",
+      "length": 0.75,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Opens the jaw wide"
+    },
+    {
+      "name": "mouth_close",
+      "loop": "once",
+      "length": 0.5,
+      "bones": [
+        "mouth",
+        "head"
+      ],
+      "description": "Closes the jaw"
+    }
+  ],
+  "definition": {
+    "template": "eel",
+    "category": "eel",
+    "body": {
+      "length": 40,
+      "width": 2,
+      "height": 4,
+      "segments": 8,
+      "taper": 0.3
+    },
+    "parts": [
+      "body",
+      "head",
+      "mouth",
+      "teeth",
+      "eye",
+      "fin",
+      "tail"
+    ],
+    "params": {
+      "head": {
+        "length": 6,
+        "width": 2,
+        "height": 4,
+        "round": 0
+      },
+      "mouth": {
+        "jaw_height": 1,
+        "jaw_length": 5,
+        "upper_length": 4,
+        "width": 1,
+        "gape": 35,
+        "rest_gape": 4,
+        "pouch": 0
+      },
+      "teeth": {
+        "count": 3,
+        "length": 1,
+        "rows": 1
+      },
+      "eye": {
+        "size": 2,
+        "height": 0.65,
+        "forward": 0.35,
+        "protrude": 0.4
+      },
+      "gills": {
+        "frills": 0,
+        "height": 3,
+        "spacing": 1
+      },
+      "pectoral": {
+        "enabled": true,
+        "length": 2,
+        "height": 1,
+        "angle": 30
+      },
+      "dorsal": {
+        "enabled": true,
+        "start": 0,
+        "end": 0.95,
+        "height": 2
+      },
+      "anal": {
+        "enabled": true,
+        "start": 0.6,
+        "end": 0.95,
+        "height": 1
+      },
+      "pelvic": {
+        "enabled": false,
+        "length": 2,
+        "height": 2,
+        "position": 0.55
+      },
+      "caudal": {
+        "enabled": true,
+        "length": 3,
+        "height": 4,
+        "shape": "fork"
+      },
+      "tail_tip": {
+        "enabled": false,
+        "size": 2
+      }
+    },
+    "palette": {
+      "body": "#1e1c1e",
+      "belly": "#4a4448",
+      "fin": "#141214",
+      "mouth": "#0a0a0c",
+      "lip": "#2a2628",
+      "teeth": "#d8d4cc",
+      "eye": "#06080a",
+      "eye_iris": "#b8a060",
+      "eye_ring": "#2a2422"
+    },
+    "texture": {
+      "pattern": "plain",
+      "pattern_strength": 0.2,
+      "countershade": 0.3
+    },
+    "glow": [],
+    "animations": [
+      "idle",
+      "swim",
+      "hurt",
+      "death",
+      "mouth_open",
+      "mouth_close"
+    ],
+    "animation": {
+      "speed": 0.8,
+      "amplitude": 0.6
+    },
+    "variation": {
+      "body": 0.08,
+      "head": 0.06,
+      "mouth": 0.1,
+      "fin": 0.12,
+      "eye": 0.1,
+      "glow": 0.2,
+      "hue": 4,
+      "lightness": 0.03
+    },
+    "id": "black_scabbardfish",
+    "name": "Black Scabbardfish",
+    "name_ja": "クロタチカマス",
+    "scientific_name": "Aphanopus carbo",
+    "habitat": "continental_slope",
+    "order": 79,
+    "notes": "Very long, laterally compressed blade-shaped body (lower than an oarfish), large head with a long jaw, protruding lower jaw and fang-like teeth, very large eyes; one long dorsal fin from head to tail (spiny front part), a short anal fin near the tail, a small forked tail on a thin stalk; coppery-black with a metallic sheen, black mouth."
+  }
+}
