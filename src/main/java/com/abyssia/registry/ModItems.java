@@ -227,6 +227,10 @@ public final class ModItems
     public static final DeferredItem<Item> HELMET_JELLY_SPAWN_EGG = spawnEgg("helmet_jelly_spawn_egg", ModEntities.HELMET_JELLY, 0x5A1E30, 0x4FE0BF);
     public static final DeferredItem<Item> GIANT_PHANTOM_JELLY_SPAWN_EGG = spawnEgg("giant_phantom_jelly_spawn_egg", ModEntities.GIANT_PHANTOM_JELLY, 0x4A121C, 0x9A3040);
 
+    // OL01 cultivated oil kelp: the sac is smelted into bio_oil; the seed plants the (item-less) oil_kelp block
+    public static final DeferredItem<Item> OIL_SAC = item("oil_sac");
+    public static final DeferredItem<Item> OIL_KELP_SEED = tabItem("oil_kelp_seed", () -> new net.minecraft.world.item.ItemNameBlockItem(ModBlocks.OIL_KELP.get(), new Item.Properties()));
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB = TABS.register("abyssia", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.abyssia"))
             .icon(() -> ModBlocks.ABYSSAL_BLOOM.get().asItem().getDefaultInstance())

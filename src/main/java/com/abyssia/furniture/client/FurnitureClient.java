@@ -18,5 +18,6 @@ public final class FurnitureClient
     {
         event.register(ModFurniture.WALL_WORKBENCH_MENU.get(), WallWorkbenchScreen::new);
         event.register(ModFurniture.LARGE_LOCKER_MENU.get(), LargeLockerScreen::new);
+        event.register(ModFurniture.HYDRO_PLANTER_MENU.get(), HydroPlanterScreen::new);
     }
 }

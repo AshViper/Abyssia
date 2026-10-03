@@ -1,0 +1,27 @@
+{
+  "feature": "abyssia:oil_kelp",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 0,
+        "max_inclusive": 2
+      }
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "abyssia:deep_floor"
+    },
+    {
+      "type": "abyssia:depth",
+      "min_depth": 827,
+      "max_depth": 5460
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}
