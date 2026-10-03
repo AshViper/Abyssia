@@ -1,0 +1,125 @@
+{
+	"id": "orange_roughy",
+	"name": "Orange Roughy",
+	"name_ja": "オレンジラフィー",
+	"scientific_name": "Hoplostethus atlanticus",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "continental_slope",
+	"order": 76,
+	"notes": "Deep, laterally compressed, almost round body; big bony head with mucus cavities, very large eyes, oblique mouth; one tall spiny dorsal fin, forked tail; bright brick-orange all over (red at depth), no light organs.",
+	"body": {
+		"length": 8,
+		"width": 4,
+		"height": 10,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 4,
+			"width": 4,
+			"height": 8,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": 0,
+			"gape": 30,
+			"rest_gape": 0,
+			"width": 0.8,
+			"round": 0
+		},
+		"eye": {
+			"size": 3,
+			"height": 0.62,
+			"forward": 0.45,
+			"protrude": 0.5
+		},
+		"tail": {
+			"segments": 1,
+			"length": 2,
+			"width": 2,
+			"height": 4,
+			"taper": 0.6
+		},
+		"caudal": {
+			"length": 4,
+			"height": 8,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"angle": 30,
+			"droop": 15,
+			"position": 0.15
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 2,
+			"position": 0.4
+		},
+		"dorsal": {
+			"count": 1,
+			"length": 6,
+			"height": 5,
+			"position": 0.3,
+			"apex": 0.35
+		},
+		"anal": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 0.85
+		}
+	},
+	"palette": {
+		"body": "#d8582c",
+		"belly": "#e8885a",
+		"fin": "#c4462a",
+		"mouth": "#7a2e22",
+		"lip": "#c25030",
+		"eye": "#0c0e12",
+		"eye_iris": "#c8b070",
+		"eye_ring": "#a03c24"
+	},
+	"texture": {
+		"pattern": "scales",
+		"pattern_strength": 0.3,
+		"pattern_scale": 1,
+		"countershade": 0.4
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.7,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.12,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

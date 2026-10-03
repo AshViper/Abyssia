@@ -1,30 +1,38 @@
 package com.abyssia.entity;
 
 import com.abyssia.registry.ModSounds;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
  * チューブワーム / giant tubeworm (Riftia pachyptila) and サツマハオリムシ (Lamellibrachia satsuma): a colony of tubes
  * rooted in vent rock. No mouth and no gut - symbiotic sulfur bacteria inside feed them - so they never move and
  * never hunt; the red plumes (haemoglobin binding oxygen and sulfide) sway in the vent water and snap back into the
- * tubes when something touches or brushes past them, reappearing a little later. An environmental animal: it does
- * not despawn, and it takes little damage while withdrawn into its chitin tubes.
+ * tubes when something touches or brushes past them, reappearing a little later. It takes little damage while
+ * withdrawn into its chitin tubes. Naturally spawned colonies despawn the vanilla way when no player is near (the
+ * fauna spawner regrows them), so visited places don't pile up entities; placed (spawn egg, dispenser, bucket) or
+ * name-tagged ones stay.
  */
 public class Tubeworm extends WaterAnimal implements FaunaAnimated
 {
@@ -146,9 +154,13 @@ public class Tubeworm extends WaterAnimal implements FaunaAnimated
     }
 
     @Override
-    public boolean removeWhenFarAway(double distance)
+    @Nullable
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason,
+                                        @Nullable SpawnGroupData data, @Nullable CompoundTag tag)
     {
-        return false;
+        // Placed by a player: keep it, like a named one. Natural spawns may despawn far away.
+        if (reason == MobSpawnType.SPAWN_EGG || reason == MobSpawnType.DISPENSER || reason == MobSpawnType.BUCKET) this.setPersistenceRequired();
+        return super.finalizeSpawn(level, difficulty, reason, data, tag);
     }
 
     @Override

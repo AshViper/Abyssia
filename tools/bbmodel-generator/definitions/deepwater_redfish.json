@@ -1,0 +1,125 @@
+{
+	"id": "deepwater_redfish",
+	"name": "Deepwater Redfish",
+	"name_ja": "アラスカメヌケ",
+	"scientific_name": "Sebastes mentella",
+	"category": "deep_sea_fish",
+	"template": "fish",
+	"habitat": "continental_slope",
+	"order": 83,
+	"notes": "Perch-like rockfish: deep but oval body, large spiny head with a bony knob on the lower jaw and very large eyes; a long dorsal fin with a tall spiny front part and a soft rear part, rounded fan-like pectorals, a rounded / square tail; red to orange-red, slightly darker back.",
+	"body": {
+		"length": 9,
+		"width": 4,
+		"height": 7,
+		"round": 1
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 6,
+			"width": 5,
+			"height": 7,
+			"drop": 0,
+			"round": 1
+		},
+		"mouth": {
+			"jaw_height": 2,
+			"underbite": 0,
+			"gape": 35,
+			"rest_gape": 0,
+			"width": 0.9,
+			"round": 0
+		},
+		"eye": {
+			"size": 3,
+			"height": 0.68,
+			"forward": 0.4,
+			"protrude": 0.6
+		},
+		"tail": {
+			"segments": 1,
+			"length": 3,
+			"width": 2,
+			"height": 4,
+			"taper": 0.7
+		},
+		"caudal": {
+			"length": 5,
+			"height": 9,
+			"shape": "fork"
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 6,
+			"height": 4,
+			"angle": 35,
+			"droop": 25,
+			"position": 0.15
+		},
+		"pelvic": {
+			"enabled": true,
+			"length": 2,
+			"height": 2,
+			"position": 0.35
+		},
+		"dorsal": {
+			"count": 2,
+			"length": 5,
+			"height": 5,
+			"position": 0.05,
+			"second_position": 0.55,
+			"apex": 0.15
+		},
+		"anal": {
+			"enabled": true,
+			"length": 3,
+			"height": 2,
+			"position": 0.85
+		}
+	},
+	"palette": {
+		"body": "#c8402e",
+		"belly": "#e88a6a",
+		"fin": "#b8382a",
+		"mouth": "#7a2a22",
+		"lip": "#b84030",
+		"eye": "#0c0e12",
+		"eye_iris": "#d0a050",
+		"eye_ring": "#8a3022"
+	},
+	"texture": {
+		"pattern": "mottled",
+		"pattern_strength": 0.3,
+		"countershade": 0.6
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 1.0,
+		"amplitude": 1
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"fin": 0.12,
+		"tail": 0.08,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

@@ -20,7 +20,10 @@ NAMES = ["anglerfish", "giant_isopod", "gulper_eel",
          "oarfish", "snipe_eel", "vampire_squid", "firefly_squid", "bigfin_squid",
          # bulk addition 3: seabed walkers, near-floor drifters, sessile animals and a medusa
          "japanese_spider_crab", "blind_lobster", "supergiant_amphipod", "sea_pig", "dumbo_octopus",
-         "giant_sea_spider", "brittle_star", "sea_lily", "venus_flower_basket", "deepstaria"]
+         "giant_sea_spider", "brittle_star", "sea_lily", "venus_flower_basket", "deepstaria",
+         # FS01 (2026-10-03): edible deep-water food fish, each dropping its own raw fillet
+         "orange_roughy", "sablefish", "patagonian_toothfish", "black_scabbardfish", "greenland_halibut",
+         "alfonsino", "blue_ling", "deepwater_redfish"]
 
 
 # Abyssia's vent fields lie 3500-7600 m deep on the mod's depth scale (abyssal plains and volcanic deeps), deeper

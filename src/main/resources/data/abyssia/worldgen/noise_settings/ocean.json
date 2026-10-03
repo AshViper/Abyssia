@@ -82,21 +82,45 @@
       "when_in_range": {
         "type": "minecraft:add",
         "argument1": {
-          "type": "minecraft:mul",
-          "argument1": 0.4,
-          "argument2": "abyssia:deep_macro_offset"
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": 0.4,
+            "argument2": "abyssia:deep_macro_offset"
+          },
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": 0.04,
+            "argument2": {
+              "type": "minecraft:shifted_noise",
+              "noise": "abyssia:biome_fuzz",
+              "xz_scale": 1.0,
+              "y_scale": 0,
+              "shift_x": "minecraft:shift_x",
+              "shift_y": 0,
+              "shift_z": "minecraft:shift_z"
+            }
+          }
         },
         "argument2": {
           "type": "minecraft:mul",
-          "argument1": 0.04,
+          "argument1": 0.3,
           "argument2": {
             "type": "minecraft:shifted_noise",
-            "noise": "abyssia:biome_fuzz",
-            "xz_scale": 1.0,
+            "noise": "abyssia:biome_zone",
+            "xz_scale": 0.09523809523809523,
             "y_scale": 0,
-            "shift_x": "minecraft:shift_x",
+            "shift_x": {
+              "type": "minecraft:mul",
+              "argument1": 0.38095238095238093,
+              "argument2": "minecraft:shift_x"
+            },
             "shift_y": 0,
-            "shift_z": "minecraft:shift_z"
+            "shift_z": {
+              "type": "minecraft:mul",
+              "argument1": 0.38095238095238093,
+              "argument2": "minecraft:shift_z"
+            }
           }
         }
       },

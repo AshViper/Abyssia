@@ -8,8 +8,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Mob;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -26,6 +28,8 @@ public class FaunaModel<T extends Mob & FaunaAnimated> extends HierarchicalModel
     private final Set<String> translucentBones;
     private final boolean pitch;
     private List<ModelPart> translucent;
+    private List<ModelPart> allParts;
+    private final Map<String, Optional<ModelPart>> boneCache = new HashMap<>();
 
     /**
      * @param rootBone    the creature's own root bone (the generator names it after the creature id)
@@ -48,6 +52,13 @@ public class FaunaModel<T extends Mob & FaunaAnimated> extends HierarchicalModel
         return this.root;
     }
 
+    /** Same result as vanilla, but memoised: vanilla re-streams every part per animated bone per frame. */
+    @Override
+    public Optional<ModelPart> getAnyDescendantWithName(String name)
+    {
+        return this.boneCache.computeIfAbsent(name, super::getAnyDescendantWithName);
+    }
+
     public ModelPart bone(String name)
     {
         return this.getAnyDescendantWithName(name).orElseThrow(() -> new IllegalArgumentException("no bone " + name));
@@ -61,7 +72,8 @@ public class FaunaModel<T extends Mob & FaunaAnimated> extends HierarchicalModel
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        this.root.getAllParts().forEach(ModelPart::resetPose);
+        if (this.allParts == null) this.allParts = this.root.getAllParts().toList();
+        for (ModelPart part : this.allParts) part.resetPose();
         for (Map.Entry<String, AnimationDefinition> clip : this.clips.entrySet())
         {
             AnimationState state = entity.animations().get(clip.getKey());

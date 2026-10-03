@@ -1,0 +1,126 @@
+{
+	"id": "black_scabbardfish",
+	"name": "Black Scabbardfish",
+	"name_ja": "クロタチカマス",
+	"scientific_name": "Aphanopus carbo",
+	"category": "eel",
+	"template": "eel",
+	"habitat": "continental_slope",
+	"order": 79,
+	"notes": "Very long, laterally compressed blade-shaped body (lower than an oarfish), large head with a long jaw, protruding lower jaw and fang-like teeth, very large eyes; one long dorsal fin from head to tail (spiny front part), a short anal fin near the tail, a small forked tail on a thin stalk; coppery-black with a metallic sheen, black mouth.",
+	"body": {
+		"length": 40,
+		"width": 2,
+		"height": 4,
+		"segments": 8,
+		"taper": 0.3
+	},
+	"parts": [
+		"body",
+		"head",
+		"mouth",
+		"teeth",
+		"eye",
+		"fin",
+		"tail"
+	],
+	"params": {
+		"head": {
+			"length": 6,
+			"width": 2,
+			"height": 4,
+			"round": 0
+		},
+		"mouth": {
+			"jaw_height": 1,
+			"jaw_length": 5,
+			"upper_length": 4,
+			"width": 1,
+			"gape": 35,
+			"rest_gape": 4,
+			"pouch": 0
+		},
+		"teeth": {
+			"count": 3,
+			"length": 1,
+			"rows": 1
+		},
+		"eye": {
+			"size": 2,
+			"height": 0.65,
+			"forward": 0.35,
+			"protrude": 0.4
+		},
+		"gills": {
+			"frills": 0
+		},
+		"pectoral": {
+			"enabled": true,
+			"length": 2,
+			"height": 1,
+			"angle": 30
+		},
+		"pelvic": {
+			"enabled": false
+		},
+		"dorsal": {
+			"enabled": true,
+			"start": 0.0,
+			"end": 0.95,
+			"height": 2
+		},
+		"anal": {
+			"enabled": true,
+			"start": 0.6,
+			"end": 0.95,
+			"height": 1
+		},
+		"caudal": {
+			"enabled": true,
+			"length": 3,
+			"height": 4,
+			"shape": "fork"
+		},
+		"tail_tip": {
+			"enabled": false
+		}
+	},
+	"palette": {
+		"body": "#1e1c1e",
+		"belly": "#4a4448",
+		"fin": "#141214",
+		"mouth": "#0a0a0c",
+		"lip": "#2a2628",
+		"teeth": "#d8d4cc",
+		"eye": "#06080a",
+		"eye_iris": "#b8a060",
+		"eye_ring": "#2a2422"
+	},
+	"texture": {
+		"pattern": "plain",
+		"pattern_strength": 0.2,
+		"countershade": 0.3
+	},
+	"glow": [],
+	"animations": [
+		"idle",
+		"swim",
+		"hurt",
+		"death",
+		"mouth_open",
+		"mouth_close"
+	],
+	"animation": {
+		"speed": 0.8,
+		"amplitude": 0.6
+	},
+	"variation": {
+		"body": 0.08,
+		"head": 0.06,
+		"mouth": 0.1,
+		"fin": 0.12,
+		"eye": 0.1,
+		"hue": 4,
+		"lightness": 0.03
+	}
+}

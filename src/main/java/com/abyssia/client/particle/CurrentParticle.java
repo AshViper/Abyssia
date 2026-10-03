@@ -91,6 +91,7 @@ public class CurrentParticle extends TextureSheetParticle
     @Override
     public void tick()
     {
+        if (!removed) ParticleBudget.ticked(Budget.CURRENT);
         xo = x;
         yo = y;
         zo = z;

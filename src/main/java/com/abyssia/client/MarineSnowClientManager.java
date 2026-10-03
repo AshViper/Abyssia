@@ -139,6 +139,13 @@ public final class MarineSnowClientManager
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event)
     {
+        if (event.phase == TickEvent.Phase.START)
+        {
+            // Before the particle engine ticks: recount the particle budgets from the particles that really ticked.
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.level != null && !mc.isPaused()) ParticleBudget.reconcile();
+            return;
+        }
         if (event.phase != TickEvent.Phase.END) return;
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
