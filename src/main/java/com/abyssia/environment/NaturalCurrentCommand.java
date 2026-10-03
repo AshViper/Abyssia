@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *     <li>{@code /abyssia currents here}: the stream at your position (type, direction, strength, radius, falloff)</li>
  *     <li>{@code /abyssia currents near [radius]}: streams around you, nearest first</li>
  *     <li>{@code /abyssia currents show [seconds]}: outlines nearby streams with dust (axis with arrowheads, edge rings); 0 stops</li>
+ *     <li>{@code /abyssia currents streams near [radius]}: CU01 current streams around you, nearest first</li>
+ *     <li>{@code /abyssia currents streams show [seconds]}: draws nearby CU01 centrelines with dust; 0 stops</li>
  * </ul>
  * The client shows the stream at your feet on the F3 screen.
  */
@@ -59,7 +61,16 @@ public final class NaturalCurrentCommand
                         .then(Commands.literal("show")
                                 .executes(ctx -> show(ctx, 30))
                                 .then(Commands.argument("seconds", IntegerArgumentType.integer(0, 600))
-                                        .executes(ctx -> show(ctx, IntegerArgumentType.getInteger(ctx, "seconds")))))));
+                                        .executes(ctx -> show(ctx, IntegerArgumentType.getInteger(ctx, "seconds")))))
+                        .then(Commands.literal("streams")
+                                .then(Commands.literal("near")
+                                        .executes(ctx -> streamsNear(ctx, 384))
+                                        .then(Commands.argument("radius", IntegerArgumentType.integer(16, 2048))
+                                                .executes(ctx -> streamsNear(ctx, IntegerArgumentType.getInteger(ctx, "radius")))))
+                                .then(Commands.literal("show")
+                                        .executes(ctx -> streamsShow(ctx, 30))
+                                        .then(Commands.argument("seconds", IntegerArgumentType.integer(0, 600))
+                                                .executes(ctx -> streamsShow(ctx, IntegerArgumentType.getInteger(ctx, "seconds"))))))));
     }
 
     private static int here(CommandContext<CommandSourceStack> ctx)
@@ -100,6 +111,62 @@ public final class NaturalCurrentCommand
         return 1;
     }
 
+    /** Players drawing CU01 centrelines, and the game tick it ends. */
+    private static final Map<UUID, Long> SHOWING_STREAMS = new ConcurrentHashMap<>();
+    private static final DustParticleOptions STREAM_AXIS = new DustParticleOptions(new Vector3f(0.92f, 0.97f, 1f), 1.4f);
+    private static final DustParticleOptions STREAM_CONTROL = new DustParticleOptions(new Vector3f(1f, 0.4f, 0.8f), 2.0f);
+
+    private static int streamsNear(CommandContext<CommandSourceStack> ctx, int radius)
+    {
+        Vec3 p = ctx.getSource().getPosition();
+        List<CurrentStream> found = CurrentStreams.near(ctx.getSource().getLevel(), p.x, p.y, p.z, radius);
+        found.sort(Comparator.comparingDouble(c -> c.nearest(p.x, p.y, p.z).distance()));
+        ctx.getSource().sendSuccess(() -> Component.literal(found.size() + " current streams within " + radius + " blocks"), false);
+        found.stream().limit(CHAT_LINES).forEach(c ->
+        {
+            CurrentStream.Nearest n = c.nearest(p.x, p.y, p.z);
+            Vec3 m = c.center();
+            String line = String.format(Locale.ROOT, " %s at (%.0f, %.0f, %.0f), length %.0f, width %.0f, strength %.2f; nearest point (%.0f, %.0f, %.0f), %.0f blocks away",
+                    c.tier(), m.x, m.y, m.z, c.length(), c.radius() * 2, c.strength(), n.point().x, n.point().y, n.point().z,
+                    Math.max(0.0, n.distance() - c.radius()));
+            ctx.getSource().sendSuccess(() -> Component.literal(line), false);
+        });
+        return found.size();
+    }
+
+    private static int streamsShow(CommandContext<CommandSourceStack> ctx, int seconds) throws CommandSyntaxException
+    {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
+        if (seconds == 0)
+        {
+            SHOWING_STREAMS.remove(player.getUUID());
+            ctx.getSource().sendSuccess(() -> Component.literal("Stream centrelines off."), false);
+            return 1;
+        }
+        SHOWING_STREAMS.put(player.getUUID(), player.level().getGameTime() + seconds * 20L);
+        ctx.getSource().sendSuccess(() -> Component.literal("Drawing current stream centrelines within " + SHOW_RANGE + " blocks for " + seconds + " s."), false);
+        return 1;
+    }
+
+    private static void showStreams(ServerLevel level, ServerPlayer player)
+    {
+        for (CurrentStream c : CurrentStreams.near(level, player.getX(), player.getY(), player.getZ(), SHOW_RANGE))
+        {
+            List<Vec3> path = c.path();
+            for (int i = 0; i < path.size() - 1; i++)
+            {
+                Vec3 a = path.get(i), b = path.get(i + 1);
+                double len = a.distanceTo(b);
+                for (double s = 0; s < len; s += 1.5)
+                {
+                    Vec3 q = a.add(b.subtract(a).scale(s / len));
+                    if (q.distanceToSqr(player.position()) <= SHOW_RANGE * SHOW_RANGE) dust(level, player, STREAM_AXIS, q);
+                }
+            }
+            for (Vec3 q : c.control()) dust(level, player, STREAM_CONTROL, q);
+        }
+    }
+
     private static String describe(NaturalCurrent c, Vec3 from)
     {
         Vec3 m = c.center(), d = c.direction();
@@ -110,9 +177,16 @@ public final class NaturalCurrentCommand
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event)
     {
-        if (SHOWING.isEmpty()) return;
+        if (SHOWING.isEmpty() && SHOWING_STREAMS.isEmpty()) return;
         for (ServerPlayer player : event.getServer().getPlayerList().getPlayers())
         {
+            Long streamsUntil = SHOWING_STREAMS.get(player.getUUID());
+            if (streamsUntil != null)
+            {
+                long now = player.serverLevel().getGameTime();
+                if (now > streamsUntil) SHOWING_STREAMS.remove(player.getUUID());
+                else if (now % SHOW_INTERVAL == 0) showStreams(player.serverLevel(), player);
+            }
             Long until = SHOWING.get(player.getUUID());
             if (until == null) continue;
             ServerLevel level = player.serverLevel();

@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
-    private static final String PROTOCOL = "4";
+    private static final String PROTOCOL = "5";
 
     private AbyssiaNetwork() {}
 

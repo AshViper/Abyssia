@@ -19,8 +19,10 @@ public final class NaturalCurrentEvents
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        Long salt = NaturalCurrents.saltFor(player.serverLevel());
-        AbyssiaNetwork.sendTo(player, new NaturalCurrentSaltPacket(salt != null, salt == null ? 0L : salt,
-                Config.NATURAL_CURRENT_CHANCE.get(), Config.NATURAL_CURRENT_MAX_SPEED.get()));
+        long seed = player.serverLevel().getSeed();
+        // The salt goes out whenever either system is on: CU01 streams use it too.
+        AbyssiaNetwork.sendTo(player, NaturalCurrentSaltPacket.of(Config.NATURAL_CURRENTS.get(), NaturalCurrents.saltOf(seed),
+                Config.NATURAL_CURRENT_CHANCE.get(), Config.NATURAL_CURRENT_MAX_SPEED.get(),
+                Config.STREAMS_ENABLED.get() ? CurrentStreams.serverSettings(seed) : null));
     }
 }

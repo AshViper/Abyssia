@@ -13,7 +13,9 @@ public final class ParticleBudget
         AMBIENT(Integer.MAX_VALUE),
         VENT(500),
         PLANT(150),
-        CURRENT(600);
+        CURRENT(600),
+        /** CU01 stream streaks; the live cap is the client's current_streams.particle_budget, checked by its spawner. */
+        STREAM(Integer.MAX_VALUE);
 
         /** Hard cap; AMBIENT is capped per depth band by its spawner instead. */
         public final int limit;

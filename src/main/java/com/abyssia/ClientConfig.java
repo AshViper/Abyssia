@@ -67,6 +67,24 @@ public final class ClientConfig
 
     static {
         BUILDER.pop();
+        BUILDER.comment("How CU01 current streams look (bundles of white streaks)").push("current_streams");
+    }
+
+    public static final ModConfigSpec.IntValue STREAM_RENDER_DISTANCE = BUILDER
+            .comment("Draw stream streaks up to this many blocks from you (near 0-32, mid 32-64, far 64-96)")
+            .defineInRange("max_render_distance", 96, 0, 160);
+    public static final ModConfigSpec.IntValue STREAM_PARTICLE_BUDGET = BUILDER
+            .comment("Most stream streaks alive at once (nearest streams and those in front of you first; 0 = none)")
+            .defineInRange("particle_budget", 600, 0, 4000);
+    public static final ModConfigSpec.BooleanValue STREAM_RIBBONS = BUILDER
+            .comment("Draw streams as translucent flowing ribbons, so they can be seen from outside")
+            .define("ribbons", true);
+    public static final ModConfigSpec.IntValue STREAM_RIBBON_DISTANCE = BUILDER
+            .comment("Draw stream ribbons up to this many blocks from you (they fade out from 48 blocks)")
+            .defineInRange("ribbon_distance", 128, 16, 256);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Title screen").push("title");
     }
 

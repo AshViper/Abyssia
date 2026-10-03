@@ -285,6 +285,57 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("CU01 current streams: wide, strong, curving bands of water (white streaks) placed from the world seed in the upper ocean (Y 4..52) and the deep layer (Y -330..-110), in any biome. Clients learn the settings from the server on login").push("current_streams");
+    }
+
+    public static final ModConfigSpec.BooleanValue STREAMS_ENABLED = BUILDER
+            .comment("Place current streams")
+            .define("enabled", true);
+    public static final ModConfigSpec.DoubleValue STREAM_CHANCE = BUILDER
+            .comment("Chance that a cell holds a stream in the deep layer (the upper ocean uses half of it)")
+            .defineInRange("generation_chance", 0.20, 0.0, 1.0);
+    public static final ModConfigSpec.IntValue STREAM_CELL_SIZE = BUILDER
+            .comment("Cell size in blocks (one roll per cell and layer); changing it moves every stream")
+            .defineInRange("cell_size", 192, 64, 1024);
+    public static final ModConfigSpec.IntValue STREAM_MIN_LENGTH = BUILDER
+            .comment("Shortest stream in blocks")
+            .defineInRange("min_length", 64, 16, 512);
+    public static final ModConfigSpec.IntValue STREAM_MAX_LENGTH = BUILDER
+            .comment("Longest stream in blocks")
+            .defineInRange("max_length", 256, 16, 512);
+    public static final ModConfigSpec.IntValue STREAM_MIN_WIDTH = BUILDER
+            .comment("Narrowest stream diameter in blocks")
+            .defineInRange("min_width", 8, 2, 48);
+    public static final ModConfigSpec.IntValue STREAM_MAX_WIDTH = BUILDER
+            .comment("Widest stream diameter in blocks")
+            .defineInRange("max_width", 20, 2, 48);
+    public static final ModConfigSpec.DoubleValue STREAM_MIN_STRENGTH = BUILDER
+            .comment("Weakest stream strength (WEAK 0.65-0.80, NORMAL 0.80-1.00, STRONG 1.00-1.20; rolled strengths are clamped to this range)")
+            .defineInRange("min_strength", 0.65, 0.0, 4.0);
+    public static final ModConfigSpec.DoubleValue STREAM_MAX_STRENGTH = BUILDER
+            .comment("Strongest stream strength")
+            .defineInRange("max_strength", 1.2, 0.0, 4.0);
+    public static final ModConfigSpec.DoubleValue STREAM_BASE_SPEED = BUILDER
+            .comment("Drift speed in blocks per tick at strength 1 on a stream's centreline (0.34: a propulsion screw cannot fully hold against it)")
+            .defineInRange("base_flow_speed", 0.34, 0.0, 1.0);
+    public static final ModConfigSpec.DoubleValue STREAM_MAX_SPEED = BUILDER
+            .comment("Cap on a stream's drift speed in blocks per tick")
+            .defineInRange("max_flow_speed", 0.40, 0.0, 1.0);
+    public static final ModConfigSpec.BooleanValue STREAM_AFFECTS_PLAYERS = BUILDER
+            .comment("Streams carry swimming players (and the boat a player steers)")
+            .define("affects_players", true);
+    public static final ModConfigSpec.BooleanValue STREAM_AFFECTS_MOBS = BUILDER
+            .comment("Streams carry mobs")
+            .define("affects_mobs", true);
+    public static final ModConfigSpec.BooleanValue STREAM_AFFECTS_ITEMS = BUILDER
+            .comment("Streams carry dropped items and XP orbs")
+            .define("affects_items", true);
+    public static final ModConfigSpec.BooleanValue STREAM_AFFECTS_BOATS = BUILDER
+            .comment("Streams carry boats")
+            .define("affects_boats", true);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Deep-sea fauna. Which animals live where (depth in metres, habitat, caps) is datapack data: data/<namespace>/fauna_spawns").push("fauna");
     }
 
