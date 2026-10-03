@@ -25,6 +25,7 @@ import cave_assets
 import gen_fauna
 import habitat_assets
 import furniture_assets
+import planter_assets
 import diving_gear_assets
 import electric_tool_assets
 import industrial_assets
@@ -899,6 +900,25 @@ NAMES.update({"cobbled_" + _r: (f"Cobbled {_en}", f"{_ja}の丸石") for _r, (_e
 NAMES.update(cave_assets.CAVE_NAMES)
 NAMES.update(plant_assets.BLOCK_NAMES)
 NAMES["ancient_sapling"] = ("Ancient Sapling", "古代樹の苗")   # TR01
+BLOCK_LANG_EXTRA = {}   # lang-only block keys (not blocks): read only by the lang writer
+# FD01/TR01/CB01 JEI info lines (<description id>.source)
+ITEM_NAMES["mushroom_cap.source"] = ("35% from deep mushrooms.", "深海キノコから35%の確率で手に入る。")
+ITEM_NAMES["gourd_flesh.source"] = ("40% from harvesting pressure gourds.", "プレッシャーゴードの収穫で40%の確率で手に入る。")
+ITEM_NAMES["kelp_leaf.source"] = ("30% from kelp and grass-type plants.", "海藻・草系の植物から30%の確率で手に入る。")
+BLOCK_LANG_EXTRA["ancient_sapling.source"] = ("5% from breaking ancient tree leaves. Plant it underwater to grow; bone meal works.",
+                                   "古代樹の葉を壊すと5%の確率で落ちる。水中に植えて育つ。骨粉も使える。")
+for _r in COBBLED:
+    BLOCK_LANG_EXTRA["cobbled_" + _r + ".source"] = ("Dropped when mined. Use Silk Touch to get the original rock.",
+                                           "掘ると落ちる。シルクタッチで元の岩が手に入る。")
+NAMES["oil_kelp"] = ("Oil Kelp", "生体油昆布")   # OL01 (no block item: the seed places it)
+ITEM_NAMES["oil_sac"] = ("Oil Sac", "油嚢")
+ITEM_NAMES["oil_kelp_seed"] = ("Oil Kelp Seed", "油昆布の種")
+ITEM_NAMES["oil_sac.source"] = ("Right-click or break a ripe Oil Kelp node. Oil Kelp grows on the seabed at Y -64 to -250; grow it from seeds.",
+                                "熟した生体油昆布の節を右クリックまたは破壊で手に入る。Y-64〜-250の海底に自生し、種から栽培もできる。")
+ITEM_NAMES["oil_kelp_seed.source"] = ("5% from breaking Oil Kelp. Plant it on the underwater seabed.",
+                                      "生体油昆布を壊すと5%の確率で落ちる。水中の海底に植える。")
+BLOCK_LANG_EXTRA["hydro_planter.source"] = ("Needs no water or power. Put in a deep mushroom, pressure gourd or deep kelp as a seedling to grow food. Placed side by side, the frames connect.",
+                                 "水も電力も不要。深海キノコ・プレッシャーゴード・深海昆布を苗として入れると食材が育つ。並べると枠がつながる。")
 ITEM_NAMES.update(plant_assets.ITEM_NAMES)
 # Material processing system (tools/material_spec.json via material_system.py)
 ITEM_NAMES.update(material_system.item_names())
@@ -1037,6 +1057,14 @@ def main():
     write(bm("ancient_sapling"), cross_model(ref("ancient_sapling")))
     write(im("ancient_sapling"), {"parent": "minecraft:item/generated", "textures": {"layer0": ref("ancient_sapling")}})
 
+    # OL01 oil kelp: base / middle (unripe) / ripe cross models; textures (OIL1 sheet) are imported by hand, never drawn here.
+    write(bs("oil_kelp"), {"variants": {"base=true,ripe=false": {"model": ref("oil_kelp_base")}, "base=true,ripe=true": {"model": ref("oil_kelp_ripe")},
+                                        "base=false,ripe=false": {"model": ref("oil_kelp_middle")}, "base=false,ripe=true": {"model": ref("oil_kelp_ripe")}}})
+    for _t in ("oil_kelp_base", "oil_kelp_middle", "oil_kelp_ripe"):
+        write(bm(_t), cross_model(ref(_t)))
+    for _i in ("oil_sac", "oil_kelp_seed"):
+        write(im(_i), {"parent": "minecraft:item/generated", "textures": {"layer0": "abyssia:item/" + _i}})
+
     _save(kelp("void_kelp", PLANT["void"], True), tex("void_kelp"))
     _save(kelp("void_kelp_plant", PLANT["void"], False), tex("void_kelp_plant"))
     for name in ("void_kelp", "void_kelp_plant"):
@@ -1055,6 +1083,7 @@ def main():
     habitat = habitat_assets.generate(write, bs, bm, im, DATA)
     # Base furniture (H04 large locker / H05 wall workbench)
     furniture_assets.generate(write, bs, bm, im, DATA)
+    planter_assets.generate(write, bs, bm, im, DATA)   # PL01 hydro planter
     electric_tool_assets.generate(write, im, DATA)
     # Entry diving gear (D01): item models + vanilla recipes.
     diving_gear_assets.generate(write, im, DATA)
@@ -1170,6 +1199,15 @@ def loot_tables():
                     "entries": [{"type": "minecraft:alternatives", "children": [
                         {"type": "minecraft:item", "name": "abyssia:" + name, "conditions": silk()},
                         {"type": "minecraft:item", "name": "abyssia:cobbled_" + name}]}]}
+        elif name == "oil_kelp":
+            # OL01: a ripe segment drops an oil sac; any segment drops a seed 5% of the time
+            write(lt(name), {"type": "minecraft:block", "random_sequence": "abyssia:blocks/" + name, "pools": [
+                {"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:oil_sac"}],
+                 "conditions": [{"condition": "minecraft:block_state_property", "block": "abyssia:oil_kelp", "properties": {"ripe": "true"}},
+                                {"condition": "minecraft:survives_explosion"}]},
+                {"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:oil_kelp_seed"}],
+                 "conditions": [{"condition": "minecraft:random_chance", "chance": 0.05}, {"condition": "minecraft:survives_explosion"}]}]})
+            continue
         elif name in SILK_ONLY:
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:" + name}], "conditions": silk()}
         else:
@@ -1196,7 +1234,7 @@ def tags():
                                                                                           + building_assets.pickaxe_blocks()
                                                                                           + industrial_assets.pickaxe_blocks()
                                                                                           + habitat_assets.pickaxe_blocks()
-                                                                                          + furniture_assets.pickaxe_blocks())})
+                                                                                          + furniture_assets.pickaxe_blocks() + planter_assets.pickaxe_blocks())})
     write(os.path.join(blocks, "mineable", "shovel.json"), {"replace": False, "values": a(SOFT + cave_assets.CAVE_SOFT)})
     write(os.path.join(blocks, "mineable", "axe.json"), {"replace": False, "values": a(cave_assets.CAVERN_AXE + building_assets.axe_blocks())})
     write(os.path.join(blocks, "mineable", "hoe.json"), {"replace": False, "values": a(cave_assets.CAVERN_HOE)})
@@ -1241,6 +1279,9 @@ def recipes():
     }
     for m in RARE_METALS:
         smelt["raw_" + m] = smelt[m + "_ore"] = f"abyssia:{m}_ingot"
+    # OL01: oil sac -> 2 bio_oil (smelting only; cooking results carry the count as an object on Forge)
+    write(rd("bio_oil_from_smelting_oil_sac"), {"type": "minecraft:smelting", "category": "misc", "ingredient": {"item": "abyssia:oil_sac"},
+          "result": {"item": "abyssia:bio_oil", "count": 2}, "experience": 0.3, "cookingtime": 200})
     for src, result in smelt.items():
         for kind, time in (("smelting", 200), ("blasting", 100)):
             write(rd(f"{result.split(':')[1]}_from_{kind}_{src}"), {
@@ -1323,6 +1364,7 @@ def lang():
         old = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
         data = {k: v for k, v in old.items() if not k.startswith(("block.abyssia.", "item.abyssia.", "biome.abyssia."))}
         data.update({"block.abyssia." + k: v[idx] for k, v in NAMES.items()})
+        data.update({"block.abyssia." + k: v[idx] for k, v in BLOCK_LANG_EXTRA.items()})
         data.update({"item.abyssia." + k: v[idx] for k, v in ITEM_NAMES.items()})
         data.update({"item.abyssia." + k: v[idx] for k, v in gen_fauna.ITEM_NAMES.items()})
         data.update({"biome.abyssia." + k: v[idx] for k, v in BIOME_NAMES.items()})
@@ -1331,6 +1373,7 @@ def lang():
         data.update({k: v[idx] for k, v in industrial_assets.CONTAINER_NAMES.items()})
         data.update({k: v[idx] for k, v in habitat_assets.LANG.items()})
         data.update({k: v[idx] for k, v in furniture_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in planter_assets.LANG.items()})
         data.update({k: v[idx] for k, v in electric_tool_assets.LANG.items()})
         data.update({k: v[idx] for k, v in diving_gear_assets.LANG.items()})
         data["itemGroup.abyssia"] = "Abyssia"

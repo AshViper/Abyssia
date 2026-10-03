@@ -802,7 +802,10 @@ def resource_plants():
     # TR01 small ancient trees (same shape as a grown ancient sapling): 0-2 per chunk, deep layer Y -300..-80.
     # Metres via DepthZone: Y -80 = deep Y 160 = 103 blocks = ~1090 m, Y -300 = deep Y -60 = 263 blocks = ~5260 m.
     feature("ancient_trees", {"type": A("ancient_tree"), "config": {}},
-            on_floor_depth((1090, 5260), {"type": "minecraft:count", "count": {"type": "minecraft:uniform", "value": {"min_inclusive": 0, "max_inclusive": 2}}}))
+            on_floor_depth((1090, 5260), {"type": "minecraft:count", "count": {"type": "minecraft:uniform", "min_inclusive": 0, "max_inclusive": 2}}))
+    # OL01 cultivated oil kelp: 0-2 columns per chunk, Y -250..-64 (deep Y 176 = 87 blocks = ~827 m, deep Y -10 = 273 blocks = ~5460 m).
+    feature("oil_kelp", {"type": A("oil_kelp"), "config": {}},
+            on_floor_depth((827, 5460), {"type": "minecraft:count", "count": {"type": "minecraft:uniform", "min_inclusive": 0, "max_inclusive": 2}}))
 
 
 def add_resource_plants():
@@ -828,6 +831,11 @@ def add_resource_plants():
     for _biome in DEEP_BIOMES.values():
         if "ancient_trees" not in _biome[4]:
             _biome[4].append("ancient_trees")
+    if "oil_kelp" not in VEG_ORDER:
+        VEG_ORDER.insert(VEG_ORDER.index("floating_blooms"), "oil_kelp")
+    for _biome in DEEP_BIOMES.values():
+        if "oil_kelp" not in _biome[4]:
+            _biome[4].append("oil_kelp")
     for b, names in wanted.items():
         veg = DEEP_BIOMES[b][4]
         veg += [n for n in names if n not in veg]

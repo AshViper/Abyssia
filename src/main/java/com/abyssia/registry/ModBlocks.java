@@ -251,7 +251,9 @@ public final class ModBlocks
     public static final RegistryObject<Block> ANCIENT_ROOT = block("ancient_root", () -> new Block(props(MapColor.TERRACOTTA_BROWN).strength(2.0f).sound(SoundType.ROOTS)));
     public static final RegistryObject<Block> ANCIENT_FROND = block("ancient_frond", () -> new FrondBlock(props(MapColor.COLOR_GREEN).strength(0.3f)
             .sound(SoundType.WET_GRASS).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
-    public static final RegistryObject<Block> ANCIENT_SAPLING = block("ancient_sapling", () -> new com.abyssia.block.AncientSaplingBlock(
+    // OL01: no block item; oil_kelp_seed places it
+    public static final RegistryObject<Block> OIL_KELP = BLOCKS.register("oil_kelp", () -> new com.abyssia.block.OilKelpBlock(plantProps(MapColor.COLOR_BROWN, 0)));
+    public static final RegistryObject<Block> ANCIENT_SAPLING =block("ancient_sapling", () -> new com.abyssia.block.AncientSaplingBlock(
             plantProps(MapColor.TERRACOTTA_CYAN, 0)));
     // Glows only through its emissive texture (no block light), so it sprinkles cavern roofs with points of light without lighting them.
     public static final RegistryObject<Block> LUMINOUS_MOSS = block("luminous_moss", () -> new CaveMossBlock(props(MapColor.COLOR_LIGHT_BLUE).replaceable()

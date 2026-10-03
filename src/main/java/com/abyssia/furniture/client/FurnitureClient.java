@@ -21,6 +21,7 @@ public final class FurnitureClient
         {
             MenuScreens.register(ModFurniture.WALL_WORKBENCH_MENU.get(), WallWorkbenchScreen::new);
             MenuScreens.register(ModFurniture.LARGE_LOCKER_MENU.get(), LargeLockerScreen::new);
+            MenuScreens.register(ModFurniture.HYDRO_PLANTER_MENU.get(), HydroPlanterScreen::new);
         });
     }
 }
