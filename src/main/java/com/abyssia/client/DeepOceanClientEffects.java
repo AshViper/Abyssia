@@ -150,9 +150,10 @@ public final class DeepOceanClientEffects
         factor *= Mth.lerp(cavernHaze, 1f, ClientConfig.CAVERN_FOG_DISTANCE.get().floatValue());
         end *= Math.max(MIN_FOG_FACTOR, factor);
         if (player.hasEffect(MobEffects.NIGHT_VISION) || player.hasEffect(MobEffects.CONDUIT_POWER)) end *= 2f;
-        // EN01: Deep Sight pushes the fog out (never past the surface-water 96, nor below what it already was); Murk pulls it in.
+        // EN01: Deep Sight pushes the fog out (+64 / +144 blocks; the render distance still caps it in onRenderFog) and
+        // clears the near water (onRenderFog); Murk pulls it in.
         MobEffectInstance sight = player.getEffect(ModMobEffects.DEEP_SIGHT.get());
-        if (sight != null) end = Math.max(end, Math.min(end * (sight.getAmplifier() >= 1 ? 4f : 2.5f), 96f));
+        if (sight != null) end += sight.getAmplifier() >= 1 ? 144f : 64f;
         if (player.hasEffect(ModMobEffects.MURK.get()))
             end *= sight == null ? 0.5f : sight.getAmplifier() >= 1 ? 1f : 0.75f;
         return end;
@@ -191,7 +192,11 @@ public final class DeepOceanClientEffects
         float waterVision = Mth.clamp(player.getWaterVision(), 0.25f, 1f);
         float end = Math.min(Minecraft.getInstance().gameRenderer.getRenderDistance(), fogEnd * waterVision);
         // In a cavern the fog starts a little way out: nearby rock and plants stay crisp, the middle distance hazes over.
-        float near = end * Mth.lerp(cavernHaze, fogStartShare(player.getEyeY()), ClientConfig.CAVERN_FOG_CLEAR.get().floatValue());
+        float share = fogStartShare(player.getEyeY());
+        // EN01: Deep Sight moves the start of the fog out toward the clear surface-water share (I 35%, II 65% of the way).
+        MobEffectInstance sight = player.getEffect(ModMobEffects.DEEP_SIGHT.get());
+        if (sight != null) share = Mth.lerp(sight.getAmplifier() >= 1 ? 0.65f : 0.35f, share, SURFACE_FOG_START);
+        float near = end * Mth.lerp(cavernHaze, share, ClientConfig.CAVERN_FOG_CLEAR.get().floatValue());
         event.setNearPlaneDistance(near);
         event.setFarPlaneDistance(end);
         event.setCanceled(true);
