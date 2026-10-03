@@ -73,8 +73,9 @@ public final class MachineSounds
         public void tick()
         {
             Minecraft mc = Minecraft.getInstance();
-            if (!ending && (mc.level != level || mc.player == null || !level.isLoaded(pos) || !running.test(level, pos)
-                    || mc.player.distanceToSqr(x, y, z) > RANGE * RANGE)) ending = true;
+            // re-evaluated every tick, so a machine that restarts during the fade-out just fades back in
+            ending = mc.level != level || mc.player == null || !level.isLoaded(pos) || !running.test(level, pos)
+                    || mc.player.distanceToSqr(x, y, z) > RANGE * RANGE;
             fade = ending ? fade - 1 : Math.min(FADE, fade + 1);
             volume = Math.max(0.01f, baseVolume * fade / FADE);
             if (ending && fade <= 0)

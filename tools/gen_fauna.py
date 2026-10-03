@@ -145,6 +145,8 @@ def sounds(synthesise=True):
             elif kind == "step":
                 entry["subtitle"] = "subtitles.block.generic.footsteps"
             table[f"entity.{name}.{kind}"] = entry
+    import machine_sounds  # machine loops share sounds.json (their .ogg files are not touched here)
+    table.update(machine_sounds.entries())
     write_json(os.path.join(ASSETS, "sounds.json"), table)
     print(f"  {len(table)} sound events")
 
