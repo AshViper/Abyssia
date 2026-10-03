@@ -962,8 +962,8 @@ ITEM_NAMES["oil_sac.source"] = ("Right-click or break a ripe Oil Kelp node. Oil 
                                 "熟した生体油昆布の節を右クリックまたは破壊で手に入る。Y-64〜-250の海底に自生し、種から栽培もできる。")
 ITEM_NAMES["oil_kelp_seed.source"] = ("5% from breaking Oil Kelp. Plant it on the underwater seabed.",
                                       "生体油昆布を壊すと5%の確率で落ちる。水中の海底に植える。")
-BLOCK_LANG_EXTRA["hydro_planter.source"] = ("Needs no water or power. Put in a deep mushroom, pressure gourd or deep kelp as a seedling to grow food. Placed side by side, the frames connect.",
-                                 "水も電力も不要。深海キノコ・プレッシャーゴード・深海昆布を苗として入れると食材が育つ。並べると枠がつながる。")
+BLOCK_LANG_EXTRA["hydro_planter.source"] = ("Needs no water or power. Four plots: right-click a plot with a deep mushroom, pressure gourd or deep kelp seedling to plant it, right-click a ripe plot to harvest (it regrows), sneak-right-click with an empty hand to take the seedling back. Hoppers below take ripe produce.",
+                                 "水も電力も不要。4区画に分かれる。区画を深海キノコ・プレッシャーゴード・深海昆布の苗で右クリックして植え、熟した区画を右クリックで収穫 (苗は残って再び育つ)。素手でスニーク右クリックすると苗を回収。下のホッパーで熟した収穫物を取り出せる。")
 ITEM_NAMES.update(plant_assets.ITEM_NAMES)
 # Material processing system (tools/material_spec.json via material_system.py)
 ITEM_NAMES.update(material_system.item_names())
@@ -1106,8 +1106,10 @@ def main():
     # OL01 oil kelp: base / middle (unripe) / ripe cross models; textures (OIL1 sheet) are imported by hand, never drawn here.
     write(bs("oil_kelp"), {"variants": {"base=true,ripe=false": {"model": ref("oil_kelp_base")}, "base=true,ripe=true": {"model": ref("oil_kelp_ripe")},
                                         "base=false,ripe=false": {"model": ref("oil_kelp_middle")}, "base=false,ripe=true": {"model": ref("oil_kelp_ripe")}}})
-    for _t in ("oil_kelp_base", "oil_kelp_middle", "oil_kelp_ripe"):
+    for _t in ("oil_kelp_base", "oil_kelp_middle"):
         write(bm(_t), cross_model(ref(_t)))
+    # OL02: the ripe model gets an emissive overlay of just the oil-sac pixels (oil_kelp_ripe_glow, derived by derive_textures.py)
+    write(bm("oil_kelp_ripe"), cross_model(ref("oil_kelp_ripe"), ref("oil_kelp_ripe_glow")))
     for _i in ("oil_sac", "oil_kelp_seed"):
         write(im(_i), {"parent": "minecraft:item/generated", "textures": {"layer0": "abyssia:item/" + _i}})
 
@@ -1129,7 +1131,7 @@ def main():
     habitat = habitat_assets.generate(write, bs, bm, im, DATA)
     # Base furniture (H04 large locker / H05 wall workbench)
     furniture_assets.generate(write, bs, bm, im, DATA)
-    planter_assets.generate(write, bs, bm, im, DATA)   # PL01 hydro planter
+    planter_assets.generate(write, bs, bm, im, DATA)   # PL01/PL02 hydro planter
     electric_tool_assets.generate(write, im, DATA)
     # BT01 build-menu content: its generators write straight into src/main/resources, so run them after the wipe.
     import subprocess
@@ -1262,10 +1264,18 @@ def loot_tables():
             continue
         elif name in SILK_ONLY:
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:" + name}], "conditions": silk()}
+        elif name == "void_kelp_plant":
+            # the stalk drops like the top: void_kelp only with silk touch / shears, otherwise the top's materials
+            top = next(p for p in plant_assets.pd.PLANTS if p.id == "void_kelp")
+            pools = [{"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:void_kelp"}],
+                      "conditions": [plant_assets.keep_block(), {"condition": "minecraft:survives_explosion"}]}]
+            pools += [plant_assets._pool(d, [plant_assets.no_keep()]) for d in top.drops]
+            write(lt(name), {"type": "minecraft:block", "pools": pools, "random_sequence": "abyssia:blocks/" + name})
+            continue
         else:
-            drop = "void_kelp" if name == "void_kelp_plant" else name
+            drop = name
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:" + drop}],
-                    "conditions": [{"condition": "minecraft:survives_explosion"}]}
+                    "conditions": ([plant_assets.keep_block()] if name == "ancient_frond" else []) + [{"condition": "minecraft:survives_explosion"}]}
         write(lt(name), {"type": "minecraft:block", "pools": [pool] + rare_pools(name), "random_sequence": "abyssia:blocks/" + name})
 
 

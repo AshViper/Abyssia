@@ -8,8 +8,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 /**
- * What a hydro planter grows (feature PL01, inbox/specs/PL01-hydro-planter.md): the seedling item, the harvest item,
- * its amount range and the growth time. NONE is the blockstate value of an empty planter.
+ * What a hydro planter cell grows (features PL01 / PL02, inbox/specs/PL02-planter-remake.md): the seedling item, the
+ * harvest item, its amount range and the growth time. NONE is an empty cell. The cell renderer draws
+ * block/planter_&lt;name&gt;_&lt;stage&gt; (stage 0..2, see {@link #stage}).
  */
 public enum PlanterCrop implements StringRepresentable
 {
@@ -51,6 +52,30 @@ public enum PlanterCrop implements StringRepresentable
         for (PlanterCrop crop : values())
             if (crop.seed != null && crop.seed.equals(id.getPath())) return crop;
         return NONE;
+    }
+
+    /** Growth stage 0 (planted), 1 (half grown) or 2 (ripe) for a progress in ticks. */
+    public int stage(long progress)
+    {
+        if (this == NONE) return 0;
+        if (progress >= ticks) return 2;
+        return progress * 2 >= ticks ? 1 : 0;
+    }
+
+    /** Looks a crop up by its serialized name; NONE when unknown. */
+    public static PlanterCrop byName(String name)
+    {
+        for (PlanterCrop crop : values())
+            if (crop.name.equals(name)) return crop;
+        return NONE;
+    }
+
+    /** One seedling of this crop (empty for NONE or an unregistered item). */
+    public ItemStack seedStack()
+    {
+        if (seed == null) return ItemStack.EMPTY;
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, seed));
+        return item == null || item == net.minecraft.world.item.Items.AIR ? ItemStack.EMPTY : new ItemStack(item);
     }
 
     /** One harvested item (count 1); empty if the item is not registered. */

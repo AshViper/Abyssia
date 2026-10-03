@@ -34,6 +34,7 @@ import texture_locks
 ASSETS = texture_locks.ASSETS
 LUMA = np.array([0.2126, 0.7152, 0.0722])
 GLOW_PERCENTILE = 65
+SPECIAL_GLOW = {"textures/block/oil_kelp_ripe_glow.png": "oil_sac_glow"}     # OL02: own recipe instead of the luminance cut
 GLOW_DIR = "textures/block/"        # block overlays only (entity emissive layers are painted by hand, fauna tools)
 
 
@@ -91,8 +92,9 @@ def glow_targets() -> dict[str, tuple[str, str]]:
     rels = {os.path.relpath(p, ASSETS).replace(os.sep, "/")
             for p in glob.glob(os.path.join(ASSETS, *GLOW_DIR.split("/"), "*_glow.png"))}
     rels |= _model_glow_refs()
+    rels |= set(SPECIAL_GLOW)
     rels -= set(texture_locks.DELETE)
-    return {rel: ("glow", rel[:-len("_glow.png")] + ".png") for rel in sorted(rels)}
+    return {rel: (SPECIAL_GLOW.get(rel, "glow"), rel[:-len("_glow.png")] + ".png") for rel in sorted(rels)}
 
 
 def targets() -> dict[str, tuple[str, str]]:
@@ -251,9 +253,32 @@ def glow(a: np.ndarray) -> np.ndarray:
     return out
 
 
+def oil_sac_glow(a: np.ndarray) -> np.ndarray:
+    """OL02: only the orange/amber oil-sac pixels (hue 20-45 deg) of oil_kelp_ripe, recoloured amber (edge) to
+    yellow-green (core) by their own brightness; everything else transparent."""
+    import colorsys
+    out = np.zeros_like(a)
+    h = np.zeros(a.shape[:2])
+    for y in range(a.shape[0]):
+        for x in range(a.shape[1]):
+            r, g, b = (a[y, x, :3] / 255.0)
+            h[y, x] = colorsys.rgb_to_hsv(r, g, b)[0] * 360
+    sac = (a[..., 3] > 0) & (h >= 20) & (h <= 45)
+    if sac.any():
+        lu = lum(a[..., :3].astype(float))
+        lo, hi = lu[sac].min(), lu[sac].max()
+        t = ((lu - lo) / (hi - lo) if hi > lo else np.ones_like(lu))[..., None]
+        col = mix(np.broadcast_to(np.array([0xe0, 0xa2, 0x3a], float), a.shape[:2] + (3,)), (0xf2, 0xe6, 0x6a), t)
+        out[sac, :3] = np.clip(np.round(col[sac]), 0, 255).astype(np.uint8)
+        out[sac, 3] = 255
+    return out
+
+
 def build(recipe: str, base: np.ndarray, name: str) -> np.ndarray:
     if recipe == "glow":
         return glow(base)
+    if recipe == "oil_sac_glow":
+        return oil_sac_glow(base)
     a = base[:base.shape[1]]                  # first frame of a strip
     rgb = RECIPES[recipe](a[..., :3].astype(float), name)
     out = np.empty(a.shape, np.uint8)

@@ -1,49 +1,8 @@
 {
-  "parent": "minecraft:block/block",
+  "parent": "minecraft:block/slab",
   "textures": {
-    "particle": "abyssia:block/hydro_planter_side",
-    "side": "abyssia:block/hydro_planter_side",
+    "bottom": "abyssia:block/hydro_planter_bottom",
     "top": "abyssia:block/hydro_planter_top",
-    "bottom": "abyssia:block/hydro_planter_bottom"
-  },
-  "elements": [
-    {
-      "from": [
-        0,
-        0,
-        0
-      ],
-      "to": [
-        16,
-        16,
-        16
-      ],
-      "faces": {
-        "down": {
-          "texture": "#bottom",
-          "cullface": "down"
-        },
-        "up": {
-          "texture": "#top",
-          "cullface": "up"
-        },
-        "north": {
-          "texture": "#side",
-          "cullface": "north"
-        },
-        "south": {
-          "texture": "#side",
-          "cullface": "south"
-        },
-        "east": {
-          "texture": "#side",
-          "cullface": "east"
-        },
-        "west": {
-          "texture": "#side",
-          "cullface": "west"
-        }
-      }
-    }
-  ]
+    "side": "abyssia:block/hydro_planter_side"
+  }
 }

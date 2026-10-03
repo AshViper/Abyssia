@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
@@ -50,6 +51,16 @@ public class GeneratorPartBlockEntity extends BlockEntity
         if (controller != null && level != null && level.isLoaded(controller)
                 && level.getBlockEntity(controller) instanceof GeneratorBlockEntity be)
             return be.itemHandler();
+        return null;
+    }
+
+    /** the controller's extract-only FE storage, registered as Capabilities.EnergyStorage.BLOCK in ModGenerators */
+    @Nullable
+    public IEnergyStorage energyStorage()
+    {
+        if (controller != null && level != null && level.isLoaded(controller)
+                && level.getBlockEntity(controller) instanceof GeneratorBlockEntity be)
+            return be.energyStorage();
         return null;
     }
 

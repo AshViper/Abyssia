@@ -55,6 +55,8 @@ public final class ModGenerators
     {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GENERATOR_ENTITY.get(), (be, side) -> be.itemHandler());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PART_ENTITY.get(), (be, side) -> be.itemHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, GENERATOR_ENTITY.get(), (be, side) -> be.energyStorage());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, PART_ENTITY.get(), (be, side) -> be.energyStorage());
     }
 
     private static BlockBehaviour.Properties props()

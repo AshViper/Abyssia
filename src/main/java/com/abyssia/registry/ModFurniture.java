@@ -3,7 +3,6 @@ package com.abyssia.registry;
 import com.abyssia.Abyssia;
 import com.abyssia.furniture.HydroPlanterBlock;
 import com.abyssia.furniture.HydroPlanterBlockEntity;
-import com.abyssia.furniture.HydroPlanterMenu;
 import com.abyssia.furniture.LargeLockerBlock;
 import com.abyssia.furniture.LargeLockerBlockEntity;
 import com.abyssia.furniture.LargeLockerMenu;
@@ -63,13 +62,11 @@ public final class ModFurniture
     public static final DeferredHolder<MenuType<?>, MenuType<LargeLockerMenu>> LARGE_LOCKER_MENU = MENUS.register("large_locker",
             () -> IMenuTypeExtension.create(LargeLockerMenu::new));
 
-    /** PL01 hydro planter: one seedling slot, grows food without water or FE (tools/planter_assets.py). */
+    /** PL01/PL02 hydro planter: half slab with 4 crop cells, no GUI, grows food without water or FE (tools/planter_assets.py). */
     public static final DeferredBlock<HydroPlanterBlock> HYDRO_PLANTER = BLOCKS.register("hydro_planter", () -> new HydroPlanterBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(2.0f, 4.0f).sound(SoundType.GLASS)));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HydroPlanterBlockEntity>> HYDRO_PLANTER_ENTITY = BLOCK_ENTITIES.register("hydro_planter",
             () -> BlockEntityType.Builder.of(HydroPlanterBlockEntity::new, HYDRO_PLANTER.get()).build(null));
-    public static final DeferredHolder<MenuType<?>, MenuType<HydroPlanterMenu>> HYDRO_PLANTER_MENU = MENUS.register("hydro_planter",
-            () -> IMenuTypeExtension.create(HydroPlanterMenu::new));
 
     private ModFurniture() {}
 
@@ -96,5 +93,7 @@ public final class ModFurniture
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, WALL_WORKBENCH_ENTITY.get(), (be, side) -> be.energy());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, LARGE_LOCKER_ENTITY.get(), (be, side) -> be.itemHandler(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, LOCKER_PART_ENTITY.get(), (be, side) -> be.itemHandler(side));
+        // PL02: hoppers / pipes pull ripe produce from every side except the top
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, HYDRO_PLANTER_ENTITY.get(), (be, side) -> be.itemHandler(side));
     }
 }
