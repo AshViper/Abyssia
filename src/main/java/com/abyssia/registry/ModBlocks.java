@@ -50,6 +50,15 @@ public final class ModBlocks
     public static final RegistryObject<Block> CRYSTAL_ROCK = rock("crystal_rock", MapColor.COLOR_LIGHT_BLUE, 2.0f, SoundType.CALCITE, 2);
     public static final RegistryObject<Block> MINERAL_HOST_ROCK = rock("mineral_host_rock", MapColor.TERRACOTTA_BROWN, 2.5f, SoundType.TUFF, 0);
 
+    // ---------- Terrain: cobbled rocks (what the main rocks drop without Silk Touch; smelt back to the rock) ----------
+    public static final RegistryObject<Block> COBBLED_DEEP_SEA_ROCK = rock("cobbled_deep_sea_rock", MapColor.COLOR_GRAY, 1.8f, SoundType.STONE, 0);
+    public static final RegistryObject<Block> COBBLED_ABYSSAL_ROCK = rock("cobbled_abyssal_rock", MapColor.COLOR_BLACK, 2.5f, SoundType.DEEPSLATE, 0);
+    public static final RegistryObject<Block> COBBLED_TRENCH_ROCK = rock("cobbled_trench_rock", MapColor.TERRACOTTA_BLUE, 3.0f, SoundType.DEEPSLATE, 0);
+    public static final RegistryObject<Block> COBBLED_THERMAL_ROCK = rock("cobbled_thermal_rock", MapColor.CRIMSON_NYLIUM, 2.0f, SoundType.BASALT, 3);
+    public static final RegistryObject<Block> COBBLED_VOLCANIC_ROCK = rock("cobbled_volcanic_rock", MapColor.TERRACOTTA_BLACK, 2.0f, SoundType.BASALT, 0);
+    public static final RegistryObject<Block> COBBLED_CRYSTAL_ROCK = rock("cobbled_crystal_rock", MapColor.COLOR_LIGHT_BLUE, 2.0f, SoundType.CALCITE, 2);
+    public static final RegistryObject<Block> COBBLED_MINERAL_HOST_ROCK = rock("cobbled_mineral_host_rock", MapColor.TERRACOTTA_BROWN, 2.5f, SoundType.TUFF, 0);
+
     // ---------- Terrain: sediments (settled marine snow, thickest in valleys and trenches) ----------
     public static final RegistryObject<Block> DEEP_SEDIMENT = soft("deep_sediment", MapColor.COLOR_GRAY, SoundType.SAND);
     public static final RegistryObject<Block> ABYSSAL_MUD = soft("abyssal_mud", MapColor.TERRACOTTA_GRAY, SoundType.MUD);
@@ -242,6 +251,8 @@ public final class ModBlocks
     public static final RegistryObject<Block> ANCIENT_ROOT = block("ancient_root", () -> new Block(props(MapColor.TERRACOTTA_BROWN).strength(2.0f).sound(SoundType.ROOTS)));
     public static final RegistryObject<Block> ANCIENT_FROND = block("ancient_frond", () -> new FrondBlock(props(MapColor.COLOR_GREEN).strength(0.3f)
             .sound(SoundType.WET_GRASS).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
+    public static final RegistryObject<Block> ANCIENT_SAPLING = block("ancient_sapling", () -> new com.abyssia.block.AncientSaplingBlock(
+            plantProps(MapColor.TERRACOTTA_CYAN, 0)));
     // Glows only through its emissive texture (no block light), so it sprinkles cavern roofs with points of light without lighting them.
     public static final RegistryObject<Block> LUMINOUS_MOSS = block("luminous_moss", () -> new CaveMossBlock(props(MapColor.COLOR_LIGHT_BLUE).replaceable()
             .noCollission().strength(0.2f).sound(SoundType.GLOW_LICHEN).pushReaction(PushReaction.DESTROY)));

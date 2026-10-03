@@ -33,6 +33,7 @@ public final class ModWorldgen
     public static final RegistryObject<Feature<RockSpireFeature.Config>> ROCK_SPIRE = FEATURES.register("rock_spire", RockSpireFeature::new);
     public static final RegistryObject<Feature<NoneFeatureConfiguration>> THERMAL_VENT_FIELD = FEATURES.register("thermal_vent_field", ThermalVentGenerator::new);
     public static final RegistryObject<Feature<CrystalSpikeFeature.Config>> CRYSTAL_SPIKE = FEATURES.register("crystal_spike", CrystalSpikeFeature::new);
+    public static final RegistryObject<Feature<NoneFeatureConfiguration>> ANCIENT_TREE = FEATURES.register("ancient_tree", AncientTreeFeature::new);
     public static final RegistryObject<Feature<RootArchFeature.Config>> ROOT_ARCH = FEATURES.register("root_arch", RootArchFeature::new);
     public static final RegistryObject<Feature<NoneFeatureConfiguration>> SEABED_STRUCTURES = FEATURES.register("seabed_structures", () -> new SeabedStructureFeature(false));
     public static final RegistryObject<Feature<NoneFeatureConfiguration>> SEABED_STRUCTURE_DRESSING = FEATURES.register("seabed_structure_dressing", () -> new SeabedStructureFeature(true));
