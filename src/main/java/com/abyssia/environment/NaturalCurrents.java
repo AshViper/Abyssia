@@ -120,13 +120,35 @@ public final class NaturalCurrents
         return Config.NATURAL_CURRENTS.get() ? saltOf(level.getSeed()) : null;
     }
 
-    /** The strongest natural current felt at this position, or {@link CurrentData#NONE}. */
+    /**
+     * The strongest current felt at this position: a natural current or a CU01 {@link CurrentStreams current stream},
+     * whichever has the higher local strength; {@link CurrentData#NONE} outside both.
+     */
     public static CurrentData getCurrentAt(Level level, BlockPos pos)
     {
         return getCurrentAt(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
     }
 
     public static CurrentData getCurrentAt(Level level, double x, double y, double z)
+    {
+        CurrentData natural = getNaturalCurrentAt(level, x, y, z);
+        CurrentStreams.Sample sample = CurrentStreams.sample(level, x, y, z);
+        if (sample == null || sample.flowMultiplier() * sample.strength() <= natural.getLocalStrength()) return natural;
+        // A CU01 stream as a synthetic natural current: a point at the nearest centre-line point, flowing along its tangent.
+        CurrentStream stream = sample.stream();
+        Vec3 at = stream.point(sample.t());
+        NaturalCurrent.Type type = switch (stream.tier())
+        {
+            case WEAK -> NaturalCurrent.Type.WEAK;
+            case NORMAL -> NaturalCurrent.Type.NORMAL;
+            case STRONG -> NaturalCurrent.Type.STRONG;
+        };
+        float radius = (float) stream.radius();
+        return new CurrentData(new NaturalCurrent(type, at, at, sample.direction(), (float) stream.strength(), radius, radius), (float) sample.flowMultiplier());
+    }
+
+    /** The strongest natural current (not CU01 streams) felt at this position, or {@link CurrentData#NONE}. */
+    public static CurrentData getNaturalCurrentAt(Level level, double x, double y, double z)
     {
         Settings settings = settings(level);
         Band band = band(level, y);

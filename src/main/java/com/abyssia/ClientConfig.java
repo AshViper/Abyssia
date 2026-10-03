@@ -67,6 +67,24 @@ public final class ClientConfig
 
     static {
         BUILDER.pop();
+        BUILDER.comment("How current streams (CU01) look").push("current_streams");
+    }
+
+    public static final ForgeConfigSpec.IntValue CURRENT_STREAM_RENDER_DISTANCE = BUILDER
+            .comment("Draw current stream streaks up to this many blocks from you")
+            .defineInRange("max_render_distance", 96, 16, 160);
+    public static final ForgeConfigSpec.IntValue CURRENT_STREAM_PARTICLE_BUDGET = BUILDER
+            .comment("Most current stream streaks alive at once (nearest streams first)")
+            .defineInRange("particle_budget", 600, 0, 4000);
+    public static final ForgeConfigSpec.BooleanValue CURRENT_STREAM_RIBBONS = BUILDER
+            .comment("Draw streams as translucent flowing ribbons, so they can be seen from outside")
+            .define("ribbons", true);
+    public static final ForgeConfigSpec.IntValue CURRENT_STREAM_RIBBON_DISTANCE = BUILDER
+            .comment("Draw stream ribbons up to this many blocks from you (they fade out from 48 blocks)")
+            .defineInRange("ribbon_distance", 128, 16, 256);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Title screen").push("title");
     }
 

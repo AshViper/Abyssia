@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,7 +44,8 @@ public final class OceanCurrentPush
     public static void onLevelTick(TickEvent.LevelTickEvent event)
     {
         if (event.phase != TickEvent.Phase.START || !(event.level instanceof ServerLevel level)) return;
-        if (!Config.CURRENT_PUSH_ENTITIES.get() || (Config.CURRENT_PUSH_SCALE.get() <= 0.0 && !Config.NATURAL_CURRENTS.get())) return;
+        if (!Config.CURRENT_PUSH_ENTITIES.get()
+                || (Config.CURRENT_PUSH_SCALE.get() <= 0.0 && !Config.NATURAL_CURRENTS.get() && !Config.CURRENT_STREAMS.get())) return;
         for (Entity entity : level.getAllEntities())
         {
             // Players and what they steer are simulated by their client, which pushes them itself.
@@ -52,9 +54,14 @@ public final class OceanCurrentPush
         }
     }
 
+    /** CU01: share of the gap to the stream's speed closed each tick (1-3 ticks to settle in or out). */
+    private static final double STREAM_BLEND = 0.25;
+    /** Cap on an entity's speed where currents (natural + CU01) add up, blocks per tick. */
+    private static final double MAX_CURRENT_SPEED = 0.60;
+
     /**
-     * Pushes one entity along the current if it is a kind the water carries and it is in ocean water: the gentle field
-     * everywhere, plus a {@link NaturalCurrents} stream where there is one.
+     * Pushes one entity along the current if it is a kind the water carries: in ocean water the gentle field everywhere,
+     * plus a {@link NaturalCurrents} stream where there is one; in any water a CU01 {@link CurrentStreams current stream}.
      */
     public static void push(Entity entity)
     {
@@ -65,15 +72,67 @@ public final class OceanCurrentPush
         if (exposure <= 0.0) return;
         Level level = entity.level();
         BlockPos pos = entity.blockPosition();
-        if (!isOceanWater(level, pos)) return;
 
-        Vec3 push = Config.CURRENT_PUSH_SCALE.get() > 0.0 ? fieldPush(entity, level, pos, drag) : Vec3.ZERO;
-        push = push.add(naturalPush(entity, level, drag));
-        if (push == Vec3.ZERO) return;
-        push = push.scale(exposure);
+        Vec3 push = Vec3.ZERO;
+        Vec3 natural = Vec3.ZERO;
+        if (isOceanWater(level, pos))
+        {
+            if (Config.CURRENT_PUSH_SCALE.get() > 0.0) push = fieldPush(entity, level, pos, drag);
+            natural = naturalPush(entity, level, drag);
+        }
+        Vec3 stream = streamPush(entity, level, drag, exposure);
+        if (push == Vec3.ZERO && natural == Vec3.ZERO && stream == Vec3.ZERO) return;
+        push = push.add(natural).scale(exposure).add(stream);
         // Boats float on the surface: up/downwelling would only fight their buoyancy.
         double vy = entity instanceof Boat ? 0.0 : push.y;
-        entity.setDeltaMovement(entity.getDeltaMovement().add(push.x, vy, push.z));
+        Vec3 old = entity.getDeltaMovement();
+        Vec3 next = old.add(push.x, vy, push.z);
+        // Where streams add up, never faster than the cap (nor slower than the entity already was).
+        if (natural != Vec3.ZERO || stream != Vec3.ZERO)
+        {
+            double speed = next.length(), cap = Math.max(MAX_CURRENT_SPEED, old.length());
+            if (speed > cap) next = next.scale(cap / speed);
+        }
+        entity.setDeltaMovement(next);
+    }
+
+    /**
+     * A CU01 stream's share: the velocity along the flow moves a quarter of the way to the stream's speed each tick
+     * (direction x clamp(base_flow_speed x strength, 0, max_flow_speed) x flowMultiplier), compensated for this tick's
+     * water drag; the other components are left alone. Brakes anything already faster downstream the same way.
+     * Nothing in rock or out of water (body-centre block).
+     */
+    private static Vec3 streamPush(Entity entity, Level level, double drag, double exposure)
+    {
+        if (!CurrentStreams.affects(level, entity)) return Vec3.ZERO;
+        CurrentStreams.Params params = CurrentStreams.params(level);
+        if (params == null) return Vec3.ZERO;
+        double x = entity.getX(), y = entity.getY() + entity.getBbHeight() * 0.5, z = entity.getZ();
+        if (!level.getFluidState(BlockPos.containing(x, y, z)).is(FluidTags.WATER)) return Vec3.ZERO;
+        CurrentStreams.Sample sample = CurrentStreams.sample(level, x, y, z);
+        if (sample == null) return Vec3.ZERO;
+        double target = CurrentStreams.flowSpeed(params, sample.strength()) * sample.flowMultiplier() * exposure;
+        Vec3 dir = sample.direction();
+        double before = keptBeforeMove(entity, drag), after = (1.0 - drag) / before;
+        double along = entity.getDeltaMovement().dot(dir);
+        // The speed the entity actually travelled along the flow last tick (its velocity lost `after` since the move).
+        double moved = along / after;
+        double travel = moved + (target - moved) * STREAM_BLEND;
+        // Whatever drag still comes before this tick's move is aimed over, so the entity travels exactly `travel`.
+        return dir.scale(travel / before - along);
+    }
+
+    /**
+     * Share of the velocity an entity keeps through the water drag applied BEFORE its move in its own tick (the rest of
+     * {@code 1 - drag} comes after the move). Living entities move first and are dragged after (LivingEntity.travel);
+     * boats are slowed before they move (Boat.floatBoat); items and XP orbs lose 1% before (setUnderwaterMovement) and 2%
+     * after. Aiming the push at the post-drag velocity of a living entity made it travel 1 / (1 - drag) = 1.25x too fast.
+     */
+    private static double keptBeforeMove(Entity entity, double drag)
+    {
+        if (entity instanceof Boat) return 1.0 - drag;
+        if (entity instanceof ItemEntity || entity instanceof ExperienceOrb) return 0.99;
+        return 1.0;
     }
 
     /** The {@link OceanCurrentManager} field's share of this tick's push. */
@@ -96,7 +155,7 @@ public final class OceanCurrentPush
      */
     private static Vec3 naturalPush(Entity entity, Level level, double drag)
     {
-        CurrentData data = NaturalCurrents.getCurrentAt(level, entity.getX(), entity.getY() + entity.getBbHeight() * 0.5, entity.getZ());
+        CurrentData data = NaturalCurrents.getNaturalCurrentAt(level, entity.getX(), entity.getY() + entity.getBbHeight() * 0.5, entity.getZ());
         if (!data.isPresent()) return Vec3.ZERO;
         double target = data.getLocalStrength() * NaturalCurrents.maxSpeed(level);
         double along = entity.getDeltaMovement().dot(data.getDirection());

@@ -15,7 +15,7 @@ public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
     // 4: habitat constructor controls (H02). 5: waypoint beacon list / settings (W01).
-    private static final String PROTOCOL = "5";
+    private static final String PROTOCOL = "6";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
 

@@ -285,6 +285,40 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("Current streams (CU01): long, curving bands of strong current (8-20 blocks across) placed from the world seed, " +
+                "seen as bundles of white streaks. Clients learn these settings from the server on login").push("current_streams");
+    }
+
+    public static final ForgeConfigSpec.BooleanValue CURRENT_STREAMS = BUILDER.define("enabled", true);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_CHANCE = BUILDER
+            .comment("Chance that a cell holds a current stream, per depth band (upper ocean Y 4..52, deep layer Y -330..-110)")
+            .defineInRange("generation_chance", 0.20, 0.0, 1.0);
+    public static final ForgeConfigSpec.IntValue CURRENT_STREAM_CELL = BUILDER
+            .comment("Cell size in blocks (one candidate stream per cell and depth band)")
+            .defineInRange("cell_size", 192, 64, 1024);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MIN_LENGTH = BUILDER.defineInRange("min_length", 64.0, 16.0, 512.0);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MAX_LENGTH = BUILDER.defineInRange("max_length", 256.0, 16.0, 512.0);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MIN_WIDTH = BUILDER
+            .comment("Stream diameter range in blocks")
+            .defineInRange("min_width", 8.0, 2.0, 48.0);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MAX_WIDTH = BUILDER.defineInRange("max_width", 20.0, 2.0, 48.0);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MIN_STRENGTH = BUILDER
+            .comment("Strength range (WEAK 0.65-0.80, NORMAL 0.80-1.00 = most common, STRONG 1.00-1.20); turbines make 120 x strength FE/t")
+            .defineInRange("min_strength", 0.65, 0.0, 4.0);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MAX_STRENGTH = BUILDER.defineInRange("max_strength", 1.20, 0.0, 4.0);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_BASE_SPEED = BUILDER
+            .comment("Flow speed on the axis in blocks per tick at strength 1")
+            .defineInRange("base_flow_speed", 0.34, 0.0, 1.0);
+    public static final ForgeConfigSpec.DoubleValue CURRENT_STREAM_MAX_SPEED = BUILDER
+            .comment("Flow speed cap in blocks per tick (whatever the strength)")
+            .defineInRange("max_flow_speed", 0.40, 0.0, 1.0);
+    public static final ForgeConfigSpec.BooleanValue CURRENT_STREAM_PLAYERS = BUILDER.define("affects_players", true);
+    public static final ForgeConfigSpec.BooleanValue CURRENT_STREAM_MOBS = BUILDER.define("affects_mobs", true);
+    public static final ForgeConfigSpec.BooleanValue CURRENT_STREAM_ITEMS = BUILDER.define("affects_items", true);
+    public static final ForgeConfigSpec.BooleanValue CURRENT_STREAM_BOATS = BUILDER.define("affects_boats", true);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Deep-sea fauna. Which animals live where (depth in metres, habitat, caps) is datapack data: data/<namespace>/fauna_spawns").push("fauna");
     }
 

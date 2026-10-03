@@ -29,6 +29,11 @@ public final class ModParticleProviders
         event.registerSpriteSet(ModParticles.MINERAL_PARTICLE.get(), sprites -> AbyssParticle.provider(Kind.MINERAL, sprites));
         event.registerSpriteSet(ModParticles.SPORE.get(), sprites -> AbyssParticle.provider(Kind.SPORE, sprites));
         event.registerSpriteSet(ModParticles.GLOW_DUST.get(), sprites -> AbyssParticle.provider(Kind.GLOW_DUST, sprites));
-        event.registerSpriteSet(ModParticles.CURRENT_MOTE.get(), CurrentParticle::provider);
+        event.registerSpriteSet(ModParticles.CURRENT_MOTE.get(), sprites ->
+        {
+            // CU01 stream streaks draw the same sprite without a particle type of their own.
+            CurrentStreamParticle.sprites = sprites;
+            return CurrentParticle.provider(sprites);
+        });
     }
 }
