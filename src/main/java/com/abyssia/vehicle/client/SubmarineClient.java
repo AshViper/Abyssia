@@ -24,12 +24,12 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
 /**
- * SUB02 pilot controls: W/S forward / back, A/D sideways, Space up, Ctrl (the sprint key) down / release the dock,
- * G headlights, Shift = vanilla dismount, mouse = yaw. With toggle-sprint on, Ctrl is read as the physical key so the
+ * SUB02 pilot controls: W/S forward / back along the nose, A/D sideways, Ctrl (the sprint key) releases the dock,
+ * G headlights, Shift = vanilla dismount, mouse = yaw + pitch (the hull faces the view). With toggle-sprint on, Ctrl is read as the physical key so the
  * toggle does not latch it. NeoForge's key lookup gives a key to every mapping bound to it, so G (shared with the
  * habitat build menu by default) works through consumeClick (Forge reads the raw key event instead).
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class SubmarineClient
 {
     public static final KeyMapping LIGHT = new KeyMapping("key." + Abyssia.MODID + ".submarine_light", KeyConflictContext.IN_GAME,
@@ -43,7 +43,7 @@ public final class SubmarineClient
         return player != null && player.getVehicle() instanceof Submarine sub ? sub : null;
     }
 
-    /** {forward, strafe (left +), vertical (up +)} of the local player; zero with a screen open */
+    /** {forward, strafe (left +), undock (-1 = Ctrl)} of the local player; zero with a screen open */
     static int[] input()
     {
         Minecraft mc = Minecraft.getInstance();
@@ -51,7 +51,7 @@ public final class SubmarineClient
         Options o = mc.options;
         int forward = (o.keyUp.isDown() ? 1 : 0) - (o.keyDown.isDown() ? 1 : 0);
         int strafe = (o.keyLeft.isDown() ? 1 : 0) - (o.keyRight.isDown() ? 1 : 0);
-        int vertical = (o.keyJump.isDown() ? 1 : 0) - (down(mc) ? 1 : 0);
+        int vertical = down(mc) ? -1 : 0;   // only Ctrl = release the dock; no vertical thrust
         return new int[]{forward, strafe, vertical};
     }
 
@@ -73,7 +73,7 @@ public final class SubmarineClient
                 AbyssiaNetwork.sendToServer(new SubmarineLightPacket(SubmarineLightPacket.Action.TOGGLE_LIGHTS));
     }
 
-    @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
     public static final class Registration
     {
         private Registration() {}

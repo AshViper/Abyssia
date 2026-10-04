@@ -9,6 +9,8 @@ package com.abyssia.vehicle;
 public final class SubmarinePods
 {
     public static final int RIGHT = 0, LEFT = 1;
+    /** hull centre height (Submarine.HULL_HEIGHT / 2): the pitch pivot */
+    private static final double PIVOT_Y = 2.2733 / 2.0;
 
     /** bbmodel box R: from [13,7.4,2] to [19,19.4,16] (+ mesh shift), group origin [16,13.4,9], rotation z +12.5 deg */
     // y shift measured on the baked mesh (pod vertices y 1.0229..1.8363 blocks): 9.473 px, not the spec's 7.6005
@@ -20,16 +22,24 @@ public final class SubmarinePods
     private SubmarinePods() {}
 
     /**
-     * @param yawDeg entity yaw; origin = ray start relative to the entity position (blocks); dir = ray direction
+     * @param yawDeg entity yaw, pitchDeg entity pitch (nose down +); origin = ray start relative to the entity position (blocks); dir = ray direction
      * @return distance (blocks, along the unit-length dir) to the nearest pod hit, or -1; {@code which[0]} gets RIGHT / LEFT
      */
-    public static double raycast(double yawDeg, double ox, double oy, double oz, double dx, double dy, double dz,
+    public static double raycast(double yawDeg, double pitchDeg, double ox, double oy, double oz, double dx, double dy, double dz,
                                  double maxDist, int[] which)
     {
         double yaw = Math.toRadians(yawDeg), c = Math.cos(yaw), s = Math.sin(yaw);
         // world -> model (blocks -> px for the position)
         double mox = (-c * ox - s * oz) * 16, moy = oy * 16, moz = (s * ox - c * oz) * 16;
         double mdx = -c * dx - s * dz, mdy = dy, mdz = s * dx - c * dz;
+        // SUB05: undo the hull pitch (the renderer tilts the mesh by -pitch about the hull centre, x axis of the model frame)
+        double cp = Math.cos(Math.toRadians(pitchDeg)), sp = Math.sin(Math.toRadians(pitchDeg));
+        double py = moy / 16 - PIVOT_Y, pz = moz / 16;
+        moy = (py * cp - pz * sp + PIVOT_Y) * 16;
+        moz = (py * sp + pz * cp) * 16;
+        double ty = mdy * cp - mdz * sp;
+        mdz = mdy * sp + mdz * cp;
+        mdy = ty;
         double best = -1;
         for (int side = RIGHT; side <= LEFT; side++)
         {

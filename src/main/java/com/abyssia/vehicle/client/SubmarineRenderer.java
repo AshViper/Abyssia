@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 /**
  * SUB02 submarine: emits the baked quads of {@link SubmarineMesh} (tools/vehicle_model.py). Hull and lamps cutout
@@ -33,6 +34,10 @@ public class SubmarineRenderer extends EntityRenderer<Submarine>
     {
         pose.pushPose();
         pose.mulPose(Axis.YP.rotationDegrees(180.0f - yaw));
+        // SUB05: nose up / down about the hull centre (mesh front = -Z, so a positive pitch = nose down is a -X rotation)
+        pose.translate(0.0, Submarine.PIVOT_Y, 0.0);
+        pose.mulPose(Axis.XP.rotationDegrees(-Mth.lerp(partialTick, sub.xRotO, sub.getXRot())));
+        pose.translate(0.0, -Submarine.PIVOT_Y, 0.0);
         PoseStack.Pose last = pose.last();
         VertexConsumer cutout = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
         quads(last, cutout, SubmarineMesh.HULL, light);
