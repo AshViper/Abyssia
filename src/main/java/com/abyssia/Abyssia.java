@@ -38,6 +38,8 @@ public class Abyssia
         com.abyssia.registry.ModFurniture.register(modEventBus);
         // BT01 constructor build menu entries (sub-specs add theirs in BuildContent)
         com.abyssia.habitat.build.BuildContent.register(modEventBus);
+        // SUB02 submarine entity + moon pool dock block (its items join ModItems)
+        com.abyssia.vehicle.VehicleContent.register(modEventBus);
         ModItems.register(modEventBus);
         com.abyssia.guide.GuideBookRegistry.register(modEventBus);
         ModEntities.register(modEventBus);

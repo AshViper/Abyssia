@@ -276,6 +276,7 @@ public final class ModItems
         ModIndustry.registerItems(ITEMS, TAB_ITEMS);
         ModHabitat.registerItems(ITEMS, TAB_ITEMS);
         ModFurniture.registerItems(ITEMS, TAB_ITEMS);
+        com.abyssia.vehicle.VehicleContent.registerItems(ITEMS, TAB_ITEMS);
         TABS.register(modBus);
     }
 
