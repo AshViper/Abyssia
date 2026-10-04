@@ -320,32 +320,78 @@ public class RelayNetwork extends SavedData
         for (BlockPos pos : relays) updateLinked(level, pos);
     }
 
-    /** Free relays (loaded) link to the nearest free relays in range, both sides need a free slot. */
+    /**
+     * Free relays (loaded) link in range, shortest free pair first, both sides need a free slot. Links never close a
+     * loop (relays already connected through other links are not linked again), so relays placed in a row keep a free
+     * slot at the end of the chain for the next one instead of forming triangles; loops left in older saves are opened
+     * by dropping their longest link.
+     */
     private void search(ServerLevel level)
     {
+        Map<BlockPos, BlockPos> group = new java.util.HashMap<>();
+        dropLoops(level, group);
         List<BlockPos> free = new ArrayList<>();
         for (BlockPos pos : relays) if (level.isLoaded(pos) && linkCount(pos) < MAX_LINKS) free.add(pos);
         if (free.size() < 2) return;
         free.sort(Comparator.comparingLong(BlockPos::asLong)); // deterministic order (ties, restarts)
         double maxSq = MAX_DISTANCE * MAX_DISTANCE;
-        for (BlockPos p : free)
-        {
-            if (linkCount(p) >= MAX_LINKS) continue;
-            List<BlockPos> candidates = new ArrayList<>();
-            for (BlockPos q : free)
-                if (!q.equals(p) && p.distSqr(q) <= maxSq && !links.containsKey(Link.of(p, q))) candidates.add(q);
-            candidates.sort(Comparator.<BlockPos>comparingDouble(p::distSqr).thenComparingLong(BlockPos::asLong));
-            for (BlockPos q : candidates)
+        // every free pair in range, shortest first (globally, so an older relay does not grab a new one that is
+        // closer to another relay)
+        List<Link> pairs = new ArrayList<>();
+        for (int a = 0; a < free.size(); a++)
+            for (int b = a + 1; b < free.size(); b++)
             {
-                if (linkCount(p) >= MAX_LINKS) break;
-                if (linkCount(q) >= MAX_LINKS) continue;
-                links.put(Link.of(p, q), new Stats());
-                setDirty();
-                syncDirty = true;
-                updateLinked(level, p);
-                updateLinked(level, q);
+                BlockPos p = free.get(a), q = free.get(b);
+                if (p.distSqr(q) <= maxSq && !links.containsKey(Link.of(p, q))) pairs.add(Link.of(p, q));
             }
+        pairs.sort(Comparator.comparingDouble(Link::distance).thenComparingLong(l -> l.a.asLong()).thenComparingLong(l -> l.b.asLong()));
+        for (Link l : pairs)
+        {
+            if (linkCount(l.a) >= MAX_LINKS || linkCount(l.b) >= MAX_LINKS || !join(group, l.a, l.b)) continue; // full, or already connected
+            links.put(l, new Stats());
+            setDirty();
+            syncDirty = true;
+            updateLinked(level, l.a);
+            updateLinked(level, l.b);
         }
+    }
+
+    /** Union-find over the current links (shortest first); a link that closes a loop is removed. */
+    private void dropLoops(ServerLevel level, Map<BlockPos, BlockPos> group)
+    {
+        List<Link> sorted = new ArrayList<>(links.keySet());
+        sorted.sort(Comparator.comparingDouble(Link::distance).thenComparingLong(l -> l.a.asLong()).thenComparingLong(l -> l.b.asLong()));
+        for (Link l : sorted)
+        {
+            if (join(group, l.a, l.b)) continue;
+            links.remove(l);
+            setDirty();
+            syncDirty = true;
+            updateLinked(level, l.a);
+            updateLinked(level, l.b);
+        }
+    }
+
+    /** Joins the groups of a and b; false when they were already in one group. */
+    private static boolean join(Map<BlockPos, BlockPos> group, BlockPos a, BlockPos b)
+    {
+        BlockPos ra = root(group, a), rb = root(group, b);
+        if (ra.equals(rb)) return false;
+        group.put(ra, rb);
+        return true;
+    }
+
+    private static BlockPos root(Map<BlockPos, BlockPos> group, BlockPos p)
+    {
+        BlockPos r = p;
+        for (BlockPos up = group.get(r); up != null; up = group.get(r)) r = up;
+        for (BlockPos q = p; !q.equals(r); )
+        {
+            BlockPos up = group.get(q);
+            group.put(q, r);
+            q = up;
+        }
+        return r;
     }
 
     /** LINKED on both halves = has at least one link (loaded chunks only). */
