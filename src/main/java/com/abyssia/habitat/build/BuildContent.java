@@ -28,9 +28,10 @@ public final class BuildContent
         // BT01h: locker / workbench, then the final menu order (the module tab also holds open_entrance, customize holds vertical_hatch)
         BuildRegistry.register(new com.abyssia.habitat.build.furniture.LockerEntry());
         BuildRegistry.register(new com.abyssia.habitat.build.furniture.WorkbenchEntry());
+        com.abyssia.habitat.relay.RelayContent.register(bus); // WR01
         BuildRegistry.applyOrder(java.util.List.of(
                 "foundation", "room", "corridor", "entrance", "open_entrance", "moon_pool", "scan_room",
-                "large_locker", "wall_workbench", "charging_station", "ladder",
+                "large_locker", "wall_workbench", "charging_station", "wireless_power_relay", "ladder",
                 "current_turbine", "geothermal_generator", "biofuel_generator",
                 "glass_wall", "wall_revert", "vertical_hatch", "dismantle",
                 "scan_upgrade", "aquarium"));
