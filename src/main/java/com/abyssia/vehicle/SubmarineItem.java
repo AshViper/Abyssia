@@ -2,6 +2,7 @@ package com.abyssia.vehicle;
 
 import com.abyssia.Abyssia;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
@@ -26,7 +27,9 @@ import java.util.Locale;
 /**
  * SUB02 submarine item: right-click places one where the player looks (on the water / ground like a boat; under water
  * on the block in reach or 4 blocks ahead), facing the player's way. The energy rides in the "Energy" tag; a stack
- * without it (fresh from the crafting table) is full.
+ * without it (fresh from the crafting table) is full. SUB03: a broken submarine also keeps its "Upgrades" (same
+ * form as the entity's, see {@link SubmarineUpgrades}); the energy is capped by the stack's own upgrades. Hull damage
+ * is not kept (breaking is the only way back to the item, so a placed submarine starts repaired, as in SUB02).
  */
 public class SubmarineItem extends Item
 {
@@ -38,9 +41,26 @@ public class SubmarineItem extends Item
         super(properties);
     }
 
+    /** battery size of this stack (with its battery upgrade) */
+    public static int capacity(ItemStack stack)
+    {
+        return SubmarineUpgrades.capacity(SubmarineUpgrades.maskOf(getUpgrades(stack)));
+    }
+
+    public static CompoundTag getUpgrades(ItemStack stack)
+    {
+        return stack.hasTag() ? stack.getTag().getCompound(SubmarineUpgrades.TAG) : new CompoundTag();
+    }
+
+    public static void setUpgrades(ItemStack stack, CompoundTag upgrades)
+    {
+        if (upgrades.isEmpty()) { if (stack.hasTag()) stack.getTag().remove(SubmarineUpgrades.TAG); }
+        else stack.getOrCreateTag().put(SubmarineUpgrades.TAG, upgrades);
+    }
+
     public static int getEnergy(ItemStack stack)
     {
-        int cap = Submarine.capacity();
+        int cap = capacity(stack);
         return stack.hasTag() && stack.getTag().contains(TAG_ENERGY) ? Mth.clamp(stack.getTag().getInt(TAG_ENERGY), 0, cap) : cap;
     }
 
@@ -78,7 +98,7 @@ public class SubmarineItem extends Item
         if (!placed) return InteractionResultHolder.fail(stack);
         if (!level.isClientSide)
         {
-            sub.setEnergy(getEnergy(stack));
+            sub.loadFromItem(stack);
             level.addFreshEntity(sub);
             level.gameEvent(player, GameEvent.ENTITY_PLACE, sub.position());
             if (!player.getAbilities().instabuild) stack.shrink(1);
@@ -96,7 +116,7 @@ public class SubmarineItem extends Item
     @Override
     public int getBarWidth(ItemStack stack)
     {
-        return Math.round(13.0f * getEnergy(stack) / Math.max(1, Submarine.capacity()));
+        return Math.round(13.0f * getEnergy(stack) / Math.max(1, capacity(stack)));
     }
 
     @Override
@@ -109,9 +129,14 @@ public class SubmarineItem extends Item
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lines, TooltipFlag flag)
     {
         NumberFormat nf = NumberFormat.getIntegerInstance(Locale.US);
-        int energy = getEnergy(stack), cap = Submarine.capacity();
+        int energy = getEnergy(stack), cap = capacity(stack);
         lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.energy", nf.format(energy), nf.format(cap))
                 .withStyle(energy > 0 ? ChatFormatting.AQUA : ChatFormatting.RED));
+        CompoundTag upgrades = getUpgrades(stack);
+        for (SubmarineUpgrades.Kind kind : SubmarineUpgrades.Kind.values())
+            if (upgrades.contains(kind.key))
+                lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.upgrade",
+                        Component.translatable("item." + Abyssia.MODID + "." + kind.id)).withStyle(ChatFormatting.BLUE));
         lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.controls").withStyle(ChatFormatting.GRAY));
     }
 }

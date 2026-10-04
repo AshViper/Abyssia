@@ -10,6 +10,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -98,6 +99,7 @@ public final class SubmarineClient
         @SubscribeEvent
         public static void setup(FMLClientSetupEvent event)
         {
+            event.enqueueWork(() -> MenuScreens.register(VehicleContent.SUBMARINE_UPGRADE_MENU.get(), SubmarineUpgradeScreen::new));
             Submarine.pilot = new Submarine.Pilot()
             {
                 @Override

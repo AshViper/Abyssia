@@ -64,7 +64,7 @@ public class SubmarineDockBlock extends BaseEntityBlock
             Submarine sub = dock.docked();
             String key = "message." + Abyssia.MODID + ".submarine_dock." + (sub == null ? "empty" : "status");
             player.displayClientMessage(sub == null ? Component.translatable(key, buffer, cap)
-                    : Component.translatable(key, buffer, cap, Math.round(100.0f * sub.getEnergy() / Math.max(1, Submarine.capacity()))), true);
+                    : Component.translatable(key, buffer, cap, Math.round(100.0f * sub.getEnergy() / Math.max(1, sub.maxEnergy()))), true);
         }
         return InteractionResult.CONSUME;
     }

@@ -416,6 +416,57 @@ public class Config
             .defineInRange("dock_capture_range", 3.5, 0.5, 16.0);
 
     static {
+        BUILDER.comment("SUB03 submarine upgrades (the base values above stay the base; installed upgrades replace / multiply them)").push("upgrades");
+    }
+
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_HULL_MAX_DAMAGE = BUILDER
+            .comment("Pressure Hull: break threshold of the hull damage (without it 40)")
+            .defineInRange("hull_max_damage", 70.0, 1.0, 10_000.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_HULL_DEEP_REDUCTION = BUILDER
+            .comment("Pressure Hull: damage factor at or below the deep layer top (Y -64), rounded up")
+            .defineInRange("hull_deep_reduction", 0.5, 0.0, 1.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_HULL_SPEED_MULT = BUILDER
+            .comment("Pressure Hull: multiplier on every top speed")
+            .defineInRange("hull_speed_mult", 0.92, 0.05, 2.0);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_BATTERY_CAPACITY = BUILDER
+            .comment("High-Capacity Battery: battery size in FE (replaces energy_capacity)")
+            .defineInRange("battery_capacity", 150_000, 1_000, 10_000_000);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_BATTERY_VERTICAL_MULT = BUILDER
+            .comment("High-Capacity Battery: multiplier on the up / down top speed")
+            .defineInRange("battery_vertical_mult", 0.95, 0.05, 2.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER_FORWARD = BUILDER
+            .comment("Maneuver Thruster: top forward speed in blocks per tick (replaces max_speed)")
+            .defineInRange("thruster_forward", 0.56, 0.05, 2.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER_SIDE = BUILDER
+            .comment("Maneuver Thruster: top reverse / sideways speed (without it 0.22)")
+            .defineInRange("thruster_side", 0.30, 0.05, 2.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER_VERTICAL = BUILDER
+            .comment("Maneuver Thruster: top up / down speed (without it 0.18)")
+            .defineInRange("thruster_vertical", 0.23, 0.05, 2.0);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_THRUSTER_FE = BUILDER
+            .comment("Maneuver Thruster: FE per tick while moving under its own power (replaces thrust_fe_per_tick)")
+            .defineInRange("thruster_fe_per_tick", 12, 0, 10_000);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER_ACCEL = BUILDER
+            .comment("Maneuver Thruster: acceleration in blocks per tick^2 (without it 0.04)")
+            .defineInRange("thruster_accel", 0.05, 0.001, 1.0);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR_FE = BUILDER
+            .comment("Deep-Sea Sonar: FE per tick while someone is aboard")
+            .defineInRange("sonar_fe_per_tick", 4, 0, 10_000);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR_RANGE = BUILDER
+            .comment("Deep-Sea Sonar: creature scan radius in blocks")
+            .defineInRange("sonar_range", 16, 1, 64);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR_INTERVAL = BUILDER
+            .comment("Deep-Sea Sonar: ticks between scans")
+            .defineInRange("sonar_interval", 10, 1, 200);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR_DOCK_RANGE = BUILDER
+            .comment("Deep-Sea Sonar: submarine dock search radius in blocks")
+            .defineInRange("sonar_dock_range", 32, 1, 128);
+
+    static {
+        BUILDER.pop();
+    }
+
+    static {
         BUILDER.pop();
     }
 
