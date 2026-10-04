@@ -82,6 +82,8 @@ public class Submarine extends Entity
     /** seat: 8.5 px ahead of the centre (bbmodel z -11 px; the baked mesh is shifted +2.5 px), rider feet so the hips are at y 12 px */
     public static final double SEAT_FORWARD = 8.5 / 16.0, SEAT_Y = 12.0 / 16.0 - 0.70;
     /** pilot eye height above the hull bottom (seat + standing eye height) */
+    /** SUB04: yaw turn per tick while pulled into / released from a dock */
+    public static final float DOCK_TURN = 6.0f;
     public static final double EYE_Y = SEAT_Y + 1.62;
     /** model height (blocks): the docked hull top sits DOCK_GAP below the dock block */
     public static final double HULL_HEIGHT = 2.2733, DOCK_GAP = 0.3, DOCK_APPROACH = 0.12, DOCK_REACH_DOWN = 6.0;
@@ -107,7 +109,7 @@ public class Submarine extends Entity
 
     private int lerpSteps;
     private double lerpX, lerpY, lerpZ, lerpYRot;
-    private boolean wasDocked;
+    private boolean wasDocked, yawEase;
     private int undockRequestTicks;
     // server
     private int dockCooldown;
@@ -195,7 +197,7 @@ public class Submarine extends Entity
         LivingEntity rider = getControllingPassenger();
         if (isControlledByLocalInstance())
         {
-            if (rider != null && level().isClientSide) setYRot(rider.getYRot());
+            if (rider != null && level().isClientSide && dock.isEmpty()) followRiderYaw(rider.getYRot());
             if (dock.isPresent())
             {
                 dockMove(dock.get());
@@ -217,7 +219,21 @@ public class Submarine extends Entity
             }
             move(MoverType.SELF, getDeltaMovement());
         }
-        else setDeltaMovement(Vec3.ZERO);
+        else
+        {
+            setDeltaMovement(Vec3.ZERO);
+            // SUB04: a docked hull is locked to the dock's facing on every side (the controlling side turns it in dockMove)
+            if (dock.isPresent())
+            {
+                float yaw = dockYaw(dock.get());
+                if (!Float.isNaN(yaw))
+                {
+                    // same turn rate as the controlling side, so it never lags behind the server's lock
+                    setYRot(getYRot() + Mth.clamp(Mth.wrapDegrees(yaw - getYRot()), -DOCK_TURN, DOCK_TURN));
+                    lerpYRot = getYRot();
+                }
+            }
+        }
         if (undockRequestTicks > 0) undockRequestTicks--;
         wasDocked = dock.isPresent();
         if (!level().isClientSide) serverTick();
@@ -312,9 +328,36 @@ public class Submarine extends Entity
         return new Vec3(dock.getX() + 0.5, dock.getY() - DOCK_GAP - HULL_HEIGHT, dock.getZ() + 0.5);
     }
 
-    /** Controlling side while docked: slide to the target (sideways first, then up), then hold still. */
+    /** SUB04: yaw follows the pilot; right after a release it swings there at DOCK_TURN per tick instead of snapping */
+    private void followRiderYaw(float want)
+    {
+        if (wasDocked) yawEase = true;
+        if (!yawEase)
+        {
+            setYRot(want);
+            return;
+        }
+        float diff = Mth.wrapDegrees(want - getYRot());
+        if (Math.abs(diff) <= DOCK_TURN)
+        {
+            setYRot(want);
+            yawEase = false;
+        }
+        else setYRot(getYRot() + Math.signum(diff) * DOCK_TURN);
+    }
+
+    /** SUB04: the dock's FACING (nose direction) as a yaw, or NaN when the block is not (yet) there */
+    private float dockYaw(BlockPos dock)
+    {
+        BlockState state = level().getBlockState(dock);
+        return state.getBlock() instanceof SubmarineDockBlock ? state.getValue(SubmarineDockBlock.FACING).toYRot() : Float.NaN;
+    }
+
+    /** Controlling side while docked: turn to the dock's facing, slide to the target (sideways first, then up), then hold still. */
     private void dockMove(BlockPos dock)
     {
+        float yaw = dockYaw(dock);
+        if (!Float.isNaN(yaw)) setYRot(getYRot() + Mth.clamp(Mth.wrapDegrees(yaw - getYRot()), -DOCK_TURN, DOCK_TURN));
         Vec3 d = dockTarget(dock).subtract(position());
         Vec3 flat = new Vec3(d.x, 0.0, d.z);
         Vec3 step = flat.length() > 0.05 ? flat : d;
@@ -538,6 +581,12 @@ public class Submarine extends Entity
         Optional<BlockPos> dock = getDock();
         if (dock.isPresent())
         {
+            // SUB04: the gangway landing while it is down
+            if (level().getBlockEntity(dock.get()) instanceof SubmarineDockBlockEntity station)
+            {
+                Vec3 landing = station.landing();
+                if (landing != null) return landing;
+            }
             Vec3 dry = dryFloor(dock.get(), passenger);
             if (dry != null) return dry;
         }

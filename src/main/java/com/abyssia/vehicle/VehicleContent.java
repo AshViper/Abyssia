@@ -45,6 +45,10 @@ public final class VehicleContent
     public static final RegistryObject<Block> SUBMARINE_DOCK = BLOCKS.register("submarine_dock",
             () -> new SubmarineDockBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0f, 6.0f)
                     .noLootTable().noOcclusion().sound(SoundType.METAL).lightLevel(s -> 12)));
+    /** SUB04 invisible step-collision helper under the dock gangway (placed by the dock block entity; no item / drops) */
+    public static final RegistryObject<Block> SUBMARINE_DOCK_GANGWAY = BLOCKS.register("submarine_dock_gangway",
+            () -> new SubmarineDockGangwayBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000.0f)
+                    .noLootTable().noOcclusion().sound(SoundType.METAL)));
     public static final RegistryObject<BlockEntityType<SubmarineDockBlockEntity>> SUBMARINE_DOCK_ENTITY = BLOCK_ENTITIES.register("submarine_dock",
             () -> BlockEntityType.Builder.of(SubmarineDockBlockEntity::new, SUBMARINE_DOCK.get()).build(null));
 

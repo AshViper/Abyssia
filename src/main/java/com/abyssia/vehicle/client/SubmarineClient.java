@@ -94,6 +94,7 @@ public final class SubmarineClient
         public static void renderers(EntityRenderersEvent.RegisterRenderers event)
         {
             event.registerEntityRenderer(VehicleContent.SUBMARINE.get(), SubmarineRenderer::new);
+            event.registerBlockEntityRenderer(VehicleContent.SUBMARINE_DOCK_ENTITY.get(), DockRenderer::new);
         }
 
         @SubscribeEvent
