@@ -104,7 +104,7 @@ public final class RelayEntry implements BuildEntry
     public Component detail()
     {
         return Component.translatable("habitat." + Abyssia.MODID + "." + ID + ".detail", (int) RelayNetwork.MAX_DISTANCE,
-                RelayNetwork.MAX_LINKS, RelayNetwork.MAX_PER_LINK);
+                RelayNetwork.MAX_PER_LINK);
     }
 
     @Override

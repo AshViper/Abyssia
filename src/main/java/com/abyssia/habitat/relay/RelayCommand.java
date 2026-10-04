@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * WR01 test hooks:
  * <ul>
- *     <li>{@code /abyssia relay list}: every link (ends, distance, efficiency, state, recent delivered FE/t, endpoint
+ *     <li>{@code /abyssia relay list}: every link (ends, distance, state, recent delivered FE/t, endpoint
  *     kinds) and the unlinked relays of this level</li>
  *     <li>{@code /abyssia relay place <pos> [facing]}: places a registered relay (both halves, waterlogged where the
  *     cell is water) without the constructor; not recorded as a built unit (no constructor dismantle)</li>
