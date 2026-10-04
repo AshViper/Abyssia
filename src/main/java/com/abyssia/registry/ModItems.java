@@ -249,6 +249,10 @@ public final class ModItems
     public static final RegistryObject<Item> OIL_SAC = item("oil_sac");
     public static final RegistryObject<Item> OIL_KELP_SEED = tabItem("oil_kelp_seed", () -> new net.minecraft.world.item.ItemNameBlockItem(ModBlocks.OIL_KELP.get(), new Item.Properties()));
 
+    // MP01 deep sea map / abyss chart (filled maps are vanilla filled_map stacks)
+    public static final RegistryObject<Item> DEEP_SEA_MAP = tabItem("deep_sea_map", () -> new com.abyssia.map.DeepSeaMapItem(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ABYSS_CHART = tabItem("abyss_chart", () -> new com.abyssia.map.AbyssChartItem(new Item.Properties().stacksTo(16)));
+
     public static final RegistryObject<CreativeModeTab> TAB = TABS.register("abyssia", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.abyssia"))
             .icon(() -> ModBlocks.ABYSSAL_BLOOM.get().asItem().getDefaultInstance())

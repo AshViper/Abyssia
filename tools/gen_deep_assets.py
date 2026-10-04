@@ -28,6 +28,7 @@ import furniture_assets
 import planter_assets
 import diving_gear_assets
 import guide_assets
+import map_assets
 import electric_tool_assets
 import industrial_assets
 import material_system
@@ -1130,6 +1131,7 @@ def main():
     electric_tool_assets.generate(write, im, DATA)
     # Entry diving gear (D01): item models + vanilla recipes.
     diving_gear_assets.generate(write, im, DATA)
+    map_assets.generate(write, im, DATA)   # MP01 deep sea map / abyss chart
     guide_assets.generate(write, im, DATA)   # GB01 guide book item/recipe
     # BT01 build-menu content: its generators write straight into src/main/resources, so run them after the wipe.
     import subprocess
@@ -1448,6 +1450,7 @@ def lang():
         data.update({k: v[idx] for k, v in planter_assets.LANG.items()})
         data.update({k: v[idx] for k, v in electric_tool_assets.LANG.items()})
         data.update({k: v[idx] for k, v in diving_gear_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in map_assets.LANG.items()})
         data.update({k: v[idx] for k, v in guide_assets.LANG.items()})
         for part in _lang_parts():  # BT01h: tools/lang_parts/*.json = {"key": [en, ja]}
             data.update({k: v[idx] for k, v in part.items()})

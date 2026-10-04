@@ -33,7 +33,7 @@ SPEC = os.path.join(HERE, "material_spec.json")
 VANILLA = {
     "stick", "string", "leather", "iron_ingot", "copper_ingot", "gold_ingot", "raw_iron", "raw_copper", "raw_gold",
     "iron_nugget", "gold_nugget", "coal", "charcoal", "diamond", "emerald", "redstone", "glowstone_dust", "gunpowder",
-    "bone_meal", "bone", "paper", "book", "slime_ball", "honeycomb", "clay_ball", "brick", "flint", "feather",
+    "bone_meal", "bone", "paper", "compass", "book", "slime_ball", "honeycomb", "clay_ball", "brick", "flint", "feather",
     "glass", "glass_pane", "tinted_glass", "torch", "lantern", "sea_lantern", "prismarine_shard", "prismarine_crystals",
     "nautilus_shell", "heart_of_the_sea", "kelp", "dried_kelp", "sponge", "wet_sponge", "sugar", "bowl", "bucket",
     "water_bucket", "glass_bottle", "potion", "lead", "white_wool", "scaffolding", "packed_mud", "mud",
