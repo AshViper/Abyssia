@@ -32,20 +32,20 @@ import java.util.Set;
  * <ul>
  *     <li>Relays are added when the lower block is placed (constructor build / {@code /abyssia relay place}) and removed
  *     when it is removed.</li>
- *     <li>Auto link every 20 ticks (and right after a placement): each relay with a free slot (max 2) links to the
- *     nearest relays within 128 blocks (3D, antenna tip to tip; terrain / water ignored) that also have a free slot.
- *     Existing links are never re-chosen.</li>
+ *     <li>Links form a forest (never a loop) and any number of links per relay is allowed. Right after a relay is
+ *     placed or removed, separate networks within 128 blocks of each other (3D, antenna tip to tip; terrain / water
+ *     ignored) are joined by their shortest relay pair: a new relay links to the single nearest relay, and only gets a
+ *     second link when it bridges two networks that were out of range of each other. Existing links are never
+ *     re-chosen; loops left in older saves lose their longest link.</li>
  *     <li>A link whose chunk (either end) is not loaded is kept but paused: no transfer, not drawn. No chunk tickets.</li>
  *     <li>Every tick each link moves FE once, from the end with the higher fill ratio to the lower (no routing, so a
- *     loop cannot multiply energy): {@code send = min(512, src, ceil(gap * capS*capD/(capS+capD)))}, arriving
- *     {@code floor(send * eff)} (100/90/80/70 % by distance), the rest is lost.</li>
+ *     loop cannot multiply energy): {@code send = min(512, src, ceil(gap * capS*capD/(capS+capD)))}, no loss.</li>
  *     <li>Clients get the link list ({@link RelaySyncPacket}) on change (min 10 ticks apart), login and dimension change.</li>
  * </ul>
  */
 public class RelayNetwork extends SavedData
 {
     public static final String NAME = "abyssia_wireless_relays";
-    public static final int MAX_LINKS = 2;
     public static final double MAX_DISTANCE = 128.0;
     public static final int MAX_PER_LINK = 512;
     public static final double MIN_RATIO_GAP = 0.005;
@@ -196,7 +196,7 @@ public class RelayNetwork extends SavedData
 
     public List<Link> linksOf(BlockPos pos)
     {
-        List<Link> out = new ArrayList<>(MAX_LINKS);
+        List<Link> out = new ArrayList<>();
         for (Link l : links.keySet()) if (l.has(pos)) out.add(l);
         return out;
     }
@@ -208,12 +208,10 @@ public class RelayNetwork extends SavedData
         return n;
     }
 
+    /** No transmission loss (user request 2026-10-04; WR01 first had 100/90/80/70 % by distance). */
     public static double efficiency(double distance)
     {
-        if (distance <= 32.0) return 1.00;
-        if (distance <= 64.0) return 0.90;
-        if (distance <= 96.0) return 0.80;
-        return 0.70;
+        return 1.0;
     }
 
     /** Base (root module id) whose module box holds pos, or -1. */
@@ -235,10 +233,10 @@ public class RelayNetwork extends SavedData
     public void tick(ServerLevel level)
     {
         long now = level.getGameTime();
-        if (searchNow || now % SEARCH_INTERVAL == 0)
+        if (searchNow || now % SEARCH_INTERVAL == 0) validate(level);
+        if (searchNow)
         {
             searchNow = false;
-            validate(level);
             search(level);
         }
         boolean window = now % WINDOW == 0;
@@ -316,38 +314,31 @@ public class RelayNetwork extends SavedData
         {
             setDirty();
             syncDirty = true;
+            searchNow = true;
         }
         for (BlockPos pos : relays) updateLinked(level, pos);
     }
 
-    /**
-     * Free relays (loaded) link in range, shortest free pair first, both sides need a free slot. Links never close a
-     * loop (relays already connected through other links are not linked again), so relays placed in a row keep a free
-     * slot at the end of the chain for the next one instead of forming triangles; loops left in older saves are opened
-     * by dropping their longest link.
-     */
+    /** Joins separate networks in range by their shortest relay pair (Kruskal over the existing forest). */
     private void search(ServerLevel level)
     {
         Map<BlockPos, BlockPos> group = new java.util.HashMap<>();
         dropLoops(level, group);
-        List<BlockPos> free = new ArrayList<>();
-        for (BlockPos pos : relays) if (level.isLoaded(pos) && linkCount(pos) < MAX_LINKS) free.add(pos);
-        if (free.size() < 2) return;
-        free.sort(Comparator.comparingLong(BlockPos::asLong)); // deterministic order (ties, restarts)
+        List<BlockPos> all = new ArrayList<>(relays);
+        if (all.size() < 2) return;
+        all.sort(Comparator.comparingLong(BlockPos::asLong)); // deterministic order (ties, restarts)
         double maxSq = MAX_DISTANCE * MAX_DISTANCE;
-        // every free pair in range, shortest first (globally, so an older relay does not grab a new one that is
-        // closer to another relay)
         List<Link> pairs = new ArrayList<>();
-        for (int a = 0; a < free.size(); a++)
-            for (int b = a + 1; b < free.size(); b++)
+        for (int a = 0; a < all.size(); a++)
+            for (int b = a + 1; b < all.size(); b++)
             {
-                BlockPos p = free.get(a), q = free.get(b);
-                if (p.distSqr(q) <= maxSq && !links.containsKey(Link.of(p, q))) pairs.add(Link.of(p, q));
+                BlockPos p = all.get(a), q = all.get(b);
+                if (p.distSqr(q) <= maxSq && !root(group, p).equals(root(group, q))) pairs.add(Link.of(p, q));
             }
         pairs.sort(Comparator.comparingDouble(Link::distance).thenComparingLong(l -> l.a.asLong()).thenComparingLong(l -> l.b.asLong()));
         for (Link l : pairs)
         {
-            if (linkCount(l.a) >= MAX_LINKS || linkCount(l.b) >= MAX_LINKS || !join(group, l.a, l.b)) continue; // full, or already connected
+            if (!join(group, l.a, l.b)) continue; // already connected
             links.put(l, new Stats());
             setDirty();
             syncDirty = true;
@@ -441,7 +432,7 @@ public class RelayNetwork extends SavedData
 
     private static final String MSG = "message." + Abyssia.MODID + ".relay.";
 
-    /** Sneak + right-click: links n/2, endpoint, then per link distance / efficiency / recent FE/t / direction. */
+    /** Sneak + right-click: link count, endpoint, then per link distance / recent FE/t / direction. */
     public static Component status(ServerLevel level, BlockPos pos)
     {
         RelayNetwork net = get(level);
@@ -457,13 +448,13 @@ public class RelayNetwork extends SavedData
                     String.format("%,d", WirelessPowerRelayBlockEntity.BUFFER));
         }
         List<Link> mine = net.linksOf(pos);
-        MutableComponent out = Component.translatable(MSG + "status", mine.size(), MAX_LINKS, endpoint);
+        MutableComponent out = Component.translatable(MSG + "status", mine.size(), endpoint);
         if (mine.isEmpty()) out.append(Component.translatable(MSG + "none"));
         for (Link l : mine)
         {
             Stats s = net.links.get(l);
             double d = l.distance();
-            out.append(Component.translatable(MSG + "link", Math.round(d), Math.round(efficiency(d) * 100), s.avg,
+            out.append(Component.translatable(MSG + "link", Math.round(d), s.avg,
                     Component.translatable(MSG + "dir." + direction(l, s, pos))));
         }
         return out;
@@ -497,8 +488,8 @@ public class RelayNetwork extends SavedData
                 case 2 -> "a->b";
                 default -> "b->a";
             };
-            out.add(String.format(Locale.ROOT, " %s <-> %s  %.1fm eff %d%%  %s  %d FE/t (band %d)  a=%s b=%s",
-                    l.a.toShortString(), l.b.toShortString(), d, Math.round(efficiency(d) * 100), state, s.avg, s.band(),
+            out.add(String.format(Locale.ROOT, " %s <-> %s  %.1fm  %s  %d FE/t (band %d)  a=%s b=%s",
+                    l.a.toShortString(), l.b.toShortString(), d, state, s.avg, s.band(),
                     endKind(level, l.a), endKind(level, l.b)));
         }
         for (BlockPos pos : net.relays)
