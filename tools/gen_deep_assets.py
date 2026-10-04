@@ -1137,7 +1137,7 @@ def main():
     guide_assets.generate(write, im, DATA)   # GB01 guide book item/recipe
     # BT01 build-menu content: its generators write straight into src/main/resources, so run them after the wipe.
     import subprocess
-    for part in ("aquarium", "custom", "generator", "ladder"):
+    for part in ("aquarium", "custom", "generator", "ladder", "relay"):
         subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "bt01", part + "_assets.py")],
                        check=True, stdout=subprocess.DEVNULL)
 

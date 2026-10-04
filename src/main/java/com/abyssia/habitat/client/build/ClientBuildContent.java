@@ -19,5 +19,6 @@ public final class ClientBuildContent
         // BT01f
         com.abyssia.habitat.aquarium.client.AquariumClient.register(bus); // BT01g
         // BT01h
+        com.abyssia.habitat.relay.client.RelayClient.register(bus); // WR01
     }
 }
