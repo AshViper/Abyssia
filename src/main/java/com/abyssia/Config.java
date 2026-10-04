@@ -401,6 +401,30 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("SUB02 submarine (piloted vehicle) and the moon pool submarine dock").push("submarine");
+    }
+
+    public static final ModConfigSpec.IntValue SUBMARINE_ENERGY_CAPACITY = BUILDER
+            .comment("Battery of a submarine in FE")
+            .defineInRange("energy_capacity", 60_000, 1_000, 10_000_000);
+    public static final ModConfigSpec.IntValue SUBMARINE_THRUST_FE = BUILDER
+            .comment("FE per tick while the submarine is moving under its own power")
+            .defineInRange("thrust_fe_per_tick", 8, 0, 10_000);
+    public static final ModConfigSpec.IntValue SUBMARINE_LIGHT_FE = BUILDER
+            .comment("FE per tick while the headlights are on")
+            .defineInRange("light_fe_per_tick", 1, 0, 10_000);
+    public static final ModConfigSpec.DoubleValue SUBMARINE_MAX_SPEED = BUILDER
+            .comment("Top forward speed in blocks per tick (reverse / sideways 0.22, up / down 0.18). The pilot's client applies it")
+            .defineInRange("max_speed", 0.42, 0.05, 2.0);
+    public static final ModConfigSpec.IntValue SUBMARINE_DOCK_CHARGE_RATE = BUILDER
+            .comment("FE per tick a dock gives its docked submarine (from the dock's own 20,000 FE buffer)")
+            .defineInRange("dock_charge_rate", 500, 0, 100_000);
+    public static final ModConfigSpec.DoubleValue SUBMARINE_DOCK_CAPTURE_RANGE = BUILDER
+            .comment("Horizontal reach of a dock in blocks (from its centre; it reaches 6 blocks down)")
+            .defineInRange("dock_capture_range", 3.5, 0.5, 16.0);
+
+    static {
+        BUILDER.pop();
     }
 
     static final ModConfigSpec SPEC = BUILDER.build();

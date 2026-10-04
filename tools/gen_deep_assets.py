@@ -25,6 +25,7 @@ import cave_assets
 import diving_gear_assets
 import guide_assets
 import map_assets
+import vehicle_assets
 import gen_fauna
 import habitat_assets
 import furniture_assets
@@ -1168,6 +1169,7 @@ def main():
     diving_gear = diving_gear_assets.generate(write, im, DATA)
     guide_assets.generate(write, im, DATA)   # GB01 guide book item/recipe
     map_assets.generate(write, im, DATA)     # MP01 deep sea map / abyss chart
+    vehicle_assets.generate(write, bs, bm, im, DATA)   # SUB02 submarine + dock
     lang()
     print(f"Resource plants: {plants}")
     print(f"Entry diving gear: {diving_gear} items")
@@ -1298,7 +1300,8 @@ def tags():
                                                                                           + building_assets.pickaxe_blocks()
                                                                                           + industrial_assets.pickaxe_blocks()
                                                                                           + habitat_assets.pickaxe_blocks()
-                                                                                          + furniture_assets.pickaxe_blocks() + planter_assets.pickaxe_blocks())})
+                                                                                          + furniture_assets.pickaxe_blocks() + planter_assets.pickaxe_blocks()
+                                                                                          + vehicle_assets.pickaxe_blocks())})
     write(os.path.join(blocks, "mineable", "shovel.json"), {"replace": False, "values": a(SOFT + cave_assets.CAVE_SOFT)})
     write(os.path.join(blocks, "mineable", "axe.json"), {"replace": False, "values": a(cave_assets.CAVERN_AXE + building_assets.axe_blocks())})
     write(os.path.join(blocks, "mineable", "hoe.json"), {"replace": False, "values": a(cave_assets.CAVERN_HOE)})
@@ -1457,6 +1460,7 @@ def lang():
         data.update({k: v[idx] for k, v in diving_gear_assets.LANG.items()})
         data.update({k: v[idx] for k, v in guide_assets.LANG.items()})
         data.update({k: v[idx] for k, v in map_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in vehicle_assets.LANG.items()})
         for part in _lang_parts():  # BT01h: tools/lang_parts/*.json = {"key": [en, ja]}
             data.update({k: v[idx] for k, v in part.items()})
         data["itemGroup.abyssia"] = "Abyssia"

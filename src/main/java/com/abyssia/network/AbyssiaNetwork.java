@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
-    private static final String PROTOCOL = "5";
+    private static final String PROTOCOL = "6";  // 6: submarine lights / undock (SUB02)
 
     private AbyssiaNetwork() {}
 
@@ -25,6 +25,9 @@ public final class AbyssiaNetwork
         // W01 waypoint beacon list (S2C) and settings save (C2S)
         registrar.playToClient(WaypointSyncPacket.TYPE, WaypointSyncPacket.STREAM_CODEC, WaypointSyncPacket::handle);
         registrar.playToServer(WaypointSavePacket.TYPE, WaypointSavePacket.STREAM_CODEC, WaypointSavePacket::handle);
+        // SUB02 submarine lights / undock (the vehicle itself moves with vanilla's client-controlled vehicle packets)
+        registrar.playToServer(com.abyssia.vehicle.SubmarineLightPacket.TYPE, com.abyssia.vehicle.SubmarineLightPacket.STREAM_CODEC,
+                com.abyssia.vehicle.SubmarineLightPacket::handle);
     }
 
     public static void sendToServer(CustomPacketPayload message)
