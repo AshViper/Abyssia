@@ -25,5 +25,6 @@ public final class FurnitureClient
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
     {
         event.registerBlockEntityRenderer(ModFurniture.HYDRO_PLANTER_ENTITY.get(), HydroPlanterRenderer::new);
+        event.registerBlockEntityRenderer(ModFurniture.LARGE_LOCKER_ENTITY.get(), LargeLockerRenderer::new);
     }
 }

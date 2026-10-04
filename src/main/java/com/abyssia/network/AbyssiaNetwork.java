@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
-    private static final String PROTOCOL = "7";  // 7: WR01 relay links. 6: submarine lights / undock (SUB02)
+    private static final String PROTOCOL = "8";  // 8: large locker rename. 6: submarine lights / undock (SUB02). 7: WR01 relay links
 
     private AbyssiaNetwork() {}
 
@@ -31,6 +31,9 @@ public final class AbyssiaNetwork
         // WR01 wireless relay links (S2C)
         registrar.playToClient(com.abyssia.habitat.relay.RelaySyncPacket.TYPE, com.abyssia.habitat.relay.RelaySyncPacket.STREAM_CODEC,
                 com.abyssia.habitat.relay.RelaySyncPacket::handle);
+        // large locker name field (C2S)
+        registrar.playToServer(com.abyssia.furniture.LockerRenamePacket.TYPE, com.abyssia.furniture.LockerRenamePacket.STREAM_CODEC,
+                com.abyssia.furniture.LockerRenamePacket::handle);
     }
 
     public static void sendToServer(CustomPacketPayload message)

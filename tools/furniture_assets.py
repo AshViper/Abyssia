@@ -30,6 +30,10 @@ NAMES = {
 LANG = {
     f"container.{MOD}.{LOCKER}": ("Large Locker", "大型ロッカー"),
     f"container.{MOD}.{WORKBENCH}": ("Wall-Mounted Workbench", "壁掛け作業台"),
+    f"gui.{MOD}.{LOCKER}.name": ("Locker name", "ロッカー名"),
+    f"gui.{MOD}.{LOCKER}.name_hint": ("Large Locker (click to name)", "大型ロッカー (クリックで名前を入力)"),
+    f"gui.{MOD}.{LOCKER}.name_tooltip": ("Click to name this locker (shown on its front)",
+                                         "クリックしてロッカーに名前を付ける (正面に表示)"),
     f"gui.{MOD}.{WORKBENCH}.charge": ("Charge slot (any FE item)", "充電スロット (FE 対応アイテム)"),
 }
 LANG.update({f"block.{MOD}.{k}": v for k, v in NAMES.items()})

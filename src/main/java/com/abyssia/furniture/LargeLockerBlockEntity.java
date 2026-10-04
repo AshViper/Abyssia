@@ -5,8 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,6 +21,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -167,6 +174,7 @@ public class LargeLockerBlockEntity extends RandomizableContainerBlockEntity
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries)
     {
         super.saveAdditional(tag, registries);
+        if (customName != null) tag.putString("CustomName", Component.Serializer.toJson(customName, registries));
         if (!trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, items, registries);
     }
 
@@ -174,7 +182,64 @@ public class LargeLockerBlockEntity extends RandomizableContainerBlockEntity
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries)
     {
         super.loadAdditional(tag, registries);
+        customName = tag.contains("CustomName", 8) ? parseCustomNameSafe(tag.getString("CustomName"), registries) : null; // a cleared name on clients
         items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
         if (!tryLoadLootTable(tag)) ContainerHelper.loadAllItems(tag, items, registries);
+    }
+
+    // ---------------------------------------------------------------- name sync
+
+    /** BaseContainerBlockEntity's name is private (1.21), so the locker keeps its own: loaded, saved, synced and renamed here. */
+    @Nullable
+    private Component customName;
+
+    @Nullable
+    @Override
+    public Component getCustomName()
+    {
+        return customName;
+    }
+
+    @Override
+    public Component getName()
+    {
+        return customName != null ? customName : getDefaultName();
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input)
+    {
+        super.applyImplicitComponents(input);
+        customName = input.get(DataComponents.CUSTOM_NAME);
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components)
+    {
+        super.collectImplicitComponents(components);
+        components.set(DataComponents.CUSTOM_NAME, customName);
+    }
+
+    public void setCustomName(@Nullable Component name)
+    {
+        customName = name;
+        setChanged();
+        if (level != null && !level.isClientSide)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    /** Only the name goes to clients (the items are synced by the menu). */
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries)
+    {
+        CompoundTag tag = new CompoundTag();
+        if (getCustomName() != null) tag.putString("CustomName", Component.Serializer.toJson(getCustomName(), registries));
+        return tag;
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket()
+    {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }
