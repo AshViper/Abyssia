@@ -1,7 +1,7 @@
 {
- "updated": 1790958210.7940712,
+ "updated": 1791097529.360949,
  "main": {
-  "model": "opus-5.5",
+  "model": "claude-opus-5-5",
   "note": ""
  },
  "tasks": [],
@@ -740,43 +740,2078 @@
    "kind": "status",
    "model": "",
    "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1790958443.96415,
+   "who": "P02",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] "
+  },
+  {
+   "t": 1790958444.1002147,
+   "who": "P02",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790958444.2345648,
+   "who": "P02",
+   "kind": "info",
+   "model": "opus-5.5",
+   "msg": "NeoForge 1.21.1 へ main 3dc7e6e..d0ec43e を移植 (4段階、coder-heavy 逐次)"
+  },
+  {
+   "t": 1790959038.5810275,
+   "who": "P02-jei",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] "
+  },
+  {
+   "t": 1790959038.7367785,
+   "who": "P02-jei",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790959038.8963246,
+   "who": "P02-currents",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] "
+  },
+  {
+   "t": 1790959039.0788069,
+   "who": "P02-currents",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790959039.2421746,
+   "who": "P02-industry",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] "
+  },
+  {
+   "t": 1790959039.383662,
+   "who": "P02-industry",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790959039.5444887,
+   "who": "P02-d01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] "
+  },
+  {
+   "t": 1790959039.6940546,
+   "who": "P02-d01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790959039.8603175,
+   "who": "P02-t02",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] "
+  },
+  {
+   "t": 1790959040.0043113,
+   "who": "P02-t02",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790959040.1958742,
+   "who": "P02-fissure",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] "
+  },
+  {
+   "t": 1790959040.3688154,
+   "who": "P02-fissure",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790959040.5444589,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "P02 を機能ごとに分担 (ユーザー指示): 第1波 F01/JEI/海流/工業/D01/T02/割れ目+アイコン、第2波 拠点/家具・電動工具/ビーコン"
+  },
+  {
+   "t": 1790959264.0410051,
+   "who": "P02",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790959264.3863835,
+   "who": "P02",
+   "kind": "info",
+   "model": "opus-5.5",
+   "msg": "F01 移植完了 9fc971d。F01担当→agentflow資料移植+第2波API下調べへ。JEI/海流担当に既存コミット a0e1e65/2abb875 の流用を指示"
+  },
+  {
+   "t": 1790959509.0413954,
+   "who": "P02-fissure",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790959510.151218,
+   "who": "P02-w2assets",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [light] "
+  },
+  {
+   "t": 1790959512.0654025,
+   "who": "P02-w2assets",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790959512.6132689,
+   "who": "P02-fissure",
+   "kind": "info",
+   "model": "sonnet-5.5",
+   "msg": "割れ目+アイコン移植完了 port/fissure b588417。担当→第2波の素材側 (port/wave2-assets) へ"
+  },
+  {
+   "t": 1790959573.3160715,
+   "who": "P02-habitat",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] "
+  },
+  {
+   "t": 1790959573.6272683,
+   "who": "P02-habitat",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790959574.0926046,
+   "who": "P02",
+   "kind": "info",
+   "model": "opus-5.5",
+   "msg": "agentflow資料移植 53c3ff5、第2波マッピング作成。同担当→拠点本体Java (H08給電除く, port/habitat)"
+  },
+  {
+   "t": 1790959860.2866647,
+   "who": "P02-jei",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790959861.0781631,
+   "who": "P02-t02",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790959861.5814025,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "NeoForge1.21.1 に port/jei, port/t02, port/fissure を統合、ビルド成功"
+  },
+  {
+   "t": 1790959901.173294,
+   "who": "P02-w2assets",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790959901.5027745,
+   "who": "P02-w2assets",
+   "kind": "info",
+   "model": "sonnet-5.5",
+   "msg": "第2波素材 port/wave2-assets a312fa8 完了 (W01素材は工業側へ)。同担当→煙突構造+CurseForge説明 (port/misc)"
+  },
+  {
+   "t": 1790960271.7649395,
+   "who": "P02-currents",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790960271.9451299,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "統合: currents(ClientConfig衝突解消), wave2-assets, furniture(ロッカー), misc(煙突+説明文)。ビルド成功"
+  },
+  {
+   "t": 1790960594.7015243,
+   "who": "P02-habitat",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790960595.0443213,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "port/habitat 統合 (AbyssiaNetwork/ModItems 衝突解消)、ビルド成功。H08給電とスキャン室は工業待ち"
+  },
+  {
+   "t": 1790960752.5491989,
+   "who": "P02-industry",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790960752.7442968,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "port/industry e424581 完了。統合の衝突解消 (生成器再実行) を工業担当へ"
+  },
+  {
+   "t": 1790961098.6923954,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "工業統合 4c94176。第2波残り: 作業台+電動工具 (port/equipment)、H08給電+スキャン室 (port/h08) を開始"
+  },
+  {
+   "t": 1790961472.184011,
+   "who": "P02-d01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790961472.6082828,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "port/d01 統合 (ModItems/生成器/lang 衝突→生成器再実行)。verify: 工業+拠点+ロッカー PASS (軽微3件)"
+  },
+  {
+   "t": 1790961836.8197749,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "port/h08 統合 ba4b4cb。クライアント確認(4ee50ab時点) OK、JEI燃料判定エラーを調査依頼 (port/fuelfix)"
+  },
+  {
+   "t": 1790963531.7843153,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "port/waypoint 統合 (ClientConfig/AbyssiaNetwork/lang 衝突解消, PROTOCOL=4)。全機能統合完了、ビルド成功。最終クライアント確認へ"
+  },
+  {
+   "t": 1790964678.1274931,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "NeoForge1.21.1 プッシュ (8b764db)。最終クライアント確認 7/7 PASS"
+  },
+  {
+   "t": 1790964678.2662926,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1790968158.345415,
+   "who": "S01",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] "
+  },
+  {
+   "t": 1790968158.5210154,
+   "who": "S01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790968158.6981266,
+   "who": "S01",
+   "kind": "info",
+   "model": "opus-5.5",
+   "msg": "NeoForge 1.21.1 シェーダー対応 (Sodium+Iris で ShaderCompat/ShaderFogPass/粒子を検証・修正)"
+  },
+  {
+   "t": 1790972794.4263866,
+   "who": "S01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790972794.552157,
+   "who": "main",
+   "kind": "decision",
+   "model": "opus-5.5",
+   "msg": "S01 NeoForgeシェーダー対応 統合+push e537d48 (fog pass の blend をコードで設定)"
+  },
+  {
+   "t": 1790993922.2206495,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 水中における呼吸の仕様変更"
+  },
+  {
+   "t": 1790994131.3504953,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "running — B01 仕様書生成"
+  },
+  {
+   "t": 1790994424.8568385,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1790994424.983235,
+   "who": "D02",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 呼吸の段階制 (Forge)"
+  },
+  {
+   "t": 1790994425.1157565,
+   "who": "D02",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790994425.250975,
+   "who": "D02-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 呼吸の段階制 NeoForge 移植"
+  },
+  {
+   "t": 1790994425.3799946,
+   "who": "D02-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1790994557.884885,
+   "who": "D02",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790994558.0279968,
+   "who": "D02-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1790996153.1119552,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "D02 ChatGPT 検査: 修正必須なし (inbox/specs/D02-review.md)"
+  },
+  {
+   "t": 1790996153.2903252,
+   "who": "D02-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1790996189.2392635,
+   "who": "memory",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1790996189.378354,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1790996189.5148199,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1791008778.5836682,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 食料関連を30種類追加"
+  },
+  {
+   "t": 1791008825.066152,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 水中で育てれる木を実装"
+  },
+  {
+   "t": 1791008863.9136462,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 深海の石材で丸石を追加"
+  },
+  {
+   "t": 1791008918.0272777,
+   "who": "request",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791008918.2249923,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791009871.202146,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 生体油の入手方法が難しい"
+  },
+  {
+   "t": 1791009892.9350195,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791009893.1086545,
+   "who": "router",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791009893.266121,
+   "who": "FD01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 料理30種+食材3種"
+  },
+  {
+   "t": 1791009893.409964,
+   "who": "TR01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 古代樹の苗"
+  },
+  {
+   "t": 1791009893.5498526,
+   "who": "CB01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 深海岩の丸石"
+  },
+  {
+   "t": 1791009893.6984372,
+   "who": "FD01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] FD01 NeoForge移植"
+  },
+  {
+   "t": 1791009893.8389893,
+   "who": "FD01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791009893.9836295,
+   "who": "FD01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791009894.163745,
+   "who": "TR01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] TR01 NeoForge移植"
+  },
+  {
+   "t": 1791009894.3059711,
+   "who": "TR01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791009894.4553924,
+   "who": "TR01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791009894.6070135,
+   "who": "CB01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] CB01 NeoForge移植"
+  },
+  {
+   "t": 1791009894.762169,
+   "who": "CB01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791009894.9141653,
+   "who": "CB01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791009951.628702,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: プラントブロックの追加"
+  },
+  {
+   "t": 1791009996.8155174,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "新規依頼 20261003-154431 (生体油栽培), 20261003-154551 (プランター) を受領。FD01/TR01/CB01 の画像生成後に ChatGPT へ仕様依頼"
+  },
+  {
+   "t": 1791010160.2414644,
+   "who": "FD01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791010160.4735718,
+   "who": "TR01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791010160.678225,
+   "who": "CB01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791010160.8955388,
+   "who": "router",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791010161.0803082,
+   "who": "texture",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791010257.0890257,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 堆積物を製錬することでガラスに加工できるように"
+  },
+  {
+   "t": 1791010478.728253,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 構造物のついか"
+  },
+  {
+   "t": 1791010503.364042,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 食料になる魚類の追加"
+  },
+  {
+   "t": 1791010565.5427475,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791010565.7789829,
+   "who": "texture",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791010566.0065296,
+   "who": "build",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791010677.9966965,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: バイオームが広すぎる問題"
+  },
+  {
+   "t": 1791010732.5738592,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 周りが見えなさすぎる問題"
+  },
+  {
+   "t": 1791010810.937279,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "Forge 実機テスト (scratch server): 丸石ドロップ/シルクタッチ OK、苗→骨粉5回で木 (幹6+葉2層) OK、ancient_trees feature OK、料理・丸石アイテム登録 OK"
+  },
+  {
+   "t": 1791010828.3409543,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791010929.1411388,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 拠点ブロックのテクスチャのれんけつ"
+  },
+  {
+   "t": 1791011191.766275,
+   "who": "FD01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011191.9059055,
+   "who": "TR01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011192.051169,
+   "who": "CB01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011192.2066998,
+   "who": "build",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791011192.3443632,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791011192.487984,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "Forge 側 push 済み (main/Forge1.20.1 0bed080)。ChatGPT 検査合格。NeoForge 移植開始 (共有レジストリ・生成器が重なるので3件を1エージェントで直列)"
+  },
+  {
+   "t": 1791011335.1194715,
+   "who": "OL01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 生体油昆布"
+  },
+  {
+   "t": 1791011335.2786775,
+   "who": "PL01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 水耕栽培プランター"
+  },
+  {
+   "t": 1791011335.4459245,
+   "who": "OL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011335.6734235,
+   "who": "OL01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] OL01 NeoForge移植"
+  },
+  {
+   "t": 1791011335.9122272,
+   "who": "OL01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791011336.0914743,
+   "who": "PL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011336.2607622,
+   "who": "PL01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] PL01 NeoForge移植"
+  },
+  {
+   "t": 1791011336.4470131,
+   "who": "PL01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791011354.3821948,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791011354.5643632,
+   "who": "GL01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [light] 堆積物→ガラス精錬"
+  },
+  {
+   "t": 1791011360.7447157,
+   "who": "ST01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 朽ち木・倒木"
+  },
+  {
+   "t": 1791011360.999885,
+   "who": "FS01",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] 食用魚8種"
+  },
+  {
+   "t": 1791011361.2592497,
+   "who": "BS01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 深海バイオーム縮小"
+  },
+  {
+   "t": 1791011361.457514,
+   "who": "VD01",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] 視界144+振り向きFPS"
+  },
+  {
+   "t": 1791011361.7385888,
+   "who": "GL01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] GL01 NeoForge移植"
+  },
+  {
+   "t": 1791011361.9623864,
+   "who": "ST01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] ST01 NeoForge移植"
+  },
+  {
+   "t": 1791011362.1457117,
+   "who": "FS01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] FS01 NeoForge移植"
+  },
+  {
+   "t": 1791011362.3267,
+   "who": "BS01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] BS01 NeoForge移植"
+  },
+  {
+   "t": 1791011362.504389,
+   "who": "VD01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] VD01 NeoForge移植"
+  },
+  {
+   "t": 1791011362.683489,
+   "who": "GL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011362.9351065,
+   "who": "ST01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011363.0890415,
+   "who": "FS01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011363.254878,
+   "who": "BS01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011363.4286637,
+   "who": "VD01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791011364.4649594,
+   "who": "router",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791011460.1273866,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "ユーザー指定 (2026-10-03): エージェントを役割で分担 — コーディング / テクスチャ取込 / 翻訳 / テスト をそれぞれ別エージェントに。メインは振り分け・統合のみ"
+  },
+  {
+   "t": 1791011466.0149114,
+   "who": "GL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791011477.0816355,
+   "who": "BS01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791011477.4234204,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "GL01 BS01 coding done; BS01 BIOME_REGION_SCALE 7 + biome_zone fuzz 0.3, wider tails; map check in test"
+  },
+  {
+   "t": 1791011550.6142228,
+   "who": "OL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791011595.6091385,
+   "who": "ST01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791011641.077786,
+   "who": "VD01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791011656.6998684,
+   "who": "PL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791011832.8773541,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 何をすればいいのかがわからない人のためのチュートリアル本"
+  },
+  {
+   "t": 1791011953.1082058,
+   "who": "main",
+   "kind": "status",
+   "model": "claude-opus-5-5",
+   "msg": "model=claude-opus-5-5"
+  },
+  {
+   "t": 1791011954.0875773,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "CT01(拠点テクスチャ連結)/GB01(チュートリアル本) 着手: 調査 + ChatGPT 仕様書"
+  },
+  {
+   "t": 1791012045.6263802,
+   "who": "FS01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791012094.9372828,
+   "who": "TL01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [light] 翻訳: 新規 lang en/ja 確認"
+  },
+  {
+   "t": 1791012095.0977554,
+   "who": "TL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791012130.9216797,
+   "who": "TL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791012131.0750983,
+   "who": "TS01",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] テスト: build + 実機"
+  },
+  {
+   "t": 1791012131.222966,
+   "who": "TS01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791012131.3875968,
+   "who": "build",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791012180.9667625,
+   "who": "verify",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791012262.7489965,
+   "who": "chatgpt",
+   "kind": "status",
+   "model": "",
+   "msg": "running — GB01 spec"
+  },
+  {
+   "t": 1791012262.9241402,
+   "who": "CT01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 拠点殻ブロックの連結テクスチャ"
+  },
+  {
+   "t": 1791012263.1190355,
+   "who": "CT01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] CT01 NeoForge移植"
+  },
+  {
+   "t": 1791012263.3050425,
+   "who": "CT01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791012263.4974597,
+   "who": "CT01",
+   "kind": "status",
+   "model": "claude-sonnet-5-5",
+   "msg": "running"
+  },
+  {
+   "t": 1791012343.306341,
+   "who": "GB01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 深海ガイドブック (チュートリアル本)"
+  },
+  {
+   "t": 1791012343.6140318,
+   "who": "GB01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] GB01 NeoForge移植"
+  },
+  {
+   "t": 1791012343.9040103,
+   "who": "GB01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791012409.6831763,
+   "who": "GB01",
+   "kind": "status",
+   "model": "claude-sonnet-5-5",
+   "msg": "running"
+  },
+  {
+   "t": 1791012459.497608,
+   "who": "FD01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791012459.9903398,
+   "who": "TR01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791012460.352589,
+   "who": "CB01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791012904.2683728,
+   "who": "build",
+   "kind": "status",
+   "model": "",
+   "msg": "running — CT01+GB01 compile"
+  },
+  {
+   "t": 1791012919.411077,
+   "who": "memory",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791013556.408961,
+   "who": "OL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791013556.7240403,
+   "who": "PL01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791013556.9814053,
+   "who": "OL01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791013557.226929,
+   "who": "PL01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791013558.037569,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791013558.435209,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "OL01/PL01 両ローダー完了 (main c302cc6 / NeoForge 移植 push)。全5依頼 done"
+  },
+  {
+   "t": 1791014079.7672262,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: このmod専用のエンチャントやバフ、デバフの実装"
+  },
+  {
+   "t": 1791014156.8722057,
+   "who": "CT01",
+   "kind": "status",
+   "model": "claude-sonnet-5-5",
+   "msg": "done — Forge OK, ChatGPT 合格"
+  },
+  {
+   "t": 1791014157.3164856,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "CT01 検査 合格 (ChatGPT)"
+  },
+  {
+   "t": 1791014186.9654655,
+   "who": "CT01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791014253.829983,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "running — CT01 main"
+  },
+  {
+   "t": 1791014266.8460035,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791015891.2450752,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "Forge commit GL01/ST01/FS01/BS01; VD01 FPS still failing (entity growth) -> VD01 agent"
+  },
+  {
+   "t": 1791015923.4216564,
+   "who": "GL01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791015923.5943654,
+   "who": "ST01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791015923.775326,
+   "who": "FS01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791015923.974353,
+   "who": "BS01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791016286.4742043,
+   "who": "GL01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791016286.916438,
+   "who": "ST01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791016287.291744,
+   "who": "FS01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791016287.5769048,
+   "who": "BS01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791016828.3105984,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "GB01 検査 合格 (ChatGPT), P1/P3 だけ反映"
+  },
+  {
+   "t": 1791016899.0143068,
+   "who": "VD01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791016899.2279117,
+   "who": "TS01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791017035.9545665,
+   "who": "GB01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791017036.1161284,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "ユーザー指示: 実装済みは随時 NeoForge へ移植 → CT01-neo 済(compile OK), GB01-neo 着手"
+  },
+  {
+   "t": 1791017433.5634856,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "ChatGPT review 2: GL01/ST01/FS01/VD01 pass, BS01 pending re-measure at 10.5"
+  },
+  {
+   "t": 1791018069.3301263,
+   "who": "CT01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791018069.4731886,
+   "who": "GB01",
+   "kind": "status",
+   "model": "claude-sonnet-5-5",
+   "msg": "done"
+  },
+  {
+   "t": 1791018069.6343324,
+   "who": "GB01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791018069.7972212,
+   "who": "memory",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791018069.9398863,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791018315.0027058,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791018315.1799314,
+   "who": "memory",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791018315.322246,
+   "who": "VD01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791018315.4598234,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "Forge pushed 27b12cf (main, Forge1.20.1). Neo port5 at 5cc001d: all pass except VD01 turn FPS -> profiling"
+  },
+  {
+   "t": 1791020765.5155911,
+   "who": "GL01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791020765.6780167,
+   "who": "ST01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791020765.8277395,
+   "who": "FS01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791020765.979175,
+   "who": "BS01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791020766.1293488,
+   "who": "VD01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791020767.0022738,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791020767.1524093,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "Done: GL01/ST01/FS01/BS01/VD01 pushed Forge ab1cee2 (main, Forge1.20.1) + NeoForge1.21.1; FPS fix = FaunaModel bone lookup cache"
+  },
+  {
+   "t": 1791020849.5002792,
+   "who": "request",
+   "kind": "add",
+   "model": "",
+   "msg": "依頼を受信: 建設用ツールの変更"
+  },
+  {
+   "t": 1791020876.4377484,
+   "who": "main",
+   "kind": "status",
+   "model": "claude-opus-5-5",
+   "msg": "model=claude-opus-5-5 — requests: 165439 enchant/buffs, 184729 construction tool"
+  },
+  {
+   "t": 1791020876.5872629,
+   "who": "router",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791021398.4107707,
+   "who": "EN01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 深海エンチャント・バフ/デバフ"
+  },
+  {
+   "t": 1791021398.5609596,
+   "who": "EN01-tex",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [light] EN01 effect icons (ChatGPT)"
+  },
+  {
+   "t": 1791021398.7078123,
+   "who": "EN01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] EN01 NeoForge port"
+  },
+  {
+   "t": 1791021398.8570104,
+   "who": "EN01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791021562.0628686,
+   "who": "EN01-tex",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done — ChatGPT sheet -> textures/mob_effect (tools/import_effect_icons.py)"
+  },
+  {
+   "t": 1791022524.3868847,
+   "who": "BT01a",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] 建設メニュー基盤・配置距離"
+  },
+  {
+   "t": 1791022524.5392983,
+   "who": "BT01b",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] BT01b"
+  },
+  {
+   "t": 1791022524.6941578,
+   "who": "BT01b",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791022524.8419523,
+   "who": "BT01c",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] BT01c"
+  },
+  {
+   "t": 1791022524.9862907,
+   "who": "BT01c",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791022525.1316962,
+   "who": "BT01d",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] BT01d"
+  },
+  {
+   "t": 1791022525.2693443,
+   "who": "BT01d",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791022525.4187257,
+   "who": "BT01e",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] BT01e"
+  },
+  {
+   "t": 1791022525.5772097,
+   "who": "BT01e",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791022525.7561052,
+   "who": "BT01f",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] BT01f"
+  },
+  {
+   "t": 1791022525.9427607,
+   "who": "BT01f",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791022526.1049254,
+   "who": "BT01g",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] BT01g"
+  },
+  {
+   "t": 1791022526.2518563,
+   "who": "BT01g",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791022526.3935707,
+   "who": "BT01h",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 統合・レシピ削除"
+  },
+  {
+   "t": 1791022526.5436974,
+   "who": "BT01h",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791022526.713583,
+   "who": "BT01-neo",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] BT01 NeoForge port"
+  },
+  {
+   "t": 1791022526.8615525,
+   "who": "BT01-neo",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "queued"
+  },
+  {
+   "t": 1791022527.0085077,
+   "who": "BT01a",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791022570.63393,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "EN01 ChatGPT review: 2 findings, both resolved without change (Frost Walker already exclusive; fog uses multipliers because real fog is 10-96 not 144)"
+  },
+  {
+   "t": 1791022570.7762315,
+   "who": "EN01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done — Forge build+autotest OK, ChatGPT review passed"
+  },
+  {
+   "t": 1791022570.921676,
+   "who": "EN01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791023323.757684,
+   "who": "BT01a",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done — compiles; in-game test with h"
+  },
+  {
+   "t": 1791023323.972407,
+   "who": "BT01b",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791023324.1751273,
+   "who": "BT01c",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791023324.373847,
+   "who": "BT01d",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791023324.5786722,
+   "who": "BT01e",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791023324.7590618,
+   "who": "BT01f",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791023324.9611452,
+   "who": "BT01g",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791023619.8888927,
+   "who": "EN01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done — NeoForge build+autotest OK"
+  },
+  {
+   "t": 1791023974.2111087,
+   "who": "BT01f",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791023974.4351718,
+   "who": "BT01c",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791023974.6308208,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "EN01 done on both loaders; pushed main/Forge1.20.1 (68c0cab, merged other session's VD01) and NeoForge1.21.1 (6a76c75)"
+  },
+  {
+   "t": 1791024040.009537,
+   "who": "BT01g",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done — tank 5x5x3 (room interior is 3 tall)"
+  },
+  {
+   "t": 1791024040.1731591,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "BT01g: aquarium height 3 instead of 4 (room interior y1..y3); keep"
+  },
+  {
+   "t": 1791024111.0038974,
+   "who": "BT01e",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791024119.061946,
+   "who": "BT01b",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791024166.6659653,
+   "who": "BT01d",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791026750.8756127,
+   "who": "BT01h",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791026751.0910487,
+   "who": "BT01-neo",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791027755.4490712,
+   "who": "BT01-neo",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791027755.74399,
+   "who": "memory",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791027755.91515,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791027756.058396,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1791029701.7378137,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "PL02: harvest goes to the player and the seedling regrows (kept PL01 behaviour), hopper pulls ripe produce; ChatGPT's output-inventory idea dropped because no GUI. OL02: emissive mask derived from the locked ChatGPT oil_kelp_ripe texture (pixel-exact)"
+  },
+  {
+   "t": 1791029702.1334186,
+   "who": "PL02",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] プランター作り直し"
+  },
+  {
+   "t": 1791029702.2639587,
+   "who": "OL02",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [light] 油嚢の発光"
+  },
+  {
+   "t": 1791030672.3789043,
+   "who": "PL02",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done — Forge OK, review passed; neo port running"
+  },
+  {
+   "t": 1791030672.5813065,
+   "who": "OL02",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791032870.4709506,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1791037216.680255,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1791082068.3850324,
+   "who": "main",
+   "kind": "status",
+   "model": "claude-opus-5-5",
+   "msg": "model=claude-opus-5-5"
+  },
+  {
+   "t": 1791082068.529654,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "MP01 受付: 深海の地図 + 深海への海図"
+  },
+  {
+   "t": 1791082348.3565617,
+   "who": "MP01",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] "
+  },
+  {
+   "t": 1791082348.5168781,
+   "who": "MP01-neo",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] "
+  },
+  {
+   "t": 1791082348.6742928,
+   "who": "MP01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791082348.8311431,
+   "who": "MP01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791082608.4040487,
+   "who": "texture",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791082608.5712605,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "MP01 アイコン2種 ChatGPT→取込 (16x16 後処理、両ブランチにロック)"
+  },
+  {
+   "t": 1791086220.9307675,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "MP01 ChatGPT 検査 2 回目 合格 (深海地図: 16列・8カテゴリ・3x3多数決)"
+  },
+  {
+   "t": 1791086837.2779446,
+   "who": "memory",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791086938.3245268,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "running"
+  },
+  {
+   "t": 1791087047.1703434,
+   "who": "git",
+   "kind": "status",
+   "model": "",
+   "msg": "done"
+  },
+  {
+   "t": 1791087047.3461618,
+   "who": "MP01",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791087047.5617845,
+   "who": "MP01-neo",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791087047.9405167,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "MP01 完了: main/Forge1.20.1 27f11be, NeoForge1.21.1 7eda469"
+  },
+  {
+   "t": 1791087048.1638436,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1791094657.5521843,
+   "who": "WR01",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] "
+  },
+  {
+   "t": 1791094657.9814112,
+   "who": "WR01-neo",
+   "kind": "add",
+   "model": "opus-5.5",
+   "msg": "追加 [heavy] "
+  },
+  {
+   "t": 1791094658.2149274,
+   "who": "WR01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791094658.4592125,
+   "who": "WR01-neo",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791094659.0303998,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "WR01 spec+design from ChatGPT (inbox/specs/WR01-*.md, designs/WR01.png); Forge+Neo in parallel"
+  },
+  {
+   "t": 1791097528.8706517,
+   "who": "WR01",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791097529.0688446,
+   "who": "WR01-neo",
+   "kind": "status",
+   "model": "opus-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791097529.217195,
+   "who": "main",
+   "kind": "decision",
+   "model": "",
+   "msg": "WR01 done: Forge b6ccc35 (main+Forge1.20.1), Neo e2fcf6a; review inbox/specs/WR01-review.md"
+  },
+  {
+   "t": 1791097529.360949,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
   }
  ],
  "stages": {
   "request": {
    "status": "idle",
    "note": "",
-   "t": 1790958210.7940712
+   "t": 1791097529.360949
   },
   "router": {
    "status": "idle",
    "note": "",
-   "t": 1790958210.7940712
+   "t": 1791097529.360949
   },
   "chatgpt": {
    "status": "idle",
    "note": "",
-   "t": 1790958210.7940712
+   "t": 1791097529.360949
   },
   "texture": {
    "status": "idle",
    "note": "",
-   "t": 1790958210.7940712
+   "t": 1791097529.360949
   },
   "verify": {
    "status": "idle",
    "note": "",
-   "t": 1790958210.7940712
+   "t": 1791097529.360949
   },
   "build": {
    "status": "idle",
    "note": "",
-   "t": 1790958210.7940712
+   "t": 1791097529.360949
   },
   "memory": {
    "status": "idle",
    "note": "",
-   "t": 1790958210.7940712
+   "t": 1791097529.360949
+  },
+  "git": {
+   "status": "idle",
+   "note": "",
+   "t": 1791097529.360949
   }
  }
 }
