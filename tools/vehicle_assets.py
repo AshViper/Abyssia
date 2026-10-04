@@ -77,10 +77,10 @@ LANG = {
     f"item.{MOD}.submarine": ("Submarine", "潜水艦"),
     f"item.{MOD}.submarine.source": (
         "A one-seat submarine. Right-click to place it on water, on the ground or under water, right-click it to board. "
-        "W/S forward and back, A/D sideways, Space up, Ctrl down, mouse to turn, G headlights, Shift to get out. "
+        "W/S forward and back along where you look, A/D sideways, mouse to steer (including up and down), Ctrl to leave a dock, G headlights, Shift to get out. "
         "Runs on its 60,000 FE battery; dock it under a Submarine Dock (built in a Moon Pool with the Habitat Constructor) to charge and repair it.",
         "一人乗りの潜水艦。右クリックで水面・地面・水中に設置し、潜水艦を右クリックで乗り込む。"
-        "W/S で前後、A/D で左右、Space で上昇、Ctrl で下降、マウスで旋回、G でライト、Shift で降りる。"
+        "W/S で視点の向きへ前後、A/D で左右、マウスで操舵（上下も）、Ctrl でドック解除、G でライト、Shift で降りる。"
         "60,000 FE のバッテリーで動き、潜水艦ドック（ハビタット建設ツールでムーンプールに設置）の下に入れると充電・修理される。"),
     f"block.{MOD}.submarine_dock": ("Submarine Dock", "潜水艦ドック"),
     f"block.{MOD}.submarine_dock_gangway": ("Dock Gangway", "ドックの足場"),
@@ -97,8 +97,8 @@ LANG = {
     f"message.{MOD}.submarine_dock.status": ("Dock buffer %s / %s FE - submarine %s%%", "ドックのバッファ %s / %s FE ・ 潜水艦 %s%%"),
     f"message.{MOD}.submarine_dock.empty": ("Dock buffer %s / %s FE - no submarine docked", "ドックのバッファ %s / %s FE ・ 潜水艦なし"),
     f"tooltip.{MOD}.submarine.energy": ("Energy %s / %s FE", "エネルギー %s / %s FE"),
-    f"tooltip.{MOD}.submarine.controls": ("WASD move, Space up, Ctrl down, G lights, Shift exit",
-                                          "WASD 移動、Space 上昇、Ctrl 下降、G ライト、Shift 降車"),
+    f"tooltip.{MOD}.submarine.controls": ("W/S move where you look, A/D strafe, mouse steers, Ctrl undock, G lights, Shift exit",
+                                          "W/S 視点方向へ移動、A/D 左右、マウス操舵、Ctrl ドック解除、G ライト、Shift 降車"),
     # SUB03 upgrades: screen, item tooltips, sonar HUD
     f"container.{MOD}.submarine.upgrades": ("Submarine Systems", "潜水艦システム"),
     f"container.{MOD}.submarine.upgrades.status": ("⚡ %s / %s FE  ❤ %s%%", "⚡ %s / %s FE  ❤ %s%%"),

@@ -17,15 +17,33 @@ public final class SubmarinePods
     /** half extents (3, 6, 7 px) + 1 px of slack per side */
     private static final double HX = 4.0 / 16.0, HY = 7.0 / 16.0, HZ = 8.0 / 16.0;
     private static final double TILT = Math.toRadians(12.5);
+    /** hull mid-height, the pitch pivot (= Submarine.PIVOT_Y; no Minecraft types here) */
+    private static final double PIVOT_Y = 2.2733 / 2.0;
 
     private SubmarinePods() {}
 
     /** world offset from the submarine origin {@code (x, y, z)} to hull-local (mesh) coordinates */
     public static double[] toLocal(float yawDeg, double x, double y, double z)
     {
+        return toLocal(yawDeg, 0.0f, x, y, z, false);
+    }
+
+    /**
+     * SUB05: with pitch. The renderer turns the mesh about the mesh x axis by -xRot about (0, PIVOT_Y, 0) (xRot + = nose
+     * down; the nose is -Z) and then by 180 - yaw about Y; the inverse is applied here. {@code point}: the offset is
+     * relative to the submarine origin (pivot shift applied), else it is a direction.
+     */
+    public static double[] toLocal(float yawDeg, float pitchDeg, double x, double y, double z, boolean point)
+    {
         double a = Math.toRadians(180.0 - yawDeg), c = Math.cos(a), s = Math.sin(a);
         // the renderer's Y rotation maps mesh -> world as x' = x c + z s, z' = -x s + z c; this is its inverse
-        return new double[]{x * c - z * s, y, x * s + z * c};
+        double lx = x * c - z * s, ly = y, lz = x * s + z * c;
+        if (point) ly -= PIVOT_Y;
+        double p = Math.toRadians(pitchDeg), pc = Math.cos(p), ps = Math.sin(p);
+        // renderer: XP by theta = -p maps (y, z) -> (y cos - z sin, y sin + z cos); inverse below
+        double ry = ly * pc - lz * ps, rz = ly * ps + lz * pc;
+        if (point) ry += PIVOT_Y;
+        return new double[]{lx, ry, rz};
     }
 
     /** Distance along the (unit) ray to the pod, hull-local coordinates, or -1 on a miss. */
@@ -55,9 +73,9 @@ public final class SubmarinePods
     }
 
     /** Nearest pod hit by a world ray (offset of the eye from the submarine origin, unit direction), within {@code reach}; RIGHT / LEFT / NONE. */
-    public static int pick(float yawDeg, double ex, double ey, double ez, double dx, double dy, double dz, double reach)
+    public static int pick(float yawDeg, float pitchDeg, double ex, double ey, double ez, double dx, double dy, double dz, double reach)
     {
-        double[] o = toLocal(yawDeg, ex, ey, ez), d = toLocal(yawDeg, dx, dy, dz);
+        double[] o = toLocal(yawDeg, pitchDeg, ex, ey, ez, true), d = toLocal(yawDeg, pitchDeg, dx, dy, dz, false);
         double tr = hit(RIGHT, o[0], o[1], o[2], d[0], d[1], d[2]);
         double tl = hit(LEFT, o[0], o[1], o[2], d[0], d[1], d[2]);
         if (tr >= 0.0 && (tl < 0.0 || tr <= tl)) return tr <= reach ? RIGHT : NONE;

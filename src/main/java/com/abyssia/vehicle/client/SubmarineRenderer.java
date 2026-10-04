@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
@@ -35,6 +36,11 @@ public class SubmarineRenderer extends EntityRenderer<Submarine>
     {
         pose.pushPose();
         pose.mulPose(Axis.YP.rotationDegrees(180.0f - yaw));
+        // SUB05: pitch about the hull mid-height (xRot + = nose down, the nose is -Z), glass / lamps share the pose
+        float pitch = Mth.lerp(partialTick, sub.xRotO, sub.getXRot());
+        pose.translate(0.0, Submarine.PIVOT_Y, 0.0);
+        pose.mulPose(Axis.XP.rotationDegrees(-pitch));
+        pose.translate(0.0, -Submarine.PIVOT_Y, 0.0);
         PoseStack.Pose last = pose.last();
         VertexConsumer cutout = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
         quads(last, cutout, SubmarineMesh.HULL, light);

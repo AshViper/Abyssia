@@ -82,19 +82,25 @@ public class Submarine extends Entity
     /** seat: 8.5 px ahead of the centre (bbmodel z -11 px; the baked mesh is shifted +2.5 px), rider feet so the hips are at y 12 px */
     public static final double SEAT_FORWARD = 8.5 / 16.0, SEAT_Y = 12.0 / 16.0 - 0.70;
     /** pilot eye height above the hull bottom (seat + standing eye height) */
-    /** SUB04: yaw turn per tick while pulled into / released from a dock */
-    public static final float DOCK_TURN = 6.0f;
     public static final double EYE_Y = SEAT_Y + 1.62;
     /** model height (blocks): the docked hull top sits DOCK_GAP below the dock block */
     public static final double HULL_HEIGHT = 2.2733, DOCK_GAP = 0.3, DOCK_APPROACH = 0.12, DOCK_REACH_DOWN = 6.0;
     public static final int UNDOCK_COOLDOWN = 60;
     public static final double LIGHT_RANGE = 12.0;
+    /** SUB04: yaw turn per tick while pulled into / released from a dock */
+    public static final float DOCK_TURN = 6.0f;
     public static final float REPAIR_PER_TICK = 0.05f;
+    /** SUB05: the hull pitches with the pilot's view, clamped to +-PITCH_MAX deg (xRot, + = nose down); docked / unmanned it eases to 0 at PITCH_EASE deg per tick */
+    public static final float PITCH_MAX = 45.0f, PITCH_EASE = 6.0f;
+    /** SUB05: pitch / seat pivot = hull mid-height (blocks above the origin); the renderer and positionRider rotate about (0, PIVOT_Y, 0) */
+    public static final double PIVOT_Y = HULL_HEIGHT / 2.0;
+    /** SUB05: height above the seat of the point that keeps its place in the hull when it pitches (keeps the head under the canopy) */
+    public static final double SEAT_ANCHOR = 1.2;
 
     /** Pilot input on the client (set by the client setup; the server never asks). */
     public interface Pilot
     {
-        /** {forward (+1 W / -1 S), strafe (+1 A / -1 D), vertical (+1 Space / -1 Ctrl)} */
+        /** {forward (+1 W / -1 S), strafe (+1 A / -1 D), undock (-1 while Ctrl is held; Space does nothing since SUB05)} */
         int[] input();
 
         void requestUndock(Submarine sub);
@@ -108,8 +114,8 @@ public class Submarine extends Entity
     };
 
     private int lerpSteps;
-    private double lerpX, lerpY, lerpZ, lerpYRot;
-    private boolean wasDocked, yawEase;
+    private double lerpX, lerpY, lerpZ, lerpYRot, lerpXRot;
+    private boolean wasDocked, yawEase, pitchEase;
     private int undockRequestTicks;
     // server
     private int dockCooldown;
@@ -197,7 +203,21 @@ public class Submarine extends Entity
         LivingEntity rider = getControllingPassenger();
         if (isControlledByLocalInstance())
         {
-            if (rider != null && level().isClientSide && dock.isEmpty()) followRiderYaw(rider.getYRot());
+            if (rider != null && level().isClientSide && dock.isEmpty())
+            {
+                followRiderYaw(rider.getYRot());
+                // after a release the pitch swings to the view at PITCH_EASE per tick, like the yaw
+                float want = Mth.clamp(rider.getXRot(), -PITCH_MAX, PITCH_MAX);
+                if (wasDocked) pitchEase = true;
+                if (pitchEase)
+                {
+                    float diff = want - getXRot();
+                    if (Math.abs(diff) <= PITCH_EASE) pitchEase = false;
+                    setXRot(Math.abs(diff) <= PITCH_EASE ? want : getXRot() + Math.signum(diff) * PITCH_EASE);
+                }
+                else setXRot(want);
+            }
+            else if (dock.isEmpty()) easePitch();
             if (dock.isPresent())
             {
                 dockMove(dock.get());
@@ -232,6 +252,8 @@ public class Submarine extends Entity
                     setYRot(getYRot() + Mth.clamp(Mth.wrapDegrees(yaw - getYRot()), -DOCK_TURN, DOCK_TURN));
                     lerpYRot = getYRot();
                 }
+                easePitch();
+                lerpXRot = getXRot();
             }
         }
         if (undockRequestTicks > 0) undockRequestTicks--;
@@ -255,8 +277,23 @@ public class Submarine extends Entity
             setYRot(getYRot() + (float) Mth.wrapDegrees(lerpYRot - getYRot()) / lerpSteps);
             lerpSteps--;
             setPos(x, y, z);
+            setXRot(getXRot() + (float) (lerpXRot - getXRot()) / (lerpSteps + 1));
             setRot(getYRot(), getXRot());
         }
+    }
+
+    /** SUB05: pitch back to level, PITCH_EASE deg per tick (docked, unmanned) */
+    private void easePitch()
+    {
+        float x = getXRot();
+        setXRot(Math.abs(x) <= PITCH_EASE ? 0.0f : x - Math.signum(x) * PITCH_EASE);
+    }
+
+    /** SUB05: unit vector of the hull's nose (yaw + pitch, xRot + = nose down) */
+    public Vec3 noseVector()
+    {
+        float yaw = getYRot() * Mth.DEG_TO_RAD, pitch = getXRot() * Mth.DEG_TO_RAD;
+        return new Vec3(-Mth.sin(yaw) * Mth.cos(pitch), -Mth.sin(pitch), Mth.cos(yaw) * Mth.cos(pitch));
     }
 
     @Override
@@ -266,38 +303,51 @@ public class Submarine extends Entity
         lerpY = y;
         lerpZ = z;
         lerpYRot = yRot;
+        lerpXRot = xRot;
         lerpSteps = Math.max(1, steps);
     }
 
-    /** Controlling side: thrust in the hull's frame (forward, left, up), water drag, gravity out of the water. */
+    /**
+     * Controlling side (SUB05): W / S thrust along the hull's nose (yaw + pitch), A / D strafe horizontally, no vertical
+     * keys. Velocity lives in the hull frame (nose, left, hull-up); the vertical component is capped at the upgrade's
+     * vertical speed by scaling the whole vector (direction kept), and has no upward part below LIFT_SUBMERGED.
+     */
     private void drive()
     {
         double wet = submergedFraction();
         float yaw = getYRot() * Mth.DEG_TO_RAD;
-        double fx = -Mth.sin(yaw), fz = Mth.cos(yaw);   // forward
-        double lx = fz, lz = -fx;                       // left
         Vec3 v = getDeltaMovement();
-        double f = v.x * fx + v.z * fz, s = v.x * lx + v.z * lz, u = v.y;
         int[] in = getControllingPassenger() != null && level().isClientSide && getEnergy() > 0 ? pilot.input() : NO_INPUT;
         if (wet > 0.0)
         {
             int mask = upgradeMask();
             double accel = SubmarineUpgrades.accel(mask), side = SubmarineUpgrades.sideSpeed(mask), up = SubmarineUpgrades.verticalSpeed(mask);
-            f = axis(f, in[0], accel, SubmarineUpgrades.forwardSpeed(mask), side);
-            s = axis(s, in[1], accel, side, side);
-            int vertical = in[2] > 0 && wet < LIFT_SUBMERGED ? 0 : in[2];
-            u = axis(u, vertical, accel, up, up);
-            // floating high at the surface: settle gently until LIFT_SUBMERGED is under water (neutral below that)
-            if (vertical == 0 && wet < LIFT_SUBMERGED) u -= 0.004;
+            Vec3 n = noseVector();
+            Vec3 l = new Vec3(Mth.cos(yaw), 0.0, Mth.sin(yaw));
+            Vec3 h = n.cross(l);
+            double f = axis(v.dot(n), in[0], accel, SubmarineUpgrades.forwardSpeed(mask), side);
+            double s = axis(v.dot(l), in[1], accel, side, side);
+            double u = v.dot(h) * DRAG;
+            v = n.scale(f).add(l.scale(s)).add(h.scale(u));
+            if (Math.abs(v.y) > up) v = v.scale(up / Math.abs(v.y));
+            // floating high at the surface: no upward part, settle gently until LIFT_SUBMERGED is under water (neutral below that)
+            if (wet < LIFT_SUBMERGED)
+            {
+                // the upward part is dropped, the horizontal speed stays within the forward cap (no speed gained from the clip)
+                double hz = Math.hypot(v.x, v.z), cap = SubmarineUpgrades.forwardSpeed(mask);
+                double k = v.y > 0.0 && hz > cap ? cap / hz : 1.0;
+                v = new Vec3(v.x * k, Math.min(v.y, 0.0) - 0.004, v.z * k);
+            }
+            setDeltaMovement(v);
+            return;
         }
-        else
-        {
-            // out of the water: no thrust, gravity, stops on the ground
-            double grip = onGround() ? 0.5 : 0.98;
-            f *= grip;
-            s *= grip;
-            u = (u - 0.04) * 0.98;
-        }
+        // out of the water: no thrust, gravity, stops on the ground
+        double fx = -Mth.sin(yaw), fz = Mth.cos(yaw), lx = fz, lz = -fx;
+        double f = v.x * fx + v.z * fz, s = v.x * lx + v.z * lz, u = v.y;
+        double grip = onGround() ? 0.5 : 0.98;
+        f *= grip;
+        s *= grip;
+        u = (u - 0.04) * 0.98;
         setDeltaMovement(fx * f + lx * s, u, fz * f + lz * s);
     }
 
@@ -356,6 +406,7 @@ public class Submarine extends Entity
     /** Controlling side while docked: turn to the dock's facing, slide to the target (sideways first, then up), then hold still. */
     private void dockMove(BlockPos dock)
     {
+        easePitch();
         float yaw = dockYaw(dock);
         if (!Float.isNaN(yaw)) setYRot(getYRot() + Mth.clamp(Mth.wrapDegrees(yaw - getYRot()), -DOCK_TURN, DOCK_TURN));
         Vec3 d = dockTarget(dock).subtract(position());
@@ -552,8 +603,12 @@ public class Submarine extends Entity
     protected void positionRider(Entity passenger, MoveFunction move)
     {
         if (!hasPassenger(passenger)) return;
-        float yaw = getYRot() * Mth.DEG_TO_RAD;
-        move.accept(passenger, getX() - Mth.sin(yaw) * SEAT_FORWARD, getY() + SEAT_Y, getZ() + Mth.cos(yaw) * SEAT_FORWARD);
+        float yaw = getYRot() * Mth.DEG_TO_RAD, pitch = getXRot() * Mth.DEG_TO_RAD;
+        // SUB05: the pilot's upright body is not tilted, so the point SEAT_ANCHOR above the seat (neck, in the canopy) is what
+        // turns with the hull pitch about the pivot; the feet hang below it. Pitch 0 = the old seat.
+        double a = SEAT_FORWARD, b = SEAT_Y - PIVOT_Y + SEAT_ANCHOR;
+        double ahead = a * Mth.cos(pitch) + b * Mth.sin(pitch), up = -a * Mth.sin(pitch) + b * Mth.cos(pitch);
+        move.accept(passenger, getX() - Mth.sin(yaw) * ahead, getY() + PIVOT_Y + up - SEAT_ANCHOR, getZ() + Mth.cos(yaw) * ahead);
         if (passenger instanceof LivingEntity living) living.setYBodyRot(getYRot());
     }
 
@@ -783,7 +838,7 @@ public class Submarine extends Entity
         {
             Vec3 eye = player.getEyePosition().subtract(position());
             Vec3 look = player.getViewVector(1.0f);
-            int side = SubmarinePods.pick(getYRot(), eye.x, eye.y, eye.z, look.x, look.y, look.z, 5.0);
+            int side = SubmarinePods.pick(getYRot(), getXRot(), eye.x, eye.y, eye.z, look.x, look.y, look.z, 5.0);
             if (side != SubmarinePods.NONE)
             {
                 if (player instanceof ServerPlayer sp) openPod(sp, side);

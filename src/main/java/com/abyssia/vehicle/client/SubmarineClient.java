@@ -24,8 +24,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
 /**
- * SUB02 pilot controls: W/S forward / back, A/D sideways, Space up, Ctrl (the sprint key, read as the physical key
- * so toggle-sprint does not latch it) down / release the dock, G headlights, Shift = vanilla dismount, mouse = yaw.
+ * SUB02 pilot controls: W/S thrust forward / back along the hull's nose, A/D sideways, Ctrl (the sprint key, read as the physical key
+ * so toggle-sprint does not latch it) = release the dock, G headlights, Shift = vanilla dismount, mouse = yaw + pitch
+ * (the hull faces where the pilot looks, +-45 deg; no up / down keys since SUB05).
  * G shares its default key with the habitat build menu, so it is read from the raw key event while riding instead of
  * the key-mapping lookup (which hands a key to one mapping only).
  */
@@ -43,7 +44,7 @@ public final class SubmarineClient
         return player != null && player.getVehicle() instanceof Submarine sub ? sub : null;
     }
 
-    /** {forward, strafe (left +), vertical (up +)} of the local player; zero with a screen open */
+    /** {forward, strafe (left +), undock (-1 = Ctrl held)} of the local player; zero with a screen open */
     static int[] input()
     {
         Minecraft mc = Minecraft.getInstance();
@@ -51,8 +52,8 @@ public final class SubmarineClient
         Options o = mc.options;
         int forward = (o.keyUp.isDown() ? 1 : 0) - (o.keyDown.isDown() ? 1 : 0);
         int strafe = (o.keyLeft.isDown() ? 1 : 0) - (o.keyRight.isDown() ? 1 : 0);
-        int vertical = (o.keyJump.isDown() ? 1 : 0) - (down(mc) ? 1 : 0);
-        return new int[]{forward, strafe, vertical};
+        int undock = down(mc) ? -1 : 0;
+        return new int[]{forward, strafe, undock};
     }
 
     /** the sprint key held right now (physical state; keyboard bindings only) */
