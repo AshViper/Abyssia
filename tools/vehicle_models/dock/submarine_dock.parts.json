@@ -1,0 +1,1479 @@
+{
+ "units": "px (16=1 block)",
+ "origin": "centre of bottom face of dock cell (moon pool y3)",
+ "axes": "x right, y up, z back; sub nose = -z",
+ "rotation_convention": "Z rotation in degrees about the group pivot, positive = counter-clockwise seen from +Z (x toward y). Right arms (+x) swing down with NEGATIVE angles, left arms with POSITIVE. Child groups inherit parent rotation. Base pose of all cubes = IDLE (all rotations 0 except gangway_bridge, see animation.IDLE).",
+ "groups": [
+  {
+   "name": "base",
+   "pivot": [
+    0,
+    0,
+    0
+   ],
+   "parent": null,
+   "cubes": [
+    {
+     "from": [
+      -8,
+      1,
+      -8
+     ],
+     "to": [
+      8,
+      12,
+      8
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      -5,
+      0,
+      -5
+     ],
+     "to": [
+      5,
+      1,
+      5
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      -8,
+      12,
+      -8
+     ],
+     "to": [
+      8,
+      16,
+      8
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -6,
+      8,
+      -19
+     ],
+     "to": [
+      6,
+      14,
+      19
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -6,
+      14,
+      -19
+     ],
+     "to": [
+      6,
+      16,
+      19
+     ],
+     "texture": "dock_metal"
+    }
+   ]
+  },
+  {
+   "name": "arm_r_f_upper",
+   "pivot": [
+    8,
+    10,
+    -14
+   ],
+   "parent": "base",
+   "cubes": [
+    {
+     "from": [
+      8,
+      8,
+      -17
+     ],
+     "to": [
+      36,
+      12,
+      -11
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      6,
+      7,
+      -18
+     ],
+     "to": [
+      10,
+      13,
+      -10
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      27,
+      12,
+      -17
+     ],
+     "to": [
+      35,
+      13,
+      -11
+     ],
+     "texture": "dock_hazard"
+    },
+    {
+     "from": [
+      12,
+      7,
+      -15
+     ],
+     "to": [
+      32,
+      8,
+      -13
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      10,
+      12,
+      -16
+     ],
+     "to": [
+      20,
+      15,
+      -12
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      20,
+      13,
+      -15
+     ],
+     "to": [
+      28,
+      14,
+      -13
+     ],
+     "texture": "dock_metal"
+    }
+   ]
+  },
+  {
+   "name": "arm_r_f_lower",
+   "pivot": [
+    36,
+    10,
+    -14
+   ],
+   "parent": "arm_r_f_upper",
+   "cubes": [
+    {
+     "from": [
+      33,
+      7,
+      -18
+     ],
+     "to": [
+      39,
+      13,
+      -10
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      36,
+      8,
+      -17
+     ],
+     "to": [
+      74,
+      12,
+      -11
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      56,
+      4,
+      -19
+     ],
+     "to": [
+      62,
+      8,
+      -9
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      68,
+      4,
+      -19
+     ],
+     "to": [
+      74,
+      8,
+      -9
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      62,
+      5,
+      -18
+     ],
+     "to": [
+      68,
+      8,
+      -10
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      56,
+      3,
+      -17
+     ],
+     "to": [
+      62,
+      4,
+      -11
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      68,
+      3,
+      -17
+     ],
+     "to": [
+      74,
+      4,
+      -11
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      66,
+      12,
+      -17
+     ],
+     "to": [
+      74,
+      13,
+      -11
+     ],
+     "texture": "dock_hazard"
+    }
+   ]
+  },
+  {
+   "name": "arm_r_b_upper",
+   "pivot": [
+    8,
+    10,
+    14
+   ],
+   "parent": "base",
+   "cubes": [
+    {
+     "from": [
+      8,
+      8,
+      11
+     ],
+     "to": [
+      36,
+      12,
+      17
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      6,
+      7,
+      10
+     ],
+     "to": [
+      10,
+      13,
+      18
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      27,
+      12,
+      11
+     ],
+     "to": [
+      35,
+      13,
+      17
+     ],
+     "texture": "dock_hazard"
+    },
+    {
+     "from": [
+      12,
+      7,
+      13
+     ],
+     "to": [
+      32,
+      8,
+      15
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      10,
+      12,
+      12
+     ],
+     "to": [
+      20,
+      15,
+      16
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      20,
+      13,
+      13
+     ],
+     "to": [
+      28,
+      14,
+      15
+     ],
+     "texture": "dock_metal"
+    }
+   ]
+  },
+  {
+   "name": "arm_r_b_lower",
+   "pivot": [
+    36,
+    10,
+    14
+   ],
+   "parent": "arm_r_b_upper",
+   "cubes": [
+    {
+     "from": [
+      33,
+      7,
+      10
+     ],
+     "to": [
+      39,
+      13,
+      18
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      36,
+      8,
+      11
+     ],
+     "to": [
+      74,
+      12,
+      17
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      56,
+      4,
+      9
+     ],
+     "to": [
+      62,
+      8,
+      19
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      68,
+      4,
+      9
+     ],
+     "to": [
+      74,
+      8,
+      19
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      62,
+      5,
+      10
+     ],
+     "to": [
+      68,
+      8,
+      18
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      56,
+      3,
+      11
+     ],
+     "to": [
+      62,
+      4,
+      17
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      68,
+      3,
+      11
+     ],
+     "to": [
+      74,
+      4,
+      17
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      66,
+      12,
+      11
+     ],
+     "to": [
+      74,
+      13,
+      17
+     ],
+     "texture": "dock_hazard"
+    }
+   ]
+  },
+  {
+   "name": "arm_l_f_upper",
+   "pivot": [
+    -8,
+    10,
+    -14
+   ],
+   "parent": "base",
+   "cubes": [
+    {
+     "from": [
+      -36,
+      8,
+      -17
+     ],
+     "to": [
+      -8,
+      12,
+      -11
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      -10,
+      7,
+      -18
+     ],
+     "to": [
+      -6,
+      13,
+      -10
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -35,
+      12,
+      -17
+     ],
+     "to": [
+      -27,
+      13,
+      -11
+     ],
+     "texture": "dock_hazard"
+    },
+    {
+     "from": [
+      -32,
+      7,
+      -15
+     ],
+     "to": [
+      -12,
+      8,
+      -13
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      -20,
+      12,
+      -16
+     ],
+     "to": [
+      -10,
+      15,
+      -12
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -28,
+      13,
+      -15
+     ],
+     "to": [
+      -20,
+      14,
+      -13
+     ],
+     "texture": "dock_metal"
+    }
+   ]
+  },
+  {
+   "name": "arm_l_f_lower",
+   "pivot": [
+    -36,
+    10,
+    -14
+   ],
+   "parent": "arm_l_f_upper",
+   "cubes": [
+    {
+     "from": [
+      -39,
+      7,
+      -18
+     ],
+     "to": [
+      -33,
+      13,
+      -10
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -74,
+      8,
+      -17
+     ],
+     "to": [
+      -36,
+      12,
+      -11
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      -62,
+      4,
+      -19
+     ],
+     "to": [
+      -56,
+      8,
+      -9
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -74,
+      4,
+      -19
+     ],
+     "to": [
+      -68,
+      8,
+      -9
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -68,
+      5,
+      -18
+     ],
+     "to": [
+      -62,
+      8,
+      -10
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      -62,
+      3,
+      -17
+     ],
+     "to": [
+      -56,
+      4,
+      -11
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      -74,
+      3,
+      -17
+     ],
+     "to": [
+      -68,
+      4,
+      -11
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      -74,
+      12,
+      -17
+     ],
+     "to": [
+      -66,
+      13,
+      -11
+     ],
+     "texture": "dock_hazard"
+    }
+   ]
+  },
+  {
+   "name": "arm_l_b_upper",
+   "pivot": [
+    -8,
+    10,
+    14
+   ],
+   "parent": "base",
+   "cubes": [
+    {
+     "from": [
+      -36,
+      8,
+      11
+     ],
+     "to": [
+      -8,
+      12,
+      17
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      -10,
+      7,
+      10
+     ],
+     "to": [
+      -6,
+      13,
+      18
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -35,
+      12,
+      11
+     ],
+     "to": [
+      -27,
+      13,
+      17
+     ],
+     "texture": "dock_hazard"
+    },
+    {
+     "from": [
+      -32,
+      7,
+      13
+     ],
+     "to": [
+      -12,
+      8,
+      15
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      -20,
+      12,
+      12
+     ],
+     "to": [
+      -10,
+      15,
+      16
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -28,
+      13,
+      13
+     ],
+     "to": [
+      -20,
+      14,
+      15
+     ],
+     "texture": "dock_metal"
+    }
+   ]
+  },
+  {
+   "name": "arm_l_b_lower",
+   "pivot": [
+    -36,
+    10,
+    14
+   ],
+   "parent": "arm_l_b_upper",
+   "cubes": [
+    {
+     "from": [
+      -39,
+      7,
+      10
+     ],
+     "to": [
+      -33,
+      13,
+      18
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -74,
+      8,
+      11
+     ],
+     "to": [
+      -36,
+      12,
+      17
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      -62,
+      4,
+      9
+     ],
+     "to": [
+      -56,
+      8,
+      19
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -74,
+      4,
+      9
+     ],
+     "to": [
+      -68,
+      8,
+      19
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      -68,
+      5,
+      10
+     ],
+     "to": [
+      -62,
+      8,
+      18
+     ],
+     "texture": "dock_metal"
+    },
+    {
+     "from": [
+      -62,
+      3,
+      11
+     ],
+     "to": [
+      -56,
+      4,
+      17
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      -74,
+      3,
+      11
+     ],
+     "to": [
+      -68,
+      4,
+      17
+     ],
+     "texture": "dock_light"
+    },
+    {
+     "from": [
+      -74,
+      12,
+      11
+     ],
+     "to": [
+      -66,
+      13,
+      17
+     ],
+     "texture": "dock_hazard"
+    }
+   ]
+  },
+  {
+   "name": "gangway_mount",
+   "pivot": [
+    58,
+    -24,
+    0
+   ],
+   "parent": null,
+   "cubes": [
+    {
+     "from": [
+      58,
+      -32,
+      -10
+     ],
+     "to": [
+      66,
+      -25,
+      10
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      58,
+      -25,
+      -10
+     ],
+     "to": [
+      66,
+      -24,
+      10
+     ],
+     "texture": "dock_hazard"
+    },
+    {
+     "from": [
+      56,
+      -33,
+      -9
+     ],
+     "to": [
+      58,
+      -31,
+      9
+     ],
+     "texture": "dock_light"
+    }
+   ]
+  },
+  {
+   "name": "gangway_bridge",
+   "pivot": [
+    58,
+    -24,
+    0
+   ],
+   "parent": null,
+   "cubes": [
+    {
+     "from": [
+      28,
+      -27,
+      -8
+     ],
+     "to": [
+      58,
+      -24,
+      8
+     ],
+     "texture": "dock_gangway_grating"
+    },
+    {
+     "from": [
+      28,
+      -30,
+      -8
+     ],
+     "to": [
+      58,
+      -27,
+      -6
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      28,
+      -30,
+      6
+     ],
+     "to": [
+      58,
+      -27,
+      8
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      28,
+      -32,
+      -8
+     ],
+     "to": [
+      30,
+      -30,
+      -6
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      28,
+      -32,
+      6
+     ],
+     "to": [
+      30,
+      -30,
+      8
+     ],
+     "texture": "dock_dark"
+    },
+    {
+     "from": [
+      28,
+      -24,
+      -8
+     ],
+     "to": [
+      30,
+      -23,
+      -6
+     ],
+     "texture": "dock_hazard"
+    },
+    {
+     "from": [
+      28,
+      -24,
+      6
+     ],
+     "to": [
+      30,
+      -23,
+      8
+     ],
+     "texture": "dock_hazard"
+    },
+    {
+     "from": [
+      28,
+      -24,
+      -3
+     ],
+     "to": [
+      30,
+      -23,
+      3
+     ],
+     "texture": "dock_light"
+    }
+   ]
+  },
+  {
+   "name": "gangway_rails",
+   "pivot": [
+    58,
+    -24,
+    0
+   ],
+   "parent": "gangway_bridge",
+   "cubes": [
+    {
+     "from": [
+      28,
+      -24,
+      -8
+     ],
+     "to": [
+      30,
+      -15,
+      -6
+     ],
+     "texture": "dock_gangway_rail"
+    },
+    {
+     "from": [
+      43,
+      -24,
+      -8
+     ],
+     "to": [
+      45,
+      -15,
+      -6
+     ],
+     "texture": "dock_gangway_rail"
+    },
+    {
+     "from": [
+      56,
+      -24,
+      -8
+     ],
+     "to": [
+      58,
+      -15,
+      -6
+     ],
+     "texture": "dock_gangway_rail"
+    },
+    {
+     "from": [
+      28,
+      -17,
+      -8
+     ],
+     "to": [
+      58,
+      -15,
+      -6
+     ],
+     "texture": "dock_gangway_rail"
+    },
+    {
+     "from": [
+      28,
+      -24,
+      6
+     ],
+     "to": [
+      30,
+      -15,
+      8
+     ],
+     "texture": "dock_gangway_rail"
+    },
+    {
+     "from": [
+      43,
+      -24,
+      6
+     ],
+     "to": [
+      45,
+      -15,
+      8
+     ],
+     "texture": "dock_gangway_rail"
+    },
+    {
+     "from": [
+      56,
+      -24,
+      6
+     ],
+     "to": [
+      58,
+      -15,
+      8
+     ],
+     "texture": "dock_gangway_rail"
+    },
+    {
+     "from": [
+      28,
+      -17,
+      6
+     ],
+     "to": [
+      58,
+      -15,
+      8
+     ],
+     "texture": "dock_gangway_rail"
+    }
+   ]
+  }
+ ],
+ "animation": {
+  "IDLE": {
+   "arm_r_f_upper": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_r_f_lower": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_r_b_upper": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_r_b_lower": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_l_f_upper": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_l_f_lower": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_l_b_upper": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_l_b_lower": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "gangway_bridge": {
+    "rotation": [
+     0,
+     0,
+     -80.0
+    ]
+   }
+  },
+  "CAPTURE": {
+   "arm_r_f_upper": {
+    "rotation": [
+     0,
+     0,
+     -20
+    ]
+   },
+   "arm_r_f_lower": {
+    "rotation": [
+     0,
+     0,
+     -70
+    ]
+   },
+   "arm_r_b_upper": {
+    "rotation": [
+     0,
+     0,
+     -20
+    ]
+   },
+   "arm_r_b_lower": {
+    "rotation": [
+     0,
+     0,
+     -70
+    ]
+   },
+   "arm_l_f_upper": {
+    "rotation": [
+     0,
+     0,
+     20
+    ]
+   },
+   "arm_l_f_lower": {
+    "rotation": [
+     0,
+     0,
+     70
+    ]
+   },
+   "arm_l_b_upper": {
+    "rotation": [
+     0,
+     0,
+     20
+    ]
+   },
+   "arm_l_b_lower": {
+    "rotation": [
+     0,
+     0,
+     70
+    ]
+   },
+   "gangway_bridge": {
+    "rotation": [
+     0,
+     0,
+     -80.0
+    ]
+   }
+  },
+  "DOCKED": {
+   "arm_r_f_upper": {
+    "rotation": [
+     0,
+     0,
+     -20
+    ]
+   },
+   "arm_r_f_lower": {
+    "rotation": [
+     0,
+     0,
+     -70
+    ]
+   },
+   "arm_r_b_upper": {
+    "rotation": [
+     0,
+     0,
+     -20
+    ]
+   },
+   "arm_r_b_lower": {
+    "rotation": [
+     0,
+     0,
+     -70
+    ]
+   },
+   "arm_l_f_upper": {
+    "rotation": [
+     0,
+     0,
+     20
+    ]
+   },
+   "arm_l_f_lower": {
+    "rotation": [
+     0,
+     0,
+     70
+    ]
+   },
+   "arm_l_b_upper": {
+    "rotation": [
+     0,
+     0,
+     20
+    ]
+   },
+   "arm_l_b_lower": {
+    "rotation": [
+     0,
+     0,
+     70
+    ]
+   },
+   "gangway_bridge": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  "RELEASE": {
+   "arm_r_f_upper": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_r_f_lower": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_r_b_upper": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_r_b_lower": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_l_f_upper": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_l_f_lower": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_l_b_upper": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "arm_l_b_lower": {
+    "rotation": [
+     0,
+     0,
+     0
+    ]
+   },
+   "gangway_bridge": {
+    "rotation": [
+     0,
+     0,
+     -80.0
+    ]
+   }
+  }
+ },
+ "timing_ticks": {
+  "CAPTURE": {
+   "total": 30,
+   "arms": {
+    "from": "IDLE",
+    "to": "CAPTURE",
+    "start": 0,
+    "end": 24,
+    "easing": "ease_in_out_cubic",
+    "upper_leads_lower": "upper 0-18, lower 6-24"
+   }
+  },
+  "DOCKED": {
+   "gangway": {
+    "from": "CAPTURE",
+    "to": "DOCKED",
+    "start": 0,
+    "end": 14,
+    "easing": "ease_out_cubic",
+    "note": "starts when sub has stopped (hold >= 6 ticks after CAPTURE)"
+   }
+  },
+  "RELEASE": {
+   "total": 34,
+   "gangway": {
+    "start": 0,
+    "end": 14,
+    "easing": "ease_in_cubic"
+   },
+   "arms": {
+    "start": 14,
+    "end": 34,
+    "easing": "ease_in_out_cubic",
+    "lower_leads_upper": "lower 14-28, upper 20-34"
+   }
+  }
+ }
+}

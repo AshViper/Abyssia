@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -46,6 +47,10 @@ public final class VehicleContent
     public static final DeferredBlock<Block> SUBMARINE_DOCK = BLOCKS.register("submarine_dock",
             () -> new SubmarineDockBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0f, 6.0f)
                     .noLootTable().noOcclusion().sound(SoundType.METAL).lightLevel(s -> 12)));
+    /** SUB04 invisible walkable helper blocks of the deployed dock gangway (no item, no drop) */
+    public static final DeferredBlock<Block> SUBMARINE_DOCK_GANGWAY = BLOCKS.register("submarine_dock_gangway",
+            () -> new SubmarineDockGangwayBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(-1.0f, 3600000.0f)
+                    .noLootTable().noOcclusion().sound(SoundType.METAL).pushReaction(PushReaction.DESTROY)));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SubmarineDockBlockEntity>> SUBMARINE_DOCK_ENTITY = BLOCK_ENTITIES.register(
             "submarine_dock", () -> BlockEntityType.Builder.of(SubmarineDockBlockEntity::new, SUBMARINE_DOCK.get()).build(null));
 

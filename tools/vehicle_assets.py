@@ -9,6 +9,7 @@ import os
 MOD = "abyssia"
 SUBMARINE = "submarine"
 DOCK = "submarine_dock"
+GANGWAY = "submarine_dock_gangway"   # SUB04 invisible helper blocks under the dock gangway
 
 RECIPES = {
     # two propulsion screws (I04), alloy hull, marine resin seal, conductive wiring, glass canopy
@@ -82,6 +83,7 @@ LANG = {
         "W/S で前後、A/D で左右、Space で上昇、Ctrl で下降、マウスで旋回、G でライト、Shift で降りる。"
         "60,000 FE のバッテリーで動き、潜水艦ドック（ハビタット建設ツールでムーンプールに設置）の下に入れると充電・修理される。"),
     f"block.{MOD}.submarine_dock": ("Submarine Dock", "潜水艦ドック"),
+    f"block.{MOD}.submarine_dock_gangway": ("Dock Gangway", "ドックの足場"),
     f"habitat.{MOD}.mode.submarine_dock": ("Submarine Dock", "潜水艦ドック"),
     f"habitat.{MOD}.submarine_dock.detail": ("Moon pool only, over the pool centre: docks, charges (%s FE buffer) and repairs a submarine",
                                              "ムーンプール専用、プール中央の真上: 潜水艦を固定・充電 (バッファ %s FE)・修理"),
@@ -137,11 +139,17 @@ def _box(frm, to, down_lamp=False):
 
 
 def dock_model():
-    """Ceiling clamp: stem from the top, a 12 x 3 x 12 plate (lamp underneath) and two jaws below it."""
+    """SUB04: the dock is drawn by DockRenderer (block entity); this model only serves the build ghost (the block's render
+    shape is invisible) and the particles: base, ceiling beam, nose marker (-z) and a stub toward the gangway side (+x).
+    Block px = dock frame + (8, 0, 8)."""
     return {"parent": "minecraft:block/block",
             "textures": {"particle": FRAME, "frame": FRAME, "lamp": LAMP},
-            "elements": [_box([6, 6, 6], [10, 16, 10]), _box([2, 3, 2], [14, 6, 14], True),
-                         _box([2, 0, 2], [4, 3, 14]), _box([12, 0, 2], [14, 3, 14])]}
+            "elements": [_box([0, 1, 0], [16, 12, 16], True), _box([2, 8, -11], [14, 16, 27]),
+                         _box([6, 6, -16], [10, 10, -11], True), _box([16, 8, 6], [24, 10, 10])]}
+
+
+def gangway_model():
+    return {"parent": "minecraft:block/block", "textures": {"particle": FRAME}, "elements": []}
 
 
 def pickaxe_blocks():
@@ -153,7 +161,10 @@ def generate(write, bs, bm, im, data_dir):
     for upgrade in UPGRADES:   # icons by ChatGPT, locked in tools/texture_locks
         write(im(upgrade), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{upgrade}"}})
     write(bm(DOCK), dock_model())
-    write(bs(DOCK), {"variants": {"": {"model": f"{MOD}:block/{DOCK}"}}})
+    write(bs(DOCK), {"variants": {f"facing={d}": {"model": f"{MOD}:block/{DOCK}", "y": y}
+                                  for d, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270))}})
+    write(bm(GANGWAY), gangway_model())
+    write(bs(GANGWAY), {"variants": {"": {"model": f"{MOD}:block/{GANGWAY}"}}})
     for name, (pattern, key) in RECIPES.items():
         write(os.path.join(data_dir, MOD, "recipes", name + ".json"), {
             "type": "minecraft:crafting_shaped", "category": "misc", "pattern": pattern,

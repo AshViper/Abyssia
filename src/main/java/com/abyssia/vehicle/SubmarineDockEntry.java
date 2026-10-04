@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * SUB02 submarine dock as an EQUIPMENT build entry: aim anywhere inside a moon pool and it snaps to the pool centre,
  * top interior cell (x 0, z mid, y = height - 2), hanging from the ceiling. Refused outside a (registered) moon pool and
- * when that pool already has its dock. No rotation (the clamp is symmetric). Dismantle: block removed, 80 % of the paid
+ * when that pool already has its dock. SUB04: R rotates it (FACING = the docked sub's nose, rot index = Direction 2D value). Dismantle: block removed, 80 % of the paid
  * materials back (overflow dropped), like the charging station.
  */
 public final class SubmarineDockEntry implements BuildEntry
@@ -49,7 +49,7 @@ public final class SubmarineDockEntry implements BuildEntry
     private static final int CEILING_SEARCH = HabitatMode.MOON_POOL.height;
 
     /** {@code centre} = the moon pool's centre ceiling light; {@code pool} false = some other 13 x 13 room */
-    public record Placement(BlockPos pos, BlockPos centre, boolean pool) implements BuildPlacement
+    public record Placement(BlockPos pos, BlockPos centre, boolean pool, Direction facing) implements BuildPlacement
     {
         @Override
         public BlockPos origin()
@@ -60,7 +60,7 @@ public final class SubmarineDockEntry implements BuildEntry
         @Override
         public Direction forward()
         {
-            return Direction.SOUTH;
+            return facing;   // rot index = the dock facing (the docked sub's nose direction)
         }
 
         /** always snapped to the pool centre */
@@ -79,7 +79,7 @@ public final class SubmarineDockEntry implements BuildEntry
         @Override
         public Map<BlockPos, BlockState> ghost(BlockGetter level)
         {
-            return Map.of(pos, VehicleContent.SUBMARINE_DOCK.get().defaultBlockState());
+            return Map.of(pos, VehicleContent.SUBMARINE_DOCK.get().defaultBlockState().setValue(SubmarineDockBlock.FACING, facing));
         }
     }
 
@@ -135,7 +135,7 @@ public final class SubmarineDockEntry implements BuildEntry
         if (centre == null) return null;
         // a moon pool has water at its floor centre (y 0)
         boolean pool = level.getFluidState(centre.below(HabitatMode.MOON_POOL.height - 1)).is(FluidTags.WATER);
-        return new Placement(centre.below().immutable(), centre.immutable(), pool);
+        return new Placement(centre.below().immutable(), centre.immutable(), pool, HabitatPlan.facing(rot));
     }
 
     @Override
@@ -152,7 +152,8 @@ public final class SubmarineDockEntry implements BuildEntry
     public BuildLayout layout(ServerLevel level, BuildPlacement placement)
     {
         Placement p = (Placement) placement;
-        return BuildLayout.of(List.of(new BuildStep(p.pos, VehicleContent.SUBMARINE_DOCK.get().defaultBlockState(), null,
+        return BuildLayout.of(List.of(new BuildStep(p.pos, VehicleContent.SUBMARINE_DOCK.get().defaultBlockState()
+                .setValue(SubmarineDockBlock.FACING, p.facing), null,
                 Blocks.AIR.defaultBlockState())));
     }
 
