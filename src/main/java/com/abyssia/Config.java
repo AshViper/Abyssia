@@ -424,6 +424,57 @@ public class Config
             .defineInRange("dock_capture_range", 3.5, 0.5, 16.0);
 
     static {
+        BUILDER.comment("SUB03 submarine upgrades (the base thrust FE is thrust_fe_per_tick above)").push("upgrades");
+    }
+
+    public static final ModConfigSpec.DoubleValue SUB_HULL_MAX_DAMAGE = BUILDER
+            .comment("Pressure hull: breaking threshold of the hull (without it 40)")
+            .defineInRange("hull_max_damage", 70.0, 1.0, 10_000.0);
+    public static final ModConfigSpec.DoubleValue SUB_HULL_DEEP_REDUCTION = BUILDER
+            .comment("Pressure hull: damage multiplier at or below Y -64 (rounded up, so 1 stays 1)")
+            .defineInRange("hull_deep_reduction", 0.5, 0.0, 1.0);
+    public static final ModConfigSpec.DoubleValue SUB_HULL_SPEED_MULT = BUILDER
+            .comment("Pressure hull: multiplier of every top speed")
+            .defineInRange("hull_speed_mult", 0.92, 0.1, 2.0);
+    public static final ModConfigSpec.IntValue SUB_BATTERY_CAPACITY = BUILDER
+            .comment("High-capacity battery: battery size in FE")
+            .defineInRange("battery_capacity", 150_000, 1_000, 10_000_000);
+    public static final ModConfigSpec.DoubleValue SUB_BATTERY_VERTICAL_MULT = BUILDER
+            .comment("High-capacity battery: multiplier of the up / down top speed")
+            .defineInRange("battery_vertical_mult", 0.95, 0.1, 2.0);
+    public static final ModConfigSpec.DoubleValue SUB_THRUSTER_FORWARD = BUILDER
+            .comment("Maneuver thruster: top forward speed (blocks per tick)")
+            .defineInRange("thruster_forward", 0.56, 0.05, 2.0);
+    public static final ModConfigSpec.DoubleValue SUB_THRUSTER_SIDE = BUILDER
+            .comment("Maneuver thruster: top reverse / sideways speed")
+            .defineInRange("thruster_side", 0.30, 0.05, 2.0);
+    public static final ModConfigSpec.DoubleValue SUB_THRUSTER_VERTICAL = BUILDER
+            .comment("Maneuver thruster: top up / down speed")
+            .defineInRange("thruster_vertical", 0.23, 0.05, 2.0);
+    public static final ModConfigSpec.IntValue SUB_THRUSTER_FE = BUILDER
+            .comment("Maneuver thruster: FE per tick while moving under power (replaces thrust_fe_per_tick)")
+            .defineInRange("thruster_fe_per_tick", 12, 0, 10_000);
+    public static final ModConfigSpec.DoubleValue SUB_THRUSTER_ACCEL = BUILDER
+            .comment("Maneuver thruster: acceleration in blocks per tick^2 (without it 0.04)")
+            .defineInRange("thruster_accel", 0.05, 0.005, 1.0);
+    public static final ModConfigSpec.IntValue SUB_SONAR_FE = BUILDER
+            .comment("Deep-sea sonar: FE per tick while someone is aboard")
+            .defineInRange("sonar_fe_per_tick", 4, 0, 10_000);
+    public static final ModConfigSpec.IntValue SUB_SONAR_RANGE = BUILDER
+            .comment("Deep-sea sonar: scan radius for sea life and currents (blocks)")
+            .defineInRange("sonar_range", 16, 1, 64);
+    public static final ModConfigSpec.IntValue SUB_SONAR_INTERVAL = BUILDER
+            .comment("Deep-sea sonar: ticks between scans")
+            .defineInRange("sonar_interval", 10, 1, 200);
+    public static final ModConfigSpec.IntValue SUB_SONAR_DOCK_RANGE = BUILDER
+            .comment("Deep-sea sonar: reach of the submarine dock search (blocks)")
+            .defineInRange("sonar_dock_range", 32, 1, 128);
+
+    static {
+        BUILDER.pop();
+    }
+
+    static {
         BUILDER.pop();
     }
 

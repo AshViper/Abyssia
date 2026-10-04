@@ -2,16 +2,23 @@ package com.abyssia.vehicle;
 
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
+import com.abyssia.registry.ModDataComponents;
+import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Containers;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,6 +30,9 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.DismountHelper;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
@@ -41,6 +51,8 @@ import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.UUID;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -59,6 +71,8 @@ public class Submarine extends Entity
     private static final EntityDataAccessor<Float> DATA_DAMAGE = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> DATA_LIGHTS = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_DOCK = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
+    /** SUB03 installed upgrades (SubmarineUpgrades.bit), set by the server; the pilot's client reads it for the speeds */
+    private static final EntityDataAccessor<Byte> DATA_UPGRADES = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.BYTE);
 
     public static final float MAX_DAMAGE = 40.0f;
     /** acceleration (blocks / tick^2), reverse / sideways / vertical top speeds, water drag per tick without input */
@@ -100,16 +114,120 @@ public class Submarine extends Entity
     private Vec3 lastServerPos;
     private boolean movingUp;
     private final List<BlockPos> placedLights = new ArrayList<>();
+    /** side storage pods: 0 = right (+x of the model), 1 = left; 27 slots each */
+    private final SimpleContainer[] pods = {newPod(), newPod()};
+    /** SUB03 upgrade slots (hull, power, thrust, utility); the server mirrors them into DATA_UPGRADES */
+    private final SimpleContainer upgrades = new SimpleContainer(SubmarineUpgrades.SLOTS);
+    /** sonar (server): last read-out appended to the HUD, creatures already reported */
+    @Nullable
+    private Component sonarLine;
+    private final Set<UUID> sonarSeen = new HashSet<>();
 
     public Submarine(EntityType<? extends Submarine> type, Level level)
     {
         super(type, level);
         blocksBuilding = true;
+        upgrades.addListener(c ->
+        {
+            if (level().isClientSide) return;
+            entityData.set(DATA_UPGRADES, (byte) SubmarineUpgrades.mask(upgrades));
+            // battery taken out: the charge above the base capacity is lost
+            setEnergy(getEnergy());
+        });
     }
 
+    /** SUB03 upgrade slots (the "Submarine Systems" menu works on these directly) */
+    public SimpleContainer upgrades()
+    {
+        return upgrades;
+    }
+
+    public boolean hasUpgrade(int slot)
+    {
+        return (entityData.get(DATA_UPGRADES) & SubmarineUpgrades.bit(slot)) != 0;
+    }
+
+    private SimpleContainer newPod()
+    {
+        return new SimpleContainer(27)
+        {
+            @Override
+            public boolean stillValid(Player player)
+            {
+                return Submarine.this.isAlive() && player.distanceToSqr(Submarine.this) <= 64.0;
+            }
+
+            @Override
+            public void startOpen(Player player)
+            {
+                if (!level().isClientSide) level().playSound(null, getX(), getY() + 1.0, getZ(), SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 0.5f, level().random.nextFloat() * 0.1f + 0.9f);
+            }
+
+            @Override
+            public void stopOpen(Player player)
+            {
+                if (!level().isClientSide) level().playSound(null, getX(), getY() + 1.0, getZ(), SoundEvents.CHEST_CLOSE, SoundSource.BLOCKS, 0.5f, level().random.nextFloat() * 0.1f + 0.9f);
+            }
+        };
+    }
+
+    public SimpleContainer pod(int side)
+    {
+        return pods[side];
+    }
+
+    /** which pod (SubmarinePods.RIGHT / LEFT) the player's view ray hits, or -1 */
+    private int podHit(Player player)
+    {
+        Vec3 eye = player.getEyePosition().subtract(position());
+        Vec3 look = player.getViewVector(1.0f);
+        int[] which = {-1};
+        double t = SubmarinePods.raycast(getYRot(), eye.x, eye.y, eye.z, look.x, look.y, look.z, player.entityInteractionRange(), which);
+        return t < 0 ? -1 : which[0];
+    }
+
+    /** base battery (no high-capacity battery) */
     public static int capacity()
     {
         return Config.SUBMARINE_ENERGY_CAPACITY.get();
+    }
+
+    /** battery with the installed upgrades */
+    public int maxEnergy()
+    {
+        return capacity(hasUpgrade(SubmarineUpgrades.BATTERY));
+    }
+
+    public static int capacity(boolean battery)
+    {
+        return battery ? Math.max(capacity(), Config.SUB_BATTERY_CAPACITY.get()) : capacity();
+    }
+
+    /** breaking threshold of the hull with the installed upgrades */
+    public float maxDamage()
+    {
+        return hasUpgrade(SubmarineUpgrades.HULL) ? Config.SUB_HULL_MAX_DAMAGE.get().floatValue() : MAX_DAMAGE;
+    }
+
+    /**
+     * Top speeds {forward, reverse / sideways, vertical} and the acceleration (spec 1.3 order: base, the thruster
+     * replaces, x hull, vertical x battery).
+     */
+    public double[] speeds()
+    {
+        boolean thruster = hasUpgrade(SubmarineUpgrades.THRUSTER);
+        double forward = thruster ? Config.SUB_THRUSTER_FORWARD.get() : Config.SUBMARINE_MAX_SPEED.get();
+        double side = thruster ? Config.SUB_THRUSTER_SIDE.get() : SIDE_SPEED;
+        double vertical = thruster ? Config.SUB_THRUSTER_VERTICAL.get() : VERTICAL_SPEED;
+        if (hasUpgrade(SubmarineUpgrades.HULL))
+        {
+            double m = Config.SUB_HULL_SPEED_MULT.get();
+            forward *= m;
+            side *= m;
+            vertical *= m;
+        }
+        if (hasUpgrade(SubmarineUpgrades.BATTERY)) vertical *= Config.SUB_BATTERY_VERTICAL_MULT.get();
+        return new double[]{forward, side, vertical, thruster ? Config.SUB_THRUSTER_ACCEL.get() : ACCEL};
     }
 
     // ---------------------------------------------------------------- synced data
@@ -121,11 +239,12 @@ public class Submarine extends Entity
         builder.define(DATA_DAMAGE, 0.0f);
         builder.define(DATA_LIGHTS, false);
         builder.define(DATA_DOCK, Optional.empty());
+        builder.define(DATA_UPGRADES, (byte) 0);
     }
 
     public int getEnergy() { return entityData.get(DATA_ENERGY); }
 
-    public void setEnergy(int energy) { entityData.set(DATA_ENERGY, Mth.clamp(energy, 0, capacity())); }
+    public void setEnergy(int energy) { entityData.set(DATA_ENERGY, Mth.clamp(energy, 0, maxEnergy())); }
 
     public float getDamage() { return entityData.get(DATA_DAMAGE); }
 
@@ -238,10 +357,11 @@ public class Submarine extends Entity
         int[] in = getControllingPassenger() != null && level().isClientSide && getEnergy() > 0 ? pilot.input() : NO_INPUT;
         if (wet > 0.0)
         {
-            f = axis(f, in[0], Config.SUBMARINE_MAX_SPEED.get(), BACK_SPEED);
-            s = axis(s, in[1], SIDE_SPEED, SIDE_SPEED);
+            double[] sp = speeds();
+            f = axis(f, in[0], sp[0], sp[1], sp[3]);
+            s = axis(s, in[1], sp[1], sp[1], sp[3]);
             int vertical = in[2] > 0 && wet < LIFT_SUBMERGED ? 0 : in[2];
-            u = axis(u, vertical, VERTICAL_SPEED, VERTICAL_SPEED);
+            u = axis(u, vertical, sp[2], sp[2], sp[3]);
             // floating high at the surface: settle gently until LIFT_SUBMERGED is under water (neutral below that)
             if (vertical == 0 && wet < LIFT_SUBMERGED) u -= 0.004;
         }
@@ -256,10 +376,10 @@ public class Submarine extends Entity
         setDeltaMovement(fx * f + lx * s, u, fz * f + lz * s);
     }
 
-    private static double axis(double v, int input, double maxPos, double maxNeg)
+    private static double axis(double v, int input, double maxPos, double maxNeg, double accel)
     {
         if (input == 0) return v * DRAG;
-        return Mth.clamp(v + ACCEL * input, -maxNeg, maxPos);
+        return Mth.clamp(v + accel * input, -maxNeg, maxPos);
     }
 
     /** Fraction (0..1) of the hull height in water, sampled down the centre line. */
@@ -312,12 +432,24 @@ public class Submarine extends Entity
             if (!level().isLoaded(at) || !(level().getBlockEntity(at) instanceof SubmarineDockBlockEntity station)) undock();
             else
             {
-                int want = Math.min(Config.SUBMARINE_DOCK_CHARGE_RATE.get(), capacity() - energy);
+                int want = Math.min(Config.SUBMARINE_DOCK_CHARGE_RATE.get(), maxEnergy() - energy);
                 if (want > 0) energy += station.drain(want);
                 if (getDamage() > 0.0f) setDamage(getDamage() - REPAIR_PER_TICK);
             }
         }
-        else if (rider != null && moved > 0.01) energy -= Config.SUBMARINE_THRUST_FE.get();
+        else if (rider != null && moved > 0.01)
+            energy -= hasUpgrade(SubmarineUpgrades.THRUSTER) ? Config.SUB_THRUSTER_FE.get() : Config.SUBMARINE_THRUST_FE.get();
+        boolean sonar = rider != null && hasUpgrade(SubmarineUpgrades.SONAR) && energy > 0;
+        if (sonar)
+        {
+            energy -= Config.SUB_SONAR_FE.get();
+            if (tickCount % Config.SUB_SONAR_INTERVAL.get() == 0) sonarLine = SubmarineSonar.scan(this, sonarSeen);
+        }
+        else
+        {
+            sonarLine = null;
+            sonarSeen.clear();
+        }
         if (lights())
         {
             energy -= Config.SUBMARINE_LIGHT_FE.get();
@@ -335,11 +467,22 @@ public class Submarine extends Entity
 
     private Component hud()
     {
-        int energy = Math.round(100.0f * getEnergy() / Math.max(1, capacity()));
-        int hull = Math.round(100.0f * (1.0f - Math.min(MAX_DAMAGE, getDamage()) / MAX_DAMAGE));
-        MutableComponent line = Component.translatable("message." + Abyssia.MODID + ".submarine.hud", energy, hull);
+        MutableComponent line = Component.translatable("message." + Abyssia.MODID + ".submarine.hud", energyPercent(), hullPercent());
         if (getDock().isPresent()) line.append(Component.translatable("message." + Abyssia.MODID + ".submarine.docked"));
+        if (sonarLine != null) line.append(sonarLine);
         return line;
+    }
+
+    public int energyPercent()
+    {
+        return Math.round(100.0f * getEnergy() / Math.max(1, maxEnergy()));
+    }
+
+    /** hull condition against the installed hull's threshold (70 with the pressure hull) */
+    public int hullPercent()
+    {
+        float max = maxDamage();
+        return Math.round(100.0f * (1.0f - Math.min(max, getDamage()) / max));
     }
 
     /** C2S (SubmarineLightPacket): the pilot flips the headlights. */
@@ -420,6 +563,13 @@ public class Submarine extends Entity
     {
         // a chunk being unloaded is not edited: the cells stay in the save and are cleared after the next load
         if (reason != RemovalReason.UNLOADED_TO_CHUNK) clearLights();
+        if (!level().isClientSide && reason.shouldDestroy())
+            // the upgrades are already moved into the item when it broke into one (hurt): this drops them for a creative removal
+            for (SimpleContainer box : new SimpleContainer[]{pods[0], pods[1], upgrades})
+            {
+                for (ItemStack stack : box.getItems()) Containers.dropItemStack(level(), getX(), getY() + 0.5, getZ(), stack);
+                box.clearContent();
+            }
         super.remove(reason);
     }
 
@@ -556,7 +706,25 @@ public class Submarine extends Entity
     @Override
     public InteractionResult interact(Player player, InteractionHand hand)
     {
-        if (player.isSecondaryUseActive() || isVehicle()) return InteractionResult.PASS;
+        // SUB03: sneak + right-click on an unmanned submarine (docked too) opens the upgrade screen, before pods / boarding
+        if (player.isSecondaryUseActive())
+        {
+            if (isVehicle() || hasPassenger(player)) return InteractionResult.PASS;
+            if (!level().isClientSide) SubmarineUpgradeMenu.open(player, this);
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
+        if (!hasPassenger(player))
+        {
+            int side = podHit(player);
+            if (side >= 0)
+            {
+                if (!level().isClientSide)
+                    player.openMenu(new SimpleMenuProvider((id, inv, p) -> ChestMenu.threeRows(id, inv, pods[side]),
+                            Component.translatable("container." + Abyssia.MODID + (side == SubmarinePods.RIGHT ? ".submarine.pod_right" : ".submarine.pod_left"))));
+                return InteractionResult.sidedSuccess(level().isClientSide);
+            }
+        }
+        if (isVehicle()) return InteractionResult.PASS;
         if (!level().isClientSide) return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
         return InteractionResult.SUCCESS;
     }
@@ -570,22 +738,32 @@ public class Submarine extends Entity
         Entity attacker = source.getEntity();
         if (attacker != null && hasPassenger(attacker)) return false;
         if (level().isClientSide || isRemoved()) return true;
-        setDamage(getDamage() + amount * 10.0f);
+        float damage = amount * 10.0f;
+        // pressure hull: deep-layer hits reduced (rounded up, a hit never drops to 0)
+        if (hasUpgrade(SubmarineUpgrades.HULL) && getY() <= DeepLayer.TOP_Y)
+            damage = (float) Math.ceil(damage * Config.SUB_HULL_DEEP_REDUCTION.get());
+        setDamage(getDamage() + damage);
         markHurt();
         gameEvent(GameEvent.ENTITY_DAMAGE, attacker);
         boolean creative = attacker instanceof Player player && player.getAbilities().instabuild;
-        if (creative || getDamage() > MAX_DAMAGE)
+        if (creative || getDamage() > maxDamage())
         {
-            if (!creative && level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) spawnAtLocation(toItem());
+            if (!creative && level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
+            {
+                spawnAtLocation(toItem());
+                upgrades.clearContent();   // kept in the item, not dropped by remove()
+            }
             discard();
         }
         return true;
     }
 
-    /** the item this submarine breaks into (keeps its energy) */
+    /** the item this submarine breaks into (keeps its energy and upgrades; damage is not carried over) */
     public ItemStack toItem()
     {
         ItemStack stack = new ItemStack(VehicleContent.SUBMARINE_ITEM.get());
+        CompoundTag installed = SubmarineUpgrades.save(upgrades);
+        if (!installed.isEmpty()) stack.set(ModDataComponents.SUBMARINE_UPGRADES.get(), installed);
         SubmarineItem.setEnergy(stack, getEnergy());
         return stack;
     }
@@ -629,20 +807,36 @@ public class Submarine extends Entity
     @Override
     protected void addAdditionalSaveData(CompoundTag tag)
     {
+        tag.put(SubmarineUpgrades.TAG, SubmarineUpgrades.save(upgrades));
         tag.putInt("Energy", getEnergy());
         tag.putFloat("Damage", getDamage());
         tag.putBoolean("Lights", lights());
         getDock().ifPresent(pos -> tag.putLong("Dock", pos.asLong()));
+        for (int side = 0; side < 2; side++)
+        {
+            CompoundTag podTag = new CompoundTag();
+            ContainerHelper.saveAllItems(podTag, pods[side].getItems(), registryAccess());
+            tag.put(side == SubmarinePods.RIGHT ? "RightPod" : "LeftPod", podTag);
+        }
         tag.putLongArray("PlacedLights", placedLights.stream().mapToLong(BlockPos::asLong).toArray());
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag)
     {
+        // upgrades first: the battery decides how much energy fits
+        SubmarineUpgrades.load(tag.getCompound(SubmarineUpgrades.TAG), upgrades);
+        entityData.set(DATA_UPGRADES, (byte) SubmarineUpgrades.mask(upgrades));
         setEnergy(tag.getInt("Energy"));
         setDamage(tag.getFloat("Damage"));
         setLights(tag.getBoolean("Lights"));
         entityData.set(DATA_DOCK, tag.contains("Dock") ? Optional.of(BlockPos.of(tag.getLong("Dock"))) : Optional.empty());
+        for (int side = 0; side < 2; side++)
+        {
+            NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+            ContainerHelper.loadAllItems(tag.getCompound(side == SubmarinePods.RIGHT ? "RightPod" : "LeftPod"), items, registryAccess());
+            for (int i = 0; i < 27; i++) pods[side].setItem(i, items.get(i));
+        }
         placedLights.clear();
         // cells left from before the unload: the next server tick clears whatever the beam no longer covers
         for (long l : tag.getLongArray("PlacedLights")) placedLights.add(BlockPos.of(l));

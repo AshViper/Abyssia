@@ -2,6 +2,7 @@ package com.abyssia.registry;
 
 import com.abyssia.Abyssia;
 import com.mojang.serialization.Codec;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
@@ -17,6 +18,10 @@ public final class ModDataComponents
     /** Stored FE (1.20: the "Energy" int tag). */
     public static final Supplier<DataComponentType<Integer>> ENERGY = COMPONENTS.registerComponentType("energy",
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
+    /** SUB03 submarine item: installed upgrades {Hull, Battery, Thruster, Utility} = item id strings (1.20: the "Upgrades" tag). */
+    public static final Supplier<DataComponentType<CompoundTag>> SUBMARINE_UPGRADES = COMPONENTS.registerComponentType("submarine_upgrades",
+            builder -> builder.persistent(CompoundTag.CODEC).networkSynchronized(ByteBufCodecs.COMPOUND_TAG));
 
     private ModDataComponents() {}
 

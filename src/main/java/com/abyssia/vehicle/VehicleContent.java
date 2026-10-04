@@ -58,6 +58,7 @@ public final class VehicleContent
         ENTITIES.register(bus);
         BLOCKS.register(bus);
         BLOCK_ENTITIES.register(bus);
+        SubmarineUpgrades.register(bus);   // SUB03 upgrade menu
         bus.addListener(VehicleContent::registerCapabilities);
         // the dock is built with the habitat constructor (no item, no drops), like the charging station
         BuildRegistry.register(new SubmarineDockEntry());
@@ -68,6 +69,7 @@ public final class VehicleContent
     {
         SUBMARINE_ITEM = items.register("submarine", () -> new SubmarineItem(new Item.Properties().stacksTo(1)));
         tab.add(SUBMARINE_ITEM);
+        SubmarineUpgrades.registerItems(items, tab);
     }
 
     /** the dock's buffer takes FE on every face (HabitatPower wireless distribution and cables) */

@@ -5,6 +5,7 @@ import com.abyssia.habitat.client.HabitatClient;
 import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.vehicle.Submarine;
 import com.abyssia.vehicle.SubmarineLightPacket;
+import com.abyssia.vehicle.SubmarineUpgrades;
 import com.abyssia.vehicle.VehicleContent;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -18,6 +19,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
@@ -80,6 +82,12 @@ public final class SubmarineClient
         public static void keys(RegisterKeyMappingsEvent event)
         {
             event.register(LIGHT);
+        }
+
+        @SubscribeEvent
+        public static void screens(RegisterMenuScreensEvent event)
+        {
+            event.register(SubmarineUpgrades.MENU.get(), SubmarineUpgradeScreen::new);
         }
 
         @SubscribeEvent

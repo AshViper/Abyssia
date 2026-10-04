@@ -42,7 +42,7 @@ VANILLA = {
     "fire_charge", "blaze_powder", "magma_cream", "conduit", "spyglass", "daylight_detector", "redstone_lamp",
     "sticky_piston", "piston", "campfire", "soul_campfire", "glow_item_frame", "item_frame", "glow_ink_sac", "ink_sac",
     "turtle_helmet", "blast_furnace", "furnace", "chest", "barrel", "crafting_table", "stone", "cobblestone",
-    "deepslate", "cobbled_deepslate", "sand", "gravel", "oak_planks",
+    "deepslate", "cobbled_deepslate", "sand", "gravel", "oak_planks", "iron_block", "copper_block", "gold_block",
 }
 
 # Registration helpers whose first string argument is an item id.

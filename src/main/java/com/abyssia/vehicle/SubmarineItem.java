@@ -3,6 +3,7 @@ package com.abyssia.vehicle;
 import com.abyssia.Abyssia;
 import com.abyssia.registry.ModDataComponents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
@@ -39,9 +40,22 @@ public class SubmarineItem extends Item
 
     public static int getEnergy(ItemStack stack)
     {
-        int cap = Submarine.capacity();
+        int cap = capacity(stack);
         Integer energy = stack.get(ModDataComponents.ENERGY.get());
-        return energy == null ? cap : Mth.clamp(energy, 0, cap);
+        return energy == null ? Submarine.capacity() : Mth.clamp(energy, 0, cap);
+    }
+
+    /** SUB03: installed upgrades {Hull, Battery, Thruster, Utility} (empty compound when none) */
+    public static CompoundTag getUpgrades(ItemStack stack)
+    {
+        CompoundTag tag = stack.get(ModDataComponents.SUBMARINE_UPGRADES.get());
+        return tag == null ? new CompoundTag() : tag.copy();
+    }
+
+    /** battery size of this stack (150,000 FE with a high-capacity battery installed) */
+    public static int capacity(ItemStack stack)
+    {
+        return Submarine.capacity((SubmarineUpgrades.mask(getUpgrades(stack)) & SubmarineUpgrades.bit(SubmarineUpgrades.BATTERY)) != 0);
     }
 
     public static void setEnergy(ItemStack stack, int energy)
@@ -78,6 +92,7 @@ public class SubmarineItem extends Item
         if (!placed) return InteractionResultHolder.fail(stack);
         if (!level.isClientSide)
         {
+            SubmarineUpgrades.load(getUpgrades(stack), sub.upgrades());   // first: the battery decides how much energy fits
             sub.setEnergy(getEnergy(stack));
             level.addFreshEntity(sub);
             level.gameEvent(player, GameEvent.ENTITY_PLACE, sub.position());
@@ -96,7 +111,7 @@ public class SubmarineItem extends Item
     @Override
     public int getBarWidth(ItemStack stack)
     {
-        return Math.round(13.0f * getEnergy(stack) / Math.max(1, Submarine.capacity()));
+        return Math.round(13.0f * getEnergy(stack) / Math.max(1, capacity(stack)));
     }
 
     @Override
@@ -109,9 +124,14 @@ public class SubmarineItem extends Item
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag)
     {
         NumberFormat nf = NumberFormat.getIntegerInstance(Locale.US);
-        int energy = getEnergy(stack), cap = Submarine.capacity();
+        int energy = getEnergy(stack), cap = capacity(stack);
         lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.energy", nf.format(energy), nf.format(cap))
                 .withStyle(energy > 0 ? ChatFormatting.AQUA : ChatFormatting.RED));
+        int mask = SubmarineUpgrades.mask(getUpgrades(stack));
+        for (int i = 0; i < SubmarineUpgrades.SLOTS; i++)
+            if ((mask & SubmarineUpgrades.bit(i)) != 0)
+                lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.upgrade",
+                        Component.translatable("item." + Abyssia.MODID + "." + SubmarineUpgrades.ITEM_IDS[i])).withStyle(ChatFormatting.BLUE));
         lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.controls").withStyle(ChatFormatting.GRAY));
     }
 }
