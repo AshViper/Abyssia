@@ -254,6 +254,43 @@ public class HabitatBases extends SavedData
         return out;
     }
 
+    /**
+     * A foundation (the only 1-high module) has no walls or hatches, so the builder never opens into it: it joins every
+     * face-adjacent module (beside it at floor level, or a module standing on it) and other foundations here instead.
+     * Returns how many joins were made.
+     */
+    public int joinFoundations(int capacity)
+    {
+        int joins = 0;
+        List<Module> mods = modules();
+        for (int i = 0; i < mods.size(); i++)
+            for (int j = i + 1; j < mods.size(); j++)
+            {
+                Module a = mods.get(i), c = mods.get(j);
+                // the edge is recorded even when both are already in one base (through another module): a later
+                // dismantle rebuilds the bases from the edges only
+                if ((foundation(a.box) || foundation(c.box)) && faceAdjacent(a.box, c.box) && !hasEdge(a.id, c.id))
+                {
+                    if (root(a.id) != root(c.id)) joins++;
+                    union(a.id, c.id, capacity);
+                }
+            }
+        return joins;
+    }
+
+    private boolean hasEdge(int a, int b)
+    {
+        int lo = Math.min(a, b), hi = Math.max(a, b);
+        for (int[] e : edges)
+            if (e[0] == lo && e[1] == hi) return true;
+        return false;
+    }
+
+    private static boolean foundation(BoundingBox box)
+    {
+        return box.getYSpan() == 1;
+    }
+
     /** Boxes sharing a face (one ends where the other starts on one axis, overlapping on the other two). */
     public static boolean faceAdjacent(BoundingBox a, BoundingBox b)
     {
@@ -322,6 +359,8 @@ public class HabitatBases extends SavedData
                 }
             if (!mods.isEmpty()) data.setDirty();
         }
+        // foundations built before they joined their neighbours
+        if (data.joinFoundations(HabitatPower.CAPACITY) > 0) data.setDirty();
         // energy only lives on live roots
         for (int i = 0; i < data.all.size(); i++)
             if (data.root(i) != i || data.all.get(i).removed) data.energy.remove(i);
