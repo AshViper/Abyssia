@@ -140,6 +140,7 @@ public final class HabitatPower
         AABB b = plan.box();
         int id = data.add(new BoundingBox((int) b.minX, (int) b.minY, (int) b.minZ, (int) b.maxX - 1, (int) b.maxY - 1, (int) b.maxZ - 1));
         for (int m : joined) data.union(id, m, CAPACITY);
+        data.joinFoundations(CAPACITY);
         // roots changed: drop the runtime caches (device lists rebuild next tick) and re-resolve cable endpoints
         Map<Integer, Runtime> rts = RUNTIME.get(server);
         if (rts != null) rts.clear();
@@ -264,9 +265,18 @@ public final class HabitatPower
         rt.inputThisTick = 0;
     }
 
-    /** Block entities with an energy capability inside the boxes (loaded chunks only). */
-    private static List<BlockPos> scanDevices(ServerLevel level, List<BoundingBox> boxes)
+    /** Cells above a foundation (1-high module) that its wireless supply reaches: the 3-high interior of a room plus its ceiling. */
+    private static final int FOUNDATION_REACH = 4;
+
+    /**
+     * Block entities with an energy capability inside the boxes (loaded chunks only). A foundation's box also covers the
+     * FOUNDATION_REACH cells above it, so devices standing on it are supplied.
+     */
+    private static List<BlockPos> scanDevices(ServerLevel level, List<BoundingBox> modules)
     {
+        List<BoundingBox> boxes = new ArrayList<>();
+        for (BoundingBox b : modules)
+            boxes.add(b.getYSpan() == 1 ? new BoundingBox(b.minX(), b.minY(), b.minZ(), b.maxX(), b.maxY() + FOUNDATION_REACH, b.maxZ()) : b);
         List<BlockPos> out = new ArrayList<>();
         Set<Long> chunks = new HashSet<>();
         for (BoundingBox box : boxes)
