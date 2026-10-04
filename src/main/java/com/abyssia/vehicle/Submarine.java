@@ -92,6 +92,8 @@ public class Submarine extends Entity
     /** SUB05: the hull pitches with the pilot's view up to this many degrees; it tilts about the hull centre */
     public static final float MAX_PITCH = 45.0f;
     public static final double PIVOT_Y = HULL_HEIGHT / 2.0;
+    /** SUB05b: the rider's eye height above the feet = the point the pilot's body tilts about (Forge uses the same class constant) */
+    public static final double SEAT_ANCHOR = 1.62;
     public static final float REPAIR_PER_TICK = 0.05f;
 
     /** Pilot input on the client (set by the client setup; the server never asks). */
@@ -488,10 +490,12 @@ public class Submarine extends Entity
     public static Vec3 seatOffset(float yawDeg, float pitchDeg)
     {
         float yaw = yawDeg * Mth.DEG_TO_RAD, p = pitchDeg * Mth.DEG_TO_RAD;
-        double f0 = SEAT_FORWARD, u0 = SEAT_Y - PIVOT_Y;
+        // the rider's eye point (SEAT_ANCHOR above the feet) is what turns with the hull about the pivot; the body is tilted
+        // about that point by SubmarineRiderRender, so the whole pilot stays rigid with the hull. Pitch 0 = the old seat.
+        double f0 = SEAT_FORWARD, u0 = SEAT_Y - PIVOT_Y + SEAT_ANCHOR;
         double fwd = f0 * Mth.cos(p) + u0 * Mth.sin(p);
         double up = -f0 * Mth.sin(p) + u0 * Mth.cos(p);
-        return new Vec3(-Mth.sin(yaw) * fwd, PIVOT_Y + up, Mth.cos(yaw) * fwd);
+        return new Vec3(-Mth.sin(yaw) * fwd, PIVOT_Y + up - SEAT_ANCHOR, Mth.cos(yaw) * fwd);
     }
 
     /** SUB04: the dock's FACING (nose direction) as a yaw, or NaN when the block is not (yet) there */
