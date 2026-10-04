@@ -6,6 +6,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,7 +20,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -31,6 +36,8 @@ import javax.annotation.Nullable;
  * The large locker's storage, on its bottom-left cell: 81 slots (9 x 9) shown with {@link LargeLockerMenu}; saves
  * from the 54-slot version load into the first 54 slots. Item capability: top = insert only, bottom = extract only, sides (and null) = both; the other cells hand this out
  * through {@link LockerPartBlockEntity}. The openers counter drives OPEN and the sounds (like a barrel).
+ * The custom name (anvil, or the screen's name field via {@link LockerRenamePacket}) is synced to clients, where
+ * LargeLockerRenderer shows it as a plate in the middle of the top row.
  */
 public class LargeLockerBlockEntity extends RandomizableContainerBlockEntity
 {
@@ -162,9 +169,43 @@ public class LargeLockerBlockEntity extends RandomizableContainerBlockEntity
     @Override
     public void load(CompoundTag tag)
     {
+        super.setCustomName(null); // super.load keeps the old name when the tag has none (a cleared name on clients)
         super.load(tag);
         items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
         if (!tryLoadLootTable(tag)) ContainerHelper.loadAllItems(tag, items);
+    }
+
+    // ---------------------------------------------------------------- name sync
+
+    @Override
+    public void setCustomName(@Nullable Component name)
+    {
+        super.setCustomName(name);
+        setChanged();
+        if (level != null && !level.isClientSide)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    /** Only the name goes to clients (the items are synced by the menu). */
+    @Override
+    public CompoundTag getUpdateTag()
+    {
+        CompoundTag tag = new CompoundTag();
+        if (getCustomName() != null) tag.putString("CustomName", Component.Serializer.toJson(getCustomName()));
+        return tag;
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket()
+    {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    /** The name plate spans the whole 2 x 2 front, not just this cell. */
+    @Override
+    public AABB getRenderBoundingBox()
+    {
+        return new AABB(worldPosition).inflate(1.0);
     }
 
     // ---------------------------------------------------------------- capabilities

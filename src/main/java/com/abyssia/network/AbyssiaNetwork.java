@@ -15,8 +15,8 @@ public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
     // 4: habitat constructor controls (H02). 5: waypoint beacon list / settings (W01). 7: submarine lights / undock (SUB02).
-    // 8: wireless power relay links (WR01).
-    private static final String PROTOCOL = "8";
+    // 8: wireless power relay links (WR01). 9: large locker rename.
+    private static final String PROTOCOL = "9";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
 
@@ -42,6 +42,9 @@ public final class AbyssiaNetwork
         CHANNEL.messageBuilder(com.abyssia.habitat.relay.RelaySyncPacket.class, 5, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(com.abyssia.habitat.relay.RelaySyncPacket::encode).decoder(com.abyssia.habitat.relay.RelaySyncPacket::decode)
                 .consumerMainThread(com.abyssia.habitat.relay.RelaySyncPacket::handle).add(); // WR01
+        CHANNEL.messageBuilder(com.abyssia.furniture.LockerRenamePacket.class, 6, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(com.abyssia.furniture.LockerRenamePacket::encode).decoder(com.abyssia.furniture.LockerRenamePacket::decode)
+                .consumerMainThread(com.abyssia.furniture.LockerRenamePacket::handle).add();
     }
 
     public static void sendToServer(Object message)
