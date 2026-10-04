@@ -24,6 +24,7 @@ import building_assets
 import cave_assets
 import diving_gear_assets
 import guide_assets
+import map_assets
 import gen_fauna
 import habitat_assets
 import furniture_assets
@@ -1166,6 +1167,7 @@ def main():
     material_recipes()
     diving_gear = diving_gear_assets.generate(write, im, DATA)
     guide_assets.generate(write, im, DATA)   # GB01 guide book item/recipe
+    map_assets.generate(write, im, DATA)     # MP01 deep sea map / abyss chart
     lang()
     print(f"Resource plants: {plants}")
     print(f"Entry diving gear: {diving_gear} items")
@@ -1454,6 +1456,7 @@ def lang():
         data.update({k: v[idx] for k, v in electric_tool_assets.LANG.items()})
         data.update({k: v[idx] for k, v in diving_gear_assets.LANG.items()})
         data.update({k: v[idx] for k, v in guide_assets.LANG.items()})
+        data.update({k: v[idx] for k, v in map_assets.LANG.items()})
         for part in _lang_parts():  # BT01h: tools/lang_parts/*.json = {"key": [en, ja]}
             data.update({k: v[idx] for k, v in part.items()})
         data["itemGroup.abyssia"] = "Abyssia"

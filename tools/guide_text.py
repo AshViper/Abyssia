@@ -19,11 +19,17 @@ EXTRA = {
     "intro": [{"type": "item", "id": "intro.book", "chapter": "intro", "item": "abyssia:abyss_guide_book",
                "description": "guide.abyssia.intro.book.desc", "obtaining": "guide.abyssia.intro.book.obtaining",
                "recipe": "abyssia:abyss_guide_book"}],
+    "waypoints": [{"type": "text", "id": "waypoints.deep_maps", "chapter": "waypoints",
+                   "title": "guide.abyssia.waypoints.deep_maps.title", "text": "guide.abyssia.waypoints.deep_maps.text"}],
     "encyclopedia": [{"type": "recipe", "id": "encyclopedia.guide_recipe", "chapter": "encyclopedia",
                       "title": "guide.abyssia.encyclopedia.guide_recipe.title", "recipe": "abyssia:abyss_guide_book",
                       "description": "guide.abyssia.encyclopedia.guide_recipe.desc"}],
 }
 EXTRA_LANG = {
+    "guide.abyssia.waypoints.deep_maps.title": ("深海の地図", "Deep Sea Maps"),
+    "guide.abyssia.waypoints.deep_maps.text": (
+        "深海層を探索するときは「深海の白地図」を使いましょう。深海層で使用すると、地上では見ることのできない海底の地形が地図に記録されます。水深や海底の高低差も陰影で確認できます。深海への入口を探すときは「深海への海図」が便利です。使用すると、近くの深海への入口を探して地図に示します。入口が見つからない場合、海図は消費されません。",
+        "Use a Deep Sea Map when exploring the deep sea. When used in the deep sea layer, it records the seafloor that cannot be seen on ordinary maps. Water depth and changes in seafloor elevation are shown through map shading. When looking for a way into the deep sea, use an Abyss Chart. It searches for a nearby entrance and marks its location on the map. If no entrance can be found, the chart is not consumed."),
     "guide.abyssia.ui.contents": ("目次", "Contents"),
     "guide.abyssia.ui.obtaining": ("入手方法", "Obtaining"),
     "guide.abyssia.ui.prev": ("前のページ", "Previous page"),

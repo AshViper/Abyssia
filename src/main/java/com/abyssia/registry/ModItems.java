@@ -254,6 +254,8 @@ public final class ModItems
     // OL01 cultivated oil kelp: the sac is smelted into bio_oil; the seed plants the (item-less) oil_kelp block
     public static final DeferredItem<Item> OIL_SAC = item("oil_sac");
     public static final DeferredItem<Item> OIL_KELP_SEED = tabItem("oil_kelp_seed", () -> new net.minecraft.world.item.ItemNameBlockItem(ModBlocks.OIL_KELP.get(), new Item.Properties()));
+    public static final DeferredItem<Item> DEEP_SEA_MAP = tabItem("deep_sea_map", () -> new com.abyssia.map.DeepSeaMapItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> ABYSS_CHART = tabItem("abyss_chart", () -> new com.abyssia.map.AbyssChartItem(new Item.Properties().stacksTo(16)));
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB = TABS.register("abyssia", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.abyssia"))
