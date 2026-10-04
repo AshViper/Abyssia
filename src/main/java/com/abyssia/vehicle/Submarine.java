@@ -94,8 +94,8 @@ public class Submarine extends Entity
     public static final float PITCH_MAX = 45.0f, PITCH_EASE = 6.0f;
     /** SUB05: pitch / seat pivot = hull mid-height (blocks above the origin); the renderer and positionRider rotate about (0, PIVOT_Y, 0) */
     public static final double PIVOT_Y = HULL_HEIGHT / 2.0;
-    /** SUB05: height above the seat of the point that keeps its place in the hull when it pitches (keeps the head under the canopy) */
-    public static final double SEAT_ANCHOR = 1.2;
+    /** SUB05b: height above the rider's feet of the point that turns rigidly with the hull pitch = the rider's eye (the model tilt pivot, see SubmarineRiderRender) */
+    public static final double SEAT_ANCHOR = 1.62;
 
     /** Pilot input on the client (set by the client setup; the server never asks). */
     public interface Pilot
@@ -604,8 +604,8 @@ public class Submarine extends Entity
     {
         if (!hasPassenger(passenger)) return;
         float yaw = getYRot() * Mth.DEG_TO_RAD, pitch = getXRot() * Mth.DEG_TO_RAD;
-        // SUB05: the pilot's upright body is not tilted, so the point SEAT_ANCHOR above the seat (neck, in the canopy) is what
-        // turns with the hull pitch about the pivot; the feet hang below it. Pitch 0 = the old seat.
+        // SUB05b: the pilot's eye (SEAT_ANCHOR above the feet) is the seat's head point turned with the hull pitch about the
+        // pivot, and the rider model is tilted about that eye (SubmarineRiderRender). Pitch 0 = the old seat.
         double a = SEAT_FORWARD, b = SEAT_Y - PIVOT_Y + SEAT_ANCHOR;
         double ahead = a * Mth.cos(pitch) + b * Mth.sin(pitch), up = -a * Mth.sin(pitch) + b * Mth.cos(pitch);
         move.accept(passenger, getX() - Mth.sin(yaw) * ahead, getY() + PIVOT_Y + up - SEAT_ANCHOR, getZ() + Mth.cos(yaw) * ahead);
