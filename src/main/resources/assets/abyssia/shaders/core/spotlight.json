@@ -1,0 +1,25 @@
+{
+    "blend": { "func": "add", "srcrgb": "one", "dstrgb": "one" },
+    "vertex": "abyssia:spotlight",
+    "fragment": "abyssia:spotlight",
+    "attributes": [ "Position", "Color", "UV0", "UV2", "Normal" ],
+    "samplers": [
+        { "name": "Sampler0" },
+        { "name": "ShadowMap" }
+    ],
+    "uniforms": [
+        { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "ChunkOffset", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] },
+        { "name": "LightViewProj", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "LightPosition", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] },
+        { "name": "LightDirection", "type": "float", "count": 3, "values": [ 0.0, 0.0, -1.0 ] },
+        { "name": "LightColor", "type": "float", "count": 3, "values": [ 1.0, 1.0, 1.0 ] },
+        { "name": "LightRange", "type": "float", "count": 1, "values": [ 32.0 ] },
+        { "name": "LightHalfAngle", "type": "float", "count": 1, "values": [ 0.35 ] },
+        { "name": "ShadowClip", "type": "float", "count": 2, "values": [ 0.05, 32.0 ] },
+        { "name": "LightFogStart", "type": "float", "count": 1, "values": [ 0.0 ] },
+        { "name": "LightFogEnd", "type": "float", "count": 1, "values": [ 1.0 ] },
+        { "name": "LightFogShape", "type": "int", "count": 1, "values": [ 0 ] }
+    ]
+}
