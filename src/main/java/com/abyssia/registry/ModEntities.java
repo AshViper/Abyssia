@@ -51,7 +51,7 @@ import java.util.List;
  * (shrimp &lt; isopod &lt; anglerfish &lt; frilled shark &lt; goblin shark &lt; giant squid), deformed to read in game. Where they spawn is datapack data (fauna_spawns), placed
  * by {@link com.abyssia.fauna.FaunaSpawner}; they are not in any biome's spawner list.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class ModEntities
 {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, Abyssia.MODID);

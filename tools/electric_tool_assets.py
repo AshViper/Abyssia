@@ -24,13 +24,14 @@ LANG = {
 
 _RECIPES = {
     # T tungsten_tip, C conductive_component, A abyssal_alloy_ingot, M machine_frame, P iron_plate, H thermal_component
-    "electric_abyssal_drill": (["TCT", "AMA", "PHP"],
+    # ECO02: neodymium magnets in the motor (N)
+    "electric_abyssal_drill": (["TCT", "AMA", "NHN"],
                                {"T": "tungsten_tip", "C": "conductive_component", "A": "abyssal_alloy_ingot",
-                                "M": "machine_frame", "P": "iron_plate", "H": "thermal_component"}),
+                                "M": "machine_frame", "N": "neodymium_ingot", "H": "thermal_component"}),
     # cutter: tungsten tips as the blade edge (the spec leaves the keys open)
-    "electric_abyssal_cutter": (["ACA", "HMH", "PPP"],
+    "electric_abyssal_cutter": (["ACA", "HMH", "PNP"],
                                 {"A": "abyssal_alloy_ingot", "C": "conductive_component", "H": "thermal_component",
-                                 "M": "machine_frame", "P": "iron_plate"}),
+                                 "M": "machine_frame", "P": "iron_plate", "N": "neodymium_ingot"}),
 }
 
 SCREW = "propulsion_screw"
@@ -57,6 +58,26 @@ def screw_model():
     return {"textures": textures, "elements": elements, "display": spec["display"]}
 
 
+SCANNER = "lidar_scanner"
+# C conductive_component, G glass, A abyssal_alloy_ingot, M machine_frame, H thermal_component
+_SCANNER_RECIPE = (["CGC", "AMA", " H "], {"C": "conductive_component", "G": "minecraft:glass", "A": "abyssal_alloy_ingot",
+                                          "M": "machine_frame", "H": "thermal_component"})
+
+
+def scanner_model():
+    """LS01: drawn by LidarScannerClient (baked mesh via tools/vehicle_model.py); this json only carries the display transforms."""
+    def d(rot, tr, sc):
+        return {"rotation": rot, "translation": tr, "scale": [sc, sc, sc]}
+    return {"parent": "minecraft:builtin/entity", "display": {
+        "gui": d([30, 225, 0], [0, -1, 0], 0.95),
+        "ground": d([0, 0, 0], [0, 2, 0], 0.5),
+        "fixed": d([0, 0, 0], [0, 0, 0], 0.8),
+        "thirdperson_righthand": d([90, 0, 0], [0, 3, -1], 0.6),
+        "thirdperson_lefthand": d([90, 0, 0], [0, 3, -1], 0.6),
+        "firstperson_righthand": d([-15, -25, 0], [-4, 5, 0], 0.55),
+        "firstperson_lefthand": d([-15, 25, 0], [4, 5, 0], 0.55)}}
+
+
 def generate(write, im, data_dir):
     for name in TOOLS:
         write(im(name), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{name}"}})
@@ -74,7 +95,13 @@ def generate(write, im, data_dir):
         "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": pattern,
         "key": {k: {"item": f"{MOD}:{v}"} for k, v in key.items()},
         "result": {"item": f"{MOD}:{SCREW}", "count": 1}})
-    return {"items": len(TOOLS) + 1}
+    write(im(SCANNER), scanner_model())
+    pattern, key = _SCANNER_RECIPE
+    write(os.path.join(data_dir, MOD, "recipes", SCANNER + ".json"), {
+        "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": pattern,
+        "key": {k: {"item": v if ":" in v else f"{MOD}:{v}"} for k, v in key.items()},
+        "result": {"item": f"{MOD}:{SCANNER}", "count": 1}})
+    return {"items": len(TOOLS) + 2}
 
 
 if __name__ == "__main__":

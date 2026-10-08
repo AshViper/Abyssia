@@ -102,6 +102,15 @@ MINERALS: dict[str, Mineral] = {
     "tungsten": Mineral(("#16171a", "#2a2c30", "#43464b", "#5f6268", "#868a90")),               # dark grey
     "yttrium": Mineral(("#2e2c26", "#57544a", "#838071", "#afab98", "#d8d4c0"),                 # pale yellow-white grey
                        accent=("#6a6a58", "#9a9a84")),
+    # ECO02 metals
+    "titanium": Mineral(("#1c2026", "#3a424c", "#5e6b7a", "#8a9aab", "#b8c6d4")),               # silvery steel blue
+    "lead": Mineral(("#17191f", "#2f333d", "#4b505e", "#6d7384", "#9399aa")),                   # dull blue-grey
+    "zinc": Mineral(("#202a2e", "#3e5058", "#6a838c", "#98b0b8", "#c8dce0")),                   # bluish white
+    "iridium": Mineral(("#2c2e33", "#585b63", "#8c9099", "#c0c4cc", "#eceef2")),                # bright silver-white
+    "uranium": Mineral(("#1a2410", "#35491c", "#587a2a", "#86b03e", "#bce068"),                 # yellow-green
+                       accent=("#6a8c2a", "#a8cc44")),
+    "neodymium": Mineral(("#241a30", "#46345c", "#6c5489", "#9a82b8", "#c8b6dc")),              # violet silver
+    "thorium": Mineral(("#1c2420", "#36443c", "#5a6e60", "#86a08c", "#b4cdb8")),                # grey-green
     # crystals
     "thermal": Mineral(("#2c0e09", "#6a2211", "#a24319", "#cf6c29", "#ecaa5a"), glow="#ffc878"),
     "abyssal": Mineral(("#1e1439", "#3a2a68", "#5f4698", "#886cc4", "#c0a8e8"), glow="#dcc8ff"),
@@ -238,14 +247,24 @@ TEXTURES: dict[str, Texture] = {
     "vanadium_ingot": Texture("ingot", "vanadium", Recolour("item/copper_ingot")),
     "raw_yttrium": Texture("raw", "yttrium", Recolour("item/raw_copper")),
     "yttrium_ingot": Texture("ingot", "yttrium", Recolour("item/copper_ingot")),
+    # ECO02: titanium / lead / zinc / iridium / uranium / neodymium / thorium
+    "raw_titanium": Texture("raw", "titanium", Recolour("item/raw_iron")),
+    "titanium_ingot": Texture("ingot", "titanium", Recolour("item/iron_ingot")),
+    "raw_lead": Texture("raw", "lead", Recolour("item/raw_iron")),
+    "lead_ingot": Texture("ingot", "lead", Recolour("item/iron_ingot")),
+    "raw_zinc": Texture("raw", "zinc", Recolour("item/raw_iron")),
+    "zinc_ingot": Texture("ingot", "zinc", Recolour("item/iron_ingot")),
+    "raw_iridium": Texture("raw", "iridium", Recolour("item/raw_iron")),
+    "iridium_ingot": Texture("ingot", "iridium", Recolour("item/iron_ingot")),
+    "raw_uranium": Texture("raw", "uranium", Recolour("item/raw_copper")),
+    "uranium_ingot": Texture("ingot", "uranium", Recolour("item/copper_ingot")),
+    "raw_neodymium": Texture("raw", "neodymium", Recolour("item/raw_gold")),
+    "neodymium_ingot": Texture("ingot", "neodymium", Recolour("item/gold_ingot")),
+    "raw_thorium": Texture("raw", "thorium", Recolour("item/raw_copper")),
+    "thorium_ingot": Texture("ingot", "thorium", Recolour("item/copper_ingot")),
 
     # ---- crusts (blocks): vanilla Raw Ore Blocks, colours remapped only; same vanilla family and palette as the
     # mineral's raw lump (cobalt = iron, manganese = gold, nickel = copper)
-    "cobalt_crust": crust("cobalt", "block/raw_iron_block"),
-    "manganese_crust": crust("manganese", "block/raw_gold_block"),
-    "nickel_crust": crust("nickel", "block/raw_copper_block"),
-    "copper_crust": crust("copper", "block/raw_copper_block"),
-    "iron_crust": crust("iron_oxide", "block/raw_iron_block"),
     "cave_mineral_crust": crust("ochre", "block/raw_gold_block"),
 
     # ---- shards (items): Quartz-style broken fragments; prisms lean at clean pixel slopes (0, +-26.57, +-45,

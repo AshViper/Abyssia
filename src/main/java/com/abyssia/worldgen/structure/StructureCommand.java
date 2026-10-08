@@ -46,7 +46,7 @@ import java.util.Map;
  *     <li>{@code /abyssia structures stats}: painting time per chunk so far</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class StructureCommand
 {
     private static final int CHAT_LINES = 24;

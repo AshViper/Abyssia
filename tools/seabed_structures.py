@@ -106,8 +106,7 @@ PLAIN_LIFE = [("black_coral", 3), ("sponge_plant", 3), ("soul_coral", 2), (("tub
 structure("abyssal_boulder", "geological", "small", 10, 10,
           f("rock", count=span(1, 3), spread=4, size=span(2, 4.5), height_ratio=0.75, sink=0.35, erosion=0.35,
             rock=ABYSSAL_ROCK, accent=MANGANESE, accent_chance=0.1),
-          dressing=dress(10, 0.22, [("seafloor_pebbles", 3), ("sponge_plant", 2), ("black_coral", 1), ("manganese_nodules", 1)],
-                         [("manganese_crust", 1)], 0.2),
+          dressing=dress(10, 0.22, [("seafloor_pebbles", 3), ("sponge_plant", 2), ("black_coral", 1), ("manganese_nodules", 1)]),
           mobs=MOBS("giant_isopod"), max_slope=1.2, max_top_y=215)
 structure("ancient_outcrop", "geological", "small", 14, 14,
           f("rock", count=span(1, 2), spread=5, size=span(3, 6), height_ratio=0.9, elongation=span(1.5, 2.5), sink=0.4, tilt=0.5,
@@ -121,7 +120,7 @@ structure("abyssal_hill", "sediment", "medium", 40, 12,
 structure("abyssal_rock_mass", "geological", "medium", 24, 24,
           f("rock", count=span(1, 3), spread=8, size=span(6, 11), height_ratio=0.7, elongation=span(1.2, 2), sink=0.3, erosion=0.4,
             rock=ABYSSAL_ROCK, accent=MANGANESE, accent_chance=0.12),
-          dressing=dress(24, 0.16, PLAIN_LIFE, [("manganese_crust", 1)], 0.15), mobs=MOBS("giant_isopod", "anglerfish"), max_slope=1.0)
+          dressing=dress(24, 0.16, PLAIN_LIFE), mobs=MOBS("giant_isopod", "anglerfish"), max_slope=1.0)
 structure("abyssal_crystal_outcrop", "crystal", "medium", 16, 18,
           f("crystal", count=span(4, 9), spread=5, length=span(4, 10), radius=span(0.9, 1.8), tilt=0.7, center_scale=1.6,
             crystal=mix(("deep_crystal_block", 3), ("blue_crystal_block", 1)), base=mix("crystal_rock"), base_radius=7, base_height=2),
@@ -131,13 +130,13 @@ ABYSSAL_SPIRE = dict(taper=0.75, lean=0.1, ledges=0.18, erosion=0.3, cracks=0.1,
                      accent=MANGANESE, accent_chance=0.12, apron=mix(("deep_sediment", 2), ("abyssal_rock", 1)), apron_height=3)
 structure("abyssal_rock_spire", "geological", "large", 44, 60,
           f("pillar", count=span(1, 4), spread=18, height=span(20, 60), radius=span(3.5, 6.5), **ABYSSAL_SPIRE),
-          dressing=dress(40, 0.12, PLAIN_LIFE + [(("deep_kelp", 6, 20), 2)], [("manganese_crust", 1)], 0.1),
+          dressing=dress(40, 0.12, PLAIN_LIFE + [(("deep_kelp", 6, 20), 2)]),
           mobs=MOBS("giant_isopod", "anglerfish"), max_slope=1.2, max_y=90)
 structure("abyssal_tower", "landmark", "colossal", 72, 100,
           f("pillar", count=span(3, 6), spread=32, height=span(60, 100), radius=span(7, 11),
             **{**ABYSSAL_SPIRE, "taper": 0.7, "ledges": 0.22, "cracks": 0.12, "broken_top": 0.25,
                "accent": mix(("manganese_ore", 2), ("cobalt_ore", 1), ("mineral_host_rock", 2)), "apron_height": 5}),
-          dressing=dress(70, 0.1, PLAIN_LIFE + [(("deep_kelp", 10, 30), 2)], [("manganese_crust", 2), ("cobalt_crust", 1)], 0.15),
+          dressing=dress(70, 0.1, PLAIN_LIFE + [(("deep_kelp", 10, 30), 2)]),
           mobs=MOBS("giant_isopod", "anglerfish", "goblin_shark"), max_slope=1.0, max_y=80, max_top_y=125)
 
 # ================================================================ Abyssal Mud (the ooze-floored plains and deep basins)
@@ -221,7 +220,7 @@ structure("hadal_pillar", "geological", "large", 38, 80,
           f("pillar", count=span(1, 3), spread=16, height=span(35, 75), radius=span(4, 8), taper=0.6, lean=0.05, ledges=0.2, erosion=0.25,
             cracks=0.12, broken_top=0.4, rock=HADAL_ROCK, accent=HADAL_ACCENT, accent_chance=0.1,
             apron=mix(("deep_sediment", 1), ("trench_rock", 1)), apron_height=3),
-          dressing=dress(34, 0.06, HADAL_LIFE, [("cobalt_crust", 1), ("nickel_crust", 1)], 0.1), mobs=MOBS("goblin_shark"), max_slope=1.2)
+          dressing=dress(34, 0.06, HADAL_LIFE), mobs=MOBS("goblin_shark"), max_slope=1.2)
 structure("hadal_crater", "geological", "large", 60, 6,
           f("crater", radius=span(22, 34), depth=span(6, 12), rim_height=span(2, 4), rim_width=0.35, roughness=0.4,
             floor=mix(("deep_mud", 2), ("abyssal_mud", 1)), rim=mix(("trench_rock", 2), ("deep_sediment", 1)), ejecta=mix("trench_rock"), ejecta_density=0.04),
@@ -253,7 +252,7 @@ structure("chimney_cluster", "thermal", "medium", 26, 24,
           f("vent", count=span(4, 9), spread=10, height=span(6, 18), width=span(1.2, 2.5), chimney=CHIMNEY, accent=SULFIDE, accent_chance=0.15,
             core=mix((VENT("black_smoker", "active"), 2), (VENT("white_smoker", "active"), 1)), mound=VENT_MOUND, mound_radius=6, mound_height=3,
             flanges=0.5),
-          dressing=dress(26, 0.35, VENT_LIFE, [("sulfur_deposit", 1), ("copper_crust", 1)], 0.2), mobs=VENT_MOBS, avoid_vent_fields=False, max_slope=0.4)
+          dressing=dress(26, 0.35, VENT_LIFE, [("sulfur_deposit", 1)], 0.2), mobs=VENT_MOBS, avoid_vent_fields=False, max_slope=0.4)
 structure("mineral_terraces", "thermal", "medium", 24, 8,
           f("sediment", count=span(3, 6), spread=9, radius=span(4, 8), height=span(2, 5), surface=mix(("mineral_sediment", 2), ("sulfur_deposit", 1)),
             core=mix("black_mineral_deposit"), layers=1),
@@ -262,7 +261,7 @@ structure("great_smoker_field", "landmark", "colossal", 100, 45,
           f("vent", count=span(18, 30), spread=70, height=span(14, 38), width=span(1.8, 3.2), lean=0.08, chimney=CHIMNEY, accent=SULFIDE, accent_chance=0.2,
             core=mix((VENT("black_smoker", "strong"), 3), (VENT("white_smoker", "active"), 1), (VENT("superheated", "superheated"), 1)),
             mound=VENT_MOUND, mound_radius=12, mound_height=5, flanges=0.6),
-          dressing=dress(96, 0.3, VENT_LIFE, [("sulfur_deposit", 2), ("copper_crust", 1)], 0.25), mobs=VENT_MOBS, avoid_vent_fields=False, max_slope=0.4, max_top_y=125)
+          dressing=dress(96, 0.3, VENT_LIFE, [("sulfur_deposit", 2)], 0.25), mobs=VENT_MOBS, avoid_vent_fields=False, max_slope=0.4, max_top_y=125)
 
 # ================================================================ Volcanic (volcanic_deep)
 # Vent cones, lava ridges, black pinnacles, craters; a submerged volcano is large, a great one is the landmark.
@@ -422,6 +421,43 @@ structure("fallen_log", "vegetation", "small", 12, 6,
             stripped_chance=0.2, wood=ANCIENT_LOG, stripped=ANCIENT_STRIPPED, root=ANCIENT_ROOTS, planks=ANCIENT_PLANKS),
           max_slope=0.8, min_y=-100, max_y=160, max_top_y=170)
 
+# ================================================================ Wrecks (every deep biome)
+# WRK01: a small stranded hull with one exposed wreck core; the lidar scanner analyses 3 of them (Config wrecks_to_unlock)
+# to unlock the habitat constructor. About one per 30 chunks: cell 84 blocks, chance 0.9.
+
+structure("wreck", "geological", "small", 14, 10,
+          f("wreck", length=span(8, 14), width=span(3, 5), height=span(2, 4), pitch=0.2, roll=0.15, sink=span(0, 2), holes=0.22, grating=0.15,
+            hull=mix(("industrial_panel", 6), ("deep_sea_rock", 1)),
+            gratings=mix(state("metal_grating", waterlogged=True)),
+            beams=mix(state("industrial_beam", waterlogged=True)),
+            silt=mix(("deep_sediment", 3), ("abyssal_mud", 1)),
+            core=mix("wreck_core")),
+          max_slope=1.0)
+
+# ================================================================ Human traces and giant bones
+# Sunken cargo containers, abandoned industrial leftovers and the skeleton of a huge creature (container_stack, artifact_field, giant_skeleton).
+
+HULL_WALL = mix(("industrial_panel", 6), ("minecraft:exposed_copper", 2), ("minecraft:weathered_copper", 2), ("minecraft:oxidized_copper", 1))
+HULL_FRAME = mix("industrial_beam")
+SALVAGE = mix(("minecraft:barrel", 3), ("metal_grating", 1), ("industrial_panel", 2))
+SEDIMENT_ROOT = mix(("deep_sediment", 3), ("abyssal_mud", 2))
+BONE = mix(("minecraft:bone_block", 8), ("fossil_rock", 1))
+BONE_ACCENT = mix("fossil_rock")
+structure("container_stack", "geological", "small", 12, 10,
+          f("cargo_container", stack=span(1, 3), length=span(7, 9), top_chance=0.45, open_chance=0.5, hole_chance=0.1, cargo_chance=0.45,
+            spill=span(2, 6), wall=HULL_WALL, frame=HULL_FRAME, cargo=SALVAGE, root=SEDIMENT_ROOT),
+          dressing=dress(12, 0.08, [("seafloor_pebbles", 3), ("sponge_plant", 2), ("black_coral", 1)]),
+          max_slope=0.6, min_y=-100, max_y=160, max_top_y=170)
+structure("artifact_field", "geological", "small", 16, 8,
+          f("artifact_field", pieces=span(4, 8), frame=HULL_FRAME, deck=mix(("metal_grating_slab", 3), ("industrial_panel_slab", 1)),
+            pipe=mix("industrial_pipe"), crate=SALVAGE, root=SEDIMENT_ROOT),
+          dressing=dress(16, 0.08, [("seafloor_pebbles", 3), ("sponge_plant", 2), ("black_coral", 1)]),
+          max_slope=0.8, min_y=-100, max_y=160, max_top_y=170)
+structure("giant_skeleton", "landmark", "medium", 38, 18,
+          f("skeleton", length=span(24, 40), rib=span(4, 7), rib_gap=0.15, bend=4, bone=BONE, accent=BONE_ACCENT),
+          dressing=dress(30, 0.05, [("seafloor_pebbles", 3), ("sponge_plant", 2), (("tube_plant", 2, 5), 2)]),
+          max_slope=0.7, min_y=-100, max_y=160, max_top_y=170)
+
 # ================================================================ profiles
 
 SMALL, MEDIUM, LARGE, COLOSSAL = (20, 40), (64, 128), (160, 288), (640, 1280)
@@ -443,50 +479,64 @@ def cavern_entries(names, chance=0.7):
 
 PROFILES = {
     "abyssal_ocean": (["abyssal_ocean"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("abyssal_boulder", 0.45, SMALL), e("ancient_outcrop", 0.25, (28, 56)), e("mud_mounds", 0.35, SMALL), e("mud_pockmark", 0.2, (28, 56)),
         e("abyssal_hill", 0.5, (64, 144)), e("abyssal_rock_mass", 0.45, MEDIUM), e("abyssal_crystal_outcrop", 0.25, (80, 160)),
         e("holothurian_mud_flat", 0.35, (80, 160)),
         e("abyssal_rock_spire", 0.6, (160, 288)), e("sediment_swell", 0.3, LARGE),
         e("abyssal_tower", 0.45, (700, 1280)),
         e("rotten_tree", 0.35, SMALL), e("fallen_log", 0.35, SMALL),
+        e("container_stack", 0.4, (48, 96)), e("artifact_field", 0.35, (40, 80)), e("giant_skeleton", 0.3, MEDIUM),
         *cavern_entries(CAVE_ABYSSAL)]),
     "deep_sea": (["deep_sea"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("sea_boulder", 0.4, SMALL), e("mud_mounds", 0.3, SMALL), e("rock_ridge", 0.4, MEDIUM), e("holothurian_mud_flat", 0.2, (72, 144)),
         e("sediment_swell", 0.25, LARGE),
         e("rotten_tree", 0.35, SMALL), e("fallen_log", 0.35, SMALL),
+        e("container_stack", 0.4, (48, 96)), e("artifact_field", 0.35, (40, 80)), e("giant_skeleton", 0.25, MEDIUM),
         *cavern_entries(CAVE_ABYSSAL, 0.6)]),
     "abyssal_trench": (["abyssal_trench"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("collapsed_blocks", 0.45, SMALL), e("trench_fissure", 0.55, (72, 144)), e("trench_cliff", 0.4, MEDIUM),
         e("trench_shaft", 0.45, (176, 304)),
         e("great_rift", 0.45, (800, 1280)),
+        e("artifact_field", 0.25, (48, 96)), e("giant_skeleton", 0.2, MEDIUM),
         *cavern_entries(CAVE_TRENCH)]),
     "hadal_zone": (["hadal_zone"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("mud_mounds", 0.15, (40, 80)), e("hadal_monolith", 0.35, (72, 144)), e("hadal_pressure_crystals", 0.25, (80, 160)),
         e("hadal_pillar", 0.5, (192, 352)), e("hadal_crater", 0.35, (224, 384)),
         e("hadal_great_crater", 0.4, (900, 1536)),
+        e("giant_skeleton", 0.2, MEDIUM),
         *cavern_entries(CAVE_TRENCH, 0.5)]),
     "thermal_vents": (["thermal_vents"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("vent_chimney", 0.95, (10, 20)),
         e("sulfur_mound", 0.5, SMALL), e("chimney_cluster", 0.6, (72, 144)), e("mineral_terraces", 0.4, MEDIUM),
         e("great_smoker_field", 0.5, (700, 1280)),
         *cavern_entries(CAVE_THERMAL)]),
     "volcanic_deep": (["volcanic_deep"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("volcanic_vent", 0.45, (28, 56)), e("black_pinnacles", 0.35, SMALL), e("lava_ridge", 0.45, MEDIUM),
         e("volcanic_crater", 0.45, (80, 160)), e("submerged_volcano", 0.5, (224, 384)),
         e("great_submerged_volcano", 0.45, (900, 1536)),
         *cavern_entries(CAVE_THERMAL)]),
     "deep_crystal_fields": (["deep_crystal_fields"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("crystal_cluster", 0.55, SMALL), e("crystal_outcrop", 0.5, MEDIUM), e("fallen_crystal_spans", 0.3, (72, 144)),
         e("large_crystal_cluster", 0.55, (176, 304)),
         e("crystal_cathedral", 0.45, (700, 1280)),
         *cavern_entries(CAVE_CRYSTAL, 0.8)]),
     "abyssal_forest": (["abyssal_forest"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("kelp_wall", 0.45, (72, 144)), e("kelp_tunnel", 0.4, (80, 160)), e("overgrown_hill", 0.45, MEDIUM),
         e("giant_kelp_forest", 0.6, (192, 352)),
         e("ancient_kelp_forest", 0.45, (700, 1280)),
         e("rotten_tree", 0.5, SMALL), e("fallen_log", 0.5, SMALL),
+        e("artifact_field", 0.2, (48, 96)),
         *cavern_entries(CAVE_FOREST)]),
     "deep_forest": (["deep_forest"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
         e("giant_tube_grove", 0.5, MEDIUM), e("overgrown_hill", 0.4, MEDIUM), e("kelp_wall", 0.3, (72, 144)),
         e("giant_kelp_forest", 0.4, LARGE),
         e("rotten_tree", 0.5, SMALL), e("fallen_log", 0.5, SMALL),

@@ -1,0 +1,90 @@
+{
+  "category": "geological",
+  "tier": "small",
+  "footprint_radius": 14,
+  "max_height": 10,
+  "formation": {
+    "type": "wreck",
+    "length": [
+      8,
+      14
+    ],
+    "width": [
+      3,
+      5
+    ],
+    "height": [
+      2,
+      4
+    ],
+    "pitch": 0.2,
+    "roll": 0.15,
+    "sink": [
+      0,
+      2
+    ],
+    "holes": 0.22,
+    "grating": 0.15,
+    "hull": [
+      {
+        "data": {
+          "Name": "abyssia:industrial_panel"
+        },
+        "weight": 6
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_sea_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "gratings": [
+      {
+        "data": {
+          "Name": "abyssia:metal_grating",
+          "Properties": {
+            "waterlogged": "true"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "beams": [
+      {
+        "data": {
+          "Name": "abyssia:industrial_beam",
+          "Properties": {
+            "waterlogged": "true"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "silt": [
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 1
+      }
+    ],
+    "core": [
+      {
+        "data": {
+          "Name": "abyssia:wreck_core"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 1.0
+  }
+}

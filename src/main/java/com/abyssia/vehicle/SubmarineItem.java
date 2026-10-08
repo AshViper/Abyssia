@@ -127,11 +127,16 @@ public class SubmarineItem extends Item
         int energy = getEnergy(stack), cap = capacity(stack);
         lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.energy", nf.format(energy), nf.format(cap))
                 .withStyle(energy > 0 ? ChatFormatting.AQUA : ChatFormatting.RED));
-        int mask = SubmarineUpgrades.mask(getUpgrades(stack));
+        CompoundTag installed = getUpgrades(stack);
+        int mask = SubmarineUpgrades.mask(installed);
         for (int i = 0; i < SubmarineUpgrades.SLOTS; i++)
-            if ((mask & SubmarineUpgrades.bit(i)) != 0)
+        {
+            net.minecraft.resources.ResourceLocation id = (mask & SubmarineUpgrades.bit(i)) == 0 ? null
+                    : net.minecraft.resources.ResourceLocation.tryParse(installed.getString(SubmarineUpgrades.KEYS[i]));
+            if (id != null)
                 lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.upgrade",
-                        Component.translatable("item." + Abyssia.MODID + "." + SubmarineUpgrades.ITEM_IDS[i])).withStyle(ChatFormatting.BLUE));
+                        Component.translatable("item." + id.getNamespace() + "." + id.getPath())).withStyle(ChatFormatting.BLUE));
+        }
         lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.controls").withStyle(ChatFormatting.GRAY));
     }
 }

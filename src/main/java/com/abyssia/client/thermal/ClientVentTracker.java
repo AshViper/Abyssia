@@ -45,7 +45,7 @@ import java.util.List;
  * the updraft felt by all environment particles, and the water temperature used for fog.
  * The server only stores the vent blocks themselves.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class ClientVentTracker
 {
     public record TrackedVent(BlockPos pos, ThermalVentType type, VentActivity activity) implements VentSource {}

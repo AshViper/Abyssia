@@ -13,7 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * Datapack registries for biome-specific seabed structures, loaded with the other worldgen registries when a world
  * loads (server-side only), so a datapack can retune, add or remove structures and profiles without code.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class StructureRegistries
 {
     public static final ResourceKey<Registry<SeabedStructure>> STRUCTURES = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "seabed_structure"));

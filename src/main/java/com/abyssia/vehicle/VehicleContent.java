@@ -84,7 +84,7 @@ public final class VehicleContent
     }
 
     /** The pilot breathes inside the hull (both sides, so the air bar never shows). */
-    @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+    @EventBusSubscriber(modid = Abyssia.MODID)
     public static final class Events
     {
         private Events() {}

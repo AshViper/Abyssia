@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 /** Client setup of the furniture: the large locker and wall workbench screens, the hydro planter crop renderer. */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class FurnitureClient
 {
     private FurnitureClient() {}

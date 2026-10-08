@@ -85,7 +85,7 @@ public final class CaveNetwork
         this.seabedDensity = randomState.router().initialDensityWithoutJaggedness();
         // The deep layer: from the world bottom up to its rock ceiling (no cave ever cuts into the ceiling or the
         // ocean world above it).
-        this.minY = noise.minY();
+        this.minY = Math.max(noise.minY(), DeepLayer.DEEP_BOTTOM_Y);  // the caves stay in the deep layer, not the abyss under it
         this.maxY = Math.min(noise.minY() + noise.height(), DeepLayer.CEILING_BOTTOM_Y);
         this.cellSize = Config.CAVE_SYSTEM_SPACING.get();
         this.profiles = profiles;

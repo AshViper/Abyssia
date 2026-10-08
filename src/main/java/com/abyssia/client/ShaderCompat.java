@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
  * and read once per frame, since particles ask for every one of them. A shader pack replaces the vanilla fog and
  * lighting maths with its own, so effects that rely on them need a fallback.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class ShaderCompat
 {
     private static final Logger LOGGER = LogUtils.getLogger();

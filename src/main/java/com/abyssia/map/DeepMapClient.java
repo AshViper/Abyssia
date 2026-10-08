@@ -10,7 +10,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 /** MP01: hides the vanilla "Locked" tooltip line on deep sea maps. */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class DeepMapClient
 {
     private DeepMapClient() {}

@@ -30,7 +30,7 @@ import java.util.Locale;
  * {@code current_mote} particles flowing along them, densest on the axis and thinning toward the edge. Nearby streams
  * are looked up once a second; where there are none, nothing else runs. Also adds the stream at your feet to F3.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class NaturalCurrentClient
 {
     private static final int LOOKUP_INTERVAL = 20;

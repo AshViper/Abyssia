@@ -28,6 +28,8 @@ LAYOUTS = {
     # I02 selective leaching separator: input over the reagent slot, big main output, a column of three rare outputs
     "leaching": dict(inputs=[(36, 21)], output=(94, 30), arrow=(60, 30), flame=None,
                      reagent=(36, 41), rares=[(126, 17), (126, 35), (126, 53)]),
+    # Excavator: no inputs, output slot, arrow, energy bar only
+    "excavator": dict(inputs=[], output=(116, 53), arrow=(80, 34), flame=None),
 }
 
 # palette: ChatGPT GUI design (inbox/specs/I01-gui-spec.md, mockup inbox/designs/I01-gui-mockup.png)

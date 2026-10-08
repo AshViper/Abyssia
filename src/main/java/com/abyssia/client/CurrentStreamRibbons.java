@@ -47,7 +47,7 @@ import java.util.Set;
  * Loader-specific parts (events, vertex calls, stream polyline / speed) are marked "LOADER"; the rest is shared with
  * the NeoForge branch.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class CurrentStreamRibbons
 {
     // LOADER

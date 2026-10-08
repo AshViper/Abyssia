@@ -62,7 +62,7 @@ import java.util.function.Predicate;
  * bottom-up assembly, auto-connection, and cancel with full refund (shell reverted to water). Runs any BuildEntry;
  * a finished build is recorded in BuiltUnits.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class HabitatBuilder
 {
     public static final int DURATION = 20;
@@ -91,6 +91,13 @@ public final class HabitatBuilder
      */
     public static Result startBuild(ServerPlayer player, BuildEntry entry, int rot, int distance)
     {
+        // WRK01: building needs the technology analysed from seabed wrecks (server-side, creative exempt)
+        if (!player.getAbilities().instabuild && !com.abyssia.progress.WreckProgress.unlocked(player))
+        {
+            message(player, Component.translatable("message.abyssia.wreck.locked",
+                    com.abyssia.progress.WreckProgress.count(player), com.abyssia.progress.WreckProgress.required()));
+            return Result.PERMISSION;
+        }
         if (JOBS.containsKey(player.getUUID()))
         {
             message(player, Component.translatable(MSG + "busy"));

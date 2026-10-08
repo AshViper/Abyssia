@@ -43,7 +43,7 @@ import java.util.function.Predicate;
  * cap           {count, radius}: no more of this animal spawns while count are within radius
  * </pre>
  */
-public record FaunaSpawnRule(EntityType<?> entity, String role, int weight, Range group, Depth depth, Placement placement,
+public record FaunaSpawnRule(EntityType<?> entity, String role, double weight, Range group, Depth depth, Placement placement,
                              float caveFactor, float openFactor, int maxLight, List<String> biomes,
                              List<Habitat> habitat, List<Substrate> substrate, int clearance, Cap cap)
 {
@@ -125,7 +125,7 @@ public record FaunaSpawnRule(EntityType<?> entity, String role, int weight, Rang
     public static final Codec<FaunaSpawnRule> CODEC = RecordCodecBuilder.create(i -> i.group(
             BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("entity").forGetter(FaunaSpawnRule::entity),
             Codec.STRING.lenientOptionalFieldOf("role", "passive").forGetter(FaunaSpawnRule::role),
-            Codec.intRange(0, 10000).fieldOf("weight").forGetter(FaunaSpawnRule::weight),
+            Codec.doubleRange(0, 10000).fieldOf("weight").forGetter(FaunaSpawnRule::weight),
             Range.CODEC.lenientOptionalFieldOf("group", new Range(1, 1)).forGetter(FaunaSpawnRule::group),
             Depth.CODEC.fieldOf("depth_m").forGetter(FaunaSpawnRule::depth),
             Placement.CODEC.fieldOf("placement").forGetter(FaunaSpawnRule::placement),

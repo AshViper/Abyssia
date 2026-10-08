@@ -20,7 +20,7 @@ import java.util.Arrays;
  * the box of the unit under the crosshair into the held constructor's minecraft:custom_data {@link #BOX} (int[6] min / max, inclusive)
  * while the dismantle mode is selected, and removes it otherwise. Only rewritten when the target changes.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class DismantleSync
 {
     public static final String BOX = "DismantleBox";

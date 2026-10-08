@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 /** Client setup of the industrial blocks: the GUI screen. Render types come from the models (render_type). */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class IndustryClient
 {
     private IndustryClient() {}
@@ -22,7 +22,7 @@ public final class IndustryClient
     }
 
     /** The client keeps one RecipeManager and refills it, so the derived machine recipes are dropped on every sync. */
-    @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
     public static final class GameEvents
     {
         private GameEvents() {}

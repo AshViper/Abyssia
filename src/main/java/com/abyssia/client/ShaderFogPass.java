@@ -31,7 +31,7 @@ import java.io.IOException;
  * holds the scene, so the same spherical fog is rebuilt from depth and laid over the pack's image: first into a
  * separate target (the depth texture is never sampled while it is attached), then blended onto the screen.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class ShaderFogPass
 {
     private static ShaderInstance fogShader;
@@ -114,7 +114,7 @@ public final class ShaderFogPass
         BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
-    @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
     public static final class Registration
     {
         private Registration() {}

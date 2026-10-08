@@ -21,8 +21,12 @@ public final class DepthZone
     private static final int DEEP_OFFSET = DeepLayer.DEPTH_ORIGIN_DEEP_Y - OCEAN_DEPTH_FLOOR_Y;
     /** Overworld Y (-40) where the depth scale switches to the deep one: deep Y 200 = 63 blocks, the value the ocean clamp holds. */
     private static final double DEEP_SCALE_TOP_Y = DeepLayer.fromDeepY(DeepLayer.DEPTH_ORIGIN_DEEP_Y);
-    private static final double[] BLOCKS = {0, 40, 100, 200, 300, 380};
-    private static final double[] METRES = {0, 200, 1000, 4000, 6000, 11000};
+    /**
+     * The last two points: 392 blocks is the old deep layer's floor (deep Y -128, 11750 m on the old extrapolation); under it
+     * lies the abyss layer (to Y -1872, about 1900 blocks), whose scale rises slowly instead of at 62.5 m per block.
+     */
+    private static final double[] BLOCKS = {0, 40, 100, 200, 300, 380, 392, 2000};
+    private static final double[] METRES = {0, 200, 1000, 4000, 6000, 11000, 11750, 17000};
 
     /** Pelagic zones by depth: sunlit, twilight, midnight, abyssal and hadal. */
     public enum Zone

@@ -19,7 +19,7 @@ import java.util.Optional;
  * Swaps the menu panorama (Screen.PANORAMA, made non-final by the access transformer) for the Abyssia one when the title
  * screen opens, unless a resource pack already replaces it. Restores the vanilla renderer otherwise.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class TitlePanoramaHandler
 {
     private static final ResourceLocation VANILLA_FACE = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/title/background/panorama_0.png");

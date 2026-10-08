@@ -2,6 +2,7 @@ package com.abyssia.industry.client;
 
 import com.abyssia.industry.GuiLayout;
 import com.abyssia.industry.MachineKind;
+import com.abyssia.industry.blockentity.AbyssalExcavatorBlockEntity;
 import com.abyssia.industry.blockentity.ProcessingMachineBlockEntity;
 import com.abyssia.industry.menu.IndustryMenu;
 import com.abyssia.thermal.VentActivity;
@@ -120,6 +121,14 @@ public class IndustryScreen extends AbstractContainerScreen<IndustryMenu>
                 g.drawString(font, rateText("gui.abyssia.output", "Output: %s FE/t"), x, 36, TEXT, false);
             }
             case ENERGY_DEVICE -> g.drawString(font, energyText(), x, 36, VALUE, false);
+            case ABYSSAL_EXCAVATOR ->
+            {
+                g.drawString(font, energyText(), x, 60, VALUE, false);
+                int status = menu.status();
+                if (status > 0)
+                    g.drawString(font, Component.translatableWithFallback("gui.abyssia.excavator." + status, "Excavator status " + status),
+                            x, 18, status == AbyssalExcavatorBlockEntity.STATUS_MINING ? TEXT : WARN, false);
+            }
             default ->
             {
                 g.drawString(font, energyText(), x, 60, VALUE, false);

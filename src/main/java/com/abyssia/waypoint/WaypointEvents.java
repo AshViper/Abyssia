@@ -7,7 +7,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 /** W01: sends each player the beacon list of the dimension they are now in. */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class WaypointEvents
 {
     private WaypointEvents() {}

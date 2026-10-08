@@ -30,7 +30,7 @@ import java.util.Map;
  * speckle: every column of its 4x4 block is sampled, colours are folded into 8 map categories, the most common one
  * wins, and a pixel whose 8 neighbours mostly (5+) agree on another category takes theirs (inbox/specs/MP01-review.md).
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class DeepMapFiller
 {
     /** Seabed columns scanned per tick per map, pixel visits per tick, map size. */

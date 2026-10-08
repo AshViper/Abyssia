@@ -28,7 +28,7 @@ import java.util.List;
  *     cell is water) without the constructor; not recorded as a built unit (no constructor dismantle)</li>
  * </ul>
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class RelayCommand
 {
     private RelayCommand() {}

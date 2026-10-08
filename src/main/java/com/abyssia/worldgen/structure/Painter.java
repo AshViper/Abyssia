@@ -50,7 +50,7 @@ public final class Painter
         this.z1 = Math.min(chunk.getMaxBlockZ(), site.z + r);
         this.radiusSq = r * r;
         this.noise = new SimplexNoise(new XoroshiroRandomSource(site.seed ^ 0x5EABEDL));
-        this.minY = level.getMinBuildHeight() + 1;
+        this.minY = Math.max(level.getMinBuildHeight(), DeepLayer.DEEP_BOTTOM_Y) + 1;
         // Structures belong to the deep layer: never into its rock ceiling or the ocean world above.
         this.maxY = Math.min(level.getMaxBuildHeight() - 1, DeepLayer.CEILING_BOTTOM_Y);
     }
@@ -119,6 +119,24 @@ public final class Painter
     public int toZ(double c, double r)
     {
         return Math.min(z1, Mth.ceil(c + r));
+    }
+
+    /** Whether a part centred at (cx, cz) with horizontal reach r can touch this chunk's columns (cheap cull). */
+    public boolean touches(double cx, double cz, double r)
+    {
+        return fromX(cx, r) <= toX(cx, r) && fromZ(cz, r) <= toZ(cz, r);
+    }
+
+    /** The state with its axis set (logs, bone blocks, beams), unchanged if it has none. */
+    public static BlockState axis(BlockState state, Direction.Axis axis)
+    {
+        return state.hasProperty(BlockStateProperties.AXIS) ? state.setValue(BlockStateProperties.AXIS, axis) : state;
+    }
+
+    /** The state waterlogged where it can be (slabs, beams), so no air-filled cell is left inside a structure. */
+    public static BlockState wet(BlockState state)
+    {
+        return state.hasProperty(BlockStateProperties.WATERLOGGED) ? state.setValue(BlockStateProperties.WATERLOGGED, true) : state;
     }
 
     // ---------------------------------------------------------------- reading

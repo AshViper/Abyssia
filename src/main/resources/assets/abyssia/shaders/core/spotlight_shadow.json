@@ -1,0 +1,12 @@
+{
+    "vertex": "abyssia:spotlight_shadow",
+    "fragment": "abyssia:spotlight_shadow",
+    "attributes": [ "Position", "Color", "UV0", "UV2", "Normal" ],
+    "samplers": [
+        { "name": "Sampler0" }
+    ],
+    "uniforms": [
+        { "name": "ChunkOffset", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] },
+        { "name": "LightViewProj", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] }
+    ]
+}

@@ -45,11 +45,19 @@ LIT_MACHINES = {
     "crusher": ("Crusher", "粉砕機"),
     "refinery_furnace": ("Refinery Furnace", "精錬炉"),
     "alloy_furnace": ("Alloy Furnace", "合金炉"),
-    "hydrothermal_generator": ("Hydrothermal Generator", "熱水発電機"),
-    "auxiliary_generator": ("Auxiliary Generator", "補助発電機"),
+    "hydrothermal_generator": ("Hydrothermal Generator Mk1", "熱水発電機 Mk1"),
+    "auxiliary_generator": ("Auxiliary Generator Mk1", "補助発電機 Mk1"),
     "high_temp_furnace": ("High-Temperature Furnace", "高温炉"),
     "selective_leaching_separator": ("Selective Leaching Separator", "選択浸出分離機"),     # I02
 }
+# ORE01 abyssal excavator Mk1 / Mk2: multiblock drawn by industry/client/ExcavatorRenderer; blockstates + chunk models come from
+# tools/bt01/excavator_assets.py; built with the habitat constructor (no item)
+EXCAVATORS = {
+    "abyssal_excavator": ("Abyssal Excavator Mk1", "深海採掘機 Mk1"),
+    "abyssal_excavator_mk2": ("Abyssal Excavator Mk2", "深海採掘機 Mk2"),
+}
+# its invisible collision cells (lang: tools/lang_parts/ore01.json; blockstate: excavator_assets.py): no loot, pickaxe, stone tool
+EXCAVATOR_PART = "excavator_part"
 # I02 item (registered in ModIndustry); lang key item.abyssia.<id>
 LEACHING_REAGENT = "acidic_leaching_reagent"
 LEACHING_REAGENT_NAME = ("Acidic Leaching Reagent", "酸性浸出試薬")
@@ -76,6 +84,7 @@ NAMES = {
     CABLE: ("Energy Cable", "エネルギーケーブル"),
     REINFORCED: ("Reinforced Energy Cable", "強化エネルギーケーブル"),
     **MACHINES,
+    **EXCAVATORS,
 }
 
 # GUI title keys (container.abyssia.<id>); same names as the blocks
@@ -126,11 +135,11 @@ ALL_BLOCKS = list(NAMES)
 
 
 def pickaxe_blocks():
-    return list(ALL_BLOCKS)
+    return list(ALL_BLOCKS) + [EXCAVATOR_PART]
 
 
 def needs_stone_tool_blocks():
-    return list(MACHINES)
+    return list(MACHINES) + list(EXCAVATORS) + [EXCAVATOR_PART]
 
 
 def block_names():
@@ -242,6 +251,12 @@ def _machine_blockstate(machine):
         for lit in ("false", "true"):
             v[f"facing={facing},lit={lit}"] = {"model": rl(machine + ("_on" if lit == "true" else "")), **_rot(y)}
     return {"variants": v}
+
+
+def _machine_blockstate_single(model):
+    """facing / lit variants that all use one model (no _on model)."""
+    return {"variants": {f"facing={facing},lit={lit}": {"model": rl(model)}
+                         for facing in ba.NORTH0 for lit in ("false", "true")}}
 
 
 def _energy_blockstate():
@@ -382,6 +397,8 @@ def generate(write, bs, bm, im, data_dir):
         write(bs(light), {"variants": _facing_variants(rl(light), LIGHT_ROT)})
         write(im(light), {"parent": item_parent(light, rl(light))})
 
+    # ---- ORE01 excavators: blockstates / models are written by tools/bt01/excavator_assets.py (multiblock, drawn by its renderer)
+
     # ---- machines, generators, energy device
     for machine in LIT_MACHINES:
         write(bm(machine + "_on"), {"parent": rl(machine), "textures": {"front": rl(f"{machine}_front_on")}})
@@ -417,6 +434,8 @@ def loot_tables(write, data_dir):
     survives = [{"condition": "minecraft:survives_explosion"}]
     slabs = (PANEL_SLAB, GRATING_SLAB)
     for name in ALL_BLOCKS:
+        if name in EXCAVATORS:
+            continue   # ORE01: built with the habitat constructor, drops nothing (no loot table, like the submarine dock)
         if name in slabs:
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": [{
                 "type": "minecraft:item", "name": f"{MOD}:{name}",
@@ -462,10 +481,12 @@ def recipes(write, data_dir):
             "K": "conductive_component", "A": "corrosion_alloy_ingot", "P": P, "R": R, "W": W}
     shaped("crusher", ["PPP", "GFG", "RWR"], mach, 1, "misc")
     shaped("refinery_furnace", ["PPP", "VFV", "PTP"], mach, 1, "misc")
-    shaped("alloy_furnace", ["ATA", "KFK", "PVP"], mach, 1, "misc")
+    # the furnace that makes the alloys cannot need one: nickel ingots (refinery furnace) stand in for the corrosion alloy
+    shaped("alloy_furnace", ["ATA", "KFK", "PVP"], {**mach, "A": "nickel_ingot"}, 1, "misc")
     shaped("auxiliary_generator", ["PPP", "GFG", "WNW"], {**mach, "N": "minecraft:furnace"}, 1, "misc")
     shaped("hydrothermal_generator", ["ATA", "VFV", "PWP"], mach, 1, "misc")
     shaped("high_temp_furnace", ["HTH", "TFT", "PVP"], {**mach, "H": "heat_resistant_alloy_ingot"}, 1, "misc")
+    # ORE01: the excavators have no recipe (habitat constructor build entries, industry/ExcavatorEntry)
     shaped("selective_leaching_separator", ["ATA", "VFV", "PRP"], {**mach, "R": LEACHING_REAGENT}, 1, "misc")
     write(rd(LEACHING_REAGENT), {
         "type": "minecraft:crafting_shapeless", "category": "misc",

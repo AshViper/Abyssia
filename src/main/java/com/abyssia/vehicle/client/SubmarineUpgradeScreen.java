@@ -24,7 +24,7 @@ import java.util.Locale;
 public class SubmarineUpgradeScreen extends AbstractContainerScreen<SubmarineUpgradeMenu>
 {
     private static final ResourceLocation CHEST = ResourceLocation.withDefaultNamespace("textures/gui/container/generic_54.png");
-    private static final String[] SLOT_KEYS = {"hull", "battery", "thruster", "utility"};
+    private static final String[] SLOT_KEYS = {"hull", "battery", "thruster", "utility", "depth"};
 
     public SubmarineUpgradeScreen(SubmarineUpgradeMenu menu, Inventory inventory, Component title)
     {

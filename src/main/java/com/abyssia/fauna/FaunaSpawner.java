@@ -3,6 +3,7 @@ package com.abyssia.fauna;
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
 import com.abyssia.fauna.external.ExternalSpawnProvider;
+import com.abyssia.registry.ModTags;
 import com.abyssia.worldgen.DeepLayer;
 import com.abyssia.worldgen.OceanChunkGenerator;
 import net.minecraft.core.BlockPos;
@@ -216,6 +217,7 @@ public final class FaunaSpawner
             }
             total += sum;
         }
+        total = balanceFoodFish(candidates, weights, total);
         if (log != null)
         {
             for (int i = 0; i < candidates.size(); i++) log.add(String.format("%s: weight %.2f at %s", key(candidates.get(i)), weights.get(i), spots.get(i).toShortString()));
@@ -229,6 +231,28 @@ public final class FaunaSpawner
         }
         if (log != null) log.add("rolled nothing");
         return 0;
+    }
+
+    /**
+     * Edible fish take {@code food_fish_share} of the weight at a spot and the other animals the rest, whatever the
+     * species counts: both groups are scaled to their share of the same total, so "nothing spawns" keeps its odds.
+     * Left alone where only one group fits.
+     */
+    private static double balanceFoodFish(List<FaunaSpawnRule> candidates, List<Double> weights, double total)
+    {
+        double share = Config.FAUNA_FOOD_FISH_SHARE.get();
+        if (share <= 0) return total;
+        double food = 0, other = 0;
+        for (int i = 0; i < candidates.size(); i++)
+        {
+            if (candidates.get(i).entity().is(ModTags.FOOD_FISH)) food += weights.get(i);
+            else other += weights.get(i);
+        }
+        if (food <= 0 || other <= 0) return total;
+        double foodScale = share * total / food;
+        double otherScale = (1.0 - share) * total / other;
+        for (int i = 0; i < weights.size(); i++) weights.set(i, weights.get(i) * (candidates.get(i).entity().is(ModTags.FOOD_FISH) ? foodScale : otherScale));
+        return total;
     }
 
     private static int spawnGroup(ServerLevel level, FaunaSpawnProvider provider, FaunaSpawnRule rule, BlockPos spot, RandomSource random, @Nullable List<String> log)

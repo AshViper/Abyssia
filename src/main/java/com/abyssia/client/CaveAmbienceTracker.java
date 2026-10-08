@@ -26,7 +26,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * Water squeezing through a narrow passage runs faster: the flow follows the passage axis, in whichever sense the
  * regional ocean current (or up/downwelling, in a shaft) pushes it.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class CaveAmbienceTracker
 {
     private static final int INTERVAL = 5;

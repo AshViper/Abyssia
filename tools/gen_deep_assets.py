@@ -31,6 +31,7 @@ import habitat_assets
 import furniture_assets
 import planter_assets
 import electric_tool_assets
+import wreck_assets
 import industrial_assets
 import material_system
 import mc_format
@@ -130,6 +131,13 @@ MINERAL = {
     "vanadium": P("#18242a", "#304349", "#4c666a", "#6e8a8a", "#9cb4b0"),
     "tungsten": P("#16171a", "#2a2c30", "#43464b", "#5f6268", "#868a90"),
     "yttrium": P("#2e2c26", "#57544a", "#838071", "#afab98", "#d8d4c0"),
+    "titanium": P("#1c2026", "#3a424c", "#5e6b7a", "#8a9aab", "#b8c6d4"),
+    "lead": P("#17191f", "#2f333d", "#4b505e", "#6d7384", "#9399aa"),
+    "zinc": P("#202a2e", "#3e5058", "#6a838c", "#98b0b8", "#c8dce0"),
+    "iridium": P("#2c2e33", "#585b63", "#8c9099", "#c0c4cc", "#eceef2"),
+    "uranium": P("#1a2410", "#35491c", "#587a2a", "#86b03e", "#bce068"),
+    "neodymium": P("#241a30", "#46345c", "#6c5489", "#9a82b8", "#c8b6dc"),
+    "thorium": P("#1c2420", "#36443c", "#5a6e60", "#86a08c", "#b4cdb8"),
     # vanilla minerals of the deep veins (placeholders too)
     "diamond": P("#0c2a2c", "#145450", "#1f8a80", "#3cbcae", "#8ce4da"),
     "emerald": P("#082a16", "#0f5228", "#17803e", "#2cae58", "#7ad88e"),
@@ -140,43 +148,49 @@ MINERAL = {
 }
 
 # ================================================================ rare metals (M01)
-# Real deep-sea resources.  Each metal: raw_<id>, <id>_ingot, <id>_ore.  Raw lumps drop (rarely) from the crusts that
+# Real deep-sea resources.  Each metal: raw_<id>, <id>_ingot, <id>_ore.  Raw lumps come from the excavator (ORE01) off the deposits that
 # concentrate them; the ores are tiny, very rare veins in the deep biomes (tools/gen_worldgen.py RARE_VEINS).
 RARE_METALS = {
     # id: (English, Japanese, ore host rock, tooltip en, tooltip ja)
-    "platinum": ("Platinum", "白金", "trench_rock",
-                 "Cobalt-rich crusts of the trench seamounts", "海溝の海山を覆うコバルトリッチクラスト"),
-    "tellurium": ("Tellurium", "テルル", "trench_rock",
-                  "Enriched in cobalt-rich crusts", "コバルトリッチクラストに濃集する"),
+    # ECO02: every metal is its own deposit (no by-products); the excavator tier is ExcavatorMinerals.MIN_TIER
+    "titanium": ("Titanium", "チタン", "abyssal_rock",
+                 "Its own deposits on the abyssal plains", "深淵平原に独立して眠る鉱床"),
+    "lead": ("Lead", "鉛", "mineral_host_rock",
+             "Its own deposits on the upper deep seabed", "深海の浅い海底に独立して眠る鉱床"),
+    "zinc": ("Zinc", "亜鉛", "thermal_rock",
+             "Its own deposits around hydrothermal vents", "熱水噴出域に独立して眠る鉱床"),
     "molybdenum": ("Molybdenum", "モリブデン", "abyssal_rock",
-                   "Manganese crusts of the abyssal plains", "深淵平原のマンガンクラスト"),
+                   "Its own deposits on the abyssal plains", "深淵平原に独立して眠る鉱床"),
     "vanadium": ("Vanadium", "バナジウム", "abyssal_rock",
-                 "Adsorbed in manganese crusts", "マンガンクラストに吸着している"),
+                 "Its own deposits on the abyssal plains", "深淵平原に独立して眠る鉱床"),
     "tungsten": ("Tungsten", "タングステン", "trench_rock",
-                 "Nickel crusts of the hadal zone", "超深海帯のニッケルクラスト"),
+                 "Its own deposits in the hadal zone", "超深海帯に独立して眠る鉱床"),
+    "platinum": ("Platinum", "白金", "trench_rock",
+                 "Its own deposits in the trenches", "海溝に独立して眠る鉱床"),
+    "tellurium": ("Tellurium", "テルル", "trench_rock",
+                  "Its own deposits in the trenches", "海溝に独立して眠る鉱床"),
+    "iridium": ("Iridium", "イリジウム", "trench_rock",
+                "Its own deposits in the deepest trenches", "最深の海溝に独立して眠る鉱床"),
+    "uranium": ("Uranium", "ウラン", "abyssal_rock",
+                "Its own deposits deep in the abyss", "深淵の底に独立して眠る鉱床"),
+    "neodymium": ("Neodymium", "ネオジム", "abyssal_rock",
+                  "Its own rare-earth deposits", "独立したレアアース鉱床"),
     "yttrium": ("Yttrium", "イットリウム", "abyssal_rock",
-                "Rare-earth mud; a trace in every crust", "レアアース泥由来 ― どのクラストにもごく僅か"),
-}
-# crust -> [(rare metal, fortune chances 0..3)]: extra raw_<metal> drops when a crust is mined without silk touch
-COMMON_RARE = [0.02, 0.03, 0.04, 0.05]
-TRACE_RARE = [0.005, 0.0075, 0.01, 0.0125]
-CRUST_RARE_DROPS = {
-    "cobalt_crust": [("platinum", COMMON_RARE), ("tellurium", COMMON_RARE), ("yttrium", TRACE_RARE)],
-    "manganese_crust": [("molybdenum", COMMON_RARE), ("vanadium", COMMON_RARE), ("yttrium", TRACE_RARE)],
-    "nickel_crust": [("tungsten", COMMON_RARE), ("yttrium", TRACE_RARE)],
-    "iron_crust": [("yttrium", TRACE_RARE)],
-    "copper_crust": [("yttrium", TRACE_RARE)],
-    # gem crusts are not smeltable: a mined crust sometimes yields the gem itself
-    "diamond_crust": [("minecraft:diamond", COMMON_RARE)],
-    "emerald_crust": [("minecraft:emerald", COMMON_RARE)],
+                "Its own rare-earth deposits", "独立したレアアース鉱床"),
+    "thorium": ("Thorium", "トリウム", "trench_rock",
+                "Its own deposits near volcanic and hadal rock", "火山と超深海の岩盤に独立して眠る鉱床"),
 }
 RARE_ORES = [m + "_ore" for m in RARE_METALS]
-# Vanilla minerals in deep-sea form (2026-10-03, user request): seabed veins of abyssal_<m>_ore ringed by <m>_crust
+# Vanilla minerals in deep-sea form (2026-10-03, user request): seabed veins of abyssal_<m>_ore
 # (tools/gen_worldgen.py VANILLA_VEINS); they drop the vanilla items. Their 12 textures are ChatGPT-made (inbox/textures,
 # user 2026-10-03) and frozen in tools/texture_locks; the placeholders below are overwritten by the locks.
 VANILLA_MINERALS = ["diamond", "gold", "redstone", "lapis", "emerald", "quartz"]
 VANILLA_ORES = [f"abyssal_{m}_ore" for m in VANILLA_MINERALS]
-VANILLA_CRUSTS = [m + "_crust" for m in VANILLA_MINERALS]
+# ORE01: deposit-only blocks (excavator only): unbreakable in survival, drop nothing (ModBlocks.deposit / depositCrystal).
+# (ECO02: sulfur, thermal crystal and abyssal crystal are ordinary hand-mined ores again, not excavator deposits)
+DEPOSIT_ONLY = ["manganese_ore", "cobalt_ore", "deep_nickel_ore",
+                *[m + "_ore" for m in RARE_METALS],
+                "manganese_nodules", "cobalt_cluster", "nickel_cluster"]
 PLANT = {
     "green": P("#0f2a1c", "#184030", "#22583f", "#2f7050", "#4a9068"),
     "teal": P("#0c2a30", "#124048", "#1a5a62", "#267a80", "#3fa0a0"),
@@ -273,12 +287,6 @@ def ore_textures(t):
     ores.update({f"abyssal_{m}_ore": ("abyssal_rock", m) for m in VANILLA_MINERALS})
     for name, (host, mineral) in ores.items():
         t[name] = ore(t[host], name, MINERAL[mineral][1:], blobs=5 if "crystal" in name else 4)
-    crusts = {"manganese_crust": "manganese", "cobalt_crust": "cobalt", "nickel_crust": "nickel",
-              "iron_crust": "iron", "copper_crust": "copper", **{m + "_crust": m for m in VANILLA_MINERALS}}
-    for name, mineral in crusts.items():
-        t[name] = flecks(t["deep_sediment"], name, MINERAL[mineral][:4], density=0.45, threshold=0.42)
-    # Polished crusts (the crust art itself) and crust bricks (crust + dark running-bond joints) are derived from the
-    # current crust textures by tools/derive_textures.py.
 
 
 # ---------------------------------------------------------------- cross sprites (clusters, plants)
@@ -600,8 +608,7 @@ CUBES = ["deep_sea_rock", "abyssal_rock", "trench_rock", "thermal_rock", "volcan
          "ruin_gravel", "ruin_sediment", "ancient_masonry", "bone_sediment", "fossil_silt", "fossil_rock", "salt_crust",
          "brine_silt", "salt_rock", "lumen_sand", "glow_silt", "lumen_rock", "frost_silt", "icy_sediment", "frozen_rock",
          "abyssal_iron_ore", "deep_copper_ore", "sulfur_ore", "thermal_crystal_ore", "abyssal_crystal_ore",
-         "manganese_ore", "cobalt_ore", "deep_nickel_ore", "manganese_crust", "cobalt_crust", "nickel_crust",
-         "iron_crust", "copper_crust", "deep_crystal_block"] + RARE_ORES + VANILLA_ORES + VANILLA_CRUSTS + COBBLED_CUBES
+         "manganese_ore", "cobalt_ore", "deep_nickel_ore", "deep_crystal_block"] + RARE_ORES + VANILLA_ORES + COBBLED_CUBES
 SOFT = ["deep_sediment", "abyssal_mud", "deep_mud", "mineral_sediment", "crystal_sediment", "organic_sediment", "volcanic_ash",
         "ruin_gravel", "ruin_sediment", "bone_sediment", "fossil_silt", "salt_crust", "brine_silt", "lumen_sand", "glow_silt",
         "frost_silt", "icy_sediment"]
@@ -867,18 +874,13 @@ NAMES = {
     "black_mineral_deposit": ("Black Mineral Deposit", "黒色鉱物堆積物"),
     "abyssal_iron_ore": ("Abyssal Iron Ore", "深淵鉄鉱石"), "deep_copper_ore": ("Deep Copper Ore", "深海銅鉱石"),
     "sulfur_ore": ("Sulfur Ore", "硫黄鉱石"), "thermal_crystal_ore": ("Thermal Crystal Ore", "熱結晶鉱石"),
-    "abyssal_crystal_ore": ("Abyssal Crystal Ore", "深淵結晶鉱石"), "manganese_ore": ("Manganese Ore", "マンガン鉱石"),
-    "cobalt_ore": ("Cobalt Ore", "コバルト鉱石"), "deep_nickel_ore": ("Deep Nickel Ore", "深海ニッケル鉱石"),
-    "manganese_crust": ("Manganese Crust", "マンガンクラスト"), "cobalt_crust": ("Cobalt Crust", "コバルトクラスト"),
-    "nickel_crust": ("Nickel Crust", "ニッケルクラスト"), "iron_crust": ("Iron Crust", "鉄クラスト"),
+    "abyssal_crystal_ore": ("Abyssal Crystal Ore", "深淵結晶鉱石"), "manganese_ore": ("Manganese Deposit", "マンガン鉱床"),
+    "cobalt_ore": ("Cobalt Deposit", "コバルト鉱床"), "deep_nickel_ore": ("Deep Nickel Deposit", "深海ニッケル鉱床"),
     "abyssal_diamond_ore": ("Abyssal Diamond Ore", "深淵ダイヤモンド鉱石"), "abyssal_gold_ore": ("Abyssal Gold Ore", "深淵金鉱石"),
     "abyssal_redstone_ore": ("Abyssal Redstone Ore", "深淵レッドストーン鉱石"),
     "abyssal_lapis_ore": ("Abyssal Lapis Lazuli Ore", "深淵ラピスラズリ鉱石"),
     "abyssal_emerald_ore": ("Abyssal Emerald Ore", "深淵エメラルド鉱石"), "abyssal_quartz_ore": ("Abyssal Quartz Ore", "深淵クォーツ鉱石"),
-    "diamond_crust": ("Diamond Crust", "ダイヤモンドクラスト"), "gold_crust": ("Gold Crust", "金クラスト"),
-    "redstone_crust": ("Redstone Crust", "レッドストーンクラスト"), "lapis_crust": ("Lapis Lazuli Crust", "ラピスラズリクラスト"),
-    "emerald_crust": ("Emerald Crust", "エメラルドクラスト"), "quartz_crust": ("Quartz Crust", "クォーツクラスト"),
-    "copper_crust": ("Copper Crust", "銅クラスト"), "deep_crystal_block": ("Deep Crystal Block", "深海結晶ブロック"),
+    "deep_crystal_block": ("Deep Crystal Block", "深海結晶ブロック"),
     "manganese_nodules": ("Manganese Nodules", "マンガン団塊"), "cobalt_cluster": ("Cobalt Cluster", "コバルトの結晶塊"),
     "nickel_cluster": ("Nickel Cluster", "ニッケルの結晶塊"), "sulfur_cluster": ("Sulfur Cluster", "硫黄の結晶塊"),
     "abyssal_crystal_cluster": ("Abyssal Crystal Cluster", "深淵結晶の塊"),
@@ -927,7 +929,7 @@ ITEM_NAMES.update({
     "abyssal_flippers": ("Abyssal Flippers", "深海フィン"),
 })
 for _m, (_en, _ja, _host, _src_en, _src_ja) in RARE_METALS.items():
-    NAMES[_m + "_ore"] = (f"{_en} Ore", f"{_ja}鉱石")
+    NAMES[_m + "_ore"] = (f"{_en} Deposit", f"{_ja}鉱床")
     ITEM_NAMES["raw_" + _m] = (f"Raw {_en}", f"{_ja}の原石")
     ITEM_NAMES[_m + "_ingot"] = (f"{_en} Ingot", f"{_ja}インゴット")
     # tooltip line (com.abyssia.item.MaterialItem: item.abyssia.<id>.source)
@@ -980,6 +982,8 @@ BIOME_NAMES = {
     "brine_lakes": ("Brine Lakes", "塩水湖帯"), "glow_gardens": ("Glow Gardens", "発光花園"),
     "frost_abyss": ("Frost Abyss", "氷晶の深淵"), "abyssal_rift": ("Abyssal Rift", "深淵の裂け目"),
     "deep_fissure": ("Deep Sea Fissure", "深海の割れ目"),
+    "abyss_plain": ("Abyssal Depths", "最深部の平原"), "abyss_garden": ("Depths Garden", "最深部の花園"),
+    "abyss_crystal": ("Depths Crystal Fields", "最深部の結晶原"),
 }
 
 # ================================================================ models
@@ -1050,9 +1054,6 @@ def main():
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         write(bm(name), {"parent": "minecraft:block/cube_all", "textures": {"all": ref(name)}})
         write(im(name), {"parent": ref(name)})
-
-    # Polished metal crusts reuse the crust texture and bricks draw joints on it (derive_textures.py); their models,
-    # blockstates, loot, recipes, tags and names come from building_assets.py.
 
     rot = {"down": {"x": 180}, "east": {"x": 90, "y": 90}, "north": {"x": 90}, "south": {"x": 90, "y": 180},
            "up": {}, "west": {"x": 90, "y": 270}}
@@ -1135,9 +1136,10 @@ def main():
     furniture_assets.generate(write, bs, bm, im, DATA)
     planter_assets.generate(write, bs, bm, im, DATA)   # PL01/PL02 hydro planter
     electric_tool_assets.generate(write, im, DATA)
+    wreck_assets.generate(write, bs, bm, im)   # WRK01 wreck core
     # BT01 build-menu content: its generators write straight into src/main/resources, so run them after the wipe.
     import subprocess
-    for part in ("aquarium", "custom", "generator", "ladder", "relay"):
+    for part in ("aquarium", "custom", "generator", "excavator", "ladder", "relay"):
         subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "bt01", part + "_assets.py")],
                        check=True, stdout=subprocess.DEVNULL)
 
@@ -1222,13 +1224,13 @@ def silk():
 
 
 def rare_pools(name):
-    """Extra pools of a crust: each concentrated rare metal rolls on its own (fortune raises the chance)."""
+    """Extra pools of a block (only the ancient frond sapling since ORE01)."""
     return [{"rolls": 1, "bonus_rolls": 0,
              "entries": [{"type": "minecraft:item", "name": metal if ":" in metal else "abyssia:raw_" + metal}],
              "conditions": [{"condition": "minecraft:inverted", "term": silk()[0]},
                             {"condition": "minecraft:table_bonus", "enchantment": "minecraft:fortune", "chances": chances},
                             {"condition": "minecraft:survives_explosion"}]}
-            for metal, chances in CRUST_RARE_DROPS.get(name, [])] + (
+            for metal, chances in []] + (
         # TR01: ancient fronds give a sapling 5% of the time, with or without silk touch.
         [{"rolls": 1, "bonus_rolls": 0, "entries": [{"type": "minecraft:item", "name": "abyssia:ancient_sapling"}],
           "conditions": [{"condition": "minecraft:random_chance", "chance": 0.05}, {"condition": "minecraft:survives_explosion"}]}]
@@ -1248,7 +1250,7 @@ def loot_tables():
                 {"type": "minecraft:item", "name": "abyssia:" + name, "conditions": silk()},
                 {"type": "minecraft:item", "name": item, "functions": funcs}]}]
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": entries}
-        elif name in cave_assets.CAVERN_NO_DROP or name in industrial_assets.NO_DROP:
+        elif name in cave_assets.CAVERN_NO_DROP or name in industrial_assets.NO_DROP or name in DEPOSIT_ONLY:
             write(lt(name), {"type": "minecraft:block", "pools": [], "random_sequence": "abyssia:blocks/" + name})
             continue
         elif name in COBBLED:
@@ -1292,9 +1294,8 @@ def tags():
              "mineral_vent_rock", "sulfur_deposit", "black_mineral_deposit", "deep_crystal_block", "thermal_vent",
              "ancient_masonry", "fossil_rock", "salt_rock", "lumen_rock", "frozen_rock"] + COBBLED_CUBES
     ores = [n for n in CUBES if n.endswith("_ore")]
-    crusts = [n for n in CUBES if n.endswith("_crust")]
     speleothems = list(cave_assets.SPELEOTHEM)
-    write(os.path.join(blocks, "mineable", "pickaxe.json"), {"replace": False, "values": a(rocks + ores + crusts + list(CLUSTERS)
+    write(os.path.join(blocks, "mineable", "pickaxe.json"), {"replace": False, "values": a(rocks + ores + list(CLUSTERS)
                                                                                           + cave_assets.CAVE_ROCKS + speleothems + ["crystal_needle"]
                                                                                           + list(cave_assets.CAVERN_CRYSTALS)
                                                                                           + building_assets.pickaxe_blocks()
@@ -1310,8 +1311,8 @@ def tags():
     write(os.path.join(blocks, "needs_iron_tool.json"), {"replace": False, "values": a(["cobalt_ore", "deep_nickel_ore", "thermal_crystal_ore", "abyssal_crystal_ore"] + RARE_ORES
                                                                                    + [o for o in VANILLA_ORES if o != "abyssal_lapis_ore"])})
     write(os.path.join(blocks, "crystal_sound_blocks.json"), {"replace": False, "values": a(["deep_crystal_block"] + list(cave_assets.CAVERN_CRYSTALS))})
-    # Veins stay visible: plants cannot root in ore, crust or hot vent minerals (heat moss and mineral vines can).
-    write(os.path.join(ours, "inhibits_plants.json"), {"values": a(ores + crusts + list(CLUSTERS) + [
+    # Veins stay visible: plants cannot root in ore or hot vent minerals (heat moss and mineral vines can).
+    write(os.path.join(ours, "inhibits_plants.json"), {"values": a(ores + list(CLUSTERS) + [
         "sulfur_deposit", "black_mineral_deposit", "mineral_host_rock", "molten_volcanic_rock", "volcanic_glass",
         "thermal_vent", "vent_rock", "black_vent_rock", "sulfur_vent_rock", "mineral_vent_rock", "cave_mineral_crust", "crystal_needle"])})
     write(os.path.join(ours, "vein_replaceable.json"), {"values": a([
@@ -1322,7 +1323,7 @@ def tags():
         # Cave walls: ore veins and spires may cut through them too.
         + [n for n in cave_assets.CAVE_CUBES if n != "cave_mineral_crust"])})
     write(os.path.join(DATA, "abyssia", "tags", "items", "crusts.json"),
-          {"replace": False, "values": a(list(building_assets.CRUSTS) + ["cave_mineral_crust"])})
+          {"replace": False, "values": a(["cave_mineral_crust"])})
     write(os.path.join(DATA, "abyssia", "tags", "items", "underwater_tools.json"),
           {"replace": False, "values": ["abyssia:abyssal_alloy_pickaxe", "abyssia:abyssal_alloy_axe",
            "abyssia:abyssal_alloy_shovel", "abyssia:abyssal_alloy_hoe", "abyssia:abyssal_alloy_sword"]
@@ -1355,14 +1356,9 @@ def recipes():
                 "type": "minecraft:" + kind, "category": "misc", "ingredient": {"item": "abyssia:" + src},
                 "result": result, "experience": 0.7, "cookingtime": time})
 
-    # Mineral crusts are both useful ore concentrates and durable building material.
-    crust_smelt = {"manganese_crust": ("abyssia:manganese_ingot", 2), "cobalt_crust": ("abyssia:cobalt_ingot", 2),
-                   "nickel_crust": ("abyssia:nickel_ingot", 2), "iron_crust": ("minecraft:iron_ingot", 2),
-                   "copper_crust": ("minecraft:copper_ingot", 2), "cave_mineral_crust": ("abyssia:sulfur", 2),
-                   "gold_crust": ("minecraft:gold_ingot", 2), "redstone_crust": ("minecraft:redstone", 4),
-                   "lapis_crust": ("minecraft:lapis_lazuli", 4), "quartz_crust": ("minecraft:quartz", 2)}
     # Vanilla 1.20.1 cooking results are a bare id (always 1); Forge's SimpleCookingSerializer also takes an object
     # result, which is the only way to carry the count (a top-level "count" is ignored).
+    crust_smelt = {"cave_mineral_crust": ("abyssia:sulfur", 2)}  # ORE01: the metal crusts are gone
     for crust, (result, count) in crust_smelt.items():
         for kind, time in (("smelting", 200), ("blasting", 100)):
             write(rd(f"{crust}_to_{kind}"), {"type": "minecraft:" + kind, "category": "misc",
@@ -1407,9 +1403,7 @@ def recipes():
 
     food_recipes(rd)
 
-    write(rd("abyssal_alloy_ingot"), {"type": "minecraft:crafting_shapeless", "category": "misc",
-          "ingredients": [{"item": f"abyssia:{m}_ingot"} for m in ("vanadium", "cobalt", "nickel")],
-          "result": {"item": "abyssia:abyssal_alloy_ingot", "count": 2}})
+    # abyssal_alloy_ingot (vanadium + cobalt + nickel) has no crafting recipe: alloy furnace only (MachineRecipes)
     for name, pattern in (("pickaxe", ["AAA", " S ", " S "]), ("axe", ["AA", "AS", " S"]),
                           ("shovel", ["A", "S", "S"]), ("hoe", ["AA", " S", " S"]),
                           ("sword", ["A", "A", "S"])):

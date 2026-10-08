@@ -20,5 +20,6 @@ public final class ClientBuildContent
         com.abyssia.habitat.aquarium.client.AquariumClient.register(bus); // BT01g
         // BT01h
         com.abyssia.habitat.relay.client.RelayClient.register(bus); // WR01
+        com.abyssia.industry.client.ExcavatorClient.register(bus); // ORE01 excavator multiblock
     }
 }

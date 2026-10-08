@@ -23,7 +23,7 @@ import java.util.List;
  * W01 client side: lamp tint (block + item), the HUD marker overlay, the settings screen, and the beacon list the
  * server sent for the current dimension.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class WaypointClient
 {
     /** beacons of the current dimension, as last sent by the server */
@@ -73,7 +73,7 @@ public final class WaypointClient
         event.registerBelow(VanillaGuiLayers.HOTBAR, ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "waypoint_markers"), WaypointHud::render);
     }
 
-    @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
     public static final class GameEvents
     {
         private GameEvents() {}

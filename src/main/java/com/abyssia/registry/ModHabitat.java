@@ -6,6 +6,7 @@ import com.abyssia.habitat.HabitatConnectedBlock;
 import com.abyssia.habitat.HabitatConstructorItem;
 import com.abyssia.habitat.HabitatDoorBlock;
 import com.abyssia.habitat.HabitatHatchBlock;
+import com.abyssia.habitat.HabitatLightBlock;
 import com.abyssia.habitat.HabitatSupportBlock;
 import com.abyssia.habitat.HabitatWindowBlock;
 import com.abyssia.habitat.power.HabitatPower;
@@ -50,7 +51,7 @@ public final class ModHabitat
     public static final DeferredBlock<Block> CEILING = BLOCKS.register("habitat_ceiling", () -> new HabitatConnectedBlock(metal(5.0f)));
     public static final DeferredBlock<Block> WINDOW = BLOCKS.register("habitat_window", () -> new HabitatWindowBlock(metal(3.0f)
             .noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false).isValidSpawn((s, l, p, e) -> false)));
-    public static final DeferredBlock<Block> LIGHT = BLOCKS.register("habitat_light", () -> new HabitatConnectedBlock(metal(3.0f).lightLevel(s -> 15)));
+    public static final DeferredBlock<Block> LIGHT = BLOCKS.register("habitat_light", () -> new HabitatLightBlock(metal(3.0f).lightLevel(s -> s.getValue(HabitatLightBlock.LIT) ? 15 : 0)));
     public static final DeferredBlock<Block> DOOR_FRAME = BLOCKS.register("habitat_door_frame", () -> new Block(metal(6.0f)));
     public static final DeferredBlock<Block> HATCH = BLOCKS.register("habitat_hatch", () -> new HabitatHatchBlock(metal(6.0f)));
     public static final DeferredBlock<Block> DOOR = BLOCKS.register("habitat_door", () -> new HabitatDoorBlock(metal(6.0f).noOcclusion()));

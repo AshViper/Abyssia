@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
@@ -32,8 +31,8 @@ import java.util.WeakHashMap;
  * <ul>
  *   <li>crusher: shapeless crushing-hammer recipes with exactly 2 ingredients, output +1</li>
  *   <li>refinery furnace: blasting powder -> ingot (60 t, 2,400 FE); concentrate -> (powder) -> ingot (100 t, 4,000 FE)</li>
- *   <li>alloy furnace: the alloy crafting recipes, output x1.5 (120 t, 6,000 FE)</li>
- *   <li>high-temperature furnace: tungsten powder -> ingot (60 t, 4,000 FE), thermal / tungsten alloy x1.5 (100 t, 8,000 FE)</li>
+ *   <li>alloy furnace: fixed alloy table ({@link #ALLOY_FURNACE_ALLOYS}, no crafting-table recipe), 3 per craft (120 t, 6,000 FE)</li>
+ *   <li>high-temperature furnace: tungsten powder -> ingot (60 t, 4,000 FE), thermal / tungsten alloy x3 (100 t, 8,000 FE)</li>
  *   <li>selective leaching separator: fixed table of spec I02 ({@link #leaching()}), not derived from recipes</li>
  * </ul>
  */
@@ -41,9 +40,17 @@ public final class MachineRecipes
 {
     private static final Map<RecipeManager, MachineRecipes> CACHE = Collections.synchronizedMap(new WeakHashMap<>());
 
-    private static final Set<String> ALLOY_FURNACE_ALLOYS = Set.of("abyssal_alloy_ingot", "corrosion_alloy_ingot",
-            "high_strength_alloy_ingot", "heat_resistant_alloy_ingot", "conductive_alloy_ingot", "thermal_alloy_ingot");
-    private static final Set<String> HIGH_TEMP_ALLOYS = Set.of("thermal_alloy_ingot", "tungsten_alloy_ingot");
+    /** alloy: result id, then its ingredient ids (no crafting-table recipe; each makes 2, the furnace gives x1.5) */
+    private static final String[][] ALLOY_FURNACE_ALLOYS = {
+            {"abyssal_alloy_ingot", "vanadium_ingot", "cobalt_ingot", "nickel_ingot"},
+            {"corrosion_alloy_ingot", "nickel_ingot", "cobalt_powder", "zinc_ingot"},
+            {"high_strength_alloy_ingot", "manganese_ingot", "vanadium_powder", "titanium_ingot"},
+            {"heat_resistant_alloy_ingot", "molybdenum_ingot", "nickel_powder", "iron_powder"},
+            {"conductive_alloy_ingot", "minecraft:copper_ingot", "tellurium_powder"},
+            {"thermal_alloy_ingot", "thermal_reagent", "molybdenum_ingot", "tungsten_powder", "thorium_ingot"}};
+    private static final String[][] HIGH_TEMP_ALLOYS = {
+            {"thermal_alloy_ingot", "thermal_reagent", "molybdenum_ingot", "tungsten_powder", "thorium_ingot"},
+            {"tungsten_alloy_ingot", "tungsten_ingot", "nickel_powder"}};
     /** powder smelted only by the high-temperature furnace */
     private static final String HIGH_TEMP_INGOT = "tungsten_ingot";
 
@@ -79,7 +86,6 @@ public final class MachineRecipes
             ItemStack result = recipe.getResultItem(access);
             if (result.isEmpty()) continue;
             List<Ingredient> ings = nonEmpty(recipe.getIngredients());
-            String out = path(result.getItem());
 
             if (ings.size() == 2)
             {
@@ -88,13 +94,10 @@ public final class MachineRecipes
                 if (other != null && !other.test(hammer))
                     crusher.add(new ProcessRecipe(List.of(other), withCount(result, result.getCount() + 1), 80, 3_200));
             }
-            if (ings.size() >= 2 && ings.size() <= 3)
-            {
-                ItemStack boosted = withCount(result, result.getCount() + result.getCount() / 2);
-                if (ALLOY_FURNACE_ALLOYS.contains(out)) alloy.add(new ProcessRecipe(ings, boosted, 120, 6_000));
-                if (HIGH_TEMP_ALLOYS.contains(out)) highTemp.add(new ProcessRecipe(ings, boosted, 100, 8_000));
-            }
         }
+
+        addAlloys(alloy, ALLOY_FURNACE_ALLOYS, 120, 6_000);
+        addAlloys(highTemp, HIGH_TEMP_ALLOYS, 100, 8_000);
 
         List<BlastingRecipe> blasting = new ArrayList<>();
         for (RecipeHolder<BlastingRecipe> holder : manager.getAllRecipesFor(RecipeType.BLASTING))
@@ -135,25 +138,35 @@ public final class MachineRecipes
         recipes.put(MachineKind.SELECTIVE_LEACHING_SEPARATOR, leaching());
     }
 
+    private static void addAlloys(List<ProcessRecipe> out, String[][] table, int ticks, int fe)
+    {
+        for (String[] row : table)
+        {
+            Item made = item(row[0]);
+            List<Ingredient> ings = new ArrayList<>();
+            for (int i = 1; i < row.length; i++)
+            {
+                Item in = item(row[i]);
+                if (in != Items.AIR) ings.add(Ingredient.of(in));
+            }
+            if (made != Items.AIR && ings.size() == row.length - 1) out.add(new ProcessRecipe(ings, new ItemStack(made, 3), ticks, fe));
+        }
+    }
+
     /**
-     * Spec I02: crust x1 (60 t, 6,000 FE) or concentrate x3 (40 t, 4,000 FE) -> powder x3 (copper crust: copper
-     * ingot x2) plus rare raw metals, each rolled on its own. The reagent is paid by the machine.
+     * Spec I02: concentrate x3 (40 t, 4,000 FE) -> powder x3
+     * plus rare raw metals, each rolled on its own. The reagent is paid by the machine.
      */
     private static List<ProcessRecipe> leaching()
     {
         List<ProcessRecipe> out = new ArrayList<>();
-        List<ProcessRecipe.Rare> cobalt = rares("raw_platinum", 0.08f, "raw_tellurium", 0.08f, "raw_yttrium", 0.02f);
-        List<ProcessRecipe.Rare> manganese = rares("raw_molybdenum", 0.08f, "raw_vanadium", 0.08f, "raw_yttrium", 0.02f);
-        List<ProcessRecipe.Rare> nickel = rares("raw_tungsten", 0.08f, "raw_yttrium", 0.02f);
-        List<ProcessRecipe.Rare> yttrium = rares("raw_yttrium", 0.02f);
-        leach(out, "cobalt_crust", 1, "cobalt_powder", 3, cobalt);
+        // ECO02: every metal is its own deposit, so the separator no longer rolls rare raw metals
+        List<ProcessRecipe.Rare> cobalt = List.of();
+        List<ProcessRecipe.Rare> manganese = List.of();
+        List<ProcessRecipe.Rare> nickel = List.of();
         leach(out, "cobalt_concentrate", 3, "cobalt_powder", 3, cobalt);
-        leach(out, "manganese_crust", 1, "manganese_powder", 3, manganese);
         leach(out, "manganese_concentrate", 3, "manganese_powder", 3, manganese);
-        leach(out, "nickel_crust", 1, "nickel_powder", 3, nickel);
         leach(out, "nickel_concentrate", 3, "nickel_powder", 3, nickel);
-        leach(out, "iron_crust", 1, "iron_powder", 3, yttrium);
-        leach(out, "copper_crust", 1, "minecraft:copper_ingot", 2, yttrium);
         return List.copyOf(out);
     }
 

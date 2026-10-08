@@ -23,7 +23,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * Sky, cloud and lightmap behaviour of the ocean world, including the deep layer below its bedrock band (the former
  * deep ocean dimension): there the old deep-ocean lightmap applies by camera Y.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class AbyssiaDimensionEffects
 {
     /** Below this camera Y in the ocean world, sun, moon, stars and clouds are no longer drawn. */

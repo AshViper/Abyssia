@@ -16,7 +16,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.List;
 
 /** {@code /abyssia ventfields [range]}: lists vent fields near the executing position (ops only; for testing). */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class ThermalVentCommand
 {
     private ThermalVentCommand() {}

@@ -61,12 +61,26 @@ public final class ModItems
     public static final DeferredItem<Item> RAW_VANADIUM = sourcedItem("raw_vanadium");
     public static final DeferredItem<Item> RAW_TUNGSTEN = sourcedItem("raw_tungsten");
     public static final DeferredItem<Item> RAW_YTTRIUM = sourcedItem("raw_yttrium");
+    public static final DeferredItem<Item> RAW_TITANIUM = sourcedItem("raw_titanium");
+    public static final DeferredItem<Item> RAW_LEAD = sourcedItem("raw_lead");
+    public static final DeferredItem<Item> RAW_ZINC = sourcedItem("raw_zinc");
+    public static final DeferredItem<Item> RAW_IRIDIUM = sourcedItem("raw_iridium");
+    public static final DeferredItem<Item> RAW_URANIUM = sourcedItem("raw_uranium");
+    public static final DeferredItem<Item> RAW_NEODYMIUM = sourcedItem("raw_neodymium");
+    public static final DeferredItem<Item> RAW_THORIUM = sourcedItem("raw_thorium");
     public static final DeferredItem<Item> PLATINUM_INGOT = sourcedItem("platinum_ingot");
     public static final DeferredItem<Item> TELLURIUM_INGOT = sourcedItem("tellurium_ingot");
     public static final DeferredItem<Item> MOLYBDENUM_INGOT = sourcedItem("molybdenum_ingot");
     public static final DeferredItem<Item> VANADIUM_INGOT = sourcedItem("vanadium_ingot");
     public static final DeferredItem<Item> TUNGSTEN_INGOT = sourcedItem("tungsten_ingot");
     public static final DeferredItem<Item> YTTRIUM_INGOT = sourcedItem("yttrium_ingot");
+    public static final DeferredItem<Item> TITANIUM_INGOT = sourcedItem("titanium_ingot");
+    public static final DeferredItem<Item> LEAD_INGOT = sourcedItem("lead_ingot");
+    public static final DeferredItem<Item> ZINC_INGOT = sourcedItem("zinc_ingot");
+    public static final DeferredItem<Item> IRIDIUM_INGOT = sourcedItem("iridium_ingot");
+    public static final DeferredItem<Item> URANIUM_INGOT = sourcedItem("uranium_ingot");
+    public static final DeferredItem<Item> NEODYMIUM_INGOT = sourcedItem("neodymium_ingot");
+    public static final DeferredItem<Item> THORIUM_INGOT = sourcedItem("thorium_ingot");
     public static final DeferredItem<Item> ABYSSAL_ALLOY_INGOT = sourcedItem("abyssal_alloy_ingot");
 
     // Material processing system (docs/material-system.md, tools/material_spec.json): plain items, rarity from the spec.
@@ -277,6 +291,7 @@ public final class ModItems
         MaterialTools.register(ITEMS, TAB_ITEMS);
         com.abyssia.item.DivingBreathing.register();
         ElectricTools.register(ITEMS, TAB_ITEMS);
+        com.abyssia.item.scanner.LidarScannerItem.register(ITEMS, TAB_ITEMS);
         com.abyssia.item.EntryDivingGear.register(ITEMS, TAB_ITEMS);
         ModIndustry.registerItems(ITEMS, TAB_ITEMS);
         ModHabitat.registerItems(ITEMS, TAB_ITEMS);

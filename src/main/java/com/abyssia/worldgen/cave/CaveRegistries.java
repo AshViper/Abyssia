@@ -13,7 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * Datapack registries for the cave network. Loaded with the other worldgen registries when a world loads, so they
  * are never pinned into level.dat and a datapack can retune or extend caves (new biome profiles, new environments).
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class CaveRegistries
 {
     public static final ResourceKey<Registry<CaveProfile>> PROFILES = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "cave_profile"));

@@ -29,9 +29,12 @@ public final class BuildContent
         BuildRegistry.register(new com.abyssia.habitat.build.furniture.LockerEntry());
         BuildRegistry.register(new com.abyssia.habitat.build.furniture.WorkbenchEntry());
         com.abyssia.habitat.relay.RelayContent.register(bus); // WR01
+        // ORE01: the excavators are built here (no item, no recipe)
+        BuildRegistry.register(new com.abyssia.industry.ExcavatorEntry(com.abyssia.industry.ExcavatorTier.MK1));
+        BuildRegistry.register(new com.abyssia.industry.ExcavatorEntry(com.abyssia.industry.ExcavatorTier.MK2));
         BuildRegistry.applyOrder(java.util.List.of(
                 "foundation", "room", "corridor", "entrance", "open_entrance", "moon_pool", "scan_room",
-                "large_locker", "wall_workbench", "charging_station", "wireless_power_relay", "ladder",
+                "large_locker", "wall_workbench", "charging_station", "wireless_power_relay", "abyssal_excavator", "abyssal_excavator_mk2", "ladder",
                 "current_turbine", "geothermal_generator", "biofuel_generator",
                 "glass_wall", "wall_revert", "vertical_hatch", "dismantle",
                 "scan_upgrade", "aquarium"));

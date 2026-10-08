@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  * EN01 server logic: abyssal_focus, thermal_catch, debuffs from fauna attacks, cold_shock mining penalty. Fog is client side.
  * deep_swimmer's swim bonus is an attributes effect in data/abyssia/enchantment/deep_swimmer.json.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class EffectEvents
 {
     /** Duration of the focus-granted Deep Sight; refreshed every second, so it vanishes within ~2 s of removing the helmet. */

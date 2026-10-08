@@ -340,38 +340,48 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
     private static final BlockState STONE = Blocks.STONE.defaultBlockState();
     private static final int NO_WATER = Integer.MIN_VALUE;
 
-    /** Turns the top block of each column's first water run below the bedrock band into air; returns those Ys. */
+    /**
+     * Turns the top block of each column's first water run below the bedrock band, and of its first water run in the
+     * abyss layer (under the deep layer's rock slab), into air; returns those Ys (deep at {@code i}, abyss at
+     * {@code 256 + i}).
+     */
     private static int[] hideDeepWater(ChunkAccess chunk)
     {
         LevelChunkSection[] sections = chunk.getSections();
         int minY = chunk.getMinBuildHeight();
-        int[] tops = new int[256];
+        int[] tops = new int[512];
         for (int i = 0; i < 256; i++)
         {
-            int x = i & 15, z = i >> 4, top = NO_WATER;
-            for (int y = DeepLayer.TOP_Y - 1; y >= minY; y--)
-            {
-                LevelChunkSection section = sections[(y - minY) >> 4];
-                if (section.getBlockState(x, y & 15, z) == WATER)
-                {
-                    section.setBlockState(x, y & 15, z, AIR, false);
-                    top = y;
-                    break;
-                }
-            }
-            tops[i] = top;
+            int x = i & 15, z = i >> 4;
+            tops[i] = hideTop(sections, minY, x, z, DeepLayer.TOP_Y - 1, DeepLayer.ABYSS_TOP_Y);
+            tops[256 + i] = hideTop(sections, minY, x, z, DeepLayer.ABYSS_TOP_Y - 1, minY - 1);
         }
         return tops;
+    }
+
+    /** Air in place of the first water block at or below {@code from} (and above {@code stop}); its Y, or NO_WATER. */
+    private static int hideTop(LevelChunkSection[] sections, int minY, int x, int z, int from, int stop)
+    {
+        for (int y = from; y > stop && y >= minY; y--)
+        {
+            LevelChunkSection section = sections[(y - minY) >> 4];
+            if (section.getBlockState(x, y & 15, z) == WATER)
+            {
+                section.setBlockState(x, y & 15, z, AIR, false);
+                return y;
+            }
+        }
+        return NO_WATER;
     }
 
     private static void restoreDeepWater(ChunkAccess chunk, int[] tops)
     {
         LevelChunkSection[] sections = chunk.getSections();
         int minY = chunk.getMinBuildHeight();
-        for (int i = 0; i < 256; i++)
+        for (int i = 0; i < tops.length; i++)
         {
             int y = tops[i];
-            if (y != NO_WATER) sections[(y - minY) >> 4].setBlockState(i & 15, y & 15, i >> 4, WATER, false);
+            if (y != NO_WATER) sections[(y - minY) >> 4].setBlockState(i & 15, y & 15, (i >> 4) & 15, WATER, false);
         }
     }
 

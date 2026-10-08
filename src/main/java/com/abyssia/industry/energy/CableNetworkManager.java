@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * networks reappear after a world load). Building never loads chunks; a chunk load / unload rebuilds the networks
  * that touch it.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class CableNetworkManager
 {
     /** Cap on the cables of one network (a runaway cable field just splits into several networks). */

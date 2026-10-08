@@ -47,7 +47,7 @@ import java.util.Objects;
  * placement's highlight boxes (connector panels). The mesh is a cached vertex buffer rebuilt only when the placement
  * changes; the tint is the shader colour.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class HabitatHologram
 {
     private static final float ALPHA = 0.4f;

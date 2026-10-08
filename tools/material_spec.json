@@ -380,7 +380,7 @@
      "tungsten_axe",
      "tungsten_pickaxe"
     ],
-    "relation_to_existing": "cobalt_crust→精鉱→cobalt_powder",
+    "relation_to_existing": "raw_cobalt→精鉱→cobalt_powder",
     "recipe_count": {
      "produced_by": 1,
      "consumed_in": 2
@@ -417,7 +417,7 @@
      "tungsten_axe",
      "tungsten_pickaxe"
     ],
-    "relation_to_existing": "manganese_crust→精鉱→manganese_powder",
+    "relation_to_existing": "raw_manganese→精鉱→manganese_powder",
     "recipe_count": {
      "produced_by": 1,
      "consumed_in": 2
@@ -461,7 +461,7 @@
      "tungsten_axe",
      "tungsten_pickaxe"
     ],
-    "relation_to_existing": "nickel_crust→精鉱→nickel_powder",
+    "relation_to_existing": "raw_nickel→精鉱→nickel_powder",
     "recipe_count": {
      "produced_by": 1,
      "consumed_in": 2
@@ -1840,6 +1840,96 @@
     },
     "why_collect": "最終品"
    }
+  },
+  {
+   "id": "pressure_dive_tank",
+   "ja": "耐圧ダイブタンク",
+   "en": "Pressure Dive Tank",
+   "category": "armor",
+   "rarity": "epic",
+   "phase": 6,
+   "kind": "armor",
+   "new": true,
+   "texture": {
+    "note": "pressure dive tank: heavy tank with hadal plating",
+    "palette": "#182a3a #5a7aa0 #d0e8f0",
+    "placeholder_from": "dive_tank",
+    "tint": "#5a7aa0"
+   },
+   "justification": {
+    "why_not_existing": "潜水装備。専用の防御/酸素・水中特性",
+    "category": "armor",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "深海版+圧殻+超深海装甲板のスミス強化",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品"
+   }
+  },
+  {
+   "id": "pressure_suit_leggings",
+   "ja": "耐圧スーツレギンス",
+   "en": "Pressure Suit Leggings",
+   "category": "armor",
+   "rarity": "epic",
+   "phase": 6,
+   "kind": "armor",
+   "new": true,
+   "texture": {
+    "note": "pressure suit leggings with hadal plating",
+    "palette": "#182a3a #5a7aa0 #d0e8f0",
+    "placeholder_from": "diving_suit_leggings",
+    "tint": "#5a7aa0"
+   },
+   "justification": {
+    "why_not_existing": "潜水装備。専用の防御/酸素・水中特性",
+    "category": "armor",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "深海版+圧殻+超深海装甲板のスミス強化",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品"
+   }
+  },
+  {
+   "id": "pressure_flippers",
+   "ja": "耐圧フィン",
+   "en": "Pressure Flippers",
+   "category": "armor",
+   "rarity": "epic",
+   "phase": 6,
+   "kind": "armor",
+   "new": true,
+   "texture": {
+    "note": "reinforced flippers with hadal plating",
+    "palette": "#182a3a #5a7aa0 #d0e8f0",
+    "placeholder_from": "abyssal_flippers",
+    "tint": "#5a7aa0"
+   },
+   "justification": {
+    "why_not_existing": "潜水装備。専用の防御/酸素・水中特性",
+    "category": "armor",
+    "becomes_what": "(最終品)",
+    "final_products": [
+     "(final product)"
+    ],
+    "relation_to_existing": "深海版+圧殻+超深海装甲板のスミス強化",
+    "recipe_count": {
+     "produced_by": 1,
+     "consumed_in": 0
+    },
+    "why_collect": "最終品"
+   }
   }
  ],
  "recipes": [
@@ -2141,11 +2231,11 @@
    "station": "blast_furnace"
   },
   {
-   "id": "cobalt_concentrate_from_crust",
+   "id": "cobalt_concentrate_from_raw",
    "type": "crafting_shapeless",
    "ingredients": [
     "crushing_hammer",
-    "cobalt_crust"
+    "raw_cobalt"
    ],
    "result": "cobalt_concentrate",
    "count": 3,
@@ -2176,11 +2266,11 @@
    "station": "blast_furnace"
   },
   {
-   "id": "manganese_concentrate_from_crust",
+   "id": "manganese_concentrate_from_raw",
    "type": "crafting_shapeless",
    "ingredients": [
     "crushing_hammer",
-    "manganese_crust"
+    "raw_manganese"
    ],
    "result": "manganese_concentrate",
    "count": 3,
@@ -2211,11 +2301,11 @@
    "station": "blast_furnace"
   },
   {
-   "id": "nickel_concentrate_from_crust",
+   "id": "nickel_concentrate_from_raw",
    "type": "crafting_shapeless",
    "ingredients": [
     "crushing_hammer",
-    "nickel_crust"
+    "raw_nickel"
    ],
    "result": "nickel_concentrate",
    "count": 3,
@@ -2244,19 +2334,6 @@
    "xp": 0.3,
    "phase": 1,
    "station": "blast_furnace"
-  },
-  {
-   "id": "iron_powder_from_iron_crust",
-   "type": "crafting_shapeless",
-   "ingredients": [
-    "crushing_hammer",
-    "iron_crust"
-   ],
-   "result": "iron_powder",
-   "count": 3,
-   "phase": 1,
-   "station": "crafting_table",
-   "damage_item": "crushing_hammer"
   },
   {
    "id": "sulfur_from_cave_mineral_crust",
@@ -2295,15 +2372,6 @@
    "ingredient": "minecraft:copper_ingot",
    "result": "copper_wire",
    "count": 3,
-   "phase": 1,
-   "station": "stonecutter"
-  },
-  {
-   "id": "copper_wire_from_copper_crust",
-   "type": "stonecutting",
-   "ingredient": "copper_crust",
-   "result": "copper_wire",
-   "count": 5,
    "phase": 1,
    "station": "stonecutter"
   },
@@ -2348,12 +2416,12 @@
    "ingredients": [
     "nickel_ingot",
     "cobalt_powder",
-    "iron_powder"
+    "zinc_ingot"
    ],
    "result": "corrosion_alloy_ingot",
    "count": 2,
    "phase": 2,
-   "station": "crafting_table"
+   "station": "alloy_furnace"
   },
   {
    "id": "high_strength_alloy_ingot",
@@ -2361,12 +2429,12 @@
    "ingredients": [
     "manganese_ingot",
     "vanadium_powder",
-    "iron_powder"
+    "titanium_ingot"
    ],
    "result": "high_strength_alloy_ingot",
    "count": 2,
    "phase": 3,
-   "station": "crafting_table"
+   "station": "alloy_furnace"
   },
   {
    "id": "heat_resistant_alloy_ingot",
@@ -2379,7 +2447,7 @@
    "result": "heat_resistant_alloy_ingot",
    "count": 2,
    "phase": 3,
-   "station": "crafting_table"
+   "station": "alloy_furnace"
   },
   {
    "id": "tungsten_alloy_ingot",
@@ -2391,7 +2459,7 @@
    "result": "tungsten_alloy_ingot",
    "count": 2,
    "phase": 3,
-   "station": "crafting_table"
+   "station": "high_temp_furnace"
   },
   {
    "id": "conductive_alloy_ingot",
@@ -2403,7 +2471,7 @@
    "result": "conductive_alloy_ingot",
    "count": 2,
    "phase": 4,
-   "station": "crafting_table"
+   "station": "alloy_furnace"
   },
   {
    "id": "thermal_alloy_ingot",
@@ -2411,12 +2479,13 @@
    "ingredients": [
     "thermal_reagent",
     "molybdenum_ingot",
-    "tungsten_powder"
+    "tungsten_powder",
+    "thorium_ingot"
    ],
    "result": "thermal_alloy_ingot",
    "count": 2,
    "phase": 5,
-   "station": "crafting_table"
+   "station": "high_temp_furnace"
   },
   {
    "id": "luminous_crystal",
@@ -2541,7 +2610,8 @@
    "ingredients": [
     "lumen_cell",
     "tellurium_ingot",
-    "crystal_core"
+    "crystal_core",
+    "lead_ingot"
    ],
    "result": "abyssal_energy_cell",
    "count": 1,
@@ -2580,7 +2650,8 @@
    "ingredients": [
     "abyssal_energy_cell",
     "thermal_core",
-    "platinum_ingot"
+    "platinum_ingot",
+    "uranium_ingot"
    ],
    "result": "advanced_energy_cell",
    "count": 1,
@@ -2620,7 +2691,8 @@
    "ingredients": [
     "tungsten_alloy_ingot",
     "tungsten_powder",
-    "hardened_tip"
+    "hardened_tip",
+    "iridium_ingot"
    ],
    "result": "tungsten_tip",
    "count": 2,
@@ -2935,6 +3007,39 @@
    "count": 1,
    "phase": 6,
    "station": "smithing_table"
+  },
+  {
+   "id": "pressure_dive_tank_upgrade",
+   "type": "smithing_transform",
+   "template": "hadal_plating",
+   "base": "dive_tank",
+   "addition": "pressure_shell",
+   "result": "pressure_dive_tank",
+   "count": 1,
+   "phase": 6,
+   "station": "smithing_table"
+  },
+  {
+   "id": "pressure_suit_leggings_upgrade",
+   "type": "smithing_transform",
+   "template": "hadal_plating",
+   "base": "diving_suit_leggings",
+   "addition": "pressure_shell",
+   "result": "pressure_suit_leggings",
+   "count": 1,
+   "phase": 6,
+   "station": "smithing_table"
+  },
+  {
+   "id": "pressure_flippers_upgrade",
+   "type": "smithing_transform",
+   "template": "hadal_plating",
+   "base": "abyssal_flippers",
+   "addition": "pressure_shell",
+   "result": "pressure_flippers",
+   "count": 1,
+   "phase": 6,
+   "station": "smithing_table"
   }
  ],
  "tools": [
@@ -3157,16 +3262,57 @@
     "repair": "pressure_shell"
    },
    "special": "deep_diver_helmet継承(水中呼吸+暗視Config)+hadal_pressure:将来の超深海圧力ダメージ免除フラグ(現状は装備タグabyssia:pressure_proof)"
+  },
+  {
+   "id": "pressure_dive_tank",
+   "slot": "chest",
+   "material": {
+    "name": "abyssia:pressure_alloy",
+    "defense": 7,
+    "toughness": 3.0,
+    "durability": 520,
+    "enchant": 15,
+    "knockback_resistance": 0.1,
+    "repair": "pressure_shell"
+   },
+   "special": "dive_tankと同じ呼吸(深海段階)+耐圧ティア3"
+  },
+  {
+   "id": "pressure_suit_leggings",
+   "slot": "legs",
+   "material": {
+    "name": "abyssia:pressure_alloy",
+    "defense": 6,
+    "toughness": 3.0,
+    "durability": 420,
+    "enchant": 15,
+    "knockback_resistance": 0.1,
+    "repair": "pressure_shell"
+   },
+   "special": "diving_suit_leggingsと同じ泳ぎ速度+5%+耐圧ティア3"
+  },
+  {
+   "id": "pressure_flippers",
+   "slot": "feet",
+   "material": {
+    "name": "abyssia:pressure_alloy",
+    "defense": 3,
+    "toughness": 3.0,
+    "durability": 350,
+    "enchant": 15,
+    "knockback_resistance": 0.1,
+    "repair": "pressure_shell"
+   },
+   "special": "abyssal_flippersと同じ泳ぎ速度+耐圧ティア3"
   }
  ],
  "machines_phase2": [
   {
    "id": "crusher",
    "ja": "粉砕機",
-   "purpose": "原石/クラスト→粉/精鉱を自動化(x2.5得率)",
+   "purpose": "原石→粉/精鉱を自動化(x2.5得率)",
    "inputs": [
-    "raw_*",
-    "*_crust"
+    "raw_*"
    ],
    "replaces": "crushing_hammer",
    "frame_cost": "machine_frame+drill_head",
@@ -5680,699 +5826,6 @@
    "ok": true
   },
   {
-   "material": "iron_crust",
-   "category": "crust",
-   "uses": 13,
-   "finals": [
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "minecraft:iron_ingot",
-      "iron_plate",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "abyssal_cutter",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "iron_powder",
-      "high_strength_alloy_ingot",
-      "drill_head"
-     ],
-     "final": "abyssal_drill",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "minecraft:iron_ingot",
-      "iron_plate",
-      "hardened_tip"
-     ],
-     "final": "cobalt_pickaxe",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "minecraft:iron_ingot",
-      "iron_plate",
-      "hardened_tip"
-     ],
-     "final": "cobalt_shovel",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "minecraft:iron_ingot"
-     ],
-     "final": "crushing_hammer",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "iron_powder",
-      "corrosion_alloy_ingot"
-     ],
-     "final": "dive_tank",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "iron_powder",
-      "corrosion_alloy_ingot"
-     ],
-     "final": "diving_suit_leggings",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "iron_powder",
-      "high_strength_alloy_ingot"
-     ],
-     "final": "manganese_axe",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "iron_powder",
-      "high_strength_alloy_ingot"
-     ],
-     "final": "manganese_sword",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "iron_powder",
-      "heat_resistant_alloy_ingot"
-     ],
-     "final": "molybdenum_pickaxe",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "iron_powder",
-      "corrosion_alloy_ingot",
-      "pressure_shell"
-     ],
-     "final": "pressure_diver_helmet",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "minecraft:iron_ingot",
-      "iron_plate",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "tungsten_axe",
-     "count": 1,
-     "via_input": "iron_crust"
-    },
-    {
-     "material": "iron_crust",
-     "category": "crust",
-     "intermediate": [
-      "minecraft:iron_ingot",
-      "iron_plate",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "tungsten_pickaxe",
-     "count": 1,
-     "via_input": "iron_crust"
-    }
-   ],
-   "min_required": 1,
-   "ok": true
-  },
-  {
-   "material": "copper_crust",
-   "category": "crust",
-   "uses": 4,
-   "finals": [
-    {
-     "material": "copper_crust",
-     "category": "crust",
-     "intermediate": [
-      "copper_wire",
-      "conductive_component"
-     ],
-     "final": "abyssal_cutter",
-     "count": 1,
-     "via_input": "copper_crust"
-    },
-    {
-     "material": "copper_crust",
-     "category": "crust",
-     "intermediate": [
-      "copper_wire",
-      "conductive_component"
-     ],
-     "final": "abyssal_drill",
-     "count": 1,
-     "via_input": "copper_crust"
-    },
-    {
-     "material": "copper_crust",
-     "category": "crust",
-     "intermediate": [
-      "copper_wire",
-      "reinforced_cable"
-     ],
-     "final": "dive_tank",
-     "count": 1,
-     "via_input": "copper_crust"
-    },
-    {
-     "material": "copper_crust",
-     "category": "crust",
-     "intermediate": [
-      "copper_wire",
-      "pressure_valve",
-      "pressure_shell"
-     ],
-     "final": "pressure_diver_helmet",
-     "count": 1,
-     "via_input": "copper_crust"
-    }
-   ],
-   "min_required": 1,
-   "ok": true
-  },
-  {
-   "material": "cobalt_crust",
-   "category": "crust",
-   "uses": 16,
-   "finals": [
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_axe",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_hoe",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_pickaxe",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_shovel",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_sword",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "abyssal_cutter",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "hardened_tip",
-      "tungsten_tip",
-      "drill_head"
-     ],
-     "final": "abyssal_drill",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_flippers",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot"
-     ],
-     "final": "cobalt_pickaxe",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot"
-     ],
-     "final": "cobalt_shovel",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "deep_diver_helmet",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_concentrate",
-      "cobalt_powder",
-      "corrosion_alloy_ingot"
-     ],
-     "final": "dive_tank",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_concentrate",
-      "cobalt_powder",
-      "corrosion_alloy_ingot"
-     ],
-     "final": "diving_suit_leggings",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_concentrate",
-      "cobalt_powder",
-      "corrosion_alloy_ingot",
-      "pressure_shell"
-     ],
-     "final": "pressure_diver_helmet",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "tungsten_axe",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    },
-    {
-     "material": "cobalt_crust",
-     "category": "crust",
-     "intermediate": [
-      "cobalt_ingot",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "tungsten_pickaxe",
-     "count": 1,
-     "via_input": "cobalt_crust"
-    }
-   ],
-   "min_required": 1,
-   "ok": true
-  },
-  {
-   "material": "manganese_crust",
-   "category": "crust",
-   "uses": 8,
-   "finals": [
-    {
-     "material": "manganese_crust",
-     "category": "crust",
-     "intermediate": [
-      "manganese_concentrate",
-      "manganese_powder",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "abyssal_cutter",
-     "count": 1,
-     "via_input": "manganese_crust"
-    },
-    {
-     "material": "manganese_crust",
-     "category": "crust",
-     "intermediate": [
-      "manganese_ingot",
-      "high_strength_alloy_ingot",
-      "drill_head"
-     ],
-     "final": "abyssal_drill",
-     "count": 1,
-     "via_input": "manganese_crust"
-    },
-    {
-     "material": "manganese_crust",
-     "category": "crust",
-     "intermediate": [
-      "manganese_concentrate",
-      "manganese_powder",
-      "hardened_tip"
-     ],
-     "final": "cobalt_pickaxe",
-     "count": 1,
-     "via_input": "manganese_crust"
-    },
-    {
-     "material": "manganese_crust",
-     "category": "crust",
-     "intermediate": [
-      "manganese_concentrate",
-      "manganese_powder",
-      "hardened_tip"
-     ],
-     "final": "cobalt_shovel",
-     "count": 1,
-     "via_input": "manganese_crust"
-    },
-    {
-     "material": "manganese_crust",
-     "category": "crust",
-     "intermediate": [
-      "manganese_ingot"
-     ],
-     "final": "manganese_axe",
-     "count": 1,
-     "via_input": "manganese_crust"
-    },
-    {
-     "material": "manganese_crust",
-     "category": "crust",
-     "intermediate": [
-      "manganese_ingot"
-     ],
-     "final": "manganese_sword",
-     "count": 1,
-     "via_input": "manganese_crust"
-    },
-    {
-     "material": "manganese_crust",
-     "category": "crust",
-     "intermediate": [
-      "manganese_concentrate",
-      "manganese_powder",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "tungsten_axe",
-     "count": 1,
-     "via_input": "manganese_crust"
-    },
-    {
-     "material": "manganese_crust",
-     "category": "crust",
-     "intermediate": [
-      "manganese_concentrate",
-      "manganese_powder",
-      "hardened_tip",
-      "tungsten_tip"
-     ],
-     "final": "tungsten_pickaxe",
-     "count": 1,
-     "via_input": "manganese_crust"
-    }
-   ],
-   "min_required": 1,
-   "ok": true
-  },
-  {
-   "material": "nickel_crust",
-   "category": "crust",
-   "uses": 15,
-   "finals": [
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_axe",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_hoe",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_pickaxe",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_shovel",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_alloy_sword",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_concentrate",
-      "nickel_powder",
-      "tungsten_alloy_ingot",
-      "tungsten_tip"
-     ],
-     "final": "abyssal_cutter",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_concentrate",
-      "nickel_powder",
-      "heat_resistant_alloy_ingot",
-      "thermal_component"
-     ],
-     "final": "abyssal_drill",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "abyssal_flippers",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "abyssal_alloy_ingot"
-     ],
-     "final": "deep_diver_helmet",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "corrosion_alloy_ingot"
-     ],
-     "final": "dive_tank",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "corrosion_alloy_ingot"
-     ],
-     "final": "diving_suit_leggings",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_concentrate",
-      "nickel_powder",
-      "heat_resistant_alloy_ingot"
-     ],
-     "final": "molybdenum_pickaxe",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_ingot",
-      "corrosion_alloy_ingot",
-      "pressure_shell"
-     ],
-     "final": "pressure_diver_helmet",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_concentrate",
-      "nickel_powder",
-      "tungsten_alloy_ingot"
-     ],
-     "final": "tungsten_axe",
-     "count": 1,
-     "via_input": "nickel_crust"
-    },
-    {
-     "material": "nickel_crust",
-     "category": "crust",
-     "intermediate": [
-      "nickel_concentrate",
-      "nickel_powder",
-      "tungsten_alloy_ingot"
-     ],
-     "final": "tungsten_pickaxe",
-     "count": 1,
-     "via_input": "nickel_crust"
-    }
-   ],
-   "min_required": 1,
-   "ok": true
-  },
-  {
    "material": "crust_powder",
    "category": "other",
    "uses": 16,
@@ -6947,36 +6400,6 @@
     "raw_yttrium"
    ],
    "result": "yttrium_ingot"
-  },
-  {
-   "inputs": [
-    "cobalt_crust"
-   ],
-   "result": "cobalt_ingot"
-  },
-  {
-   "inputs": [
-    "manganese_crust"
-   ],
-   "result": "manganese_ingot"
-  },
-  {
-   "inputs": [
-    "nickel_crust"
-   ],
-   "result": "nickel_ingot"
-  },
-  {
-   "inputs": [
-    "iron_crust"
-   ],
-   "result": "minecraft:iron_ingot"
-  },
-  {
-   "inputs": [
-    "copper_crust"
-   ],
-   "result": "minecraft:copper_ingot"
   },
   {
    "inputs": [

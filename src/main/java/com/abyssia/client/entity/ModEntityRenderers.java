@@ -80,7 +80,7 @@ import java.util.Set;
  * by tools/gen_fauna.py); here each animal gets its clips, its size correction (the generator draws every animal at
  * a readable size, the scale restores the real size order: isopod < anglerfish < giant squid) and its light.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class ModEntityRenderers
 {
     public static final ModelLayerLocation ANGLERFISH = layer("anglerfish");

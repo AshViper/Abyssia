@@ -1,6 +1,7 @@
 package com.abyssia.vehicle.client;
 
 import com.abyssia.Abyssia;
+import com.abyssia.client.light.SpotlightProjector;
 import com.abyssia.habitat.client.HabitatClient;
 import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.vehicle.Submarine;
@@ -24,7 +25,7 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
 /**
- * SUB02 pilot controls: W/S forward / back along the nose, A/D sideways, Ctrl (the sprint key) releases the dock,
+ * SUB02 pilot controls: W/S forward / back along the nose, A/D sideways, Space rises, Ctrl (the sprint key) dives and releases the dock,
  * G headlights, Shift = vanilla dismount, mouse = yaw + pitch (the hull faces the view). With toggle-sprint on, Ctrl is read as the physical key so the
  * toggle does not latch it. NeoForge's key lookup gives a key to every mapping bound to it, so G (shared with the
  * habitat build menu by default) works through consumeClick (Forge reads the raw key event instead).
@@ -43,7 +44,7 @@ public final class SubmarineClient
         return player != null && player.getVehicle() instanceof Submarine sub ? sub : null;
     }
 
-    /** {forward, strafe (left +), undock (-1 = Ctrl)} of the local player; zero with a screen open */
+    /** {forward, strafe (left +), vertical (+1 Space / -1 Ctrl; -1 also undocks)} of the local player; zero with a screen open */
     static int[] input()
     {
         Minecraft mc = Minecraft.getInstance();
@@ -51,7 +52,7 @@ public final class SubmarineClient
         Options o = mc.options;
         int forward = (o.keyUp.isDown() ? 1 : 0) - (o.keyDown.isDown() ? 1 : 0);
         int strafe = (o.keyLeft.isDown() ? 1 : 0) - (o.keyRight.isDown() ? 1 : 0);
-        int vertical = down(mc) ? -1 : 0;   // only Ctrl = release the dock; no vertical thrust
+        int vertical = (o.keyJump.isDown() ? 1 : 0) - (down(mc) ? 1 : 0);
         return new int[]{forward, strafe, vertical};
     }
 
@@ -100,6 +101,7 @@ public final class SubmarineClient
         @SubscribeEvent
         public static void setup(FMLClientSetupEvent event)
         {
+            SpotlightProjector.addSource(SubmarineLamps::collect);
             Submarine.pilot = new Submarine.Pilot()
             {
                 @Override

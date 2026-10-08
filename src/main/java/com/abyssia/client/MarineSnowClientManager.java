@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  * Spawns marine snow and other environment particles around the local player only. Depth sets the base
  * density and particle mix, the biome adjusts it, and a budget caps how many are alive at once.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class MarineSnowClientManager
 {
     /** Depth below the sea surface at which each band's density applies; interpolated with smoothstep between them. */

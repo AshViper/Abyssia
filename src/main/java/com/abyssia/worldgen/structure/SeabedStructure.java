@@ -94,7 +94,7 @@ public record SeabedStructure(Category category, Tier tier, Anchor anchor, int f
     public record Conditions(int minY, int maxY, float minSlope, float maxSlope, int maxTopY, int minClearance, boolean avoidCaves,
                              boolean avoidVentFields)
     {
-        public static final Conditions DEFAULT = new Conditions(DeepLayer.MIN_Y, DeepLayer.TOP_Y, 0f, 10f, (int) DeepLayer.fromDeepY(110), 12, true, true);
+        public static final Conditions DEFAULT = new Conditions(DeepLayer.DEEP_BOTTOM_Y, DeepLayer.TOP_Y, 0f, 10f, (int) DeepLayer.fromDeepY(110), 12, true, true);
         public static final Codec<Conditions> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.INT.lenientOptionalFieldOf("min_y", DEFAULT.minY).forGetter(Conditions::minY),
                 Codec.INT.lenientOptionalFieldOf("max_y", DEFAULT.maxY).forGetter(Conditions::maxY),

@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Block;
 
 public final class ModTags
 {
-    /** Ores, crusts and hot minerals that plants cannot root in, keeping exposed veins visible. */
+    /** Ores and hot minerals that plants cannot root in, keeping exposed veins visible. */
     public static final TagKey<Block> INHIBITS_PLANTS = block("inhibits_plants");
     /** Deep ocean terrain that ore veins and rock spires may replace. */
     public static final TagKey<Block> VEIN_REPLACEABLE = block("vein_replaceable");
@@ -51,6 +51,8 @@ public final class ModTags
 
     /** Abyssia's fish (not eels, sharks or jellies): thermal_catch cooks their meat drops. */
     public static final TagKey<EntityType<?>> FISH = entity("fish");
+    /** Animals that drop edible meat (fish, eels, sharks): the share of spawns {@code fauna.food_fish_share} gives them. */
+    public static final TagKey<EntityType<?>> FOOD_FISH = entity("food_fish");
 
     private ModTags() {}
 

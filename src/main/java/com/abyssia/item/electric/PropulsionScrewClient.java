@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * direction. First person: while the screw is in the main hand the vanilla hand rendering (both hands) is cancelled
  * and the screw plus both arms are drawn centred in front of the player.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class PropulsionScrewClient
 {
     /** The extended ArmPose (see PropulsionScrewPose and META-INF/enumextensions.json). */
@@ -69,7 +69,7 @@ public final class PropulsionScrewClient
     };
 
     /** Mod-bus registration of the client item extension (1.20: Item#initializeClient). */
-    @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
     public static final class Setup
     {
         private Setup() {}

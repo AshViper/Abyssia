@@ -14,14 +14,14 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * SUB03 "Submarine Systems": the 4 upgrade slots (hull, power, thrust, utility) in a row above the player inventory.
+ * SUB03 "Submarine Systems": the 5 upgrade slots (hull, power, thrust, utility, depth) in a row above the player inventory.
  * Opened by sneak + right-click on an unmanned submarine; valid while the submarine lives, is unmanned and within 8
  * blocks (re-checked on every click; a boarding closes the menu through stillValid). The client gets the entity id in
  * the open buffer and reads energy / hull from the synced entity.
  */
 public class SubmarineUpgradeMenu extends AbstractContainerMenu
 {
-    public static final int SLOT_X = 52, SLOT_Y = 30, INV_Y = 61, HOTBAR_Y = 119;
+    public static final int SLOT_X = 44, SLOT_Y = 30, INV_Y = 61, HOTBAR_Y = 119;
 
     @Nullable
     private final Submarine sub;

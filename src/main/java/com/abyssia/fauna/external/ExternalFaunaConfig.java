@@ -17,7 +17,7 @@ import java.util.Map;
  * its own so abyssia-common.toml keeps its shape. Changes apply on the next spawn round (the profiles are rebuilt).
  * Per-entity and per-biome rules are datapack data: data/&lt;namespace&gt;/external_fauna/{entities,biomes}.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class ExternalFaunaConfig
 {
     public static final String FILE_NAME = Abyssia.MODID + "-external-fauna.toml";

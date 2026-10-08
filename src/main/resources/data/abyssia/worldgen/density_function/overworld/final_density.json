@@ -11,24 +11,37 @@
           "type": "minecraft:range_choice",
           "input": {
             "type": "minecraft:y_clamped_gradient",
-            "from_y": -368,
+            "from_y": -1872,
             "to_y": 320,
-            "from_value": -368,
+            "from_value": -1872,
             "to_value": 320
           },
-          "min_inclusive": -369,
-          "max_exclusive": -66,
-          "when_in_range": "abyssia:overworld/deep_density_nr",
+          "min_inclusive": -1873,
+          "max_exclusive": -378,
+          "when_in_range": "abyssia:overworld/abyss_density",
           "when_out_of_range": {
             "type": "minecraft:range_choice",
-            "input": "abyssia:overworld/fissure_v",
-            "min_inclusive": -1.0,
-            "max_exclusive": 1e-06,
-            "when_in_range": "abyssia:overworld/surface_density",
+            "input": {
+              "type": "minecraft:y_clamped_gradient",
+              "from_y": -1872,
+              "to_y": 320,
+              "from_value": -1872,
+              "to_value": 320
+            },
+            "min_inclusive": -1873,
+            "max_exclusive": -66,
+            "when_in_range": "abyssia:overworld/deep_density_nr",
             "when_out_of_range": {
-              "type": "minecraft:min",
-              "argument1": "abyssia:overworld/surface_density",
-              "argument2": "abyssia:overworld/crack_carve"
+              "type": "minecraft:range_choice",
+              "input": "abyssia:overworld/fissure_v",
+              "min_inclusive": -1.0,
+              "max_exclusive": 1e-06,
+              "when_in_range": "abyssia:overworld/surface_density",
+              "when_out_of_range": {
+                "type": "minecraft:min",
+                "argument1": "abyssia:overworld/surface_density",
+                "argument2": "abyssia:overworld/crack_carve"
+              }
             }
           }
         }

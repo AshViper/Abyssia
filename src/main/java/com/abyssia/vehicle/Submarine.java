@@ -2,8 +2,10 @@ package com.abyssia.vehicle;
 
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
+import com.abyssia.fauna.DepthZone;
 import com.abyssia.registry.ModDataComponents;
 import com.abyssia.worldgen.DeepLayer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -34,7 +36,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -44,8 +45,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +53,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -62,7 +60,7 @@ import java.util.Set;
 /**
  * SUB02 one-seat submarine. Not a Boat (its surface buoyancy fights diving). Vanilla vehicles are moved by the
  * pilot's client (ServerboundMoveVehiclePacket), so steering needs no mod packet: the controlling side runs
- * {@link #drive} / {@link #dockMove}. The server keeps energy, damage, headlight blocks and the HUD.
+ * {@link #drive} / {@link #dockMove}. The server keeps energy, damage and the HUD; the headlights are client spotlights (SubmarineLamps).
  * Model front = -Z (rendered with 180 - yaw, so it faces the entity's forward).
  */
 public class Submarine extends Entity
@@ -86,11 +84,10 @@ public class Submarine extends Entity
     /** model height (blocks): the docked hull top sits DOCK_GAP below the dock block */
     public static final double HULL_HEIGHT = 2.2733, DOCK_GAP = 0.3, DOCK_APPROACH = 0.12, DOCK_REACH_DOWN = 6.0;
     public static final int UNDOCK_COOLDOWN = 60;
-    public static final double LIGHT_RANGE = 12.0;
     /** SUB04: yaw turn per tick while pulled into / released from a dock */
     public static final float DOCK_TURN = 6.0f;
     /** SUB05: the hull pitches with the pilot's view up to this many degrees; it tilts about the hull centre */
-    public static final float MAX_PITCH = 45.0f;
+    public static final float MAX_PITCH = 65.0f;
     public static final double PIVOT_Y = HULL_HEIGHT / 2.0;
     /** SUB05b: the rider's eye height above the feet = the point the pilot's body tilts about (Forge uses the same class constant) */
     public static final double SEAT_ANCHOR = 1.62;
@@ -99,7 +96,7 @@ public class Submarine extends Entity
     /** Pilot input on the client (set by the client setup; the server never asks). */
     public interface Pilot
     {
-        /** {forward (+1 W / -1 S), strafe (+1 A / -1 D), undock (-1 while Ctrl is held; no vertical thrust)} */
+        /** {forward (+1 W / -1 S), strafe (+1 A / -1 D), vertical (+1 Space = hull up / -1 Ctrl = hull down; -1 also releases the dock)} */
         int[] input();
 
         void requestUndock(Submarine sub);
@@ -123,7 +120,7 @@ public class Submarine extends Entity
     private final List<BlockPos> placedLights = new ArrayList<>();
     /** side storage pods: 0 = right (+x of the model), 1 = left; 27 slots each */
     private final SimpleContainer[] pods = {newPod(), newPod()};
-    /** SUB03 upgrade slots (hull, power, thrust, utility); the server mirrors them into DATA_UPGRADES */
+    /** SUB03 upgrade slots (hull, power, thrust, utility, depth); the server mirrors them into DATA_UPGRADES */
     private final SimpleContainer upgrades = new SimpleContainer(SubmarineUpgrades.SLOTS);
     /** sonar (server): last read-out appended to the HUD, creatures already reported */
     @Nullable
@@ -147,6 +144,12 @@ public class Submarine extends Entity
     public SimpleContainer upgrades()
     {
         return upgrades;
+    }
+
+    /** the synced upgrade bit mask (bits 0-4 installed, bits 5-6 Depth Hull tier) */
+    public int upgradeMask()
+    {
+        return entityData.get(DATA_UPGRADES);
     }
 
     public boolean hasUpgrade(int slot)
@@ -378,31 +381,35 @@ public class Submarine extends Entity
         return new Vec3(-Mth.sin(yaw) * Mth.cos(pitch), -Mth.sin(pitch), Mth.cos(yaw) * Mth.cos(pitch));
     }
 
-    /** SUB05 controlling side: W/S thrust along the nose, A/D sideways, water drag, gravity out of the water. */
+    /** SUB05 controlling side: W/S thrust along the nose, A/D sideways, Space/Ctrl along the hull's up axis (tilts with the pitch), water drag, gravity out of the water. */
     private void drive()
     {
         double wet = submergedFraction();
         float yaw = getYRot() * Mth.DEG_TO_RAD;
         Vec3 n = nose(getYRot(), getXRot());
         double lx = Mth.cos(yaw), lz = Mth.sin(yaw);   // left (horizontal)
+        float pitch = getXRot() * Mth.DEG_TO_RAD;
+        // hull up = nose x left: straight up at pitch 0, leans toward the nose when the nose points down
+        double ux = -Mth.sin(pitch) * Mth.sin(yaw), uy = Mth.cos(pitch), uz = Mth.sin(pitch) * Mth.cos(yaw);
         Vec3 v = getDeltaMovement();
-        double f = v.x * n.x + v.y * n.y + v.z * n.z, s = v.x * lx + v.z * lz;
-        double rx = v.x - n.x * f - lx * s, ry = v.y - n.y * f, rz = v.z - n.z * f - lz * s;   // what is along neither axis
+        // nose / left / up are orthonormal, so the velocity splits into them with nothing left over
+        double f = v.x * n.x + v.y * n.y + v.z * n.z, s = v.x * lx + v.z * lz, g = v.x * ux + v.y * uy + v.z * uz;
         int[] in = getControllingPassenger() != null && level().isClientSide && getEnergy() > 0 ? pilot.input() : NO_INPUT;
         double x, y, z;
         if (wet > 0.0)
         {
             double[] sp = speeds();
-            // along the nose at most the forward / reverse speed, and its vertical part at most the vertical speed
-            double ny = Math.abs(n.y), cap = ny > 1.0e-6 ? sp[2] / ny : Double.MAX_VALUE;
-            f = axis(f, in[0], Math.min(sp[0], cap), Math.min(sp[1], cap), sp[3]);
+            // along the nose at most the forward / reverse speed; the total vertical speed is capped below
+            f = axis(f, in[0], sp[0], sp[1], sp[3]);
             s = axis(s, in[1], sp[1], sp[1], sp[3]);
-            x = n.x * f + lx * s + rx * DRAG;
-            y = n.y * f + ry * DRAG;
-            z = n.z * f + lz * s + rz * DRAG;
+            // 上昇 / 下降 (Space / Ctrl): along the hull's up axis, drag when no key is held
+            g = axis(g, in[2], sp[2], sp[2], sp[3]);
+            x = n.x * f + lx * s + ux * g;
+            y = n.y * f + uy * g;
+            z = n.z * f + lz * s + uz * g;
             y = Mth.clamp(y, -sp[2], sp[2]);
             // floating high at the surface: no rising until LIFT_SUBMERGED is under water, settle gently (neutral below that)
-            if (wet < LIFT_SUBMERGED) 
+            if (wet < LIFT_SUBMERGED)
             {
                 y = Math.min(y, 0.0) - 0.004;
                 // the dropped upward part must not turn into extra speed: horizontal speed stays within the forward max
@@ -561,8 +568,9 @@ public class Submarine extends Entity
             if (energy <= 0 || rider == null) setLights(false);
         }
         setEnergy(energy);
-        if (tickCount % 2 == 0 || !lights()) updateLights();
+        if (tickCount % 20 == 0) updateLights();
 
+        crush(rider);
         if (rider instanceof Player player)
         {
             player.setAirSupply(player.getMaxAirSupply());
@@ -570,9 +578,31 @@ public class Submarine extends Entity
         }
     }
 
+    /** metres below the surface at the hull (DepthZone), and the rated depth of the installed Depth Hull */
+    public int depthMetres() { return (int) Math.max(0.0, DepthZone.metres(level(), getY())); }
+
+    public int ratedDepth() { return SubmarineUpgrades.ratedDepth(upgradeMask()); }
+
+    /** SUB06: below the rated depth the hull takes crush damage once a second; a creative pilot is exempt (as in PressureGear) */
+    private void crush(@Nullable LivingEntity rider)
+    {
+        if (tickCount % 20 != 0 || isRemoved() || getDock().isPresent()) return;
+        if (rider instanceof Player player && (player.isCreative() || player.isSpectator())) return;
+        int depth = depthMetres(), rated = ratedDepth();
+        if (depth <= rated) return;
+        float damage = Config.SUBMARINE_CRUSH_DAMAGE.get().floatValue() + (depth - rated) / Config.SUBMARINE_CRUSH_STEP.get();
+        setDamage(getDamage() + damage);
+        markHurt();
+        level().playSound(null, this, SoundEvents.ANVIL_LAND, SoundSource.NEUTRAL, 0.5f, 0.6f);
+        if (getDamage() > maxDamage()) breakApart();
+    }
+
     private Component hud()
     {
         MutableComponent line = Component.translatable("message." + Abyssia.MODID + ".submarine.hud", energyPercent(), hullPercent());
+        int depth = depthMetres(), rated = ratedDepth();
+        line.append(Component.translatable("message." + Abyssia.MODID + ".submarine.depth", depth, rated)
+                .withStyle(depth > rated ? ChatFormatting.RED : ChatFormatting.WHITE));
         if (getDock().isPresent()) line.append(Component.translatable("message." + Abyssia.MODID + ".submarine.docked"));
         if (sonarLine != null) line.append(sonarLine);
         return line;
@@ -597,48 +627,23 @@ public class Submarine extends Entity
         updateLights();
     }
 
-    // ---------------------------------------------------------------- headlights (light blocks)
+    // ---------------------------------------------------------------- headlights
 
     /**
-     * Light blocks ahead: at the end of a ray from the pilot's eye along the yaw (12 blocks, stops before the first
-     * solid block) and half way. Only air / water source cells take one; only cells this submarine filled are cleared.
+     * The headlights are drawn on each client as shadowed spotlights (client/light/SpotlightProjector, vehicle/client/
+     * SubmarineLamps); no blocks are placed any more. Light blocks an older version put ahead of the submarine
+     * (saved in PlacedLights) are cleared here once they are loaded.
      */
     private void updateLights()
     {
-        Set<BlockPos> want = new LinkedHashSet<>();
-        if (lights() && isAlive())
-        {
-            float yaw = getYRot() * Mth.DEG_TO_RAD;
-            Vec3 forward = new Vec3(-Mth.sin(yaw), 0.0, Mth.cos(yaw));
-            Vec3 from = position().add(forward.scale(SEAT_FORWARD)).add(0.0, EYE_Y, 0.0);
-            Vec3 to = from.add(forward.scale(LIGHT_RANGE));
-            BlockHitResult hit = level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-            Vec3 end = hit.getType() == HitResult.Type.MISS ? to : hit.getLocation().subtract(forward.scale(0.5));
-            if (end.distanceTo(from) > 1.0)
-            {
-                want.add(BlockPos.containing(end));
-                want.add(BlockPos.containing(from.add(end).scale(0.5)));
-            }
-        }
+        if (placedLights.isEmpty()) return;
         for (Iterator<BlockPos> it = placedLights.iterator(); it.hasNext(); )
         {
             BlockPos pos = it.next();
-            if (want.contains(pos)) continue;
+            if (!level().isLoaded(pos)) continue;
             removeLight(pos);
             it.remove();
         }
-        for (BlockPos pos : want)
-            if (!placedLights.contains(pos) && placeLight(pos)) placedLights.add(pos);
-    }
-
-    private boolean placeLight(BlockPos pos)
-    {
-        if (!level().isLoaded(pos)) return false;
-        BlockState state = level().getBlockState(pos);
-        boolean water = state.is(Blocks.WATER) && state.getFluidState().isSource();
-        if (!state.isAir() && !water) return false;
-        return level().setBlock(pos, Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, 15).setValue(LightBlock.WATERLOGGED, water),
-                Block.UPDATE_ALL);
     }
 
     private void removeLight(BlockPos pos)
@@ -857,16 +862,20 @@ public class Submarine extends Entity
         markHurt();
         gameEvent(GameEvent.ENTITY_DAMAGE, attacker);
         boolean creative = attacker instanceof Player player && player.getAbilities().instabuild;
-        if (creative || getDamage() > maxDamage())
-        {
-            if (!creative && level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
-            {
-                spawnAtLocation(toItem());
-                upgrades.clearContent();   // kept in the item, not dropped by remove()
-            }
-            discard();
-        }
+        if (creative) discard();
+        else if (getDamage() > maxDamage()) breakApart();
         return true;
+    }
+
+    /** the hull gave way: drops the item (keeps energy and upgrades) unless entity drops are off */
+    private void breakApart()
+    {
+        if (level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
+        {
+            spawnAtLocation(toItem());
+            upgrades.clearContent();   // kept in the item, not dropped by remove()
+        }
+        discard();
     }
 
     /** the item this submarine breaks into (keeps its energy and upgrades; damage is not carried over) */

@@ -35,7 +35,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * Above the old transition depth (overworld Y -40 = deep Y {@link DeepLayer#DEPTH_ORIGIN_DEEP_Y}) the ocean curve
  * runs from the surface; below it the deep curve, tuned in old deep-ocean Y, takes over continuously.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class DeepOceanClientEffects
 {
     private static final int SEA_LEVEL = 63;
@@ -43,7 +43,7 @@ public final class DeepOceanClientEffects
     private static final int DEEP_CURVE_TOP = DeepLayer.DEPTH_ORIGIN_DEEP_Y;
     private static final double DEEP_CURVE_TOP_Y = DeepLayer.fromDeepY(DEEP_CURVE_TOP);
     /** Old deep-ocean Y of the world bottom. */
-    private static final double DEEP_CURVE_BOTTOM = DeepLayer.toDeepY(DeepLayer.MIN_Y);
+    private static final double DEEP_CURVE_BOTTOM = DeepLayer.toDeepY(DeepLayer.DEEP_BOTTOM_Y);
 
     /**
      * Where the fog starts, as a share of the fog end: the view distance stays the same at every depth

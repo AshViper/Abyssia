@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /** WR01: link / transfer tick per level (end of tick), client sync on login / dimension change / respawn. */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class RelayEvents
 {
     private RelayEvents() {}

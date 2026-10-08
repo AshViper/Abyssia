@@ -39,7 +39,7 @@ import java.util.Random;
  * {@code current_streams.max_render_distance}. One shared budget ({@code particle_budget}), handed out nearest band
  * first and bands in front of the camera before ones behind it. The outer 30% of each band gets few lanes.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class CurrentStreamClient
 {
     private static final int LOOKUP_INTERVAL = 20;

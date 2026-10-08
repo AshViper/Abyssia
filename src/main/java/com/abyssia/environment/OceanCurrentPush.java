@@ -32,7 +32,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * ({@code client.OceanCurrentClient}) for the local player and the boat it steers. Only ocean water is carried
  * (ocean biomes, this mod's biomes and the deep layer), so rivers, lakes and pools stay still.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class OceanCurrentPush
 {
     /** 1 - water drag per tick, per kind of entity (living 0.8, sprint-swimming 0.9, boats 0.9, items/XP ~0.97). */

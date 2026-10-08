@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * </ul>
  * The client shows the stream at your feet on the F3 screen.
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public final class NaturalCurrentCommand
 {
     private static final int SHOW_RANGE = 96, SHOW_INTERVAL = 10, CHAT_LINES = 12;

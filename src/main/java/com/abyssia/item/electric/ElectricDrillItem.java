@@ -33,7 +33,7 @@ import java.util.List;
  * Electric abyssal drill: pickaxe + shovel at the abyssal drill tier, 500 FE per block (hardness > 0). Sneaking mines
  * the 3x3 plane facing the player (each block fires BlockEvent.BreakEvent through the game mode, costs 500 FE).
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Abyssia.MODID)
 public class ElectricDrillItem extends PickaxeItem implements ElectricTools.Electric
 {
     /** True while the 3x3 neighbours are being broken (those breaks come back into this item and must not recurse). */

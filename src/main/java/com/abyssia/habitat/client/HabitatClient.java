@@ -27,7 +27,7 @@ import org.lwjgl.glfw.GLFW;
  * H02 / BT01a controls while the constructor is in the main hand: right-click / G = build menu, left-click = build,
  * R = rotate +90 (Shift+R -90), mouse wheel = placement distance +-1 (3..12, component habitat_dist; Shift+wheel stays the hotbar).
  */
-@EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class HabitatClient
 {
     public static final String CATEGORY = "key.categories." + Abyssia.MODID;
@@ -141,7 +141,7 @@ public final class HabitatClient
         changeDistance(event.getScrollDeltaY() > 0 ? 1 : -1);
     }
 
-    @EventBusSubscriber(modid = Abyssia.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
     public static final class Registration
     {
         private Registration() {}

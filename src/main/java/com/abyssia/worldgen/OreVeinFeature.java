@@ -2,10 +2,12 @@ package com.abyssia.worldgen;
 
 import com.abyssia.Config;
 import com.abyssia.registry.ModTags;
+import com.abyssia.worldgen.deposit.OreDepositManager;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
@@ -18,6 +20,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.synth.SimplexNoise;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +31,8 @@ import java.util.Optional;
 /**
  * An ore vein: a noise-warped body of ore inside host rock, following a direction (horizontal, vertical,
  * diagonal, thin vein, compact cluster, or flat along the strata). Ore is richest along the core and thins
- * into host rock at the rim. Exposed veins break through the seabed and are ringed by mineral crust and
- * nodules, so they can be spotted from afar; buried ones only hint at themselves with a little crust above.
+ * into host rock at the rim. Exposed veins break through the seabed and are ringed by nodules / clusters,
+ * so they can be spotted from afar. There is no crust (ORE01).
  */
 public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
 {
@@ -56,9 +59,22 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
             if (this == LARGE || this == HUGE) count = (int) Math.round(count * Config.LARGE_VEIN_MULTIPLIER.get());
             return Math.max(1, count);
         }
+
+        public static final Codec<Size> CODEC = StringRepresentable.fromEnum(Size::values);
     }
 
-    private enum Shape { HORIZONTAL, VERTICAL, DIAGONAL, VEIN, CLUSTER, STRATUM }
+    public enum Shape implements StringRepresentable
+    {
+        HORIZONTAL, VERTICAL, DIAGONAL, VEIN, CLUSTER, STRATUM;
+
+        @Override
+        public String getSerializedName()
+        {
+            return name().toLowerCase();
+        }
+
+        public static final Codec<Shape> CODEC = StringRepresentable.fromEnum(Shape::values);
+    }
 
     /** Keeps every block within the region a feature may write to. */
     private static final double MAX_REACH = 13.0;
@@ -165,13 +181,32 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
         }
 
         decorateSurface(level, random, config, cx, cz, r, exposed, floor);
+
+        // Register the ore deposit for tracking
+        if (ores > 0 && level.getLevel() instanceof net.minecraft.server.level.ServerLevel serverLevel
+                && com.abyssia.industry.ExcavatorMinerals.isMinable(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(config.ore().getBlock())))
+        {
+            // Compute bounds: the vein extends up to MAX_REACH horizontally from center,
+            // and vertically from cy-r-2 (bottom) to floor+1 (top, including exposed ore)
+            double minY = cy - r - 2;
+            double maxY = floor + 1; // include exposed ore above seabed
+            AABB bounds = new AABB(
+                    cx - MAX_REACH, minY, cz - MAX_REACH,
+                    cx + MAX_REACH, maxY, cz + MAX_REACH
+            );
+            BlockPos centerPos = BlockPos.containing(cx, cy, cz);
+            ResourceLocation mineralId = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(config.ore().getBlock());
+            // worldgen runs on worker threads: queue, the main thread registers (OreDepositFlusher)
+            OreDepositManager.enqueue(serverLevel, mineralId, centerPos, bounds, config.size(), shape, ores);
+        }
+
         return ores > 0;
     }
 
-    /** Mineral crust and nodules on the seabed around (exposed) or above (buried) the vein. */
+    /** Nodules / clusters on the seabed around (exposed) or above (buried) the vein. */
     private void decorateSurface(WorldGenLevel level, RandomSource random, VeinConfig config, double cx, double cz, double r, boolean exposed, int floorY)
     {
-        if (config.crust().isEmpty() && config.cluster().isEmpty()) return;
+        if (config.cluster().isEmpty()) return;
         double radius = exposed ? r + 4 : r + 1;
         double coverage = exposed ? 0.8 : 0.25;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -185,8 +220,6 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
                 int x = Mth.floor(cx) + dx, z = Mth.floor(cz) + dz;
                 int top = DeepFloorPlacement.surface(level, x, z, floorY);
                 pos.set(x, top - 1, z);
-                BlockState ground = level.getBlockState(pos);
-                if (config.crust().isPresent() && ground.is(ModTags.VEIN_REPLACEABLE)) level.setBlock(pos, config.crust().get(), 2);
                 if (config.cluster().isPresent() && random.nextFloat() < (exposed ? 0.3f : 0.1f) * (1 - d))
                 {
                     pos.set(x, top, z);
@@ -218,13 +251,12 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
     /**
      * @param exposure multiplier on the configured chance of breaking through the seabed
      */
-    public record VeinConfig(BlockState ore, BlockState host, Optional<BlockState> crust, Optional<BlockState> cluster,
+    public record VeinConfig(BlockState ore, BlockState host, Optional<BlockState> cluster,
                          Size size, float exposure) implements FeatureConfiguration
     {
         public static final Codec<VeinConfig> CODEC = RecordCodecBuilder.create(i -> i.group(
                 BlockState.CODEC.fieldOf("ore").forGetter(VeinConfig::ore),
                 BlockState.CODEC.fieldOf("host").forGetter(VeinConfig::host),
-                BlockState.CODEC.lenientOptionalFieldOf("crust").forGetter(VeinConfig::crust),
                 BlockState.CODEC.lenientOptionalFieldOf("cluster").forGetter(VeinConfig::cluster),
                 SIZE_CODEC.fieldOf("size").forGetter(VeinConfig::size),
                 Codec.floatRange(0f, 10f).lenientOptionalFieldOf("exposure", 1f).forGetter(VeinConfig::exposure)

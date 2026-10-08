@@ -17,13 +17,14 @@ import java.util.List;
  * ({@link #toRule}) evaluated by the fauna spawner like any native species.
  *
  * @param weight            relative weight before biome multipliers (native rules' scale)
+ * @param scale             the entity rules' weight_multiplier, applied after the biome weight is rounded (so it can go below 1)
  * @param clearance         open water needed around it (large bodies)
  * @param minPlayerDistance never closer than this to a player (large animals)
  * @param biomes            only these biome ids / #tags (empty: wherever the biome rules allow its category)
  * @param source            detected | whitelist | data
  */
 public record DeepSeaSpawnProfile(EntityType<?> entityType, ResourceLocation id, int score, DeepSeaSpawnCategory category,
-                                  double weight, int minCount, int maxCount, FaunaSpawnRule.Depth depth, String depthLabel,
+                                  double weight, double scale, int minCount, int maxCount, FaunaSpawnRule.Depth depth, String depthLabel,
                                   FaunaSpawnRule.Placement placement, float caveFactor, int capCount, int capRadius,
                                   int clearance, int minPlayerDistance, boolean hostile,
                                   SpawnPlacementType spawnPlacement, List<String> biomes, String source)
@@ -39,6 +40,7 @@ public record DeepSeaSpawnProfile(EntityType<?> entityType, ResourceLocation id,
         FaunaSpawnRule.Depth depth = category.depth.depth();
         String depthLabel = category.depth.getSerializedName();
         double weight = category.weight * weightMultiplier;
+        double scale = 1.0;
         int min = category.groupMin;
         int max = category.groupMax;
         // an animal that already spawns in groups keeps its own group size, within the category's bounds
@@ -63,7 +65,7 @@ public record DeepSeaSpawnProfile(EntityType<?> entityType, ResourceLocation id,
                 depth = r.depthBand().get();
                 depthLabel = r.depthMetres().isPresent() ? "custom" : r.depth().get().getSerializedName();
             }
-            weight *= r.weightMultiplier();
+            scale *= r.weightMultiplier();
             if (r.group().isPresent())
             {
                 min = r.group().get().min();
@@ -85,7 +87,7 @@ public record DeepSeaSpawnProfile(EntityType<?> entityType, ResourceLocation id,
             capRadius = Math.max(capRadius, 128);
             weight *= 0.25;
         }
-        return new DeepSeaSpawnProfile(c.type(), c.id(), c.score(), category, weight, min, max, depth, depthLabel, placement,
+        return new DeepSeaSpawnProfile(c.type(), c.id(), c.score(), category, weight, scale, min, max, depth, depthLabel, placement,
                 caveFactor, capCount, capRadius, clearance, minDistance, c.hostile(), c.placement(), biomes, source);
     }
 
@@ -97,11 +99,11 @@ public record DeepSeaSpawnProfile(EntityType<?> entityType, ResourceLocation id,
 
     /**
      * The spawn rule in one biome ({@code multiplier} = biome x category multipliers). Weights are whole numbers like
-     * the native ones; anything allowed there keeps at least 1.
+     * the native ones (anything allowed there keeps at least 1) before the entity rules' scale.
      */
     public FaunaSpawnRule toRule(double multiplier)
     {
-        int w = (int) Math.max(1, Math.round(this.weight * multiplier));
+        double w = Math.max(1, Math.round(this.weight * multiplier)) * this.scale;
         return new FaunaSpawnRule(this.entityType, this.category.getSerializedName(), w, new FaunaSpawnRule.Range(this.minCount, this.maxCount),
                 this.depth, this.placement, this.caveFactor, 1.0F, 15, List.of(), List.of(), List.of(), this.clearance,
                 new FaunaSpawnRule.Cap(this.capCount, this.capRadius));
@@ -109,9 +111,9 @@ public record DeepSeaSpawnProfile(EntityType<?> entityType, ResourceLocation id,
 
     public String describe()
     {
-        return String.format("%s: %s, score %d, depth %s (%.0f-%.0f m), %s, weight %.1f, group %d-%d, cap %d/%d%s%s [%s]",
+        return String.format("%s: %s, score %d, depth %s (%.0f-%.0f m), %s, weight %.1f x%.2f, group %d-%d, cap %d/%d%s%s [%s]",
                 this.id, this.category.getSerializedName(), this.score, this.depthLabel, this.depth.min(), this.depth.max(),
-                this.placement.getSerializedName(), this.weight, this.minCount, this.maxCount, this.capCount, this.capRadius,
+                this.placement.getSerializedName(), this.weight, this.scale, this.minCount, this.maxCount, this.capCount, this.capRadius,
                 this.minPlayerDistance > 0 ? ", >= " + this.minPlayerDistance + " blocks from players" : "",
                 this.hostile ? ", hostile" : "", this.source);
     }

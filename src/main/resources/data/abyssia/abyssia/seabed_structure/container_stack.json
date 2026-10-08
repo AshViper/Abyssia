@@ -1,0 +1,129 @@
+{
+  "category": "geological",
+  "tier": "small",
+  "footprint_radius": 12,
+  "max_height": 10,
+  "formation": {
+    "type": "cargo_container",
+    "stack": [
+      1,
+      3
+    ],
+    "length": [
+      7,
+      9
+    ],
+    "top_chance": 0.45,
+    "open_chance": 0.5,
+    "hole_chance": 0.1,
+    "cargo_chance": 0.45,
+    "spill": [
+      2,
+      6
+    ],
+    "wall": [
+      {
+        "data": {
+          "Name": "abyssia:industrial_panel"
+        },
+        "weight": 6
+      },
+      {
+        "data": {
+          "Name": "minecraft:exposed_copper"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "minecraft:weathered_copper"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "minecraft:oxidized_copper"
+        },
+        "weight": 1
+      }
+    ],
+    "frame": [
+      {
+        "data": {
+          "Name": "abyssia:industrial_beam"
+        },
+        "weight": 1
+      }
+    ],
+    "cargo": [
+      {
+        "data": {
+          "Name": "minecraft:barrel"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:metal_grating"
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:industrial_panel"
+        },
+        "weight": 2
+      }
+    ],
+    "root": [
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 2
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 0.6,
+    "min_y": -340,
+    "max_y": -80,
+    "max_top_y": -92
+  },
+  "dressing": {
+    "radius": 12,
+    "density": 0.08,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sponge_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  }
+}
