@@ -42,7 +42,7 @@ public final class DeepOceanClientEffects
     private static final int DEEP_CURVE_TOP = DeepLayer.DEPTH_ORIGIN_DEEP_Y;
     private static final double DEEP_CURVE_TOP_Y = DeepLayer.fromDeepY(DEEP_CURVE_TOP);
     /** Old deep-ocean Y of the world bottom. */
-    private static final double DEEP_CURVE_BOTTOM = DeepLayer.toDeepY(DeepLayer.MIN_Y);
+    private static final double DEEP_CURVE_BOTTOM = DeepLayer.toDeepY(DeepLayer.DEEP_BOTTOM_Y);
 
     /**
      * Where the fog starts, as a share of the fog end: the view distance stays the same at every depth

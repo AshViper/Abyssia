@@ -4,8 +4,6 @@
   ``polished_<rock>`` (denoised base on the base's own colours + light bevel), ``<rock>_bricks`` (running bond,
   4px rows, 8px bricks, dark 1px joints), ``cracked_<rock>_bricks`` (the bricks + a few dark cracks and chipped
   corners) and ``chiseled_<rock>`` (raised border frame + recessed inset panel with a diamond boss)
-* metal crusts (building_assets.CRUSTS), from ``<crust>.png``: ``polished_<crust>`` (the crust art itself) and
-  ``<crust>_bricks`` (the crust with darker 1px running-bond joints; same rule as the old crust_bricks())
 * block glow overlays: every ``textures/block/<x>_glow.png`` that exists or that a model references (except
   texture_locks.DELETE): the pixels of ``<x>.png`` at or above
   the 65th luminance percentile (Rec. 709) of its visible pixels, everything else transparent
@@ -16,7 +14,7 @@ never write these files (texture_locks.wants).
 
     python tools/derive_textures.py                  # rebuild everything, JSON summary on stdout
     python tools/derive_textures.py --dry-run        # report only
-    python tools/derive_textures.py --only polished_deep_sea_rock,cobalt_crust_bricks
+    python tools/derive_textures.py --only polished_deep_sea_rock,deep_sea_rock_bricks
 """
 from __future__ import annotations
 
@@ -45,7 +43,7 @@ def _block(name: str) -> str:
 
 
 def stone_targets() -> dict[str, tuple[str, str]]:
-    """rel path -> (recipe, base rel path) for the stone families and crusts."""
+    """rel path -> (recipe, base rel path) for the stone families."""
     import building_assets as ba
     t = {}
     for fam in ba.STONE_FAMILIES:
@@ -54,10 +52,6 @@ def stone_targets() -> dict[str, tuple[str, str]]:
         t[_block(fam.bricks)] = ("bricks", base)
         t[_block(fam.cracked_bricks)] = ("cracked", base)
         t[_block(fam.chiseled)] = ("chiseled", base)
-    for crust in ba.CRUSTS:
-        base = _block(crust)
-        t[_block("polished_" + crust)] = ("copy", base)
-        t[_block(crust + "_bricks")] = ("crust_bricks", base)
     return t
 
 

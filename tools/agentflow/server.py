@@ -39,14 +39,14 @@ CHATGPT = ROOT / "inbox" / "textures"
 DEFAULT_CFG = {
     "enabled": False,  # unattended `claude -p` runs stay off until the user turns them on (checkbox in the UI or here)
     "max_workers": 3,
-    "model": "opus",
+    "model": "sonnet",
     "permission_mode": "acceptEdits",
     "allowed_tools": ["Read", "Write", "Edit", "Glob", "Grep", "Bash", "Agent", "Skill", "ToolSearch",
                       "mcp__claude-in-chrome__*"],
     "prompt": ("inbox/requests の status=new の依頼を処理して。手順は CLAUDE.md、inbox/README.md、"
                "Vault project/decisions/autonomous-request-pipeline.md に従い、確認の質問はせず自律的に進める"
                "(破壊的操作・課金・セキュリティ影響のみ `python tools/agentflow/flow.py ask` でサイト承認を取る)。"
-               "依頼は Forge 1.20.1 (main) と NeoForge 1.21.1 (worktree F:/Java/Abyssia-NeoForge) の両方に入れて完了とする"
+               "依頼は NeoForge 1.21.1 (worktree F:/Java/Abyssia-NeoForge) で実装し、Forge 1.20.1 (main) へ移植して両方に入れて完了とする"
                "(inbox/README.md 運用ルール4)。"
                "進行は flow.py で記録し、全て終わったら `python tools/agentflow/flow.py finish` を実行して待機に戻す。"),
     "max_reruns": 3,
@@ -327,7 +327,26 @@ def merged_state():
     return st
 
 
+_LIVE_CACHE = {"key": None, "t": 0.0, "val": None}
+
+
 def live(window=1800, lines=4000):
+    """live_uncached, reused for 1.5 s while the hook log is unchanged (every open tab polls this every second)."""
+    try:
+        st = LIVE.stat()
+        key = (st.st_mtime_ns, st.st_size, window, lines)
+    except OSError:
+        key = None
+    now = time.time()
+    c = _LIVE_CACHE
+    if key is not None and c["key"] == key and now - c["t"] < 1.5 and c["val"] is not None:
+        return c["val"]
+    val = live_uncached(window, lines)
+    c.update(key=key, t=now, val=val)
+    return val
+
+
+def live_uncached(window=1800, lines=4000):
     """Fold hook.py events into: agents (who is working where), msgs (agent <-> agent hand-offs), events (tail)."""
     try:
         raw = LIVE.read_bytes().splitlines()[-lines:]

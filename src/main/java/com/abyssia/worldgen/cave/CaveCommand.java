@@ -12,6 +12,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -87,6 +88,9 @@ public final class CaveCommand
                             ctx.getSource().sendSuccess(() -> Component.literal(CaveGenerator.stats()), false);
                             return 1;
                         })))
+                .then(Commands.literal("shafts")
+                        .then(Commands.argument("radius", IntegerArgumentType.integer(64, 1600))
+                                .executes(ctx -> shafts(ctx, IntegerArgumentType.getInteger(ctx, "radius")))))
                 .then(Commands.literal("map")
                         .then(Commands.argument("radius", IntegerArgumentType.integer(64, 16384))
                                 .then(Commands.argument("step", IntegerArgumentType.integer(4, 512))
@@ -252,6 +256,32 @@ public final class CaveCommand
     private interface Render
     {
         String run() throws java.io.IOException;
+    }
+
+    /**
+     * {@code /abyssia shafts <radius>}: the hadal shafts (the openings down to the abyss layer) within a radius, from the
+     * generator's density (no chunks are generated): a column is a shaft where the abyss ceiling slab is open water.
+     */
+    private static int shafts(CommandContext<CommandSourceStack> ctx, int radius)
+    {
+        ServerLevel level = ctx.getSource().getLevel();
+        DensityFunction density = level.getChunkSource().randomState().router().finalDensity();
+        BlockPos centre = origin(ctx);
+        int y = DeepLayer.ABYSS_CEILING_BOTTOM_Y + 24;
+        List<BlockPos> found = new ArrayList<>();
+        for (int x = centre.getX() - radius; x <= centre.getX() + radius; x += 16)
+        {
+            for (int z = centre.getZ() - radius; z <= centre.getZ() + radius; z += 16)
+            {
+                if (density.compute(new DensityFunction.SinglePointContext(x, y, z)) >= 0) continue;
+                BlockPos p = new BlockPos(x, y, z);
+                if (found.stream().noneMatch(f -> f.distSqr(p) < 48 * 48)) found.add(p);
+            }
+        }
+        ctx.getSource().sendSuccess(() -> Component.literal(found.size() + " hadal shaft(s) within " + radius + " blocks"), false);
+        found.stream().sorted(java.util.Comparator.comparingDouble(f -> f.distSqr(centre))).limit(20).forEach(f ->
+                ctx.getSource().sendSuccess(() -> Component.literal("  " + f.getX() + " " + f.getZ() + " (" + (int) Math.sqrt(f.distSqr(centre)) + " blocks)"), false));
+        return found.size();
     }
 
     private static BlockPos origin(CommandContext<CommandSourceStack> ctx)

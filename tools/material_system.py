@@ -21,7 +21,7 @@ NS = "abyssia"
 # abyssia:underwater_tools additions (spec section 5: drill, cutter, crystal pickaxe and the cobalt tools).
 UNDERWATER = ["cobalt_pickaxe", "cobalt_shovel", "crystal_pickaxe", "abyssal_drill", "abyssal_cutter"]
 # Item tag for the future hadal-pressure exemption (spec armor.pressure_diver_helmet.special).
-PRESSURE_PROOF = ["pressure_diver_helmet"]
+PRESSURE_PROOF = ["pressure_diver_helmet", "pressure_dive_tank", "pressure_suit_leggings", "pressure_flippers"]
 # Rendered like a held tool (the other tools/armor use item/generated).
 _HANDHELD_KINDS = {"pickaxe", "axe", "shovel", "hoe", "sword", "hammer"}
 
@@ -100,9 +100,15 @@ def recipe_json(r: dict) -> dict:
     raise ValueError(f"recipe {r['id']}: unsupported type {t!r}")
 
 
+# Recipes made in these machines only: no crafting-table JSON (industry/recipe/MachineRecipes holds the table).
+MACHINE_ONLY_STATIONS = {"alloy_furnace", "high_temp_furnace"}
+
+
 def recipes() -> dict[str, dict]:
     out = {}
     for r in SPEC["recipes"]:
+        if r.get("station") in MACHINE_ONLY_STATIONS:
+            continue
         if r["id"] in out:
             raise ValueError(f"duplicate recipe id {r['id']}")
         out[r["id"]] = recipe_json(r)

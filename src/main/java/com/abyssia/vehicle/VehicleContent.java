@@ -60,6 +60,9 @@ public final class VehicleContent
     /** SUB03 upgrade items, one per {@link SubmarineUpgrades.Kind} */
     public static final Map<SubmarineUpgrades.Kind, RegistryObject<Item>> UPGRADE_ITEMS = new EnumMap<>(SubmarineUpgrades.Kind.class);
 
+    /** SUB06 Depth Hull Mk1..Mk3 (index = tier - 1) */
+    public static final List<RegistryObject<Item>> DEPTH_ITEMS = new java.util.ArrayList<>();
+
     private VehicleContent() {}
 
     public static void register(IEventBus bus)
@@ -77,8 +80,17 @@ public final class VehicleContent
     {
         SUBMARINE_ITEM = items.register("submarine", () -> new SubmarineItem(new Item.Properties().stacksTo(1)));
         tab.add(SUBMARINE_ITEM);
+        for (int tier = 1; tier <= SubmarineUpgrades.DEPTH_TIERS; tier++)
+        {
+            int t = tier;
+            RegistryObject<Item> item = items.register(SubmarineUpgrades.DepthItem.idOf(t),
+                    () -> new SubmarineUpgrades.DepthItem(t, new Item.Properties().stacksTo(1)));
+            DEPTH_ITEMS.add(item);
+            tab.add(item);
+        }
         for (SubmarineUpgrades.Kind kind : SubmarineUpgrades.Kind.values())
         {
+            if (kind == SubmarineUpgrades.Kind.DEPTH) continue;   // the three Depth Hull items above
             RegistryObject<Item> item = items.register(kind.id, () -> new SubmarineUpgrades.UpgradeItem(kind, new Item.Properties().stacksTo(1)));
             UPGRADE_ITEMS.put(kind, item);
             tab.add(item);

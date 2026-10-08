@@ -55,6 +55,16 @@ public class Config
     public static final ForgeConfigSpec.IntValue HUGE_VEIN_MIN = veinSize("huge_vein_min", 100);
     public static final ForgeConfigSpec.IntValue HUGE_VEIN_MAX = veinSize("huge_vein_max", 300);
 
+    // Mineable amount of a deposit (data only; does not change the generated vein size).
+    public static final ForgeConfigSpec.IntValue SMALL_DEPOSIT_MIN = depositAmount("small_deposit_min", 100);
+    public static final ForgeConfigSpec.IntValue SMALL_DEPOSIT_MAX = depositAmount("small_deposit_max", 500);
+    public static final ForgeConfigSpec.IntValue MEDIUM_DEPOSIT_MIN = depositAmount("medium_deposit_min", 1000);
+    public static final ForgeConfigSpec.IntValue MEDIUM_DEPOSIT_MAX = depositAmount("medium_deposit_max", 5000);
+    public static final ForgeConfigSpec.IntValue LARGE_DEPOSIT_MIN = depositAmount("large_deposit_min", 6000);
+    public static final ForgeConfigSpec.IntValue LARGE_DEPOSIT_MAX = depositAmount("large_deposit_max", 10000);
+    public static final ForgeConfigSpec.IntValue HUGE_DEPOSIT_MIN = depositAmount("huge_deposit_min", 20000);
+    public static final ForgeConfigSpec.IntValue HUGE_DEPOSIT_MAX = depositAmount("huge_deposit_max", 50000);
+
     static {
         BUILDER.pop();
         BUILDER.comment("Deep ocean vegetation").push("vegetation");
@@ -151,6 +161,11 @@ public class Config
 
     static {
         BUILDER.pop();
+    }
+
+    private static ForgeConfigSpec.IntValue depositAmount(String name, int value)
+    {
+        return BUILDER.defineInRange(name, value, 1, 10_000_000);
     }
 
     private static ForgeConfigSpec.IntValue veinSize(String name, int value)
@@ -343,6 +358,9 @@ public class Config
     public static final ForgeConfigSpec.DoubleValue FAUNA_DENSITY = BUILDER
             .comment("Multiplier on every species' spawn weight (1 = default density)")
             .defineInRange("density_multiplier", 6.0, 0.0, 20.0);
+    public static final ForgeConfigSpec.DoubleValue FAUNA_FOOD_FISH_SHARE = BUILDER
+            .comment("Share of spawns that go to edible fish (tag abyssia:food_fish) where both they and other animals fit; the rest goes to the other animals. 0 = off")
+            .defineInRange("food_fish_share", 0.6, 0.0, 1.0);
     public static final ForgeConfigSpec.BooleanValue LURE_ATTRACTION = BUILDER
             .comment("Small fish are drawn to anglerfish lures in the dark (and may be eaten)")
             .define("lure_attraction", true);
@@ -375,6 +393,14 @@ public class Config
     static {
         BUILDER.pop();
     }
+
+    static {
+        BUILDER.pop();
+        BUILDER.comment("Water pressure: diving gear tier decides the safe depth (see item PressureGear)").push("pressure");
+    }
+    public static final ForgeConfigSpec.BooleanValue PRESSURE_ENABLED = BUILDER
+            .comment("Hurt and slow players who dive deeper than their gear tier allows (survival / adventure, not in a submarine)")
+            .define("enabled", true);
 
     static {
         BUILDER.pop();
@@ -449,6 +475,24 @@ public class Config
     public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER_ACCEL = BUILDER
             .comment("Maneuver Thruster: acceleration in blocks per tick^2 (without it 0.04)")
             .defineInRange("thruster_accel", 0.05, 0.001, 1.0);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_DEPTH_BASE = BUILDER
+            .comment("Rated depth in metres of a submarine without a Depth Hull upgrade")
+            .defineInRange("depth_base", 300, 10, 20_000);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_DEPTH_MK1 = BUILDER
+            .comment("Depth Hull Mk1: rated depth in metres")
+            .defineInRange("depth_mk1", 600, 10, 20_000);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_DEPTH_MK2 = BUILDER
+            .comment("Depth Hull Mk2: rated depth in metres")
+            .defineInRange("depth_mk2", 1000, 10, 20_000);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_DEPTH_MK3 = BUILDER
+            .comment("Depth Hull Mk3: rated depth in metres")
+            .defineInRange("depth_mk3", 2000, 10, 20_000);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_CRUSH_DAMAGE = BUILDER
+            .comment("Hull damage per second below the rated depth (break threshold is 40, or 70 with the Pressure Hull)")
+            .defineInRange("crush_damage", 4.0, 0.0, 1000.0);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_CRUSH_STEP = BUILDER
+            .comment("Extra crush damage per second for every this many metres below the rated depth")
+            .defineInRange("crush_step_metres", 200, 10, 20_000);
     public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR_FE = BUILDER
             .comment("Deep-Sea Sonar: FE per tick while someone is aboard")
             .defineInRange("sonar_fe_per_tick", 4, 0, 10_000);
@@ -467,6 +511,20 @@ public class Config
     }
 
     static {
+        BUILDER.pop();
+    }
+
+    static
+    {
+        BUILDER.comment("Progression gates (WRK01)").push("progression");
+    }
+
+    public static final ForgeConfigSpec.IntValue WRECKS_TO_UNLOCK = BUILDER
+            .comment("Wreck cores that must be analysed with the lidar scanner before the habitat constructor can build")
+            .defineInRange("wrecks_to_unlock", 3, 1, 10);
+
+    static
+    {
         BUILDER.pop();
     }
 

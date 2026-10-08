@@ -2,6 +2,7 @@ package com.abyssia.registry;
 
 import com.abyssia.Abyssia;
 import com.abyssia.industry.MachineKind;
+import com.abyssia.industry.block.AbyssalExcavatorBlock;
 import com.abyssia.industry.block.BeamBlock;
 import com.abyssia.industry.block.EnergyCableBlock;
 import com.abyssia.industry.block.EnergyDeviceBlock;
@@ -10,6 +11,7 @@ import com.abyssia.industry.block.IndustrialLightBlock;
 import com.abyssia.industry.block.IndustrialPipeBlock;
 import com.abyssia.industry.block.MachineBlock;
 import com.abyssia.industry.block.ValveBlock;
+import com.abyssia.industry.blockentity.AbyssalExcavatorBlockEntity;
 import com.abyssia.industry.blockentity.EnergyDeviceBlockEntity;
 import com.abyssia.industry.blockentity.GeneratorBlockEntity;
 import com.abyssia.industry.blockentity.ProcessingMachineBlockEntity;
@@ -85,6 +87,18 @@ public final class ModIndustry
     public static final RegistryObject<Block> HIGH_TEMP_FURNACE = machine(MachineKind.HIGH_TEMP_FURNACE);
     /** I02 (inbox/specs/I02-selective-leaching-separator.md) */
     public static final RegistryObject<Block> SELECTIVE_LEACHING_SEPARATOR = machine(MachineKind.SELECTIVE_LEACHING_SEPARATOR);
+    /** Excavator Mk1 (deep-sea mining platform); built with the habitat constructor (ExcavatorEntry): no block item, no drops */
+    public static final RegistryObject<Block> ABYSSAL_EXCAVATOR = BLOCKS.register("abyssal_excavator", () ->
+            new AbyssalExcavatorBlock(excavatorProps().lightLevel(s -> s.getValue(BlockStateProperties.LIT) ? 7 : 0)));
+
+    /** Excavator Mk2 (ORE01): wider reach, faster, 2 ore a cycle, can mine the rare minerals */
+    public static final RegistryObject<Block> ABYSSAL_EXCAVATOR_MK2 = BLOCKS.register("abyssal_excavator_mk2", () ->
+            new AbyssalExcavatorBlock(excavatorProps().lightLevel(s -> s.getValue(BlockStateProperties.LIT) ? 7 : 0),
+                    com.abyssia.industry.ExcavatorTier.MK2));
+
+    /** invisible collision cells of the excavator multiblock (see ExcavatorStructure); no item, no drops */
+    public static final RegistryObject<Block> EXCAVATOR_PART = BLOCKS.register("excavator_part", () ->
+            new com.abyssia.industry.block.ExcavatorPartBlock(excavatorProps()));
 
     // ---------- items ----------
     /** Used once per selective leaching operation; registered in {@link #registerItems}. */
@@ -96,6 +110,10 @@ public final class ModIndustry
             () -> BlockEntityType.Builder.of(ProcessingMachineBlockEntity::new,
                     CRUSHER.get(), REFINERY_FURNACE.get(), ALLOY_FURNACE.get(), HIGH_TEMP_FURNACE.get(),
                     SELECTIVE_LEACHING_SEPARATOR.get()).build(null));
+    public static final RegistryObject<BlockEntityType<AbyssalExcavatorBlockEntity>> EXCAVATOR_ENTITY = BLOCK_ENTITIES.register("abyssal_excavator",
+            () -> BlockEntityType.Builder.of(AbyssalExcavatorBlockEntity::new, ABYSSAL_EXCAVATOR.get(), ABYSSAL_EXCAVATOR_MK2.get()).build(null));
+    public static final RegistryObject<BlockEntityType<com.abyssia.industry.blockentity.ExcavatorPartBlockEntity>> EXCAVATOR_PART_ENTITY = BLOCK_ENTITIES.register("excavator_part",
+            () -> BlockEntityType.Builder.of(com.abyssia.industry.blockentity.ExcavatorPartBlockEntity::new, EXCAVATOR_PART.get()).build(null));
     public static final RegistryObject<BlockEntityType<GeneratorBlockEntity>> GENERATOR_ENTITY = BLOCK_ENTITIES.register("industrial_generator",
             () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, HYDROTHERMAL_GENERATOR.get(), AUXILIARY_GENERATOR.get()).build(null));
     public static final RegistryObject<BlockEntityType<EnergyDeviceBlockEntity>> ENERGY_DEVICE_ENTITY = BLOCK_ENTITIES.register("energy_device",
@@ -132,6 +150,13 @@ public final class ModIndustry
     private static RegistryObject<Block> machine(MachineKind kind)
     {
         return block(kind.id, () -> new MachineBlock(machineProps().lightLevel(s -> s.getValue(BlockStateProperties.LIT) ? 7 : 0), kind));
+    }
+
+    /** the excavator: machine strength, but see-through (light and water pass the multiblock; the renderer draws it) */
+    private static BlockBehaviour.Properties excavatorProps()
+    {
+        return machineProps().noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)
+                .isValidSpawn((s, l, p, e) -> false);
     }
 
     /** Pressure-proof metal: like an iron block, pickaxe needed. */

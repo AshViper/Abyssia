@@ -62,15 +62,15 @@ public final class MaterialTools
     // Durabilities are the spec's per-piece totals.
     private static final ArmorMaterial DIVING = new Material("abyssia:diving_alloy", new int[]{0, 420, 448, 0},
             new int[]{0, 5, 6, 0}, 1.5F, 0.0F, 12, () -> ModItems.CORROSION_ALLOY_INGOT.get());
-    private static final ArmorMaterial PRESSURE = new Material("abyssia:pressure_alloy", new int[]{0, 0, 0, 462},
-            new int[]{0, 0, 0, 4}, 3.0F, 0.1F, 15, () -> ModItems.PRESSURE_SHELL.get());
+    private static final ArmorMaterial PRESSURE = new Material("abyssia:pressure_alloy", new int[]{350, 420, 520, 462},
+            new int[]{3, 6, 7, 4}, 3.0F, 0.1F, 15, () -> ModItems.PRESSURE_SHELL.get());
 
     private static final UUID SUIT_SPEED = UUID.fromString("0f4f1c8e-6a52-4c0b-9d0e-2b7a31c5e7a1");
     private static final UUID SET_SPEED = UUID.fromString("7c1d2e44-3b9a-4f6e-8a15-5d9c0b2f6e83");
 
     public static RegistryObject<Item> CRUSHING_HAMMER, COBALT_PICKAXE, COBALT_SHOVEL, MANGANESE_AXE, MANGANESE_SWORD,
             MOLYBDENUM_PICKAXE, TUNGSTEN_PICKAXE, TUNGSTEN_AXE, CRYSTAL_PICKAXE, ABYSSAL_DRILL, ABYSSAL_CUTTER,
-            DIVE_TANK, DIVING_SUIT_LEGGINGS, PRESSURE_DIVER_HELMET;
+            DIVE_TANK, DIVING_SUIT_LEGGINGS, PRESSURE_DIVER_HELMET, PRESSURE_DIVE_TANK, PRESSURE_SUIT_LEGGINGS, PRESSURE_FLIPPERS;
 
     private MaterialTools() {}
 
@@ -93,7 +93,12 @@ public final class MaterialTools
         // Smithing upgrade of deep_diver_helmet: same breathing / night vision; tag abyssia:pressure_proof marks it for
         // the future hadal pressure damage.
         PRESSURE_DIVER_HELMET = add(items, tab, "pressure_diver_helmet", () -> new ModTools.DiverHelmet(PRESSURE, ArmorItem.Type.HELMET, props(Rarity.EPIC)));
+        // Pressure gear (tier 3, PressureGear): smithing upgrades of the deep pieces, same behaviour as their bases.
+        PRESSURE_DIVE_TANK = add(items, tab, "pressure_dive_tank", () -> new ArmorItem(PRESSURE, ArmorItem.Type.CHESTPLATE, props(Rarity.EPIC)));
+        PRESSURE_SUIT_LEGGINGS = add(items, tab, "pressure_suit_leggings", () -> new SuitLeggings(PRESSURE, ArmorItem.Type.LEGGINGS, props(Rarity.EPIC)));
+        PRESSURE_FLIPPERS = add(items, tab, "pressure_flippers", () -> new ModTools.Flippers(PRESSURE, ArmorItem.Type.BOOTS, props(Rarity.EPIC)));
         MinecraftForge.EVENT_BUS.register(MaterialTools.class);
+        PressureGear.register();
     }
 
     private static Item.Properties props(Rarity rarity)
@@ -162,9 +167,9 @@ public final class MaterialTools
         if (swim == null) return;
         ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
         boolean full = (head.is(ModTools.DIVER_HELMET.get()) || head.is(PRESSURE_DIVER_HELMET.get()))
-                && player.getItemBySlot(EquipmentSlot.CHEST).is(DIVE_TANK.get())
-                && player.getItemBySlot(EquipmentSlot.LEGS).is(DIVING_SUIT_LEGGINGS.get())
-                && player.getItemBySlot(EquipmentSlot.FEET).is(ModTools.FLIPPERS.get());
+                && (player.getItemBySlot(EquipmentSlot.CHEST).is(DIVE_TANK.get()) || player.getItemBySlot(EquipmentSlot.CHEST).is(PRESSURE_DIVE_TANK.get()))
+                && (player.getItemBySlot(EquipmentSlot.LEGS).is(DIVING_SUIT_LEGGINGS.get()) || player.getItemBySlot(EquipmentSlot.LEGS).is(PRESSURE_SUIT_LEGGINGS.get()))
+                && (player.getItemBySlot(EquipmentSlot.FEET).is(ModTools.FLIPPERS.get()) || player.getItemBySlot(EquipmentSlot.FEET).is(PRESSURE_FLIPPERS.get()));
         boolean has = swim.getModifier(SET_SPEED) != null;
         if (full && !has)
             swim.addTransientModifier(new AttributeModifier(SET_SPEED, "Abyssia diving set swim speed", 0.10, AttributeModifier.Operation.MULTIPLY_TOTAL));

@@ -2,12 +2,14 @@ package com.abyssia.vehicle;
 
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
+import com.abyssia.fauna.DepthZone;
 import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
@@ -457,6 +459,7 @@ public class Submarine extends Entity
         }
         else if (sonarLine == null || tickCount % Config.SUBMARINE_SONAR_INTERVAL.get() == 0) sonarLine = SubmarineSonar.scan(this, sonarSeen);
 
+        crush(rider);
         if (rider instanceof Player player)
         {
             player.setAirSupply(player.getMaxAirSupply());
@@ -464,10 +467,32 @@ public class Submarine extends Entity
         }
     }
 
+    /** metres below the surface at the hull (DepthZone), and the rated depth of the installed Depth Hull */
+    public int depthMetres() { return (int) Math.max(0.0, DepthZone.metres(level(), getY())); }
+
+    public int ratedDepth() { return SubmarineUpgrades.ratedDepth(upgradeMask()); }
+
+    /** SUB06: below the rated depth the hull takes crush damage once a second; a creative pilot is exempt (as in PressureGear) */
+    private void crush(@Nullable LivingEntity rider)
+    {
+        if (tickCount % 20 != 0 || isRemoved() || getDock().isPresent()) return;
+        if (rider instanceof Player player && (player.isCreative() || player.isSpectator())) return;
+        int depth = depthMetres(), rated = ratedDepth();
+        if (depth <= rated) return;
+        float damage = Config.SUBMARINE_CRUSH_DAMAGE.get().floatValue() + (depth - rated) / Config.SUBMARINE_CRUSH_STEP.get();
+        setDamage(getDamage() + damage);
+        markHurt();
+        level().playSound(null, this, SoundEvents.ANVIL_LAND, SoundSource.NEUTRAL, 0.5f, 0.6f);
+        if (getDamage() > maxDamage()) breakApart();
+    }
+
     private Component hud()
     {
         int energy = Math.round(100.0f * getEnergy() / Math.max(1, maxEnergy()));
         MutableComponent line = Component.translatable("message." + Abyssia.MODID + ".submarine.hud", energy, hullPercent());
+        int depth = depthMetres(), rated = ratedDepth();
+        line.append(Component.translatable("message." + Abyssia.MODID + ".submarine.depth", depth, rated)
+                .withStyle(depth > rated ? ChatFormatting.RED : ChatFormatting.WHITE));
         if (getDock().isPresent()) line.append(Component.translatable("message." + Abyssia.MODID + ".submarine.docked"));
         if (sonarLine != null) line.append(sonarLine);
         return line;
@@ -806,7 +831,7 @@ public class Submarine extends Entity
 
     private final Upgrades upgrades = new Upgrades();
 
-    /** the 4 upgrade slots (0 hull, 1 battery, 2 thruster, 3 utility) */
+    /** the 5 upgrade slots (0 hull, 1 battery, 2 thruster, 3 utility, 4 depth) */
     public SimpleContainer upgrades()
     {
         return upgrades;
@@ -867,16 +892,20 @@ public class Submarine extends Entity
         markHurt();
         gameEvent(GameEvent.ENTITY_DAMAGE, attacker);
         boolean creative = attacker instanceof Player player && player.getAbilities().instabuild;
-        if (creative || getDamage() > maxDamage())
-        {
-            if (!creative && level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
-            {
-                spawnAtLocation(toItem());
-                upgrades.clearContent();   // they ride in the item
-            }
-            discard();
-        }
+        if (creative) discard();
+        else if (getDamage() > maxDamage()) breakApart();
         return true;
+    }
+
+    /** the hull gave way: drops the item (keeps energy and upgrades) unless entity drops are off */
+    private void breakApart()
+    {
+        if (level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
+        {
+            spawnAtLocation(toItem());
+            upgrades.clearContent();   // they ride in the item
+        }
+        discard();
     }
 
     /** the item this submarine breaks into (keeps its energy and upgrades; damage is not kept, as in SUB02) */

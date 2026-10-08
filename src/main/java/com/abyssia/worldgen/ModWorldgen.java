@@ -42,6 +42,7 @@ public final class ModWorldgen
     public static final RegistryObject<PlacementModifierType<ConfigPlacement>> CONFIG_PLACEMENT = PLACEMENTS.register("config", () -> () -> ConfigPlacement.CODEC);
     public static final RegistryObject<PlacementModifierType<DepthFilter>> DEPTH_FILTER = PLACEMENTS.register("depth", () -> () -> DepthFilter.CODEC);
     public static final RegistryObject<PlacementModifierType<DeepFloorPlacement>> DEEP_FLOOR = PLACEMENTS.register("deep_floor", () -> () -> DeepFloorPlacement.CODEC);
+    public static final RegistryObject<PlacementModifierType<AbyssFloorPlacement>> ABYSS_FLOOR = PLACEMENTS.register("abyss_floor", () -> () -> AbyssFloorPlacement.CODEC);
 
     private ModWorldgen() {}
 

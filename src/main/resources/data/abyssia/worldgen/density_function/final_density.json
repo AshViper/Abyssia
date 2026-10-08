@@ -4,14 +4,27 @@
     "type": "minecraft:range_choice",
     "input": {
       "type": "minecraft:y_clamped_gradient",
-      "from_y": -368,
+      "from_y": -1872,
       "to_y": 320,
-      "from_value": -368,
+      "from_value": -1872,
       "to_value": 320
     },
-    "min_inclusive": -369,
-    "max_exclusive": -66,
-    "when_in_range": "abyssia:deep_density",
-    "when_out_of_range": "abyssia:ocean_density"
+    "min_inclusive": -1873,
+    "max_exclusive": -378,
+    "when_in_range": "abyssia:abyss_density",
+    "when_out_of_range": {
+      "type": "minecraft:range_choice",
+      "input": {
+        "type": "minecraft:y_clamped_gradient",
+        "from_y": -1872,
+        "to_y": 320,
+        "from_value": -1872,
+        "to_value": 320
+      },
+      "min_inclusive": -1873,
+      "max_exclusive": -66,
+      "when_in_range": "abyssia:deep_density",
+      "when_out_of_range": "abyssia:ocean_density"
+    }
   }
 }

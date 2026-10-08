@@ -28,3 +28,5 @@ tools: Read, Grep, Glob
 }
 ```
 `result` は `PASS` か `FAIL`。high の問題が1つでもあれば `FAIL`。Agent Flow はこの値を Verification ノードに表示する。
+
+共通: ファイルは全文を読まず Grep + offset/limit で必要な範囲だけ読む。Vault は `python tools/memory.py search|heads|show` の抜粋だけ。他のエージェントとは通信せず、結果はメインだけに返す。返答は10行以内。

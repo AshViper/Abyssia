@@ -20,8 +20,16 @@ public final class DeepLayer
 {
     /** Overworld Y = old deep-ocean Y + SHIFT. */
     public static final int SHIFT = -240;
-    /** Bottom of the world (bedrock floor of the deep layer). */
-    public static final int MIN_Y = -368;
+    /** Bottom of the world (bedrock floor of the abyss layer). */
+    public static final int MIN_Y = -1872;
+    /** Bottom of the deep layer as it was before the abyss layer existed (its seabeds reach about Y -362): old deep Y -128. */
+    public static final int DEEP_BOTTOM_Y = -368;
+    /** Top of the abyss layer (exclusive, a multiple of 8): everything below is the abyss, rock down to its ceiling. */
+    public static final int ABYSS_TOP_Y = -376;
+    /** Lowest underside of the abyss layer's rock ceiling; its shafts and the deep layer's hadal floors stay above it. */
+    public static final int ABYSS_CEILING_BOTTOM_Y = -408;
+    /** The abyss seabed is this Y + 64 x its seabed offset (about Y -1840 .. -1460): the layer holds ~1300 blocks of open water. */
+    public static final int ABYSS_SEABED_BASE_Y = -1650;
     /** Bottom of the bedrock band between the ocean world and the deep layer; everything below is the deep layer. */
     public static final int TOP_Y = -64;
     /** Top of the bedrock band (exclusive). */
@@ -43,6 +51,12 @@ public final class DeepLayer
     public static boolean isDeep(double y)
     {
         return y < TOP_Y;
+    }
+
+    /** True in the abyss layer, under the deep layer (a deep layer's rock slab included). */
+    public static boolean isAbyss(double y)
+    {
+        return y < ABYSS_TOP_Y;
     }
 
     /** True in an overworld with a deep layer (ocean world or default world) below the bedrock band (client and server). */
@@ -99,6 +113,39 @@ public final class DeepLayer
             boolean solid = level.getBlockState(pos.setY(y)).blocksMotion();
             if (!solid) open = true;
             else if (open) return y;
+        }
+        return MIN_Y;
+    }
+
+    /**
+     * The abyss seabed at a column of real blocks: scans up from the bedrock for the last solid block under open water
+     * (the abyss has no caves or overhangs; a built structure on the floor is seen as part of it), or {@code MIN_Y}.
+     */
+    public static int abyssFloorY(BlockGetter level, int x, int z)
+    {
+        int top = ABYSS_CEILING_BOTTOM_Y;
+        if (level instanceof WorldGenLevel gen)
+        {
+            ChunkAccess chunk = gen.getChunk(x >> 4, z >> 4);
+            LevelChunkSection[] sections = chunk.getSections();
+            int minY = chunk.getMinBuildHeight(), lx = x & 15, lz = z & 15;
+            // Top-down by sections: a section that holds nothing solid is skipped, so the water column costs little.
+            for (int y = Math.min(top, chunk.getMaxBuildHeight() - 1); y > Math.max(MIN_Y, minY); y--)
+            {
+                LevelChunkSection section = sections[(y - minY) >> 4];
+                if (!section.maybeHas(state -> state.blocksMotion()))
+                {
+                    y = ((y >> 4) << 4);  // the next iteration continues in the section below
+                    continue;
+                }
+                if (section.getBlockState(lx, y & 15, lz).blocksMotion()) return y;
+            }
+            return MIN_Y;
+        }
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, top, z);
+        for (int y = top; y > MIN_Y; y--)
+        {
+            if (level.getBlockState(pos.setY(y)).blocksMotion()) return y;
         }
         return MIN_Y;
     }

@@ -1,0 +1,79 @@
+{
+  "category": "landmark",
+  "tier": "medium",
+  "footprint_radius": 38,
+  "max_height": 18,
+  "formation": {
+    "type": "skeleton",
+    "length": [
+      24,
+      40
+    ],
+    "rib": [
+      4,
+      7
+    ],
+    "rib_gap": 0.15,
+    "bend": 4,
+    "bone": [
+      {
+        "data": {
+          "Name": "minecraft:bone_block"
+        },
+        "weight": 8
+      },
+      {
+        "data": {
+          "Name": "abyssia:fossil_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accent": [
+      {
+        "data": {
+          "Name": "abyssia:fossil_rock"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 0.7,
+    "min_y": -340,
+    "max_y": -80,
+    "max_top_y": -92
+  },
+  "dressing": {
+    "radius": 30,
+    "density": 0.05,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sponge_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:tube_plant"
+          },
+          "min_height": 2,
+          "max_height": 5
+        },
+        "weight": 2
+      }
+    ]
+  }
+}

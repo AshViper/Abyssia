@@ -29,6 +29,7 @@ WIDTH = {
     "habitat_wall": (2, 2),
     "habitat_ceiling": (2, 2),
     "habitat_light": (2, 2),
+    "habitat_light_off": (2, 2),   # ECO03: the light with no power, dimmed from habitat_light
     "habitat_trim": (1, 1),
 }
 
@@ -62,8 +63,24 @@ def variant(base, mask, wx, wy):
     return out
 
 
+def dim_light():
+    """habitat_light_off.png: habitat_light pulled down to the ceiling's dark steel tones (the lamp is out)."""
+    src = Image.open(os.path.join(TEX, "habitat_light.png")).convert("RGBA")
+    out = Image.new("RGBA", src.size)
+    for y in range(src.height):
+        for x in range(src.width):
+            r, g, b, a = src.getpixel((x, y))
+            out.putpixel((x, y), (int(r * 0.33), int(g * 0.35), int(b * 0.38), a))
+    return out
+
+
 def main(dry):
     written = []
+    if not dry:
+        off = dim_light()
+        off.save(os.path.join(TEX, "habitat_light_off.png"))
+        os.makedirs(LOCK, exist_ok=True)
+        off.save(os.path.join(LOCK, "habitat_light_off.png"))
     for base_id, (wx, wy) in WIDTH.items():
         base = Image.open(os.path.join(TEX, base_id + ".png")).convert("RGBA")
         for mask in range(1, 16):

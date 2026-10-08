@@ -19,7 +19,7 @@ import java.util.Locale;
 
 /**
  * SUB03 "Submarine Systems" screen on the vanilla chest texture: header, a status line ("⚡ x / y FE  ❤ z%"), the
- * 4 upgrade slots centred in one row, then the inventory. Empty slots name their kind; the battery / hull slots warn
+ * 5 upgrade slots centred in one row, then the inventory. Empty slots name their kind; the battery / hull slots warn
  * about the charge lost on removal / the damaged hull lock.
  */
 public class SubmarineUpgradeScreen extends AbstractContainerScreen<SubmarineUpgradeMenu>

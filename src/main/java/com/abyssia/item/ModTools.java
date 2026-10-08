@@ -88,7 +88,7 @@ public final class ModTools {
         }
     }
 
-    private static final class Flippers extends ArmorItem {
+    static final class Flippers extends ArmorItem {
         Flippers(ArmorMaterial material, Type type, Properties props) {
             super(material, type, props);
         }

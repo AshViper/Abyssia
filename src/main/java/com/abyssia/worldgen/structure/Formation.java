@@ -1,5 +1,7 @@
 package com.abyssia.worldgen.structure;
 
+import com.abyssia.worldgen.structure.formation.ArtifactFieldFormation;
+import com.abyssia.worldgen.structure.formation.CargoContainerFormation;
 import com.abyssia.worldgen.structure.formation.CaveFormation;
 import com.abyssia.worldgen.structure.formation.CraterFormation;
 import com.abyssia.worldgen.structure.formation.CrystalFormation;
@@ -8,10 +10,12 @@ import com.abyssia.worldgen.structure.formation.PillarFormation;
 import com.abyssia.worldgen.structure.formation.RottenTreeFormation;
 import com.abyssia.worldgen.structure.formation.RockFormation;
 import com.abyssia.worldgen.structure.formation.SedimentFormation;
+import com.abyssia.worldgen.structure.formation.SkeletonFormation;
 import com.abyssia.worldgen.structure.formation.TrenchFormation;
 import com.abyssia.worldgen.structure.formation.VegetationFormation;
 import com.abyssia.worldgen.structure.formation.VentFormation;
 import com.abyssia.worldgen.structure.formation.VolcanoFormation;
+import com.abyssia.worldgen.structure.formation.WreckFormation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
@@ -43,6 +47,10 @@ public interface Formation
             case CaveFormation.TYPE -> CaveFormation.CODEC;
             case RottenTreeFormation.TYPE -> RottenTreeFormation.CODEC;
             case FallenLogFormation.TYPE -> FallenLogFormation.CODEC;
+            case CargoContainerFormation.TYPE -> CargoContainerFormation.CODEC;
+            case SkeletonFormation.TYPE -> SkeletonFormation.CODEC;
+            case ArtifactFieldFormation.TYPE -> ArtifactFieldFormation.CODEC;
+            case WreckFormation.TYPE -> WreckFormation.CODEC;
             default -> null;
         };
         return codec != null ? DataResult.success(codec) : DataResult.error(() -> "Unknown seabed structure formation: " + type);

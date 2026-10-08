@@ -13,14 +13,14 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * SUB03 "Submarine Systems" menu: 4 fixed-kind upgrade slots in a row (0 hull, 1 battery, 2 thruster, 3 utility),
+ * SUB03 "Submarine Systems" menu: 5 fixed-kind upgrade slots in a row (0 hull, 1 battery, 2 thruster, 3 utility, 4 depth),
  * then the player inventory (4-30) and hotbar (31-39); 1-row chest layout with a status line above the slots
  * (client: SubmarineUpgradeScreen). Valid while the submarine lives, is unmanned and within 8 blocks (vanilla closes
  * the menu and drops clicks once that fails, so boarding closes it).
  */
 public class SubmarineUpgradeMenu extends AbstractContainerMenu
 {
-    public static final int SLOT_X = 53, SLOT_Y = 28, INV_Y = 59, HOTBAR_Y = 117;
+    public static final int SLOT_X = 44, SLOT_Y = 28, INV_Y = 59, HOTBAR_Y = 117;
     public static final int WIDTH = 176, HEIGHT = 141;
 
     private final Container container;

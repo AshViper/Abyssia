@@ -54,7 +54,7 @@ public final class DivingBreathing
     private static int chestStage(ItemStack chest)
     {
         if (EntryDivingGear.TANK != null && chest.is(EntryDivingGear.TANK.get())) return 1;
-        if (chest.is(MaterialTools.DIVE_TANK.get())) return 2;
+        if (chest.is(MaterialTools.DIVE_TANK.get()) || chest.is(MaterialTools.PRESSURE_DIVE_TANK.get())) return 2;
         return 0;
     }
 

@@ -43,6 +43,7 @@ VANILLA = {
     "sticky_piston", "piston", "campfire", "soul_campfire", "glow_item_frame", "item_frame", "glow_ink_sac", "ink_sac",
     "turtle_helmet", "blast_furnace", "furnace", "chest", "barrel", "crafting_table", "stone", "cobblestone",
     "deepslate", "cobbled_deepslate", "sand", "gravel", "oak_planks", "iron_block", "copper_block", "gold_block",
+    "lapis_lazuli", "quartz",
 }
 
 # Registration helpers whose first string argument is an item id.
@@ -137,7 +138,8 @@ def check() -> dict:
             "items_not_registered_in_java": [i for i in spec_ids if i not in java],
             "items_without_model": [i for i in spec_ids if i not in models],
             "recipes_not_generated": [r["id"] for r in spec["recipes"]
-                                      if not os.path.isfile(os.path.join(RECIPES, r["id"] + ".json"))],
+                                      if r.get("station") not in ("alloy_furnace", "high_temp_furnace")   # machine-only: no JSON
+                                      and not os.path.isfile(os.path.join(RECIPES, r["id"] + ".json"))],
         }
     report["ok"] = not (report["unresolved"] or report["invalid_json"] or report["bad_pattern"]
                         or any(v for k, v in report["spec"].items() if isinstance(v, list)))

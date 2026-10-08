@@ -74,7 +74,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.55 var(--mono)}
 .tline{fill:none;stroke:var(--line);stroke-width:1.4}
 .tline.dash{stroke-dasharray:4 5}
 .tline.on{stroke:var(--c,var(--c-sub))}
-.tdot{filter:drop-shadow(0 0 4px currentColor)}
+.tdot{opacity:.95}
 .tlow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;padding:0 16px 14px}
 @media(max-width:1000px){.tlow{grid-template-columns:minmax(0,1fr)}}
 .fs{border:1px solid var(--bd);border-radius:3px;padding:12px 10px 8px;position:relative;min-width:0}
@@ -399,6 +399,7 @@ function detail(){
 
 
 async function poll(){
+  if(document.hidden)return;
   try{
     const s=await (await fetch("state.json",{cache:"no-store"})).text();
     if(s!==lastJson){lastJson=s;state=JSON.parse(s);render();if(LV.agents)trender();
@@ -500,7 +501,11 @@ function gptbox(){ // ChatGPT = spec / design / texture owner and reviewer (driv
   $("pipe").querySelectorAll("[data-task]").forEach(e=>e.onclick=()=>{const t=(state.tasks||[]).find(x=>x.id===e.dataset.task);if(t)select({kind:"task",...t})});
   $("gpt").onclick=()=>selStage("chatgpt");
 }
-function trender(){
+// perf: hooks change live.json almost every second; coalesce redraws, and never touch the DOM for unchanged HTML
+const _hc=new Map();function hset(id,html){if(_hc.get(id)===html)return;_hc.set(id,html);$(id).innerHTML=html}
+let _tp=0;function trender(){if(_tp)return;_tp=setTimeout(()=>{_tp=0;if(!document.hidden)trenderNow()},250)}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){poll();tpoll();trender()}});
+function trenderNow(){
   const ags=LV.agents,allMains=ags.filter(a=>a.type==="main"),decs=ags.filter(a=>a.type==="decision"),all=ags.filter(a=>a.type!=="main"&&a.type!=="decision");
   const now=Date.now()/1000,live=a=>a.status==="running"||now-(a.ended||a.t)<DONE_GRACE||a.id===tsel;
   const subs=showDone?all:all.filter(live);
@@ -508,11 +513,11 @@ function trender(){
   let mains=showDone?allMains:allMains.filter(a=>live(a)||keepMain.has(a.id));
   if(!mains.length&&allMains.length)mains=[allMains.reduce((p,q)=>q.t>p.t?q:p)]; // always show the latest session
   const hidden=all.length-subs.length+allMains.length-mains.length;
-  $("mains").innerHTML=mains.length?mains.map(abox).join(""):`<div class="ab main idle"><div class="nm">Opus · main session</div><div class="st">○ 記録なし — hook 待ち</div></div>`;
+  hset("mains",mains.length?mains.map(abox).join(""):`<div class="ab main idle"><div class="nm">Opus · main session</div><div class="st">○ 記録なし — hook 待ち</div></div>`);
   const run=subs.filter(a=>a.status==="running").length;
-  $("hub").innerHTML=all.length?`delegate to subagents · <b>${run} running</b> / ${all.length}`+(hidden||showDone?` · <a href="#" id="tgDone" style="color:var(--mut)">${showDone?"完了を隠す":`完了 ${hidden} 件を表示`}</a>`:""):"";
+  hset("hub",all.length?`delegate to subagents · <b>${run} running</b> / ${all.length}`+(hidden||showDone?` · <a href="#" id="tgDone" style="color:var(--mut)">${showDone?"完了を隠す":`完了 ${hidden} 件を表示`}</a>`:""):"");
   if($("tgDone"))$("tgDone").onclick=e=>{e.preventDefault();showDone=!showDone;try{localStorage.setItem("af.showDone",showDone?"1":"0")}catch(_){}trender()};
-  $("subs").innerHTML=subs.map(abox).join("");
+  hset("subs",subs.map(abox).join(""));
   advisor(decs);gptbox();postbox();
   const m=mains.find(a=>a.status==="running")||mains[0];
   $("thMain").textContent=`${(m&&m.model||"opus-5.5").toUpperCase().replace("-"," ")} WORKS`;
@@ -522,11 +527,10 @@ function trender(){
   tmsgs();tlog();tstat();requestAnimationFrame(tlines);
 }
 function tlines(){
-  const svg=$("tsvg"),host=$("tbody").getBoundingClientRect();svg.innerHTML="";
+  const svg=$("tsvg"),host=$("tbody").getBoundingClientRect(),acc=[];
   const box=id=>{const e=document.querySelector(`#tree .ab[data-id="${CSS.escape(id)}"]`);return e&&e.getBoundingClientRect()};
   const P=(r,s)=>s==="b"?[r.left+r.width/2-host.left,r.bottom-host.top]:s==="t"?[r.left+r.width/2-host.left,r.top-host.top]:s==="r"?[r.right-host.left,r.top+r.height/2-host.top]:[r.left-host.left,r.top+r.height/2-host.top];
-  const line=(d,col,on,dash)=>{const p=el("path",{d,class:"tline"+(on?" on":"")+(dash?" dash":"")},svg);p.style.setProperty("--c",col);
-    if(on)for(let i=0;i<2;i++){const c=el("circle",{r:3,fill:col,class:"tdot"},svg);c.style.color=col;el("animateMotion",{path:d,dur:"1.6s",begin:i*0.8+"s",repeatCount:"indefinite"},c)}return d};
+  const line=(d,col,on,dash)=>{acc.push([d,col,on,dash]);return d};
   window._tpaths={};
   const pr=$("post").getBoundingClientRect(),sb=[...document.querySelectorAll("#subs .ab, #mains .ab")].map(e=>e.getBoundingClientRect());
   if(pr.width&&sb.length){const by=Math.max(...sb.map(r=>r.bottom))-host.top,x=pr.left+pr.width/2-host.left;
@@ -544,6 +548,9 @@ function tlines(){
     const [x1,y1]=P(par,"b"),[x2,y2]=P(ch,"t"),my=(y1+y2)/2;
     window._tpaths[a.id]=line(`M${x1},${y1} L${x1},${my} L${x2},${my} L${x2},${y2}`,col,on,false);
   }
+  const sig=JSON.stringify(acc);if(sig===window._lsig)return;window._lsig=sig;svg.innerHTML="";
+  for(const [d,col,on,dash] of acc){const p=el("path",{d,class:"tline"+(on?" on":"")+(dash?" dash":"")},svg);p.style.setProperty("--c",col);
+    if(on)for(let i=0;i<2;i++){const c=el("circle",{r:3,fill:col,class:"tdot"},svg);c.style.color=col;el("animateMotion",{path:d,dur:"1.6s",begin:i*0.8+"s",repeatCount:"indefinite"},c)}}
 }
 function tpacket(m){ // one-shot packet along the line for a fresh hand-off / result
   const sub=m.kind==="result"?m.from:m.to,d=(window._tpaths||{})[sub];if(!d)return;
@@ -555,31 +562,32 @@ const MK={task:"依頼",result:"結果",send:"msg",prompt:"user"};
 function tmsgs(){
   let ms=[...LV.msgs].reverse();if(tsel)ms=ms.filter(m=>m.from===tsel||m.to===tsel);
   const open=new Set([...document.querySelectorAll("#msgs li.open")].map(e=>e.dataset.k));
-  $("msgs").innerHTML=ms.length?ms.slice(0,80).map(m=>{const k=m.t+m.from;const to=m.to||m.to_type||"?";
+  hset("msgs",ms.length?ms.slice(0,40).map(m=>{const k=m.t+m.from;const to=m.to||m.to_type||"?";
     return `<li data-k="${esc(k)}" class="${open.has(String(k))?"open":""}"><div class="hd"><span class="tm">${hms(m.t)}</span>
     <span style="color:${acol(m.from)}">${esc(aname(m.from))}</span><span class="tm">→</span><span style="color:${acol(to)}">${esc(m.to?aname(m.to):to)}</span>
     <span class="k" style="color:${m.kind==="result"?"var(--done)":"var(--mut)"}">${MK[m.kind]||m.kind}</span>${m.desc?`<b>${esc(m.desc)}</b>`:""}</div>
-    <div class="tx">${esc(m.text||"")}</div></li>`}).join(""):`<li class="empty">まだやり取りなし (サブエージェント起動で表示)</li>`;
+    <div class="tx">${esc((m.text||"").slice(0,500))}</div></li>`}).join(""):`<li class="empty">まだやり取りなし (サブエージェント起動で表示)</li>`);
   document.querySelectorAll("#msgs li[data-k]").forEach(e=>e.onclick=()=>e.classList.toggle("open"));
 }
 function tlog(){ // hook events + flow.py activity (progress notes, decisions) in one timeline
   const key=tsel||selKey();
   const TXT=e=>e.ev==="SubagentStart"?"start":e.ev==="SubagentStop"?"stop":e.ev==="PostToolUse"?(e.ok===false?"✕ ":e.ok?"✓ ":"· ")+e.stage:(TOOLV[e.tool]||tname(e.tool));
-  let rows=(LV.events||[]).map(e=>({t:e.t,html:`<li><span class="tm">${hms(e.t)}</span><span style="color:${acol(e.who)}">${esc(aname(e.who))}</span><span class="tl">${esc(TXT(e))}</span><span title="${esc(e.out||e.target||"")}"${e.ok===false?' style="color:var(--failed)"':""}>${esc(e.ev==="PostToolUse"?(e.out||e.target||""):(e.target||""))}</span></li>`,
+  let rows=(LV.events||[]).map(e=>({t:e.t,html:`<li><span class="tm">${hms(e.t)}</span><span style="color:${acol(e.who)}">${esc(aname(e.who))}</span><span class="tl">${esc(TXT(e))}</span><span title="${esc((e.out||e.target||"").slice(0,200))}"${e.ok===false?' style="color:var(--failed)"':""}>${esc(e.ev==="PostToolUse"?(e.out||e.target||""):(e.target||""))}</span></li>`,
     hit:!key||e.who===key||e.stage===key}));
   rows=rows.concat((state.log||[]).slice(-150).map(l=>({t:l.t,html:`<li class="fl k-${esc(l.kind)}"><span class="tm">${hms(l.t)}</span><span style="color:${l.who==="main"?"var(--c-main)":STAGE_KEYS.has(l.who)?"var(--c-gpt)":"var(--c-coder)"}">${esc(l.who)}</span><span class="tl">${esc(l.kind==="info"?"log":l.kind)}</span><span title="${esc(l.msg)}">${esc(l.msg)}</span></li>`,
     hit:!key||l.who===key})));
-  rows=rows.filter(r=>r.hit).sort((a,b)=>b.t-a.t).slice(0,200);
+  rows=rows.filter(r=>r.hit).sort((a,b)=>b.t-a.t).slice(0,120);
   $("slogL").textContent=key?`session log · ${agentById(key)?aname(key):key}`:"session log";
-  $("slog").innerHTML=rows.length?rows.map(r=>r.html).join(""):`<li class="empty">記録なし</li>`;
+  hset("slog",rows.length?rows.map(r=>r.html).join(""):`<li class="empty">記録なし</li>`);
 }
 function tstat(){
   const a=LV.agents,subs=a.filter(x=>x.type!=="main"),run=subs.filter(x=>x.status==="running").length;
   const calls=a.reduce((s,x)=>s+x.calls,0),dec=a.filter(x=>x.type==="decision"&&x.status==="running").length;
-  $("tstat").innerHTML=`<div><span class="pr">~/abyssia $</span> agentflow --live <span class="cur"></span></div>
-    <div><span class="kv">agents <b>[${a.length}]</b></span><span class="kv">subagents <b>[${run}/${subs.length}]</b></span><span class="kv">decision <b style="color:var(--c-dec)">[${dec?"advising":"on call"}]</b></span><span class="kv">tool calls <b>[${calls}]</b></span><span class="kv">msgs <b>[${LV.msgs.length}]</b></span></div>`;
+  hset("tstat",`<div><span class="pr">~/abyssia $</span> agentflow --live <span class="cur"></span></div>
+    <div><span class="kv">agents <b>[${a.length}]</b></span><span class="kv">subagents <b>[${run}/${subs.length}]</b></span><span class="kv">decision <b style="color:var(--c-dec)">[${dec?"advising":"on call"}]</b></span><span class="kv">tool calls <b>[${calls}]</b></span><span class="kv">msgs <b>[${LV.msgs.length}]</b></span></div>`);
 }
 async function tpoll(){
+  if(document.hidden)return;
   try{const s=await (await fetch("live.json",{cache:"no-store"})).text();
     if(s===lvJson)return;lvJson=s;LV=JSON.parse(s);trender();
     const fresh=LV.msgs.filter(m=>m.t>seenMsg);if(seenMsg)setTimeout(()=>fresh.slice(-4).forEach(tpacket),50);
@@ -927,7 +935,8 @@ $("tgundo").onclick=async()=>{
   }catch(e){$("tgamsg").textContent="元に戻せません: "+e.message}};
 
 render();poll();tpoll();reqs();aprs();autoPoll();
-setInterval(poll,1200);setInterval(()=>{if(!document.hidden)tpoll()},1000);setInterval(reqs,4000);setInterval(aprs,2000);setInterval(autoPoll,2500);
+const _vis=f=>()=>{if(!document.hidden)f()};
+setInterval(poll,2000);setInterval(tpoll,1500);setInterval(_vis(reqs),5000);setInterval(_vis(aprs),3000);setInterval(_vis(autoPoll),3000);
 </script>
 </body>
 </html>

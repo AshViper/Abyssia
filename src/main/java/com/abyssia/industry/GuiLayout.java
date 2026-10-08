@@ -19,7 +19,9 @@ public enum GuiLayout
     /** no slots: energy bar and text only */
     ENERGY("industrial_energy", new int[0][], -1, -1, -1, -1, -1, -1, 30),
     /** input over the reagent slot (droplet icon on its left), arrow, big main output, a column of three rare outputs */
-    LEACHING("industrial_leaching", new int[][] {{36, 21}}, 94, 30, 60, 30, -1, -1, 28, 36, 41, new int[][] {{126, 17}, {126, 35}, {126, 53}});
+    LEACHING("industrial_leaching", new int[][] {{36, 21}}, 94, 30, 60, 30, -1, -1, 28, 36, 41, new int[][] {{126, 17}, {126, 35}, {126, 53}}),
+    /** no inputs, energy bar, progress bar, target deposit info, output slot + by-product slot (Mk2) */
+    EXCAVATOR("industrial_excavator", new int[0][], 116, 53, 80, 34, -1, -1, 28, -1, -1, new int[][] {{142, 53}});
 
     public static final int ENERGY_X = 9, ENERGY_Y = 17, ENERGY_W = 12, ENERGY_H = 52;
     public static final int SPRITE_X = 176, FLAME_V = 0, ARROW_V = 14, ENERGY_V = 31;

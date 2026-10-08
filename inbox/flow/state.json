@@ -1,10 +1,23 @@
 {
- "updated": 1791097529.360949,
+ "updated": 1791462122.8478107,
  "main": {
-  "model": "claude-opus-5-5",
+  "model": "sonnet-5.5",
   "note": ""
  },
- "tasks": [],
+ "tasks": [
+  {
+   "id": "ORE01-model",
+   "title": "採掘機を発電機方式の多ブロックに (コード生成モデル)",
+   "tier": "standard",
+   "model": "sonnet-5.5",
+   "status": "done",
+   "files": "excavator multiblock, tools/bt01/excavator_assets.py, EXC1 textures",
+   "parent": "",
+   "note": "",
+   "started": 1791461557.5919955,
+   "ended": 1791462122.8478107
+  }
+ ],
  "log": [
   {
    "t": 1790914916.3245559,
@@ -2770,48 +2783,209 @@
    "kind": "status",
    "model": "",
    "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1791459052.1265407,
+   "who": "main",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "model=sonnet-5.5 — ORE01 鉱床・採掘機"
+  },
+  {
+   "t": 1791459052.2839687,
+   "who": "router",
+   "kind": "status",
+   "model": "",
+   "msg": "running — ORE01 A/B/棚卸しを分担"
+  },
+  {
+   "t": 1791459052.4477916,
+   "who": "ORE01-A",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] クラスト削除・独自鉱物の手掘り禁止"
+  },
+  {
+   "t": 1791459052.6192799,
+   "who": "ORE01-B",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 採掘機 Mk2・ティア制限・枯渇処理"
+  },
+  {
+   "t": 1791459052.783359,
+   "who": "ORE01-inv",
+   "kind": "add",
+   "model": "haiku-5.5",
+   "msg": "追加 [light] レシピ依存の棚卸し (読み取りのみ)"
+  },
+  {
+   "t": 1791459052.9562616,
+   "who": "ORE01-forge",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] Forge 1.20.1 へ移植 (A/B 完了後)"
+  },
+  {
+   "t": 1791459053.1264744,
+   "who": "ORE01-A",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791459053.2830253,
+   "who": "ORE01-B",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791459053.4319148,
+   "who": "ORE01-inv",
+   "kind": "status",
+   "model": "haiku-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791459053.614866,
+   "who": "ORE01-forge",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "queued — NeoForge ビルド・テスト後に開始"
+  },
+  {
+   "t": 1791459086.822467,
+   "who": "ORE01-inv",
+   "kind": "status",
+   "model": "haiku-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791459322.1042814,
+   "who": "ORE01-B",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791459449.5967743,
+   "who": "ORE01-A",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791459449.7331932,
+   "who": "build",
+   "kind": "status",
+   "model": "",
+   "msg": "running — NeoForge compile"
+  },
+  {
+   "t": 1791459573.9897442,
+   "who": "main",
+   "kind": "info",
+   "model": "",
+   "msg": "ORE01: scratch server test"
+  },
+  {
+   "t": 1791459921.9033504,
+   "who": "build",
+   "kind": "status",
+   "model": "",
+   "msg": "done — NeoForge compile + server test 39/39"
+  },
+  {
+   "t": 1791459922.0492253,
+   "who": "ORE01-forge",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791460614.0755398,
+   "who": "ORE01-forge",
+   "kind": "info",
+   "model": "",
+   "msg": "Forge compile OK; 建設ツール化とライト修正の差分を後で反映"
+  },
+  {
+   "t": 1791460974.5560465,
+   "who": "ORE01-forge",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
+  },
+  {
+   "t": 1791460974.700958,
+   "who": "main",
+   "kind": "status",
+   "model": "",
+   "msg": "全作業完了 - 待機に戻しました"
+  },
+  {
+   "t": 1791461557.2699945,
+   "who": "ORE01-model",
+   "kind": "add",
+   "model": "sonnet-5.5",
+   "msg": "追加 [standard] 採掘機を発電機方式の多ブロックに (コード生成モデル)"
+  },
+  {
+   "t": 1791461557.5919955,
+   "who": "ORE01-model",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "running"
+  },
+  {
+   "t": 1791462122.8478107,
+   "who": "ORE01-model",
+   "kind": "status",
+   "model": "sonnet-5.5",
+   "msg": "done"
   }
  ],
  "stages": {
   "request": {
    "status": "idle",
    "note": "",
-   "t": 1791097529.360949
+   "t": 1791460974.700958
   },
   "router": {
    "status": "idle",
    "note": "",
-   "t": 1791097529.360949
+   "t": 1791460974.700958
   },
   "chatgpt": {
    "status": "idle",
    "note": "",
-   "t": 1791097529.360949
+   "t": 1791460974.700958
   },
   "texture": {
    "status": "idle",
    "note": "",
-   "t": 1791097529.360949
+   "t": 1791460974.700958
   },
   "verify": {
    "status": "idle",
    "note": "",
-   "t": 1791097529.360949
+   "t": 1791460974.700958
   },
   "build": {
    "status": "idle",
    "note": "",
-   "t": 1791097529.360949
+   "t": 1791460974.700958
   },
   "memory": {
    "status": "idle",
    "note": "",
-   "t": 1791097529.360949
+   "t": 1791460974.700958
   },
   "git": {
    "status": "idle",
    "note": "",
-   "t": 1791097529.360949
+   "t": 1791460974.700958
   }
  }
 }

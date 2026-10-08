@@ -136,7 +136,7 @@ public class SubmarineItem extends Item
         for (SubmarineUpgrades.Kind kind : SubmarineUpgrades.Kind.values())
             if (upgrades.contains(kind.key))
                 lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.upgrade",
-                        Component.translatable("item." + Abyssia.MODID + "." + kind.id)).withStyle(ChatFormatting.BLUE));
+                        Component.translatable("item." + upgrades.getString(kind.key).replace(':', '.'))).withStyle(ChatFormatting.BLUE));
         lines.add(Component.translatable("tooltip." + Abyssia.MODID + ".submarine.controls").withStyle(ChatFormatting.GRAY));
     }
 }

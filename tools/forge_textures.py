@@ -294,6 +294,14 @@ RARE_ORES = {
     "vanadium_ore": ("block/deepslate_emerald_ore", "abyssal_rock", "#6a9a94"),  # blue-green grey
     "tungsten_ore": ("block/deepslate_coal_ore", "trench_rock", "#5a5e66"),      # dark grey
     "yttrium_ore": ("block/deepslate_redstone_ore", "abyssal_rock", "#c8c2a4"),  # pale yellow-white grey
+    # ECO02 (placeholders until the ChatGPT sheet, inbox/prompts/ORE02-textures.md)
+    "titanium_ore": ("block/deepslate_iron_ore", "abyssal_rock", "#8a9aab"),     # steel blue
+    "lead_ore": ("block/deepslate_coal_ore", "mineral_host_rock", "#6d7384"),    # dull blue-grey
+    "zinc_ore": ("block/deepslate_lapis_ore", "thermal_rock", "#98b0b8"),        # bluish white
+    "iridium_ore": ("block/deepslate_gold_ore", "trench_rock", "#c0c4cc"),       # silver-white
+    "uranium_ore": ("block/deepslate_emerald_ore", "abyssal_rock", "#86b03e"),   # yellow-green
+    "neodymium_ore": ("block/deepslate_redstone_ore", "abyssal_rock", "#9a82b8"),  # violet
+    "thorium_ore": ("block/deepslate_emerald_ore", "trench_rock", "#86a08c"),    # grey-green
 }
 
 

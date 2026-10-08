@@ -114,7 +114,7 @@ public final class ExternalFaunaCommand
                 biome != null ? biome.location() : "?", rules.size(), ExternalSpawnProvider.countSpawned(level, pos, s), ExternalFaunaConfig.MAX_PER_PLAYER.get()));
         for (FaunaSpawnRule r : rules)
         {
-            say(ctx, String.format("  %s: %s, weight %d, %.0f-%.0f m, %s, cap %d/%d", EntityType.getKey(r.entity()), r.role(), r.weight(),
+            say(ctx, String.format("  %s: %s, weight %.1f, %.0f-%.0f m, %s, cap %d/%d", EntityType.getKey(r.entity()), r.role(), r.weight(),
                     r.depth().min(), r.depth().max(), r.placement().getSerializedName(), r.cap().count(), r.cap().radius()));
         }
         return rules.size();

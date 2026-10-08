@@ -1,5 +1,6 @@
 package com.abyssia.worldgen.structure.formation;
 
+import com.abyssia.worldgen.DeepLayer;
 import com.abyssia.worldgen.structure.Formation;
 import com.abyssia.worldgen.structure.Mix;
 import com.abyssia.worldgen.structure.Painter;
@@ -87,7 +88,7 @@ public record TrenchFormation(Shape shape, Span length, Span width, Span depth, 
     {
         double half = L / 2, cos = Math.cos(theta), sin = Math.sin(theta);
         double reach = half + W + 4;
-        int bottomLimit = p.level.getMinBuildHeight() + 8;
+        int bottomLimit = Math.max(p.level.getMinBuildHeight(), DeepLayer.DEEP_BOTTOM_Y) + 8;
         for (int x = p.fromX(site.x, reach); x <= p.toX(site.x, reach); x++)
         {
             for (int z = p.fromZ(site.z, reach); z <= p.toZ(site.z, reach); z++)
@@ -172,7 +173,7 @@ public record TrenchFormation(Shape shape, Span length, Span width, Span depth, 
     private void shaftPit(Site site, Painter p, double r0, double D)
     {
         double reach = r0 * 1.6 + 3;
-        int bottomLimit = p.level.getMinBuildHeight() + 8;
+        int bottomLimit = Math.max(p.level.getMinBuildHeight(), DeepLayer.DEEP_BOTTOM_Y) + 8;
         for (int x = p.fromX(site.x, reach); x <= p.toX(site.x, reach); x++)
         {
             for (int z = p.fromZ(site.z, reach); z <= p.toZ(site.z, reach); z++)

@@ -1,6 +1,9 @@
 {
   "hooks": {
-    "PreToolUse": [{"matcher": "*", "hooks": [{"type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/tools/agentflow/hook.py\"", "timeout": 5}]}],
+    "PreToolUse": [
+      {"matcher": "*", "hooks": [{"type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/tools/agentflow/hook.py\"", "timeout": 5}]},
+      {"matcher": "Read", "hooks": [{"type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/tools/token_guard.py\"", "timeout": 5}]}
+    ],
     "PostToolUse": [{"matcher": "*", "hooks": [{"type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/tools/agentflow/hook.py\"", "timeout": 5}]}],
     "SubagentStart": [{"hooks": [{"type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/tools/agentflow/hook.py\"", "timeout": 5}]}],
     "SubagentStop": [{"hooks": [{"type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/tools/agentflow/hook.py\"", "timeout": 5}]}],

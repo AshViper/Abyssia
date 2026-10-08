@@ -74,10 +74,12 @@ def _deep_layer_constants():
 DL = _deep_layer_constants()
 SHIFT, MIN_Y, TOP_Y = DL["SHIFT"], DL["MIN_Y"], DL["TOP_Y"]
 BAND_TOP_Y, CEILING_BOTTOM_Y, SEABED_MAX_Y = DL["BAND_TOP_Y"], DL["CEILING_BOTTOM_Y"], DL["SEABED_MAX_Y"]
+DEEP_BOTTOM_Y, ABYSS_TOP_Y, ABYSS_CEILING_BOTTOM_Y, ABYSS_SEABED_BASE_Y = DL["DEEP_BOTTOM_Y"], DL["ABYSS_TOP_Y"], DL["ABYSS_CEILING_BOTTOM_Y"], DL["ABYSS_SEABED_BASE_Y"]
 WORLD_TOP = 320                    # top of the ocean world (exclusive): height = WORLD_TOP - MIN_Y
 # Where the router switches layers: between the noise cell corners at Y -72 / -64 (cells are 8 tall) and the biome
 # quarts at Y -68 / -64, so every sample point lands clearly on one side (the gradient below is not exact to 1e-9).
 LAYER_SPLIT = TOP_Y - 2
+ABYSS_SPLIT = ABYSS_TOP_Y - 2      # the same between the deep layer's bottom rock and the abyss layer (cell corners at -384 / -376)
 
 
 def dy(deep_y):
@@ -117,11 +119,15 @@ def ramp(v, lo, hi):
     return mul(sq(t), add(3.0, mul(-2.0, t)))
 
 
-def layered(deep, ocean):
-    """The deep layer's function below LAYER_SPLIT, the ocean world's above. Never wrap this in flat_cache / cache_2d
-    (they sample at one Y and would pick one layer for the whole column)."""
+def layered(deep, ocean, abyss=None):
+    """The deep layer's function below LAYER_SPLIT, the ocean world's above, and (when given) the abyss layer's below
+    ABYSS_SPLIT. Never wrap this in flat_cache / cache_2d (they sample at one Y and would pick one layer for the whole column)."""
+    inner = {"type": "minecraft:range_choice", "input": LAYER_Y, "min_inclusive": MIN_Y - 1,
+             "max_exclusive": LAYER_SPLIT, "when_in_range": deep, "when_out_of_range": ocean}
+    if abyss is None:
+        return inner
     return {"type": "minecraft:range_choice", "input": LAYER_Y, "min_inclusive": MIN_Y - 1,
-            "max_exclusive": LAYER_SPLIT, "when_in_range": deep, "when_out_of_range": ocean}
+            "max_exclusive": ABYSS_SPLIT, "when_in_range": abyss, "when_out_of_range": inner}
 
 
 LAYER_Y = grad(MIN_Y, WORLD_TOP, MIN_Y, WORLD_TOP)  # Y as a density function (the layer switch's input)
@@ -139,8 +145,9 @@ DEEP_GRAD = grad(dy(-128), dy(256), 2.0, -4.0)
 MACRO_SCALE = 2.5    # ocean basins, shelves, mountain chains and trench lines, x the vanilla-sized original
 CLIMATE_SCALE = 2.0  # ocean world temperature belts
 REGION_SCALE = 9.0   # trench_region only (terrain)
-BIOME_REGION_SCALE = 10.5 # deep biome provinces: habitat, volcanic / crystal, water-mass, relic (noise lattice ~2700 blocks; measured median patch 7.0 -> 1230, 8.5 -> 1420, 9.0 -> 1340 (seed noise ~100))
-ZONE_FUZZ = 0.3      # medium-scale wobble of the deep depth-zone borders (biome only, not terrain)
+BIOME_REGION_SCALE = 0.9 # deep biome provinces: habitat, volcanic / crystal, water-mass, relic. 2026-10-08 (user: biomes at most ~20 chunks in radius): was 10.5 (patches ~1500 blocks across), 0.4 for a few hours (too small). Measured with tools/biome_patches.py on /abyssia map 4000 16 (8000 blocks square): equal-area patch radius, area-weighted median 5.5 chunks, p99 16, max 17 (two cut by the map edge up to ~19)
+DEPTH_BIAS = 0.1     # how strongly the macro seabed depth picks the depth-zone biome (continentalness = DEPTH_BIAS x macro offset + fuzz); lower = zones less tied to the terrain depth (0.4 before 2026-10-08: the shelf biome deep_sea formed 40+ chunk patches)
+ZONE_FUZZ = 1.6      # wobble of the deep depth-zone borders (biome only, not terrain); 0.3 before 2026-10-08, raised so zones break into small patches
 
 # ---------------------------------------------------------------- deep ocean relief (old deep-ocean Y; overworld Y = dy())
 # The deep ocean is one open ocean: its seabed lies mostly below Y 100 with open water above. The ocean world's macro
@@ -168,6 +175,23 @@ DEEP = dict(
 # ---------------------------------------------------------------- rock ceiling of the deep layer (overworld Y)
 # Solid from the bedrock band down to a noisy underside between CEILING_BOTTOM_Y and CEILING_BOTTOM_Y + `relief`.
 CEILING = dict(relief=16)
+
+# ---------------------------------------------------------------- abyss layer (overworld Y)
+# Under the deep layer: its rock (the deep seabeds reach about Y -362, ABYSS_TOP_Y -376 is where the router switches) and
+# a ceiling with a noisy underside between ABYSS_CEILING_BOTTOM_Y and + `relief`, then ~1300 blocks of open water down to a
+# seabed at ABYSS_SEABED_BASE_Y + 64 x offset (offset -3..3: about Y -1842..-1458) and bedrock from MIN_Y. The only ways
+# down are the hadal shafts: abyssia:rift columns (a second noise, so a second set of cells) over the deep layer's low
+# floors (seabed at the axis at or below `max_seabed`, in the deep layer's blocks/64 offset), opened through the deep
+# floor's rock and the ceiling from `open_below` down (max_seabed 0.35 = deep Y 22 = overworld Y -218, `open_below` above it).
+ABYSS = dict(
+    hills=(0.3, 1.0),              # (xz scale, offset): rolling plains, +-64 blocks
+    ridges=(0.5, 0.2, 5.0, 1.4),   # (xz, width, k, offset): mountain chains up to ~90 blocks
+    canyons=(0.35, 0.06, 16.0, -1.2),  # narrow canyons ~77 blocks deep
+    offset_limit=3.0,              # seabed offset clamp: keeps the floor 25+ blocks over the bedrock
+    ceiling_relief=16,
+    rift=dict(cell=320, chance=0.6, radius=(10, 16), max_seabed=0.35, carve=16.0, open_below=-205),
+    continents=-1.9,               # router continentalness of the abyss: abyss biomes sit at -2..-1.7, the deep layer's at -1.5 and up
+)
 
 # ---------------------------------------------------------------- ocean world floor
 # Lowest seabed (Y): deep seas bottom out at Y -50, leaving rock, the bedrock band (Y -64..-60) and the deep layer's
@@ -233,6 +257,10 @@ def terrain():
     write("noise/fissure", {"firstOctave": -7, "amplitudes": [1.0, 0.5]})
     write("noise/fissure_region", {"firstOctave": -8, "amplitudes": [1.0, 0.5]})
     write("noise/ceiling", {"firstOctave": -6, "amplitudes": [1.0, 0.6, 0.4]})
+    write("noise/abyss_hills", {"firstOctave": -6, "amplitudes": [1.0, 0.5, 0.25]})
+    write("noise/abyss_ridge", {"firstOctave": -7, "amplitudes": [1.0, 0.5, 0.25]})
+    write("noise/abyss_canyon", {"firstOctave": -7, "amplitudes": [1.0, 0.4]})
+    write("noise/abyss_rift", {"firstOctave": -4, "amplitudes": [1.0]})  # only seeds the hadal shafts' placement per world
 
     # ---- ocean world seabed: macro layout + local relief
     write("density_function/base", mul(0.7, snoise("minecraft:continentalness", 0.25 / MACRO_SCALE)))
@@ -341,9 +369,38 @@ def terrain():
     openings = dmin(rift_carve, fissure_slit(A("fissure_strength")))
     deep_gate = grad(CEILING_BOTTOM_Y - 16, CEILING_BOTTOM_Y - 8, 20.0, -20.0)
 
-    def deep_density(seabed_offset, openings):
-        # Deep layer: terrain and caves, under the ceiling (max: caves never cut into it), opened by the shafts.
-        return dmin(dmax(dmin(add(DEEP_GRAD, seabed_offset), A("deep_caves")), ceiling), dmax(openings, deep_gate))
+    # ---- the abyss layer: its seabed, ceiling and hadal shafts (see ABYSS)
+    ab = ABYSS
+    write("density_function/abyss_seabed_raw", flat(add(add(mul(ab["hills"][1], snoise(A("abyss_hills"), ab["hills"][0])),
+                                                           mul(ab["ridges"][3], ridge(A("abyss_ridge"), *ab["ridges"][:3]))),
+                                                       mul(ab["canyons"][3], ridge(A("abyss_canyon"), *ab["canyons"][:3])))))
+    write("density_function/abyss_seabed_offset", flat(clamp(A("abyss_seabed_raw"), -ab["offset_limit"], ab["offset_limit"])))
+    ar = ab["rift"]
+
+    def abyss_rift(seabed):
+        return flat({"type": A("rift"), "noise": A("abyss_rift"), "seabed": seabed, "cell_size": ar["cell"], "chance": ar["chance"],
+                     "min_radius": ar["radius"][0], "max_radius": ar["radius"][1], "max_seabed": ar["max_seabed"]})
+    write("density_function/abyss_rift", abyss_rift(A("deep_seabed_offset")))
+    write("density_function/overworld/abyss_rift", abyss_rift(A("overworld/deep_seabed_offset_nr")))
+    shaft_gate = grad(ar["open_below"], ar["open_below"] + 8, -20.0, 20.0)  # open below `open_below`, a no-op above
+    shaft_in_deep = lambda rift_fn: dmax(mul(-ar["carve"], rift_fn), shaft_gate)
+    # Rock slab + ceiling with a noisy underside (like the deep layer's), open water under it down to the seabed, rock below.
+    abyss_ceiling = add(grad(ABYSS_CEILING_BOTTOM_Y - 16, ABYSS_CEILING_BOTTOM_Y + 32, -2.0, 4.0),
+                        mul(-ab["ceiling_relief"] / 8.0, A("ceiling_depth")))
+    abyss_gate = grad(ABYSS_CEILING_BOTTOM_Y - 16, ABYSS_CEILING_BOTTOM_Y - 8, 20.0, -20.0)  # the shaft is open above, a no-op below
+    ABY_GRAD = grad(ABYSS_SEABED_BASE_Y - 512, ABYSS_SEABED_BASE_Y + 256, 8.0, -4.0)  # zero at ABYSS_SEABED_BASE_Y, 1 per 64 blocks
+
+    def abyss_density(rift_fn):
+        return dmin(dmax(add(ABY_GRAD, A("abyss_seabed_offset")), abyss_ceiling), dmax(mul(-ar["carve"], rift_fn), abyss_gate))
+    write("density_function/abyss_density", abyss_density(A("abyss_rift")))
+    write("density_function/overworld/abyss_density", abyss_density(A("overworld/abyss_rift")))
+    write("density_function/abyss_initial_density", add(ABY_GRAD, A("abyss_seabed_offset")))
+
+    def deep_density(seabed_offset, openings, rift_fn):
+        # Deep layer: terrain and caves, under the ceiling (max: caves never cut into it), opened by the shafts; the
+        # hadal shafts to the abyss open its low floors downward.
+        density = dmin(dmax(dmin(add(DEEP_GRAD, seabed_offset), A("deep_caves")), ceiling), dmax(openings, deep_gate))
+        return dmin(density, shaft_in_deep(rift_fn))
 
     # Density is sampled at 4x8 cell corners and interpolated (smooth per block, cheap). One interpolation over the
     # layer switch: the branches below must not be interpolated themselves.
@@ -352,11 +409,12 @@ def terrain():
     funnel = mul(grad(-64, -56, 0.0, 1.0), mul(y(r["funnel"]), sq(clamp(mul(2.0, add(A("rift"), 0.5)), 0.0, 1.0))))
     write("density_function/ocean_density", dmin(add(dmin(add(OCEAN_GRAD, A("seabed_offset")), A("ocean_caves")), mul(-1, funnel)),
                                                  openings))
-    write("density_function/deep_density", deep_density(A("deep_seabed_offset"), openings))
-    write("density_function/final_density", interp(layered(A("deep_density"), A("ocean_density"))))
+    write("density_function/deep_density", deep_density(A("deep_seabed_offset"), openings, A("abyss_rift")))
+    write("density_function/final_density", interp(layered(A("deep_density"), A("ocean_density"), A("abyss_density"))))
     # The vanilla world's deep layer: no rifts, opened only by the slits of the (ocean-gated) fissures.
     vanilla_world_fields()
-    write("density_function/overworld/deep_density_nr", deep_density(A("overworld/deep_seabed_offset_nr"), fissure_slit(A("overworld/fissure_strength"))))
+    write("density_function/overworld/deep_density_nr", deep_density(A("overworld/deep_seabed_offset_nr"), fissure_slit(A("overworld/fissure_strength")),
+                                                                       A("overworld/abyss_rift")))
 
 
 def fissure_slit(strength):
@@ -444,24 +502,20 @@ def bedrock(name, bottom, top):
 BEDROCK = bedrock("minecraft:bedrock_floor", MIN_Y, MIN_Y + 5)     # the world bottom, under the deep layer
 BAND_BEDROCK = bedrock(A("bedrock_band"), TOP_Y, BAND_TOP_Y)        # the band between the layers (Y -64..-60)
 
-# Geology per biome: surface sediments by noise (first match wins), the layer beneath, the rock crust,
-# an optional mineral crust patch (block, noise threshold) and cave ceilings.
+# Geology per biome: surface sediments by noise (first match wins), the layer beneath, the rock crust
+# and cave ceilings.
 GEOLOGY = {
     "volcanic_deep": dict(surface=[(0.55, "molten_volcanic_rock"), (0.0, "volcanic_ash"), (-0.6, "volcanic_rock"), (None, "volcanic_glass")],
                           sub="volcanic_rock", rock="volcanic_rock",
                           ceiling=[(0.5, "molten_volcanic_rock"), (None, "volcanic_rock")]),
-    "thermal_vents": dict(surface=[(0.5, "sulfur_deposit"), (None, "mineral_sediment")], sub="mineral_sediment", rock="thermal_rock",
-                          crust=("copper_crust", 0.72)),
+    "thermal_vents": dict(surface=[(0.5, "sulfur_deposit"), (None, "mineral_sediment")], sub="mineral_sediment", rock="thermal_rock"),
     "deep_crystal_fields": dict(surface=[(0.3, "crystal_rock"), (None, "crystal_sediment")], sub="crystal_sediment", rock="crystal_rock",
                                 ceiling=[(0.4, "deep_crystal_block"), (None, "crystal_rock")]),
-    "abyssal_trench": dict(surface=[(0.1, "deep_mud"), (None, "mineral_sediment")], sub="mineral_sediment", rock="trench_rock",
-                           crust=("cobalt_crust", 0.66)),
-    "hadal_zone": dict(surface=[(0.0, "abyssal_mud"), (None, "deep_mud")], sub="deep_sediment", rock="trench_rock",
-                       crust=("nickel_crust", 0.68), ceiling=[(0.45, "deep_crystal_block"), (None, "trench_rock")]),
+    "abyssal_trench": dict(surface=[(0.1, "deep_mud"), (None, "mineral_sediment")], sub="mineral_sediment", rock="trench_rock"),
+    "hadal_zone": dict(surface=[(0.0, "abyssal_mud"), (None, "deep_mud")], sub="deep_sediment", rock="trench_rock", ceiling=[(0.45, "deep_crystal_block"), (None, "trench_rock")]),
     "abyssal_forest": dict(surface=[(0.0, "organic_sediment"), (None, "abyssal_mud")], sub="abyssal_mud", rock="deep_sea_rock"),
     "deep_forest": dict(surface=[(-0.2, "organic_sediment"), (None, "deep_sediment")], sub="abyssal_mud", rock="deep_sea_rock"),
-    "abyssal_ocean": dict(surface=[(0.35, "abyssal_mud"), (None, "deep_sediment")], sub="deep_sediment", rock="abyssal_rock",
-                          crust=("manganese_crust", 0.62)),
+    "abyssal_ocean": dict(surface=[(0.35, "abyssal_mud"), (None, "deep_sediment")], sub="deep_sediment", rock="abyssal_rock"),
     "deep_sea": dict(surface=[(0.3, "abyssal_mud"), (None, "deep_sediment")], sub="mineral_sediment", rock="deep_sea_rock"),
     # Water-mass / relic provinces on the abyssal plains (see biome_sources)
     "sunken_ruins": dict(surface=[(0.55, "ancient_masonry"), (None, "ruin_gravel")], sub="ruin_sediment", rock="ancient_masonry"),
@@ -469,6 +523,12 @@ GEOLOGY = {
     "brine_lakes": dict(surface=[(0.4, "brine_silt"), (None, "salt_crust")], sub="brine_silt", rock="salt_rock"),
     "glow_gardens": dict(surface=[(0.4, "glow_silt"), (None, "lumen_sand")], sub="glow_silt", rock="lumen_rock"),
     "frost_abyss": dict(surface=[(0.4, "icy_sediment"), (None, "frost_silt")], sub="icy_sediment", rock="frozen_rock"),
+    # The abyss layer (ABYSS_BIOMES)
+    "abyss_plain": dict(surface=[(0.0, "abyssal_mud"), (None, "deep_mud")], sub="deep_sediment", rock="trench_rock",
+                        ceiling=[(None, "trench_rock")]),
+    "abyss_garden": dict(surface=[(0.0, "organic_sediment"), (None, "abyssal_mud")], sub="abyssal_mud", rock="deep_sea_rock"),
+    "abyss_crystal": dict(surface=[(0.3, "crystal_rock"), (None, "crystal_sediment")], sub="crystal_sediment", rock="crystal_rock",
+                          ceiling=[(0.4, "deep_crystal_block"), (None, "crystal_rock")]),
 }
 DEFAULT_BIOME = "deep_sea"
 
@@ -487,7 +547,6 @@ def deep_surface_rule():
     floor = per_biome(lambda g: seq(
         cond(STEEP, block(g["rock"])),                                                       # cliffs and spire flanks stay bare rock
         cond(noise_band(-0.035, 0.035, "minecraft:surface_secondary"), block(g["rock"])),    # hairline cracks through the sediment
-        cond(noise_above(g["crust"][1]), block(g["crust"][0])) if "crust" in g else None,     # mineral crust patches
         choose(g["surface"])))
     sub = per_biome(lambda g: block(g["sub"]))
     ceiling = per_biome(lambda g: choose(g["ceiling"]) if "ceiling" in g else block(g["rock"]))
@@ -555,6 +614,7 @@ def clustered(ratio, offset=0.15):
 # The deep layer's floor: abyssia:deep_floor (DeepFloorPlacement) moves to the first open block above the deep seabed.
 # The OCEAN_FLOOR_WG heightmap would find the ocean world's seabed above the bedrock band instead.
 DEEP_FLOOR = {"type": A("deep_floor")}
+ABYSS_FLOOR = {"type": A("abyss_floor")}  # the abyss layer's floor (AbyssFloorPlacement)
 # Placed features of the ocean world's biomes (Twilight Reef); every other one belongs to the deep layer. The two sets
 # never share a feature, so the overworld's one feature order (FeatureSorter over both layers' biomes) has no cycle.
 OCEAN_LAYER_FEATURES = {"reef_kelp", "patch_sea_fern", "patch_glow_anemone"}
@@ -592,16 +652,22 @@ def feature(name, configured, placement):
 
 
 MINERALS = {
-    # mineral: (ore, crust, cluster, host)
-    "iron": ("abyssal_iron_ore", "iron_crust", None, "mineral_host_rock"),
-    "copper": ("deep_copper_ore", "copper_crust", None, "mineral_host_rock"),
-    "manganese": ("manganese_ore", "manganese_crust", "manganese_nodules", "mineral_host_rock"),
-    "cobalt": ("cobalt_ore", "cobalt_crust", "cobalt_cluster", "mineral_host_rock"),
-    "nickel": ("deep_nickel_ore", "nickel_crust", "nickel_cluster", "mineral_host_rock"),
-    "sulfur": ("sulfur_ore", "sulfur_deposit", "sulfur_cluster", "mineral_host_rock"),
-    "thermal_crystal": ("thermal_crystal_ore", "mineral_sediment", "thermal_crystal_cluster", "thermal_rock"),
-    "abyssal_crystal": ("abyssal_crystal_ore", "crystal_sediment", "abyssal_crystal_cluster", "crystal_rock"),
+    # mineral: (ore, cluster, host)  (ORE01: no crust)
+    "iron": ("abyssal_iron_ore", None, "mineral_host_rock"),
+    "copper": ("deep_copper_ore", None, "mineral_host_rock"),
+    "manganese": ("manganese_ore", "manganese_nodules", "mineral_host_rock"),
+    "cobalt": ("cobalt_ore", "cobalt_cluster", "mineral_host_rock"),
+    "nickel": ("deep_nickel_ore", "nickel_cluster", "mineral_host_rock"),
+    "sulfur": ("sulfur_ore", "sulfur_cluster", "mineral_host_rock"),
+    "thermal_crystal": ("thermal_crystal_ore", "thermal_crystal_cluster", "thermal_rock"),
+    "abyssal_crystal": ("abyssal_crystal_ore", "abyssal_crystal_cluster", "crystal_rock"),
 }
+# Generation condition (2026-10-08 play feedback): shallowest depth in metres at which a deposit forms (DepthZone scale;
+# seabed ~1700-3500 m deep_sea, 3500-5300 abyssal plains, 5300-6100 trench, 6100+ hadal). Absent = no depth condition.
+# Vanilla-item veins have none and form in every deep biome.
+MINERAL_MIN_DEPTH = {"manganese": 2500, "nickel": 3500, "cobalt": 4500, "abyssal_crystal": 3500}
+RARE_MIN_DEPTH = {"platinum": 5300, "tellurium": 5300, "molybdenum": 3500, "vanadium": 3500, "tungsten": 6100, "yttrium": 4500,
+                  "titanium": 2500, "lead": 1500, "zinc": 0, "iridium": 5300, "uranium": 4500, "neodymium": 4000, "thorium": 4500}
 VEIN_PLACEMENT = {"small": [count(2)], "medium": [rarity(2)], "large": [rarity(5)], "huge": [rarity(14)]}
 VEINS = {
     # biome: [(mineral, size), ...]  -- each biome favours its own minerals and vein sizes
@@ -622,26 +688,34 @@ VEINS = {
 }
 
 
-# Rare metals (M01, tools/gen_deep_assets.py RARE_METALS): one tiny, very rare vein per metal ("vein_<metal>_rare",
-# size small, no crust / nodules), only in the deep biomes that match the real deposit.
+# Rare metals (M01 + ECO02, tools/gen_deep_assets.py RARE_METALS): one tiny, rare vein per metal ("vein_<metal>_rare",
+# size small, no nodules), only in the deep biomes that match the real deposit.
 RARE_VEINS = {
     # metal: (ore, host, rarity 1/n chunks, biomes)
     "platinum": ("platinum_ore", "trench_rock", 48, ["abyssal_trench", "hadal_zone"]),
     "tellurium": ("tellurium_ore", "trench_rock", 40, ["abyssal_trench", "hadal_zone"]),
-    "molybdenum": ("molybdenum_ore", "abyssal_rock", 40, ["abyssal_ocean", "abyssal_trench"]),
-    "vanadium": ("vanadium_ore", "abyssal_rock", 40, ["abyssal_ocean", "abyssal_trench"]),
+    "molybdenum": ("molybdenum_ore", "abyssal_rock", 18, ["abyssal_ocean", "abyssal_trench"]),
+    "vanadium": ("vanadium_ore", "abyssal_rock", 18, ["abyssal_ocean", "abyssal_trench"]),
     "tungsten": ("tungsten_ore", "trench_rock", 48, ["hadal_zone"]),
     "yttrium": ("yttrium_ore", "abyssal_rock", 56, ["abyssal_ocean", "hadal_zone"]),
+    # ECO02: every metal of the excavator tier table is its own deposit (Mk1 metals are commoner than the Mk2 ones)
+    "titanium": ("titanium_ore", "abyssal_rock", 14, ["abyssal_ocean", "deep_sea", "abyssal_trench"]),
+    "lead": ("lead_ore", "mineral_host_rock", 12, ["deep_sea", "abyssal_ocean", "sunken_ruins", "bone_graveyard"]),
+    "zinc": ("zinc_ore", "thermal_rock", 12, ["thermal_vents", "brine_lakes", "volcanic_deep"]),
+    "iridium": ("iridium_ore", "trench_rock", 64, ["abyssal_trench", "hadal_zone"]),
+    "uranium": ("uranium_ore", "abyssal_rock", 56, ["abyssal_ocean", "hadal_zone"]),
+    "neodymium": ("neodymium_ore", "abyssal_rock", 48, ["abyssal_ocean", "deep_crystal_fields", "hadal_zone"]),
+    "thorium": ("thorium_ore", "trench_rock", 56, ["volcanic_deep", "hadal_zone"]),
 }
 for _metal, (_ore, _host, _n, _biomes) in RARE_VEINS.items():
     for _b in _biomes:
         VEINS[_b].append((_metal, "rare"))
 
 # Vanilla minerals (2026-10-03, user request): seabed veins like the Abyssia minerals ("vein_<m>_vanilla"): abyssal_<m>_ore
-# in mineral host rock ringed by <m>_crust (tools/gen_deep_assets.py VANILLA_MINERALS; they drop the vanilla items),
+# in mineral host rock (tools/gen_deep_assets.py VANILLA_MINERALS; they drop the vanilla items),
 # each in the deep biomes that suit it.
 VANILLA_VEINS = {
-    # mineral: (size, rarity 1/n chunks, biomes)
+    # mineral: (size, rarity 1/n chunks, biomes: informational only, the veins form in every deep biome)
     "diamond": ("small", 3, ["abyssal_trench", "hadal_zone", "deep_crystal_fields", "frost_abyss"]),
     "emerald": ("small", 4, ["deep_crystal_fields", "deep_forest", "abyssal_forest", "glow_gardens"]),
     "lapis": ("medium", 3, ["abyssal_ocean", "deep_crystal_fields", "frost_abyss", "sunken_ruins", "brine_lakes"]),
@@ -649,26 +723,33 @@ VANILLA_VEINS = {
     "redstone": ("medium", 2, ["abyssal_trench", "hadal_zone", "deep_sea", "abyssal_ocean", "bone_graveyard", "glow_gardens"]),
     "quartz": ("large", 4, ["volcanic_deep", "thermal_vents", "brine_lakes", "bone_graveyard"]),
 }
-for _ore, (_size, _n, _biomes) in VANILLA_VEINS.items():
-    for _b in _biomes:
+for _ore in VANILLA_VEINS:
+    for _b in VEINS:   # every deep biome
         VEINS[_b].append((_ore, "vanilla"))
 
 
+def vein_floor(min_depth, *extra):
+    """on_floor() for a vein, below a minimum depth in metres when it has one (the depth filter follows the floor step)."""
+    if not min_depth:
+        return on_floor(*extra)
+    return [*extra, {"type": "minecraft:in_square"}, DEEP_FLOOR,
+            {"type": A("depth"), "min_depth": min_depth, "max_depth": 99999}, {"type": "minecraft:biome"}]
+
+
 def veins():
-    for mineral, (ore, crust, cluster, host) in MINERALS.items():
+    for mineral, (ore, cluster, host) in MINERALS.items():
         for size in ("small", "medium", "large", "huge"):
             cfg_ = {"ore": state(ore), "host": state(host), "size": size}
-            if crust:
-                cfg_["crust"] = state(crust)
             if cluster:
                 cfg_["cluster"] = CLUSTER(cluster)
-            feature(f"vein_{mineral}_{size}", {"type": A("ore_vein"), "config": cfg_}, on_floor(*VEIN_PLACEMENT[size]))
+            feature(f"vein_{mineral}_{size}", {"type": A("ore_vein"), "config": cfg_},
+                    vein_floor(MINERAL_MIN_DEPTH.get(mineral), *VEIN_PLACEMENT[size]))
     for metal, (ore, host, n, _) in RARE_VEINS.items():
         feature(f"vein_{metal}_rare", {"type": A("ore_vein"), "config": {"ore": state(ore), "host": state(host), "size": "small"}},
-                on_floor(rarity(n)))
+                vein_floor(RARE_MIN_DEPTH.get(metal), rarity(n)))
     for name, (size, n, _) in VANILLA_VEINS.items():
         feature(f"vein_{name}_vanilla", {"type": A("ore_vein"), "config": {"ore": state(f"abyssal_{name}_ore"), "host": state("mineral_host_rock"),
-                                                                           "crust": state(name + "_crust"), "size": size}},
+                                                                           "size": size}},
                 on_floor(rarity(n)))
 
 
@@ -970,7 +1051,7 @@ CAVE_ENVIRONMENTS = {
         [("mineral_cave_rock", 6), ("layered_cave_rock", 2), ("mineral_host_rock", 2)],
         [("mineral_sediment", 3), ("cave_sediment", 2), ("cave_mud", 1)],
         [("mineral_cave_rock", 2), ("layered_cave_rock", 1)],
-        [("cave_mineral_crust", 4), ("iron_crust", 1), ("copper_crust", 1), ("manganese_crust", 1)], 0.18,
+        [("cave_mineral_crust", 6)], 0.18,
         flora=dict(floor=[(("cave_grass", 1, 2), 2), ("cave_fern", 1), ("seafloor_pebbles", 1)],
                    wall=[("wall_mineral_vine", 3), ("wall_fern", 1)],
                    ceiling=[(("cave_root", 1, 3), 6), (("resin_root", 1, 4), 1)],   # RS01: uncommon resin roots
@@ -1026,7 +1107,7 @@ CAVE_ENVIRONMENTS = {
         [("dark_cave_rock", 5), ("abyssal_cave_rock", 3), ("trench_rock", 2)],
         [("deep_mud", 3), ("cave_mud", 2)],
         [("dark_cave_rock", 1)],
-        [("cobalt_crust", 2), ("cave_mineral_crust", 1)], 0.08,
+        [("cave_mineral_crust", 3)], 0.08,
         flora=dict(floor=[(("ashen_abyssal_grass", 1, 2), 2), ("black_coral", 1), ("cave_fern", 1)],
                    wall=[("wall_fern", 1)],
                    ceiling=[(("cave_root", 1, 3), 1)],
@@ -1285,6 +1366,20 @@ DEEP_BIOMES = {
     "frost_abyss": (0x4A7AAE, 0x13304C, ["rock_spire"], ["cave_deep_crystals"],
                     ["meadow_ancient_normal", "void_kelp", "patch_pressure_crystal", "patch_deep_crystal_cluster", "seafloor_pebbles"]),
 }
+# The abyss layer's biomes (continentalness -2..-1.7, see biome_sources): water colour, fog colour and vegetation, all of it
+# the deep layer's features cloned onto the abyss floor (abyss_features). No landforms, structures, veins or caves yet.
+ABYSS_BIOMES = {
+    "abyss_plain": (0x05050F, 0x000002,
+                    ["meadow_ancient_normal", "giant_tube_scattered", "patch_black_coral", "patch_hadal_bloom", "glow_plants_ancient",
+                     "patch_pressure_crystal"]),
+    "abyss_garden": (0x0B2A3A, 0x01080C,
+                     ["meadow_organic_dense", "sponge_plants", "patch_abyssal_bloom", "patch_abyssal_mushroom", "glow_plants_deep",
+                      "glow_plants_ancient", "floating_blooms", "large_deep_kelp"]),
+    "abyss_crystal": (0x1A2A5A, 0x040818,
+                      ["meadow_crystal_normal", "crystal_plants", "glow_plants_crystal", "crystal_garden", "crystal_spikes",
+                       "patch_deep_crystal_cluster", "patch_pressure_crystal"]),
+}
+ABYSS_SUFFIX = "_abyss"
 # Deep biomes without seabed structure profiles yet (tools/seabed_structures.py PROFILES): the painter skips them.
 NO_STRUCTURE_PROFILE = {"sunken_ruins", "bone_graveyard", "brine_lakes", "glow_gardens", "frost_abyss"}
 
@@ -1299,7 +1394,7 @@ def deep_biome(name):
     water, fog, landforms, decor, veg = DEEP_BIOMES[name]
     features = [[] for _ in range(11)]
     features[2] = ordered(LANDFORM_ORDER, ["seabed_structures", *landforms])          # structure bodies, then large landforms
-    features[6] = ordered(VEIN_ORDER, [f"vein_{m}_{s}" for m, s in VEINS[name]])      # ore veins and their surface crusts
+    features[6] = ordered(VEIN_ORDER, [f"vein_{m}_{s}" for m, s in VEINS[name]])      # ore veins and their nodules
     features[7] = ordered(DECOR_ORDER, ["vent_fields", *decor])                        # vents after veins, then caves
     features[9] = ordered(VEG_ORDER, ["seabed_structure_dressing", *veg])              # structure dressing, then vegetation, crystals, small decorations
     effects = {"fog_color": fog, "sky_color": 0, "water_color": water, "water_fog_color": fog,
@@ -1314,9 +1409,35 @@ def deep_biome(name):
                          "water_creature": [{"type": "minecraft:squid", "weight": 3, "minCount": 1, "maxCount": 3}]}}
 
 
+def abyss_features():
+    """The deep layer's floor features cloned onto the abyss floor: the same configured feature, placed by
+    abyssia:abyss_floor, with no metre-depth filter (the abyss is under every band). Adds the clones to VEG_ORDER."""
+    clones = []
+    for name in dict.fromkeys(n for veg in (b[2] for b in ABYSS_BIOMES.values()) for n in veg):
+        cf, placement = PLACED[name]
+        assert DEEP_FLOOR in placement, f"{name} does not sit on the deep floor"
+        PLACED[name + ABYSS_SUFFIX] = (cf, [ABYSS_FLOOR if p == DEEP_FLOOR else p for p in placement if p.get("type") != A("depth")])
+        clones.append(name)
+    VEG_ORDER.extend(n + ABYSS_SUFFIX for n in VEG_ORDER[:] if n in clones)
+
+
+def abyss_biome(name):
+    water, fog, veg = ABYSS_BIOMES[name]
+    features = [[] for _ in range(11)]
+    features[9] = ordered(VEG_ORDER, [n + ABYSS_SUFFIX for n in veg])
+    effects = {"fog_color": fog, "sky_color": 0, "water_color": water, "water_fog_color": fog,
+               "mood_sound": {"block_search_extent": 8, "offset": 2.0, "sound": "minecraft:ambient.cave", "tick_delay": 3000}}
+    return {"carvers": {}, "downfall": 0.5, "has_precipitation": False, "temperature": 0.5, "effects": effects,
+            "features": features, "spawn_costs": {},
+            "spawners": {"ambient": [], "axolotls": [], "creature": [], "misc": [], "monster": [],
+                         "underground_water_creature": [], "water_ambient": [], "water_creature": []}}
+
+
 def biomes():
     for name in DEEP_BIOMES:
         write("biome/" + name, deep_biome(name))
+    for name in ABYSS_BIOMES:
+        write("biome/" + name, abyss_biome(name))
     # Twilight Reef lives in the ocean world: warm-ocean features minus land ones, plus reef plants.
     warm = vanilla("biome/warm_ocean")
     land = {"minecraft:trees_water", "minecraft:flower_default", "minecraft:patch_grass_badlands", "minecraft:brown_mushroom_normal",
@@ -1331,7 +1452,7 @@ def biomes():
     check_feature_layers()
     # abyssia:deep_layer: every biome of the deep layer (for code that tells the layers apart by biome).
     tag = os.path.join(ROOT, "abyssia", "tags", "worldgen", "biome", "deep_layer.json")
-    write_data(tag, {"replace": False, "values": [A(b) for b in DEEP_BIOMES]})
+    write_data(tag, {"replace": False, "values": [A(b) for b in [*DEEP_BIOMES, *ABYSS_BIOMES]]})
 
 
 def check_feature_layers():
@@ -1341,18 +1462,18 @@ def check_feature_layers():
     ocean = {f for b in ocean_biomes for step in read("biome/" + b)["features"] for f in step}
     for b in OCEAN_WORLD_VANILLA:
         ocean |= {f for step in vanilla("biome/" + b)["features"] for f in step}
-    deep = {f for b in DEEP_BIOMES for step in read("biome/" + b)["features"] for f in step}
+    deep = {f for b in [*DEEP_BIOMES, *ABYSS_BIOMES] for step in read("biome/" + b)["features"] for f in step}
     assert not ocean & deep, f"features in both layers: {ocean & deep}"
     assert {f for f in ocean if f.startswith("abyssia:")} == {A(n) for n in OCEAN_LAYER_FEATURES}, ocean
     for f in deep:
         placement = PLACED[f[len("abyssia:"):]][1]
-        assert placement == [] or DEEP_FLOOR in placement or any(p.get("type") == "minecraft:height_range" for p in placement), f
+        assert placement == [] or DEEP_FLOOR in placement or ABYSS_FLOOR in placement or any(p.get("type") == "minecraft:height_range" for p in placement), f
     # The vanilla world (minecraft:normal): every vanilla overworld biome, deep_fissure and the deep layer share one
     # feature order too.
     land = {b: vanilla("biome/" + b)["features"] for b in vanilla_biomes()}
     shared = deep & {f for features in land.values() for step in features for f in step}
     assert not shared, f"deep layer features in vanilla biomes: {shared}"
-    deep_features = {A(b): read("biome/" + b)["features"] for b in DEEP_BIOMES}
+    deep_features = {A(b): read("biome/" + b)["features"] for b in [*DEEP_BIOMES, *ABYSS_BIOMES]}
     check_feature_order("ocean_world", {**{A(b): read("biome/" + b)["features"] for b in ocean_biomes},
                                         **{"minecraft:" + b: land[b] for b in OCEAN_WORLD_VANILLA}, **deep_features})
     check_feature_order("normal", {**{"minecraft:" + b: f for b, f in land.items()}, A("deep_fissure"): read("biome/deep_fissure")["features"],
@@ -1430,7 +1551,7 @@ def biome_sources():
     # Deep ocean: continentalness = 0.4 * macro seabed offset (macro seabed Y = 160 * c, fuzzed), humidity = habitat
     # province, weirdness = volcanic / crystal province. Depth zones by macro seabed Y: shelves and upper slopes, abyssal
     # plains, trench system flanks and basins, hadal floors.
-    Y = lambda lo, hi: (lo / 160 if lo > -300 else -2, hi / 160 if hi < 300 else 2)
+    Y = lambda lo, hi: (lo / 160 if lo > -300 else -1.5, hi / 160 if hi < 300 else 2)  # -1.5: the abyss biomes own -2..-1.7
     # Province thresholds sit in the noises' tails (std ~0.27): each province type covers roughly 7-10% of the seabed.
     H, W = (-0.36, 0.30), (-0.33, 0.33)
     normal = dict(humidity=H, weirdness=W)
@@ -1455,6 +1576,14 @@ def biome_sources():
         params(A("abyssal_forest"), continentalness=Y(0, 999), humidity=(H[1], 0.6), weirdness=W),
         params(A("deep_forest"), continentalness=Y(0, 999), humidity=(0.6, 2), weirdness=W),
         params(A("thermal_vents"), continentalness=Y(-95, 125), humidity=(-2, H[0]), weirdness=W),
+    ]
+    # The abyss layer: continentalness -2..-1.7 (the abyss router sits at ABYSS continents, the deep layer's entries start
+    # at -1.5), told apart like the other provinces: humid -> garden, crystal weirdness -> crystal, the rest plain.
+    AC = (-2, -1.7)
+    deep += [
+        params(A("abyss_plain"), continentalness=AC, **normal),
+        params(A("abyss_garden"), continentalness=AC, humidity=(H[1], 2), weirdness=W),
+        params(A("abyss_crystal"), continentalness=AC, weirdness=(-2, W[0])),
     ]
     for entry in deep:
         entry["parameters"]["depth"] = LAYER_DEPTH["deep"]
@@ -1488,11 +1617,16 @@ def biome_sources():
 DEEP_CLIMATE = dict(
     temperature=A("region_temperature"),
     vegetation=A("region_habitat"),
-    continents=add(add(mul(0.4, A("deep_macro_offset")), mul(0.04, snoise(A("biome_fuzz"), 1.0))),
-                   mul(ZONE_FUZZ, snoise(A("biome_zone"), 1.0 / BIOME_REGION_SCALE))),
+    # Clamped at -1.4: the abyss biomes own continentalness -2..-1.7 (ABYSS continents), the deep biomes -1.5 and up.
+    continents=clamp(add(add(mul(DEPTH_BIAS, A("deep_macro_offset")), mul(0.04, snoise(A("biome_fuzz"), 1.0))),
+                         mul(ZONE_FUZZ, snoise(A("biome_zone"), 1.0 / BIOME_REGION_SCALE))), -1.4, 4.0),
     erosion=A("region_erosion"),
     ridges=A("region_volcanic"),
 )
+
+
+# The abyss layer's climate: the deep layer's, except the continentalness that picks the abyss biomes.
+ABYSS_CLIMATE = dict(DEEP_CLIMATE, continents=ABYSS["continents"])
 
 
 def ocean_surface_rules(rule):
@@ -1514,14 +1648,16 @@ def noise_settings():
     # from the field that opens them (see biome_sources). Deep layer: depth zones follow the macro seabed, not the
     # local relief (the fuzz only waves their borders); habitat, volcanic, water-mass and relic provinces.
     deep = DEEP_CLIMATE
-    o["temperature"] = layered(deep["temperature"], snoise("minecraft:temperature", 0.25 / CLIMATE_SCALE))
-    o["vegetation"] = layered(deep["vegetation"], 0.0)
-    o["continents"] = layered(deep["continents"], add(A("seabed_macro"), mul(0.02, snoise(A("biome_fuzz"), 1.0))))
-    o["erosion"] = layered(deep["erosion"], add(1.0 - RIFT["biome"], A("rift")))
-    o["ridges"] = layered(deep["ridges"], add(1.0 - FISSURE["biome"], A("fissure")))
-    o["depth"] = layered(LAYER_DEPTH["router"], -LAYER_DEPTH["router"])
+    abyss = ABYSS_CLIMATE
+    o["temperature"] = layered(deep["temperature"], snoise("minecraft:temperature", 0.25 / CLIMATE_SCALE), abyss["temperature"])
+    o["vegetation"] = layered(deep["vegetation"], 0.0, abyss["vegetation"])
+    o["continents"] = layered(deep["continents"], add(A("seabed_macro"), mul(0.02, snoise(A("biome_fuzz"), 1.0))), abyss["continents"])
+    o["erosion"] = layered(deep["erosion"], add(1.0 - RIFT["biome"], A("rift")), abyss["erosion"])
+    o["ridges"] = layered(deep["ridges"], add(1.0 - FISSURE["biome"], A("fissure")), abyss["ridges"])
+    o["depth"] = layered(LAYER_DEPTH["router"], -LAYER_DEPTH["router"], LAYER_DEPTH["router"])
     # The deep side has no ceiling: CaveNetwork.seabed() binary-searches it, so it must fall monotonically with Y.
-    o["initial_density_without_jaggedness"] = layered(add(DEEP_GRAD, A("deep_seabed_offset")), add(OCEAN_GRAD, A("seabed_offset")))
+    o["initial_density_without_jaggedness"] = layered(add(DEEP_GRAD, A("deep_seabed_offset")), add(OCEAN_GRAD, A("seabed_offset")),
+                                                      A("abyss_initial_density"))
     o["final_density"] = A("final_density")
 
     rules = copy.deepcopy(ocean_surface_rules(ocean["surface_rule"]))["sequence"]
@@ -1605,18 +1741,18 @@ def vanilla_world(deep_entries):
     node = interpolated[0]
     assert node["argument"]["type"] == "minecraft:blend_density", node["argument"]["type"]
     write("density_function/overworld/surface_density", node["argument"])
-    node["argument"] = layered(A("overworld/deep_density_nr"), cracked(A("overworld/surface_density")))
+    node["argument"] = layered(A("overworld/deep_density_nr"), cracked(A("overworld/surface_density")), A("overworld/abyss_density"))
     write("density_function/overworld/final_density", final)
     r["final_density"] = A("overworld/final_density")
     # Initial density (preliminary surface for aquifers and surface rules; CaveNetwork's deep seabed): the crack too,
     # so the aquifers take it for open sea, not for underground. The deep side falls with Y (CaveNetwork's binary search).
     write("density_function/overworld/surface_initial_density", r["initial_density_without_jaggedness"])
     r["initial_density_without_jaggedness"] = layered(add(DEEP_GRAD, A("overworld/deep_seabed_offset_nr")),
-                                                      cracked(A("overworld/surface_initial_density")))
+                                                      cracked(A("overworld/surface_initial_density")), A("abyss_initial_density"))
 
     # Climate: the deep layer's below LAYER_SPLIT (biome quarts below -16), vanilla's above.
     for field, deep in DEEP_CLIMATE.items():
-        r[field] = layered(deep, r[field])
+        r[field] = layered(deep, r[field], ABYSS_CLIMATE[field])
     # Depth: 0 in the deep layer (its biome entries sit at 0, and the aquifer's deep dark test needs depth <= 0.9);
     # vanilla's above, pushed far below fissure_max_depth over the fissures, where abyssia:layered picks deep_fissure.
     # Split at Y -64.5, not LAYER_SPLIT: aquifer centres at Y -65 / -66 must not pass that test (vanilla depth is
@@ -1678,6 +1814,7 @@ def main():
     resource_plants()
     add_resource_plants()
     vent_fields()
+    abyss_features()
     for name, cf in CONFIGURED.items():
         write("configured_feature/" + name, cf)
     for name, (cf, placement) in PLACED.items():
@@ -1690,7 +1827,7 @@ def main():
     profiled = {b for biomes, _, _ in seabed_structures.PROFILES.values() for b in biomes}
     # Structure heights are written in deep-ocean Y; tops stay 4 blocks under the ceiling (SeabedStructures.TOP_MARGIN).
     counts = seabed_structures.write(CAVE_DIR, set(DEEP_BIOMES) - (NO_STRUCTURE_PROFILE - profiled), dy, CEILING_BOTTOM_Y - 4)
-    print(f"{len(CONFIGURED)} configured features, {len(PLACED)} placed features, {len(DEEP_BIOMES) + 3} biomes, "
+    print(f"{len(CONFIGURED)} configured features, {len(PLACED)} placed features, {len(DEEP_BIOMES) + len(ABYSS_BIOMES) + 3} biomes, "
           f"{len(CAVE_ENVIRONMENTS)} cave environments, {len(CAVE_PROFILES)} cave profiles, {len(CAVERN_TEMPLATES)} cavern templates, "
           f"{counts[0]} seabed structures, {counts[1]} structure profiles")
 

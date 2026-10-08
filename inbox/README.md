@@ -34,7 +34,7 @@ recolor / variants (polished・bricks・cracked・chiseled・mossy・frosted・s
 ## 仕様書テンプレ
 ```
 # <id> <title>
-tier: light | standard | heavy      # 実装モデルの目安（ChatGPTが判定）
+tier: light | standard | heavy      # 実装モデルの目安（memo が判定）
 files: <編集してよいファイル/ディレクトリ。並列タスク間で重複させない>
 goal: 1-3行
 constraints: 使用禁止API・既存設計との整合など
@@ -75,32 +75,31 @@ AgentFlow の tier はすべて Claude のサブエージェントが実行す�
 
 ## 実装したいことの伝え方 (requests)
 UI右の「実装したいこと」フォーム、または Claude に直接言う。フォームは `inbox/requests/<id>.json` に保存される。
-- Claude は「requestsを処理して」で `flow.py req list` を読み、via=claude なら仕様書化 / via=chatgpt なら ChatGPT へ依頼 → `inbox/specs/` → tier 別に並列実装。
+- Claude は「requestsを処理して」で `flow.py req list` を読み、仕様書化 (軽量モデル memo) → `inbox/specs/` → tier 別に実装。via によらず仕様書は ChatGPT に頼まない。
 - 進行に合わせて `flow.py req set <id> specced|running|done`。tier=auto は Claude が判定。
 
-### 役割分担 (2026-10-02、ユーザー指定の理想形)
-- **ChatGPT が管理するもの**: 仕様書、デザイン画、モデルの設計 (パーツ定義の案・寸法・配色)、テクスチャ (画像生成)。「何をどう作るか」と「デザイン通りか」の判断は ChatGPT 側。
-- **Claude がやること**: ChatGPT の設計をモデル定義 (`tools/bbmodel-generator/definitions/<id>.json`) やコードに落として生成・実装・ビルド・実機テストする。設計を勝手に変えない (ツール制約で作れない所だけ差分を報告して相談)。
-- **検査**: できた成果物 (ゲーム内スクリーンショット) を ChatGPT に見せ、デザイン通りに作れているかを ChatGPT が判定。差異があれば ChatGPT が直し方 (パーツ定義の修正案) を返し、Claude が反映して再生成する。合格するまで (最大3回) 繰り返す。
-- テクスチャ: 生成ツールの UV 展開図 (`Base PNG`) を ChatGPT に渡して塗らせる形が目標。現状は配色指定のみで、ChatGPT 画像の取込は inbox/textures/ → texture pipeline。
+### 役割分担 (2026-10-08、ユーザー指定。2026-10-02/03 の「ChatGPT が仕様書・デザイン・検査」を置き換え)
+- **ChatGPT はテクスチャ画像の生成だけ**。仕様書・デザイン画・モデル設計案・検査は頼まない。
+- **仕様書は軽量モデル (agent `memo`、Haiku) が書く**。上のテンプレで短く (目的・変更ファイル・受け入れ条件・tier)。単純な依頼 (明確なバグ修正・typo・設定・既存パターンの実装) は仕様書を省略して直接実装する。
+- **実装・修正は Sonnet** (`coder-standard`)、機械的な変更は Haiku (`coder-light`)。**検査**は実際のビルド・テストの結果と、必要なときだけ `verify`。見た目はゲーム内スクリーンショットを Claude 自身が見て確認する (ChatGPT に見せない)。
+- モデル・ブロックの見た目は依頼文と既存の見た目に合わせて Claude がモデル定義 (`tools/bbmodel-generator/definitions/<id>.json`) に落とす。写真があるときは `/photo-to-model`。
 
-### 依頼処理の必須手順 (2026-10-02、ユーザー指定)
-依頼を処理するときは、タスクの分担 (サブエージェント投入) を始める前に、必ず ChatGPT に **仕様書** と **必要なデザイン** を生成させる。
-1. Claude が Claude in Chrome で chatgpt.com を直接操作する (ログイン済み前提。パスワード入力・CAPTCHA は人がやる)。依頼文と制約を送り、仕様書 (上のテンプレ) を出させて `inbox/specs/` に保存。
-2. 見た目が要る依頼 (乗り物・Mob・ブロックなど) は、デザイン画 (4面図など) も ChatGPT に生成させ `inbox/designs/<id>.png` に保存。プロンプト雛形は `inbox/prompts/`。モデル化は `/photo-to-model`。
-3. 画像の保存: ChatGPT 画像は blob URL でブラウザのダウンロードが落ちないことがある。その場合は画像ビューアを開いて `computer zoom` + `save_to_disk` で取得する。ChatGPT 画像のダウンロードに確認は不要 (ユーザー許可済み)。
-4. 仕様書とデザインが揃ってから `flow.py add` でタスク分担を始める。
-5. **検査**: 実装後 (ビルド通過後)、依頼どおりにできているかを ChatGPT に検査させる。依頼文・仕様書・デザイン画と、成果物のスクリーンショット (モデルのプレビュー/ゲーム内) を添付し、「依頼・仕様・デザインとの差異」を箇条書きで出させる。指摘のうち妥当なものは直して再検査 (最大2回)。結果は `flow.py log main` に1行で残し、`inbox/specs/<id>-review.md` に保存する。ChatGPT の見落としや誤りは Claude が現物で確認する (鵜呑みにしない)。
+### 依頼処理の手順 (2026-10-08)
+1. 依頼を読み、単純なら仕様書を省いて実装へ。そうでなければ `memo` に仕様書を 1 回書かせて `inbox/specs/<id>.md` に保存する。
+2. 手順が決まったら `flow.py add` でタスクを登録して実装する (サブエージェントは最大 3、通信なし。結果はメインだけが受け取る)。
+3. **テクスチャが新規に要るときだけ ChatGPT**: Claude が Claude in Chrome で chatgpt.com を操作し (ログイン済み前提。パスワード入力・CAPTCHA は人がやる)、`inbox/prompts/<task>-textures.md` のプロンプトで画像を生成させ、`inbox/textures/` に保存する。ChatGPT 画像は blob URL でブラウザのダウンロードが落ちないことがある。その場合は画像ビューアを開いて `computer zoom` + `save_to_disk` で取得する (ダウンロードに確認は不要、ユーザー許可済み)。取り込みは texture pipeline (texture_locks 厳守)。
+4. ビルド・テストで検証し、直らないものだけ上のモデル運用 (Sonnet 3 回 → Opus 1 回) に従う。
 
 ### 役割一覧 (2026-10-03)
 | 担当 | 誰 | やること | 記録・表示 |
 |---|---|---|---|
 | 依頼 | ユーザー | フォームか `inbox/requests/` に依頼を出すだけ | stage `request` |
-| 管理 (設計・検査) | ChatGPT (Claude in Chrome で操作) | 仕様書・デザイン画・モデル設計案・テクスチャ画像を作る。成果物が依頼どおりか検査し、修正案を返す (最大3回) | stage `chatgpt` / `texture`、ツリー右の CHATGPT 枠 |
-| 振り分け・統合 | Main (Opus 5.5) | ChatGPT の成果を受けてタスクに割り、tier ごとにサブエージェントへ渡し、結果をまとめる。自分では大きな実装をしない | stage `router`、ツリー橙 |
+| 仕様書・判断 | memo (Haiku) | 必要なときだけ仕様書を短く書く。必要性・tier の判断、要約、Obsidian 更新 | stage `router` |
+| テクスチャ生成 | ChatGPT (Claude in Chrome で操作) | テクスチャ画像だけを生成する (仕様書・デザイン・検査は頼まない) | stage `chatgpt` / `texture`、ツリー右の CHATGPT 枠 |
+| 振り分け・統合 | Main (Sonnet 5.5) | 仕様書を受けて必要なときだけタスクに割り、tier ごとにサブエージェント (最大3、通信なし) へ渡し、結果をまとめる。自分では大きな実装をしない | stage `router`、ツリー橙 |
 | 調査 | Explore | 該当コードの場所を探して要点だけ返す | ツリー青 |
-| 設計判断 | decision (Opus 5.5) | CLAUDE.md §8 のときだけ。approve / reject / modify を JSON で返す。コードは書かない | ツリー左の紫枠 |
-| 実装 | coder-light / standard (Sonnet 5.5)、coder-heavy (Opus 5.5) | 1体1タスク。`files:` の範囲だけ編集。手に負えないときは ESCALATE | `flow.py add/set`、ツリー緑 |
+| 設計判断 | decision (Haiku) | CLAUDE.md §8 のときだけ。approve / reject / modify を JSON で返す。コードは書かない | ツリー左の紫枠 |
+| 実装 | coder-light (Haiku)、coder-standard (Sonnet 5.5)、coder-heavy (Opus 5.5、Sonnet で3回直らないときだけ) | 1体1タスク。`files:` の範囲だけ編集。手に負えないときは ESCALATE | `flow.py add/set`、ツリー緑 |
 | テクスチャ取込 | Texture Pipeline | ChatGPT 画像を `inbox/textures/` から取り込む (texture_locks 厳守) | stage `texture` |
 | 検証 | verify エージェント (Sonnet 5.5、読むだけ) | 設計違反、API の誤用、互換性。PASS / FAIL を JSON で返す。コードは変えない | stage `verify` |
 | ビルド・テスト | Main のみ | `gradle build` と実機テスト。サブエージェントには走らせない | stage `build` |
@@ -108,11 +107,10 @@ UI右の「実装したいこと」フォーム、または Claude に直接言�
 | 公開 | Main | 依頼で変えたファイルだけを commit して push | stage `git` |
 
 ### Agent Flow 運用ルール (2026-10-03、ユーザー指定)
-1. **仕様書とテクスチャは ChatGPT が兼任**: 仕様書・デザイン画・テクスチャ画像はすべて ChatGPT に作らせる (上の必須手順)。Claude は自分で仕様書を書いたり画像を描いたりしない。ChatGPT が使えないときだけ代行し、その理由を `flow.py log main --kind decision` に残す。
-2. **複数エージェントで分担・協力**: 1つの依頼を小さなタスクに割り、1エージェント1タスクで負担を小さくする。調査は Explore、設計判断は decision、実装は coder-light/standard/heavy、検査は別のエージェントに任せる。`files:` が重ならないタスクは並列にし、依存するタスクは queued で後に回す。前のエージェントの結果 (仕様書・調査メモ・SendMessage) を次のエージェントに渡して協力させる。メインは振り分けと統合に徹する。
+1. **ChatGPT はテクスチャ生成だけ (2026-10-08、ユーザー指定)**: 仕様書は軽量モデル (memo) が書く。Claude は画像を描かず、新規テクスチャだけ ChatGPT ImageGen に作らせる。ChatGPT が使えないときは `flow.py log main --kind decision` に残して報告する。
+2. **サブエージェントは最大 3・通信なし (2026-10-08)**: 必要なときだけ割り、1エージェント1タスク、依頼文は自己完結。`files:` が重ならないタスクは並列、依存するものは queued。エージェント同士で結果を渡し合わず、メインだけが受け取って統合する (SendMessage や中継の連鎖を作らない)。
 3. **作業が終わったら Obsidian メモと git push**: ① Vault `G:\Obsidian\Abyssia Vault\project\` の該当ノートを更新するか、`history/` に日付ログを書く (CLAUDE.md §17 の形式。些細な変更は書かない)。② その依頼で変えたファイルだけを commit し、ほかで作業中の変更は混ぜない。③ push する。Forge は `main` と `Forge1.20.1`、NeoForge 移植は `NeoForge1.21.1`。各段階は `flow.py stage memory|git running` → `done` で記録する。push に失敗したら `flow.py log main --kind error` に残して報告する。
-4. **1.20.1 と 1.21.1 の両方に入れる (2026-10-03、ユーザー指定)**: 依頼は Forge 1.20.1 (`main`、`F:\Java\Abyssia`) と NeoForge 1.21.1 (`NeoForge1.21.1`、worktree `F:\Java\Abyssia-NeoForge`) の両方に入って初めて完了とする。① Forge で実装・ビルド・検査を済ませる。② 同じ変更を NeoForge worktree に移植するタスク `<id>-neo` を `flow.py add` し、Forge タスクの完了まで queued にする。移植は別のサブエージェントに任せ、パッケージ・クラス名・modid は変えない。データは `tools/mc_format.py` で 1.21 形式にし、lang/tags は `gen_deep_assets.py --no-forge` で再生成する (手でマージしない)。1.21 の罠は Vault `decisions/two-loader-branches.md` を見る。worktree を編集するときは必ず絶対パスを使う。③ NeoForge 側でも `gradle build` と実機テスト、検査を通す。④ 両方を commit・push する (`main` と `Forge1.20.1`、`NeoForge1.21.1`)。片方だけ通った状態では依頼を done にしない。1.21 で作れない部分は差分を `flow.py log main --kind decision` に残して報告する。
-
+4. **1.21.1 をベースに開発し、1.20.1 へ移植する (2026-10-08、ユーザー指定。2026-10-03 の「Forge 先」を置き換え)**: 依頼は NeoForge 1.21.1 (`NeoForge1.21.1`、worktree `F:\Java\Abyssia-NeoForge`) で実装・ビルド・検査を済ませ、Forge 1.20.1 (`main`、`F:\Java\Abyssia`) へ移植して両方で通って初めて完了とする。① NeoForge で実装・ビルド・実機テスト・検査を済ませる。② 同じ変更を Forge に移植するタスク `<id>-forge` を `flow.py add` し、NeoForge タスクの完了まで queued にする。移植は別のサブエージェントに任せ、パッケージ・クラス名・modid は変えない。data/lang/tags の形式差は Vault `decisions/two-loader-branches.md` を見る (`tools/mc_format.py` は現状 1.20→1.21 の向きなので、逆向きの扱いは同ノートの 2026-10-08)。worktree を編集するときは必ず絶対パスを使う。③ Forge 側でも `gradle build` と実機テスト、検査を通す。④ 両方を commit・push する (NeoForge は `NeoForge1.21.1`、Forge は `main` と `Forge1.20.1`)。片方だけ通った状態では依頼を done にしない。1.20 で作れない部分は差分を `flow.py log main --kind decision` に残して報告する。
 ## エージェントツリー (live、2026-10-03)
 フロータブ最上段。`.claude/settings.json` の hook (`tools/agentflow/hook.py`) が全エージェントのツール呼び出し・サブエージェント起動/終了・やり取りを `inbox/flow/live.jsonl` に追記し、`server.py` が `/live.json` にまとめる。flow.py を呼ばなくても自動で出る。
 - 箱 = エージェント (橙 main / 緑 coder / 青 その他 / 紫 decision は左の advisor 枠)。「where」行 = いま何のツールでどのファイルを触っているか (終了後は最後のファイル)。

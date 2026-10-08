@@ -35,6 +35,7 @@ public class Abyssia
         // industrial blocks, block entities and menu (I01); their block items join ModItems
         ModIndustry.register(modEventBus);
         ModHabitat.register(modEventBus);
+        com.abyssia.registry.ModWrecks.register(modEventBus);
         com.abyssia.registry.ModFurniture.register(modEventBus);
         // BT01 constructor build menu entries (sub-specs add theirs in BuildContent)
         com.abyssia.habitat.build.BuildContent.register(modEventBus);

@@ -1,0 +1,113 @@
+{
+  "category": "geological",
+  "tier": "small",
+  "footprint_radius": 16,
+  "max_height": 8,
+  "formation": {
+    "type": "artifact_field",
+    "pieces": [
+      4,
+      8
+    ],
+    "frame": [
+      {
+        "data": {
+          "Name": "abyssia:industrial_beam"
+        },
+        "weight": 1
+      }
+    ],
+    "deck": [
+      {
+        "data": {
+          "Name": "abyssia:metal_grating_slab"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:industrial_panel_slab"
+        },
+        "weight": 1
+      }
+    ],
+    "pipe": [
+      {
+        "data": {
+          "Name": "abyssia:industrial_pipe"
+        },
+        "weight": 1
+      }
+    ],
+    "crate": [
+      {
+        "data": {
+          "Name": "minecraft:barrel"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:metal_grating"
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:industrial_panel"
+        },
+        "weight": 2
+      }
+    ],
+    "root": [
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 2
+      }
+    ]
+  },
+  "conditions": {
+    "max_slope": 0.8,
+    "min_y": -340,
+    "max_y": -80,
+    "max_top_y": -92
+  },
+  "dressing": {
+    "radius": 16,
+    "density": 0.08,
+    "plants": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:seafloor_pebbles"
+          }
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:sponge_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:black_coral"
+          }
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

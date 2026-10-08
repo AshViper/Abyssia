@@ -103,16 +103,23 @@ public final class ModBlocks
     public static final RegistryObject<Block> SULFUR_ORE = ore("sulfur_ore", 1, 3, 0);
     public static final RegistryObject<Block> THERMAL_CRYSTAL_ORE = ore("thermal_crystal_ore", 2, 5, 3);
     public static final RegistryObject<Block> ABYSSAL_CRYSTAL_ORE = ore("abyssal_crystal_ore", 2, 5, 3);
-    public static final RegistryObject<Block> MANGANESE_ORE = ore("manganese_ore", 0, 0, 0);
-    public static final RegistryObject<Block> COBALT_ORE = ore("cobalt_ore", 0, 0, 0);
-    public static final RegistryObject<Block> DEEP_NICKEL_ORE = ore("deep_nickel_ore", 0, 0, 0);
+    public static final RegistryObject<Block> MANGANESE_ORE = deposit("manganese_ore", 0);
+    public static final RegistryObject<Block> COBALT_ORE = deposit("cobalt_ore", 0);
+    public static final RegistryObject<Block> DEEP_NICKEL_ORE = deposit("deep_nickel_ore", 0);
     // Rare metals: tiny, very rare veins in the deep biomes (tools/gen_worldgen.py RARE_VEINS)
-    public static final RegistryObject<Block> PLATINUM_ORE = ore("platinum_ore", 0, 0, 0);
-    public static final RegistryObject<Block> TELLURIUM_ORE = ore("tellurium_ore", 0, 0, 0);
-    public static final RegistryObject<Block> MOLYBDENUM_ORE = ore("molybdenum_ore", 0, 0, 0);
-    public static final RegistryObject<Block> VANADIUM_ORE = ore("vanadium_ore", 0, 0, 0);
-    public static final RegistryObject<Block> TUNGSTEN_ORE = ore("tungsten_ore", 0, 0, 0);
-    public static final RegistryObject<Block> YTTRIUM_ORE = ore("yttrium_ore", 0, 0, 0);
+    public static final RegistryObject<Block> PLATINUM_ORE = deposit("platinum_ore", 0);
+    public static final RegistryObject<Block> TELLURIUM_ORE = deposit("tellurium_ore", 0);
+    public static final RegistryObject<Block> MOLYBDENUM_ORE = deposit("molybdenum_ore", 0);
+    public static final RegistryObject<Block> VANADIUM_ORE = deposit("vanadium_ore", 0);
+    public static final RegistryObject<Block> TUNGSTEN_ORE = deposit("tungsten_ore", 0);
+    public static final RegistryObject<Block> YTTRIUM_ORE = deposit("yttrium_ore", 0);
+    public static final RegistryObject<Block> TITANIUM_ORE = deposit("titanium_ore", 0);
+    public static final RegistryObject<Block> LEAD_ORE = deposit("lead_ore", 0);
+    public static final RegistryObject<Block> ZINC_ORE = deposit("zinc_ore", 0);
+    public static final RegistryObject<Block> IRIDIUM_ORE = deposit("iridium_ore", 0);
+    public static final RegistryObject<Block> URANIUM_ORE = deposit("uranium_ore", 0);
+    public static final RegistryObject<Block> NEODYMIUM_ORE = deposit("neodymium_ore", 0);
+    public static final RegistryObject<Block> THORIUM_ORE = deposit("thorium_ore", 0);
     // Vanilla minerals in deep-sea form: seabed veins (tools/gen_worldgen.py VANILLA_VEINS), vanilla drops and XP
     public static final RegistryObject<Block> ABYSSAL_DIAMOND_ORE = ore("abyssal_diamond_ore", 3, 7, 0);
     public static final RegistryObject<Block> ABYSSAL_GOLD_ORE = ore("abyssal_gold_ore", 0, 0, 0);
@@ -121,23 +128,12 @@ public final class ModBlocks
     public static final RegistryObject<Block> ABYSSAL_EMERALD_ORE = ore("abyssal_emerald_ore", 3, 7, 0);
     public static final RegistryObject<Block> ABYSSAL_QUARTZ_ORE = ore("abyssal_quartz_ore", 2, 5, 0);
 
-    // ---------- Mineral crusts: thin mineral coatings on the seabed around and above veins ----------
-    public static final RegistryObject<Block> MANGANESE_CRUST = crust("manganese_crust", MapColor.COLOR_BLACK);
-    public static final RegistryObject<Block> COBALT_CRUST = crust("cobalt_crust", MapColor.COLOR_BLUE);
-    public static final RegistryObject<Block> NICKEL_CRUST = crust("nickel_crust", MapColor.COLOR_LIGHT_GREEN);
-    public static final RegistryObject<Block> IRON_CRUST = crust("iron_crust", MapColor.COLOR_RED);
-    public static final RegistryObject<Block> COPPER_CRUST = crust("copper_crust", MapColor.COLOR_ORANGE);
-    public static final RegistryObject<Block> DIAMOND_CRUST = crust("diamond_crust", MapColor.DIAMOND);
-    public static final RegistryObject<Block> GOLD_CRUST = crust("gold_crust", MapColor.GOLD);
-    public static final RegistryObject<Block> REDSTONE_CRUST = crust("redstone_crust", MapColor.FIRE);
-    public static final RegistryObject<Block> LAPIS_CRUST = crust("lapis_crust", MapColor.LAPIS);
-    public static final RegistryObject<Block> EMERALD_CRUST = crust("emerald_crust", MapColor.EMERALD);
-    public static final RegistryObject<Block> QUARTZ_CRUST = crust("quartz_crust", MapColor.QUARTZ);
+    // Vein crusts were removed (ORE01); salt_crust and cave_mineral_crust are unrelated terrain blocks.
 
     // ---------- Mineral clusters and crystals ----------
-    public static final RegistryObject<Block> MANGANESE_NODULES = block("manganese_nodules", () -> crystal(MapColor.COLOR_BLACK, 4, 4, 0));
-    public static final RegistryObject<Block> COBALT_CLUSTER = block("cobalt_cluster", () -> crystal(MapColor.COLOR_BLUE, 6, 3, 0));
-    public static final RegistryObject<Block> NICKEL_CLUSTER = block("nickel_cluster", () -> crystal(MapColor.COLOR_LIGHT_GREEN, 6, 3, 0));
+    public static final RegistryObject<Block> MANGANESE_NODULES = block("manganese_nodules", () -> depositCrystal(MapColor.COLOR_BLACK, 4, 4, 0));
+    public static final RegistryObject<Block> COBALT_CLUSTER = block("cobalt_cluster", () -> depositCrystal(MapColor.COLOR_BLUE, 6, 3, 0));
+    public static final RegistryObject<Block> NICKEL_CLUSTER = block("nickel_cluster", () -> depositCrystal(MapColor.COLOR_LIGHT_GREEN, 6, 3, 0));
     public static final RegistryObject<Block> SULFUR_CLUSTER = block("sulfur_cluster", () -> crystal(MapColor.COLOR_YELLOW, 5, 3, 0));
     public static final RegistryObject<Block> ABYSSAL_CRYSTAL_CLUSTER = block("abyssal_crystal_cluster", () -> crystal(MapColor.COLOR_PURPLE, 7, 3, 5));
     public static final RegistryObject<Block> DEEP_CRYSTAL_BLOCK = block("deep_crystal_block", () -> new Block(props(MapColor.COLOR_CYAN)
@@ -312,6 +308,18 @@ public final class ModBlocks
     private static RegistryObject<Block> crust(String name, MapColor color)
     {
         return block(name, () -> new Block(props(color).strength(1.5f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.TUFF)));
+    }
+
+    /** ORE01: a mineral only the excavator can take - a visible deposit that survival players cannot break. */
+    private static RegistryObject<Block> deposit(String name, int light)
+    {
+        return block(name, () -> new Block(props(MapColor.COLOR_BLACK).strength(-1.0f, 3_600_000.0f).sound(SoundType.DEEPSLATE).lightLevel(s -> light)));
+    }
+
+    private static Block depositCrystal(MapColor color, int height, int offset, int light)
+    {
+        return new AmethystClusterBlock(height, offset, props(color).forceSolidOn().noOcclusion().strength(-1.0f, 3_600_000.0f)
+                .sound(SoundType.AMETHYST_CLUSTER).lightLevel(s -> light).pushReaction(PushReaction.BLOCK));
     }
 
     private static Block crystal(MapColor color, int height, int offset, int light)

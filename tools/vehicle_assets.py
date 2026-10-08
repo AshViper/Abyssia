@@ -15,16 +15,24 @@ RECIPES = {
     # two propulsion screws (I04), alloy hull, marine resin seal, conductive wiring, glass canopy
     SUBMARINE: (["GGG", "AMA", "SCS"], {"G": "minecraft:glass", "A": "abyssia:abyssal_alloy_ingot", "M": "abyssia:marine_resin",
                                          "S": "abyssia:propulsion_screw", "C": "abyssia:conductive_alloy_ingot"}),
+    # BAL01: upgrades were as dear as the submarine itself (iron / gold blocks) -> plates / ingots, ~40-75% of the hull
     # SUB03 upgrades (spec inbox/specs/SUB03-submarine-upgrades.md section 4): pressure glass = pressure_shell,
     # motor = conductive_component (the closest existing electric part besides the propulsion screw)
     "submarine_upgrade_pressure_hull": (["APA", "PIP", "AAA"], {"A": "abyssia:abyssal_alloy_ingot", "P": "abyssia:pressure_shell",
-                                                                "I": "minecraft:iron_block"}),
+                                                                "I": "abyssia:iron_plate"}),
     "submarine_upgrade_high_capacity_battery": (["CUC", "RER", "CGC"], {"C": "abyssia:conductive_alloy_ingot", "U": "minecraft:copper_block",
                                                                         "R": "minecraft:redstone", "E": "abyssia:abyssal_energy_cell",
-                                                                        "G": "minecraft:gold_block"}),
+                                                                        "G": "minecraft:gold_ingot"}),
     "submarine_upgrade_maneuver_thruster": (["ASA", "IMI", "ARA"], {"A": "abyssia:abyssal_alloy_ingot", "S": "abyssia:propulsion_screw",
-                                                                    "I": "minecraft:iron_block", "M": "abyssia:conductive_component",
+                                                                    "I": "abyssia:iron_plate", "M": "abyssia:conductive_component",
                                                                     "R": "minecraft:redstone"}),
+    # SUB06 Depth Hull Mk1..Mk3: each tier is built on the one below
+    "submarine_upgrade_depth_mk1": (["AIA", "PIP", "AIA"], {"A": "abyssia:abyssal_alloy_ingot", "I": "abyssia:iron_plate",
+                                                            "P": "abyssia:pressure_shell"}),
+    "submarine_upgrade_depth_mk2": (["TPT", "AUA", "TPT"], {"T": "abyssia:titanium_ingot", "P": "abyssia:pressure_shell",
+                                                            "A": "abyssia:abyssal_alloy_ingot", "U": "abyssia:submarine_upgrade_depth_mk1"}),
+    "submarine_upgrade_depth_mk3": (["WHW", "PUP", "WHW"], {"W": "abyssia:tungsten_ingot", "H": "abyssia:hadal_plating",
+                                                            "P": "abyssia:pressure_shell", "U": "abyssia:submarine_upgrade_depth_mk2"}),
     "submarine_upgrade_sonar_scanner": (["LPL", "KOK", "RAR"], {"L": "minecraft:sea_lantern", "P": "abyssia:pressure_shell",
                                                                 "K": "minecraft:copper_ingot", "O": "abyssia:bio_oil",
                                                                 "R": "minecraft:redstone", "A": "abyssia:abyssal_alloy_ingot"}),
@@ -59,6 +67,36 @@ UPGRADES = {
         "Install with Sneak + right-click on an unmanned submarine.",
         "潜水艦アップグレード (推進スロット)。最高速度 前進 0.42 → 0.56、後退/横 0.22 → 0.30、上下 0.18 → 0.23 ブロック/tick、加速も向上。"
         "推進の消費は移動中 8 → 12 FE/tick。無人の潜水艦をスニーク + 右クリックで装着画面。"),
+    "submarine_upgrade_depth_mk1": (
+        "Depth Hull Mk1", "深度船体 Mk1",
+        "Rated depth 300 m -> 600 m", "耐圧深度 300 m → 600 m",
+        "Below it the hull takes crush damage", "超えると船体に圧壊ダメージ",
+        "Submarine upgrade (depth slot). Raises the rated depth from 300 m to 600 m. Below the rated depth the hull takes "
+        "crush damage every second (4 plus 1 per 200 m deeper; the hull breaks at 40, or 70 with the Pressure Hull), so surface or "
+        "fit a deeper hull in time. Install with Sneak + right-click on an unmanned submarine.",
+        "潜水艦アップグレード (深度スロット)。耐圧深度を 300 m から 600 m に上げる。耐圧深度より深いと毎秒船体に圧壊ダメージ "
+        "(4 + 200 m 深くなるごとに 1、船体は 40 で壊れる。耐圧船体があれば 70) を受けるので、早めに浮上するかより深い船体に換えること。"
+        "無人の潜水艦をスニーク + 右クリックで装着画面。"),
+    "submarine_upgrade_depth_mk2": (
+        "Depth Hull Mk2", "深度船体 Mk2",
+        "Rated depth 300 m -> 1,000 m", "耐圧深度 300 m → 1,000 m",
+        "Below it the hull takes crush damage", "超えると船体に圧壊ダメージ",
+        "Submarine upgrade (depth slot). Raises the rated depth from 300 m to 1,000 m. Below the rated depth the hull takes "
+        "crush damage every second (4 plus 1 per 200 m deeper; the hull breaks at 40, or 70 with the Pressure Hull), so surface or "
+        "fit a deeper hull in time. Install with Sneak + right-click on an unmanned submarine.",
+        "潜水艦アップグレード (深度スロット)。耐圧深度を 300 m から 1,000 m に上げる。耐圧深度より深いと毎秒船体に圧壊ダメージ "
+        "(4 + 200 m 深くなるごとに 1、船体は 40 で壊れる。耐圧船体があれば 70) を受けるので、早めに浮上するかより深い船体に換えること。"
+        "無人の潜水艦をスニーク + 右クリックで装着画面。"),
+    "submarine_upgrade_depth_mk3": (
+        "Depth Hull Mk3", "深度船体 Mk3",
+        "Rated depth 300 m -> 2,000 m", "耐圧深度 300 m → 2,000 m",
+        "Below it the hull takes crush damage", "超えると船体に圧壊ダメージ",
+        "Submarine upgrade (depth slot). Raises the rated depth from 300 m to 2,000 m. Below the rated depth the hull takes "
+        "crush damage every second (4 plus 1 per 200 m deeper; the hull breaks at 40, or 70 with the Pressure Hull), so surface or "
+        "fit a deeper hull in time. Install with Sneak + right-click on an unmanned submarine.",
+        "潜水艦アップグレード (深度スロット)。耐圧深度を 300 m から 2,000 m に上げる。耐圧深度より深いと毎秒船体に圧壊ダメージ "
+        "(4 + 200 m 深くなるごとに 1、船体は 40 で壊れる。耐圧船体があれば 70) を受けるので、早めに浮上するかより深い船体に換えること。"
+        "無人の潜水艦をスニーク + 右クリックで装着画面。"),
     "submarine_upgrade_sonar_scanner": (
         "Deep-Sea Sonar", "深海ソナー",
         "HUD: creatures (16 m), current, docks (32 m)", "HUD に生物 (16m)・海流・ドック (32m) を表示",
@@ -105,6 +143,9 @@ LANG = {
     f"container.{MOD}.submarine.upgrades.slot.hull": ("Hull slot: Pressure Hull", "船体スロット: 耐圧船体"),
     f"container.{MOD}.submarine.upgrades.slot.battery": ("Power slot: High-Capacity Battery", "電源スロット: 大容量バッテリー"),
     f"container.{MOD}.submarine.upgrades.slot.thruster": ("Propulsion slot: Maneuver Thruster", "推進スロット: 高出力推進器"),
+    f"container.{MOD}.submarine.upgrades.slot.depth": ("Depth slot: Depth Hull Mk1-Mk3 (rated depth 300 m without it)",
+                                                       "深度スロット: 深度船体 Mk1〜Mk3 (なしは耐圧深度 300 m)"),
+    f"message.{MOD}.submarine.depth": ("  ⬇ %s / %s m", "  ⬇ %s / %s m"),
     f"container.{MOD}.submarine.upgrades.slot.utility": ("Utility slot: Deep-Sea Sonar", "補助スロット: 深海ソナー"),
     f"tooltip.{MOD}.submarine_upgrade.battery_warning": ("Removing it caps the charge at %s FE (the rest is lost)",
                                                          "外すと残量は %s FE までになる (超過分は失われる)"),

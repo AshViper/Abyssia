@@ -14,8 +14,8 @@
     }
   },
   "noise": {
-    "min_y": -368,
-    "height": 688,
+    "min_y": -1872,
+    "height": 2192,
     "size_horizontal": 1,
     "size_vertical": 2
   },
@@ -28,29 +28,42 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -368,
+        "from_y": -1872,
         "to_y": 320,
-        "from_value": -368,
+        "from_value": -1872,
         "to_value": 320
       },
-      "min_inclusive": -369,
-      "max_exclusive": -66,
+      "min_inclusive": -1873,
+      "max_exclusive": -378,
       "when_in_range": "abyssia:region_temperature",
       "when_out_of_range": {
-        "type": "minecraft:shifted_noise",
-        "noise": "minecraft:temperature",
-        "xz_scale": 0.125,
-        "y_scale": 0,
-        "shift_x": {
-          "type": "minecraft:mul",
-          "argument1": 0.5,
-          "argument2": "minecraft:shift_x"
+        "type": "minecraft:range_choice",
+        "input": {
+          "type": "minecraft:y_clamped_gradient",
+          "from_y": -1872,
+          "to_y": 320,
+          "from_value": -1872,
+          "to_value": 320
         },
-        "shift_y": 0,
-        "shift_z": {
-          "type": "minecraft:mul",
-          "argument1": 0.5,
-          "argument2": "minecraft:shift_z"
+        "min_inclusive": -1873,
+        "max_exclusive": -66,
+        "when_in_range": "abyssia:region_temperature",
+        "when_out_of_range": {
+          "type": "minecraft:shifted_noise",
+          "noise": "minecraft:temperature",
+          "xz_scale": 0.125,
+          "y_scale": 0,
+          "shift_x": {
+            "type": "minecraft:mul",
+            "argument1": 0.5,
+            "argument2": "minecraft:shift_x"
+          },
+          "shift_y": 0,
+          "shift_z": {
+            "type": "minecraft:mul",
+            "argument1": 0.5,
+            "argument2": "minecraft:shift_z"
+          }
         }
       }
     },
@@ -58,39 +71,100 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -368,
+        "from_y": -1872,
         "to_y": 320,
-        "from_value": -368,
+        "from_value": -1872,
         "to_value": 320
       },
-      "min_inclusive": -369,
-      "max_exclusive": -66,
+      "min_inclusive": -1873,
+      "max_exclusive": -378,
       "when_in_range": "abyssia:region_habitat",
-      "when_out_of_range": 0.0
+      "when_out_of_range": {
+        "type": "minecraft:range_choice",
+        "input": {
+          "type": "minecraft:y_clamped_gradient",
+          "from_y": -1872,
+          "to_y": 320,
+          "from_value": -1872,
+          "to_value": 320
+        },
+        "min_inclusive": -1873,
+        "max_exclusive": -66,
+        "when_in_range": "abyssia:region_habitat",
+        "when_out_of_range": 0.0
+      }
     },
     "continents": {
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -368,
+        "from_y": -1872,
         "to_y": 320,
-        "from_value": -368,
+        "from_value": -1872,
         "to_value": 320
       },
-      "min_inclusive": -369,
-      "max_exclusive": -66,
-      "when_in_range": {
-        "type": "minecraft:add",
-        "argument1": {
-          "type": "minecraft:add",
-          "argument1": {
-            "type": "minecraft:mul",
-            "argument1": 0.4,
-            "argument2": "abyssia:deep_macro_offset"
+      "min_inclusive": -1873,
+      "max_exclusive": -378,
+      "when_in_range": -1.9,
+      "when_out_of_range": {
+        "type": "minecraft:range_choice",
+        "input": {
+          "type": "minecraft:y_clamped_gradient",
+          "from_y": -1872,
+          "to_y": 320,
+          "from_value": -1872,
+          "to_value": 320
+        },
+        "min_inclusive": -1873,
+        "max_exclusive": -66,
+        "when_in_range": {
+          "type": "minecraft:clamp",
+          "input": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": 0.1,
+                "argument2": "abyssia:deep_macro_offset"
+              },
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": 0.04,
+                "argument2": {
+                  "type": "minecraft:shifted_noise",
+                  "noise": "abyssia:biome_fuzz",
+                  "xz_scale": 1.0,
+                  "y_scale": 0,
+                  "shift_x": "minecraft:shift_x",
+                  "shift_y": 0,
+                  "shift_z": "minecraft:shift_z"
+                }
+              }
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": 1.6,
+              "argument2": {
+                "type": "minecraft:shifted_noise",
+                "noise": "abyssia:biome_zone",
+                "xz_scale": 1.1111111111111112,
+                "y_scale": 0,
+                "shift_x": "minecraft:shift_x",
+                "shift_y": 0,
+                "shift_z": "minecraft:shift_z"
+              }
+            }
           },
+          "min": -1.4,
+          "max": 4.0
+        },
+        "when_out_of_range": {
+          "type": "minecraft:add",
+          "argument1": "abyssia:seabed_macro",
           "argument2": {
             "type": "minecraft:mul",
-            "argument1": 0.04,
+            "argument1": 0.02,
             "argument2": {
               "type": "minecraft:shifted_noise",
               "noise": "abyssia:biome_fuzz",
@@ -101,44 +175,6 @@
               "shift_z": "minecraft:shift_z"
             }
           }
-        },
-        "argument2": {
-          "type": "minecraft:mul",
-          "argument1": 0.3,
-          "argument2": {
-            "type": "minecraft:shifted_noise",
-            "noise": "abyssia:biome_zone",
-            "xz_scale": 0.09523809523809523,
-            "y_scale": 0,
-            "shift_x": {
-              "type": "minecraft:mul",
-              "argument1": 0.38095238095238093,
-              "argument2": "minecraft:shift_x"
-            },
-            "shift_y": 0,
-            "shift_z": {
-              "type": "minecraft:mul",
-              "argument1": 0.38095238095238093,
-              "argument2": "minecraft:shift_z"
-            }
-          }
-        }
-      },
-      "when_out_of_range": {
-        "type": "minecraft:add",
-        "argument1": "abyssia:seabed_macro",
-        "argument2": {
-          "type": "minecraft:mul",
-          "argument1": 0.02,
-          "argument2": {
-            "type": "minecraft:shifted_noise",
-            "noise": "abyssia:biome_fuzz",
-            "xz_scale": 1.0,
-            "y_scale": 0,
-            "shift_x": "minecraft:shift_x",
-            "shift_y": 0,
-            "shift_z": "minecraft:shift_z"
-          }
         }
       }
     },
@@ -146,84 +182,136 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -368,
+        "from_y": -1872,
         "to_y": 320,
-        "from_value": -368,
+        "from_value": -1872,
         "to_value": 320
       },
-      "min_inclusive": -369,
-      "max_exclusive": -66,
+      "min_inclusive": -1873,
+      "max_exclusive": -378,
       "when_in_range": "abyssia:region_erosion",
       "when_out_of_range": {
-        "type": "minecraft:add",
-        "argument1": 1.2,
-        "argument2": "abyssia:rift"
+        "type": "minecraft:range_choice",
+        "input": {
+          "type": "minecraft:y_clamped_gradient",
+          "from_y": -1872,
+          "to_y": 320,
+          "from_value": -1872,
+          "to_value": 320
+        },
+        "min_inclusive": -1873,
+        "max_exclusive": -66,
+        "when_in_range": "abyssia:region_erosion",
+        "when_out_of_range": {
+          "type": "minecraft:add",
+          "argument1": 1.2,
+          "argument2": "abyssia:rift"
+        }
       }
     },
     "depth": {
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -368,
+        "from_y": -1872,
         "to_y": 320,
-        "from_value": -368,
+        "from_value": -1872,
         "to_value": 320
       },
-      "min_inclusive": -369,
-      "max_exclusive": -66,
+      "min_inclusive": -1873,
+      "max_exclusive": -378,
       "when_in_range": 10.0,
-      "when_out_of_range": -10.0
+      "when_out_of_range": {
+        "type": "minecraft:range_choice",
+        "input": {
+          "type": "minecraft:y_clamped_gradient",
+          "from_y": -1872,
+          "to_y": 320,
+          "from_value": -1872,
+          "to_value": 320
+        },
+        "min_inclusive": -1873,
+        "max_exclusive": -66,
+        "when_in_range": 10.0,
+        "when_out_of_range": -10.0
+      }
     },
     "ridges": {
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -368,
+        "from_y": -1872,
         "to_y": 320,
-        "from_value": -368,
+        "from_value": -1872,
         "to_value": 320
       },
-      "min_inclusive": -369,
-      "max_exclusive": -66,
+      "min_inclusive": -1873,
+      "max_exclusive": -378,
       "when_in_range": "abyssia:region_volcanic",
       "when_out_of_range": {
-        "type": "minecraft:add",
-        "argument1": 0.85,
-        "argument2": "abyssia:fissure"
+        "type": "minecraft:range_choice",
+        "input": {
+          "type": "minecraft:y_clamped_gradient",
+          "from_y": -1872,
+          "to_y": 320,
+          "from_value": -1872,
+          "to_value": 320
+        },
+        "min_inclusive": -1873,
+        "max_exclusive": -66,
+        "when_in_range": "abyssia:region_volcanic",
+        "when_out_of_range": {
+          "type": "minecraft:add",
+          "argument1": 0.85,
+          "argument2": "abyssia:fissure"
+        }
       }
     },
     "initial_density_without_jaggedness": {
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -368,
+        "from_y": -1872,
         "to_y": 320,
-        "from_value": -368,
+        "from_value": -1872,
         "to_value": 320
       },
-      "min_inclusive": -369,
-      "max_exclusive": -66,
-      "when_in_range": {
-        "type": "minecraft:add",
-        "argument1": {
-          "type": "minecraft:y_clamped_gradient",
-          "from_y": -368,
-          "to_y": 16,
-          "from_value": 2.0,
-          "to_value": -4.0
-        },
-        "argument2": "abyssia:deep_seabed_offset"
-      },
+      "min_inclusive": -1873,
+      "max_exclusive": -378,
+      "when_in_range": "abyssia:abyss_initial_density",
       "when_out_of_range": {
-        "type": "minecraft:add",
-        "argument1": {
+        "type": "minecraft:range_choice",
+        "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -64,
+          "from_y": -1872,
           "to_y": 320,
-          "from_value": 1.0,
-          "to_value": -5.0
+          "from_value": -1872,
+          "to_value": 320
         },
-        "argument2": "abyssia:seabed_offset"
+        "min_inclusive": -1873,
+        "max_exclusive": -66,
+        "when_in_range": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:y_clamped_gradient",
+            "from_y": -368,
+            "to_y": 16,
+            "from_value": 2.0,
+            "to_value": -4.0
+          },
+          "argument2": "abyssia:deep_seabed_offset"
+        },
+        "when_out_of_range": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:y_clamped_gradient",
+            "from_y": -64,
+            "to_y": 320,
+            "from_value": 1.0,
+            "to_value": -5.0
+          },
+          "argument2": "abyssia:seabed_offset"
+        }
       }
     },
     "final_density": "abyssia:final_density",
@@ -532,10 +620,10 @@
                 "type": "minecraft:vertical_gradient",
                 "random_name": "minecraft:bedrock_floor",
                 "true_at_and_below": {
-                  "absolute": -368
+                  "absolute": -1872
                 },
                 "false_at_and_above": {
-                  "absolute": -363
+                  "absolute": -1867
                 }
               },
               "then_run": {
@@ -705,21 +793,6 @@
                                 }
                               },
                               {
-                                "type": "minecraft:condition",
-                                "if_true": {
-                                  "type": "minecraft:noise_threshold",
-                                  "noise": "minecraft:surface",
-                                  "min_threshold": 0.72,
-                                  "max_threshold": 10.0
-                                },
-                                "then_run": {
-                                  "type": "minecraft:block",
-                                  "result_state": {
-                                    "Name": "abyssia:copper_crust"
-                                  }
-                                }
-                              },
-                              {
                                 "type": "minecraft:sequence",
                                 "sequence": [
                                   {
@@ -854,21 +927,6 @@
                                 }
                               },
                               {
-                                "type": "minecraft:condition",
-                                "if_true": {
-                                  "type": "minecraft:noise_threshold",
-                                  "noise": "minecraft:surface",
-                                  "min_threshold": 0.66,
-                                  "max_threshold": 10.0
-                                },
-                                "then_run": {
-                                  "type": "minecraft:block",
-                                  "result_state": {
-                                    "Name": "abyssia:cobalt_crust"
-                                  }
-                                }
-                              },
-                              {
                                 "type": "minecraft:sequence",
                                 "sequence": [
                                   {
@@ -932,21 +990,6 @@
                                   "type": "minecraft:block",
                                   "result_state": {
                                     "Name": "abyssia:trench_rock"
-                                  }
-                                }
-                              },
-                              {
-                                "type": "minecraft:condition",
-                                "if_true": {
-                                  "type": "minecraft:noise_threshold",
-                                  "noise": "minecraft:surface",
-                                  "min_threshold": 0.68,
-                                  "max_threshold": 10.0
-                                },
-                                "then_run": {
-                                  "type": "minecraft:block",
-                                  "result_state": {
-                                    "Name": "abyssia:nickel_crust"
                                   }
                                 }
                               },
@@ -1148,21 +1191,6 @@
                                   "type": "minecraft:block",
                                   "result_state": {
                                     "Name": "abyssia:abyssal_rock"
-                                  }
-                                }
-                              },
-                              {
-                                "type": "minecraft:condition",
-                                "if_true": {
-                                  "type": "minecraft:noise_threshold",
-                                  "noise": "minecraft:surface",
-                                  "min_threshold": 0.62,
-                                  "max_threshold": 10.0
-                                },
-                                "then_run": {
-                                  "type": "minecraft:block",
-                                  "result_state": {
-                                    "Name": "abyssia:manganese_crust"
                                   }
                                 }
                               },
@@ -1531,6 +1559,207 @@
                           }
                         },
                         {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_plain"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:sequence",
+                            "sequence": [
+                              {
+                                "type": "minecraft:condition",
+                                "if_true": {
+                                  "type": "minecraft:steep"
+                                },
+                                "then_run": {
+                                  "type": "minecraft:block",
+                                  "result_state": {
+                                    "Name": "abyssia:trench_rock"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "minecraft:condition",
+                                "if_true": {
+                                  "type": "minecraft:noise_threshold",
+                                  "noise": "minecraft:surface_secondary",
+                                  "min_threshold": -0.035,
+                                  "max_threshold": 0.035
+                                },
+                                "then_run": {
+                                  "type": "minecraft:block",
+                                  "result_state": {
+                                    "Name": "abyssia:trench_rock"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "minecraft:sequence",
+                                "sequence": [
+                                  {
+                                    "type": "minecraft:condition",
+                                    "if_true": {
+                                      "type": "minecraft:noise_threshold",
+                                      "noise": "minecraft:surface",
+                                      "min_threshold": 0.0,
+                                      "max_threshold": 10.0
+                                    },
+                                    "then_run": {
+                                      "type": "minecraft:block",
+                                      "result_state": {
+                                        "Name": "abyssia:abyssal_mud"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "minecraft:block",
+                                    "result_state": {
+                                      "Name": "abyssia:deep_mud"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_garden"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:sequence",
+                            "sequence": [
+                              {
+                                "type": "minecraft:condition",
+                                "if_true": {
+                                  "type": "minecraft:steep"
+                                },
+                                "then_run": {
+                                  "type": "minecraft:block",
+                                  "result_state": {
+                                    "Name": "abyssia:deep_sea_rock"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "minecraft:condition",
+                                "if_true": {
+                                  "type": "minecraft:noise_threshold",
+                                  "noise": "minecraft:surface_secondary",
+                                  "min_threshold": -0.035,
+                                  "max_threshold": 0.035
+                                },
+                                "then_run": {
+                                  "type": "minecraft:block",
+                                  "result_state": {
+                                    "Name": "abyssia:deep_sea_rock"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "minecraft:sequence",
+                                "sequence": [
+                                  {
+                                    "type": "minecraft:condition",
+                                    "if_true": {
+                                      "type": "minecraft:noise_threshold",
+                                      "noise": "minecraft:surface",
+                                      "min_threshold": 0.0,
+                                      "max_threshold": 10.0
+                                    },
+                                    "then_run": {
+                                      "type": "minecraft:block",
+                                      "result_state": {
+                                        "Name": "abyssia:organic_sediment"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "minecraft:block",
+                                    "result_state": {
+                                      "Name": "abyssia:abyssal_mud"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_crystal"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:sequence",
+                            "sequence": [
+                              {
+                                "type": "minecraft:condition",
+                                "if_true": {
+                                  "type": "minecraft:steep"
+                                },
+                                "then_run": {
+                                  "type": "minecraft:block",
+                                  "result_state": {
+                                    "Name": "abyssia:crystal_rock"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "minecraft:condition",
+                                "if_true": {
+                                  "type": "minecraft:noise_threshold",
+                                  "noise": "minecraft:surface_secondary",
+                                  "min_threshold": -0.035,
+                                  "max_threshold": 0.035
+                                },
+                                "then_run": {
+                                  "type": "minecraft:block",
+                                  "result_state": {
+                                    "Name": "abyssia:crystal_rock"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "minecraft:sequence",
+                                "sequence": [
+                                  {
+                                    "type": "minecraft:condition",
+                                    "if_true": {
+                                      "type": "minecraft:noise_threshold",
+                                      "noise": "minecraft:surface",
+                                      "min_threshold": 0.3,
+                                      "max_threshold": 10.0
+                                    },
+                                    "then_run": {
+                                      "type": "minecraft:block",
+                                      "result_state": {
+                                        "Name": "abyssia:crystal_rock"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "minecraft:block",
+                                    "result_state": {
+                                      "Name": "abyssia:crystal_sediment"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        {
                           "type": "minecraft:sequence",
                           "sequence": [
                             {
@@ -1795,6 +2024,51 @@
                             "type": "minecraft:block",
                             "result_state": {
                               "Name": "abyssia:icy_sediment"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_plain"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "abyssia:deep_sediment"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_garden"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "abyssia:abyssal_mud"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_crystal"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "abyssia:crystal_sediment"
                             }
                           }
                         },
@@ -2075,6 +2349,76 @@
                           }
                         },
                         {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_plain"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:sequence",
+                            "sequence": [
+                              {
+                                "type": "minecraft:block",
+                                "result_state": {
+                                  "Name": "abyssia:trench_rock"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_garden"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "abyssia:deep_sea_rock"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:biome",
+                            "biome_is": [
+                              "abyssia:abyss_crystal"
+                            ]
+                          },
+                          "then_run": {
+                            "type": "minecraft:sequence",
+                            "sequence": [
+                              {
+                                "type": "minecraft:condition",
+                                "if_true": {
+                                  "type": "minecraft:noise_threshold",
+                                  "noise": "minecraft:surface",
+                                  "min_threshold": 0.4,
+                                  "max_threshold": 10.0
+                                },
+                                "then_run": {
+                                  "type": "minecraft:block",
+                                  "result_state": {
+                                    "Name": "abyssia:deep_crystal_block"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "minecraft:block",
+                                "result_state": {
+                                  "Name": "abyssia:crystal_rock"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
                           "type": "minecraft:block",
                           "result_state": {
                             "Name": "abyssia:deep_sea_rock"
@@ -2278,6 +2622,51 @@
                           "type": "minecraft:block",
                           "result_state": {
                             "Name": "abyssia:frozen_rock"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:biome",
+                          "biome_is": [
+                            "abyssia:abyss_plain"
+                          ]
+                        },
+                        "then_run": {
+                          "type": "minecraft:block",
+                          "result_state": {
+                            "Name": "abyssia:trench_rock"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:biome",
+                          "biome_is": [
+                            "abyssia:abyss_garden"
+                          ]
+                        },
+                        "then_run": {
+                          "type": "minecraft:block",
+                          "result_state": {
+                            "Name": "abyssia:deep_sea_rock"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:biome",
+                          "biome_is": [
+                            "abyssia:abyss_crystal"
+                          ]
+                        },
+                        "then_run": {
+                          "type": "minecraft:block",
+                          "result_state": {
+                            "Name": "abyssia:crystal_rock"
                           }
                         }
                       },

@@ -86,8 +86,11 @@ LANG = {
     f"message.{MOD}.habitat.entity": ("Something is in the way", "範囲内に生き物がいる"),
     f"message.{MOD}.habitat.permission": ("You can't build here", "ここには建設できない"),
     # H08 habitat power (habitat/power/HabitatPower, sneak + right-click a shell block with an empty hand)
-    f"message.{MOD}.habitat.power": ("Base power %s / %s FE · in %s FE/t · out %s FE/t",
-                                    "拠点電力 %s / %s FE ・入力 %s FE/t ・出力 %s FE/t"),
+    f"message.{MOD}.habitat.power": ("Base power %s / %s FE · in %s FE/t · out %s FE/t · life support %s FE/t · oxygen %s%%",
+                                    "拠点電力 %s / %s FE ・入力 %s FE/t ・出力 %s FE/t ・生命維持 %s FE/t ・酸素 %s%%"),
+    # ECO03 life support: no power = no light, and the oxygen reserve of the module runs down
+    f"message.{MOD}.habitat.oxygen_low": ("Base power is down - oxygen left: %s s", "拠点の電力が尽きている — 酸素 残り %s 秒"),
+    f"message.{MOD}.habitat.oxygen_out": ("The air is stale - restore power!", "空気が淀んでいる — 電力を復旧せよ"),
     f"message.{MOD}.habitat.power.none": ("This module is not part of a powered base (built before H08)",
                                          "このモジュールは拠点電力に未登録 (H08 以前に建設)"),
     # H07 scan console (habitat/scan/ScanConsoleScreen)
@@ -143,22 +146,24 @@ WINDOW_FACES = {
 }
 
 
-def _window(write, bs, bm, block="habitat_window", translucent=True):
-    """64 states (one boolean per direction = same block there) -> one model each."""
+def _window(write, bs, bm, block="habitat_window", translucent=True, unlit=None):
+    """64 states (one boolean per direction = same block there) -> one model each.  ``unlit``: texture family used
+    when the block's ``lit`` property is false (ECO03 habitat light; models habitat_light_off_<bits>)."""
     variants = {}
     for bits in range(64):
         on = {d: bool(bits >> i & 1) for i, d in enumerate(WINDOW_DIRS)}
-        name = block if bits == 0 else f"{block}_{bits}"
-        textures = {}
-        for face, (u, d, l, r) in WINDOW_FACES.items():
-            mask = on[u] * 1 | on[d] * 2 | on[l] * 4 | on[r] * 8
-            textures[face] = rl(block if mask == 0 else f"{block}_c{mask}")
-        textures["particle"] = rl(block)
-        model = {"parent": "minecraft:block/cube", "textures": textures}
-        if translucent:
-            model = {"parent": "minecraft:block/cube", "render_type": "minecraft:translucent", "textures": textures}
-        write(bm(name), model)
-        variants[",".join(f"{d}={str(on[d]).lower()}" for d in WINDOW_DIRS)] = {"model": rl(name)}
+        for family, suffix in ((block, ",lit=true"), (unlit, ",lit=false")) if unlit else ((block, ""),):
+            name = family if bits == 0 else f"{family}_{bits}"
+            textures = {}
+            for face, (u, d, l, r) in WINDOW_FACES.items():
+                mask = on[u] * 1 | on[d] * 2 | on[l] * 4 | on[r] * 8
+                textures[face] = rl(family if mask == 0 else f"{family}_c{mask}")
+            textures["particle"] = rl(family)
+            model = {"parent": "minecraft:block/cube", "textures": textures}
+            if translucent:
+                model = {"parent": "minecraft:block/cube", "render_type": "minecraft:translucent", "textures": textures}
+            write(bm(name), model)
+            variants[",".join(f"{d}={str(on[d]).lower()}" for d in WINDOW_DIRS) + suffix] = {"model": rl(name)}
     write(bs(block), {"variants": variants})
 
 
@@ -171,7 +176,7 @@ def generate(write, bs, bm, im, data_dir):
 
     _window(write, bs, bm)
     for name in CONNECTED:
-        _window(write, bs, bm, name, translucent=False)
+        _window(write, bs, bm, name, translucent=False, unlit="habitat_light_off" if name == "habitat_light" else None)
 
     # hatch: hatch face on the outside (north in the model) and the inside, hull on the rest
     write(bm("habitat_hatch"), {"parent": "minecraft:block/cube", "textures": {
@@ -256,9 +261,11 @@ def constructor_model():
 
 
 def recipes(write, data_dir):
-    key = {"P": f"{MOD}:iron_plate", "H": f"{MOD}:high_strength_alloy_ingot", "C": "minecraft:copper_ingot",
-           "A": f"{MOD}:abyssal_alloy_ingot", "I": "minecraft:iron_ingot", "R": "minecraft:redstone"}
+    # BAL01: the constructor builds the first excavator, so it cannot need an alloy (alloy furnace needs nickel,
+    # which only an excavator mines): iron, copper, a machine frame and a diamond only
+    key = {"P": f"{MOD}:iron_plate", "F": f"{MOD}:machine_frame", "C": "minecraft:copper_ingot",
+           "D": "minecraft:diamond", "I": "minecraft:iron_ingot", "R": "minecraft:redstone"}
     write(os.path.join(data_dir, MOD, "recipes", CONSTRUCTOR + ".json"), {
-        "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": ["PHP", "CAC", "IRI"],
+        "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": ["PFP", "CDC", "IRI"],
         "key": {k: {"item": v} for k, v in key.items()}, "result": {"item": f"{MOD}:{CONSTRUCTOR}", "count": 1}})
 

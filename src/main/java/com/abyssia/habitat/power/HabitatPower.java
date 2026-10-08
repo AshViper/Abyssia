@@ -2,6 +2,7 @@ package com.abyssia.habitat.power;
 
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.HabitatBuilder;
+import com.abyssia.habitat.HabitatLightBlock;
 import com.abyssia.habitat.HabitatPlan;
 import com.abyssia.industry.energy.CableNetworkManager;
 import com.abyssia.industry.energy.EnergyLookup;
@@ -14,6 +15,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -49,6 +51,10 @@ public final class HabitatPower
     public static final int INPUT_CAP = 100_000;
     public static final int PER_DEVICE = 10_000;
     public static final int RESCAN_TICKS = 40;
+    /** ECO03: FE per tick every habitable module draws for lighting and life support (a foundation draws none) */
+    public static final int LIFE_SUPPORT_FE = 20;
+    /** how often the lamps are re-synced to the power state (new modules, reloaded chunks) */
+    public static final int LIGHT_SYNC_TICKS = 200;
 
     /** per-level runtime state of the bases (not saved) */
     private static final Map<Level, Map<Integer, Runtime>> RUNTIME = new WeakHashMap<>();
@@ -62,6 +68,11 @@ public final class HabitatPower
         int inputThisTick, lastInput, lastOutput;
         long nextScan;
         int cursor;
+        /** ECO03: the base paid its life support this tick (lamps on, oxygen refilling); null before the first tick */
+        Boolean powered;
+        Boolean lightsSet;
+        long nextLightSync;
+        int lastDrain;
         List<BlockPos> devices = List.of();
         final IEnergyStorage receiver;
 
@@ -225,6 +236,30 @@ public final class HabitatPower
             rt.inputThisTick += got;
         }
 
+        // ECO03: life support first - every habitable module draws LIFE_SUPPORT_FE; no power = lamps off, oxygen down
+        List<HabitatBases.Module> mods = new ArrayList<>();
+        for (HabitatBases.Module m : data.modules())
+            if (data.root(m.id()) == rt.base && m.box().getYSpan() > 1) mods.add(m);
+        int drain = mods.size() * LIFE_SUPPORT_FE;
+        if (stored < drain)
+            for (IEnergyStorage b : batteries)
+            {
+                stored += b.extractEnergy(Math.min(PER_DEVICE, CAPACITY - stored), false);
+                if (stored >= drain) break;
+            }
+        boolean powered = stored >= drain;
+        if (powered) stored -= drain;
+        rt.powered = powered;
+        rt.lastDrain = powered ? drain : 0;
+        HabitatAir air = HabitatAir.get(level);
+        for (HabitatBases.Module m : mods) air.step(m.id(), powered);
+        if (rt.lightsSet == null || rt.lightsSet != powered || now >= rt.nextLightSync)
+        {
+            syncLights(level, data.boxes(rt.base), powered);
+            rt.lightsSet = powered;
+            rt.nextLightSync = now + LIGHT_SYNC_TICKS;
+        }
+
         // buffer -> consumers, round-robin start
         int output = 0;
         boolean short_ = false;
@@ -263,6 +298,33 @@ public final class HabitatPower
         rt.lastInput = rt.inputThisTick;
         rt.lastOutput = output;
         rt.inputThisTick = 0;
+    }
+
+    /** Sets the lit state of every habitat lamp inside the boxes (loaded positions only). */
+    private static void syncLights(ServerLevel level, List<BoundingBox> boxes, boolean lit)
+    {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (BoundingBox box : boxes)
+            for (int x = box.minX(); x <= box.maxX(); x++)
+                for (int z = box.minZ(); z <= box.maxZ(); z++)
+                {
+                    pos.set(x, box.minY(), z);
+                    if (!level.isLoaded(pos)) continue;
+                    for (int y = box.minY(); y <= box.maxY(); y++)
+                    {
+                        pos.set(x, y, z);
+                        BlockState state = level.getBlockState(pos);
+                        if (state.is(ModHabitat.LIGHT.get()) && state.getValue(HabitatLightBlock.LIT) != lit)
+                            level.setBlock(pos, state.setValue(HabitatLightBlock.LIT, lit), Block.UPDATE_ALL);
+                    }
+                }
+    }
+
+    /** Whether the base of this module paid its life support last tick (true until its first tick). */
+    public static boolean isPowered(ServerLevel level, int module)
+    {
+        Boolean powered = runtime(level, HabitatBases.get(level).root(module)).powered;
+        return powered == null || powered;
     }
 
     /** Cells above a foundation (1-high module) that its wireless supply reaches: the 3-high interior of a room plus its ceiling. */
@@ -317,8 +379,11 @@ public final class HabitatPower
             return;
         }
         Runtime rt = runtime(server, base);
+        int module = HabitatBases.get(server).moduleAt(event.getPos());
+        int oxygen = module < 0 ? HabitatAir.MAX : HabitatAir.get(server).oxygen(module);
         player.displayClientMessage(Component.translatable(key, String.format("%,d", stored(server, base)), String.format("%,d", CAPACITY),
-                String.format("%,d", rt.lastInput), String.format("%,d", rt.lastOutput)), true);
+                String.format("%,d", rt.lastInput), String.format("%,d", rt.lastOutput), String.format("%,d", rt.lastDrain),
+                String.valueOf(oxygen * 100 / HabitatAir.MAX)), true);
     }
 
     // ---------------------------------------------------------------- harness / tooling
