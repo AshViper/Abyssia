@@ -127,6 +127,6 @@ final class CaveBuilder
         if (landmark != null) summary.append(" [").append(landmark.getSerializedName()).append(']');
         if (!route.isEmpty()) summary.append(": ").append(String.join(" > ", route));
         return new CaveSystem(cellX, cellZ, minor, type, landmark, List.copyOf(shapes), List.copyOf(spaces), List.copyOf(sites), List.copyOf(vents),
-                summary.toString(), Mth.floor(x), Mth.floor(y), Mth.floor(z));
+                summary.toString(), Mth.floor(x), Mth.floor(y), Mth.floor(z), net.band());
     }
 }

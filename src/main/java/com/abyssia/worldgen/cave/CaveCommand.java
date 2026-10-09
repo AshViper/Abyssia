@@ -2,6 +2,7 @@ package com.abyssia.worldgen.cave;
 
 import com.abyssia.Abyssia;
 import com.abyssia.worldgen.DeepLayer;
+import com.abyssia.worldgen.DepthBand;
 import com.abyssia.worldgen.OceanChunkGenerator;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -11,7 +12,9 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,10 +30,12 @@ import java.util.stream.Stream;
 /**
  * Testing aid (ops only), run in the overworld's deep layer (below the bedrock band):
  * <ul>
- *     <li>{@code /abyssia caves list [range]}: cave systems near you, with their type, rarity and route</li>
- *     <li>{@code /abyssia caves locate <type or landmark>}: the nearest system of that type or landmark</li>
- *     <li>{@code /abyssia caves here}: which cave space you are in and its environment</li>
- *     <li>{@code /abyssia caves stats}: cave generation time per chunk so far</li>
+ *     <li>{@code /abyssia caves list [range]}: cave systems near you (the shallow network and the crust windows B', C, D, E),
+ *     with their window, biome, environment, type, rarity and route</li>
+ *     <li>{@code /abyssia caves locate <type or landmark>}: the nearest system of that type or landmark (windows included)</li>
+ *     <li>{@code /abyssia caves here}: which cave space you are in, its window, biome and environment</li>
+ *     <li>{@code /abyssia caves census <radius> <y0> <y1>}: cave volume by environment per window (from the layouts), plus block counts for small boxes</li>
+ *     <li>{@code /abyssia caves stats}: cave generation time per chunk so far, and per crust window</li>
  * </ul>
  * and in any dimension {@code /abyssia map <radius> <step>}: a biome and seabed map around you (PNG + CSV) of the layer
  * you are in (run it below Y -64 for the deep layer).
@@ -40,6 +45,8 @@ public final class CaveCommand
 {
     private static final int LOCATE_RADIUS_CELLS = 48;
     private static final int LOCATE_RADIUS_MINOR = 24;
+    /** Cells searched around you in each crust window (their cells are bigger than the shallow network's). */
+    private static final int LOCATE_RADIUS_WINDOW = 24;
     /** Cavern centre landmarks are found by building whole systems, so that search stays nearer. */
     private static final int LOCATE_RADIUS_CAVERN = 16;
     private static final String CAVERN_PREFIX = "cavern_";
@@ -65,22 +72,22 @@ public final class CaveCommand
                                         .executes(ctx -> locate(ctx, StringArgumentType.getString(ctx, "target")))))
                         .then(Commands.literal("here").executes(CaveCommand::here))
                         .then(Commands.literal("slice")
-                                .then(Commands.argument("y", IntegerArgumentType.integer(-512, 512))
+                                .then(Commands.argument("y", IntegerArgumentType.integer(-1872, -64))
                                         .then(Commands.argument("radius", IntegerArgumentType.integer(8, 256))
                                                 .executes(ctx -> render(ctx, () -> CaveDebugRender.slice(ctx.getSource().getLevel(), origin(ctx),
                                                         IntegerArgumentType.getInteger(ctx, "y"), IntegerArgumentType.getInteger(ctx, "radius")))))))
                         .then(Commands.literal("section")
                                 .then(Commands.argument("axis", StringArgumentType.word()).suggests((c, b) -> SharedSuggestionProvider.suggest(List.of("x", "z"), b))
                                         .then(Commands.argument("radius", IntegerArgumentType.integer(8, 256))
-                                                .then(Commands.argument("y0", IntegerArgumentType.integer(-512, 512))
-                                                        .then(Commands.argument("y1", IntegerArgumentType.integer(-512, 512))
+                                                .then(Commands.argument("y0", IntegerArgumentType.integer(-1872, -64))
+                                                        .then(Commands.argument("y1", IntegerArgumentType.integer(-1872, -64))
                                                                 .executes(ctx -> render(ctx, () -> CaveDebugRender.section(ctx.getSource().getLevel(), origin(ctx),
                                                                         StringArgumentType.getString(ctx, "axis").equals("x"), IntegerArgumentType.getInteger(ctx, "radius"),
                                                                         IntegerArgumentType.getInteger(ctx, "y0"), IntegerArgumentType.getInteger(ctx, "y1")))))))))
                         .then(Commands.literal("census")
                                 .then(Commands.argument("radius", IntegerArgumentType.integer(1, 128))
-                                        .then(Commands.argument("y0", IntegerArgumentType.integer(-512, 512))
-                                                .then(Commands.argument("y1", IntegerArgumentType.integer(-512, 512))
+                                        .then(Commands.argument("y0", IntegerArgumentType.integer(-1872, -64))
+                                                .then(Commands.argument("y1", IntegerArgumentType.integer(-1872, -64))
                                                         .executes(CaveCommand::census)))))
                         .then(Commands.literal("verify")
                                 .then(Commands.argument("samples", IntegerArgumentType.integer(1, 5000))
@@ -117,14 +124,27 @@ public final class CaveCommand
         CaveNetwork network = network(ctx);
         if (network == null) return 0;
         BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
-        List<CaveSystem> systems = network.systemsNear(pos.getX() - range, pos.getZ() - range, pos.getX() + range, pos.getZ() + range);
+        List<CaveSystem> systems = network.systemsNearAll(pos.getX() - range, pos.getZ() - range, pos.getX() + range, pos.getZ() + range);
         ctx.getSource().sendSuccess(() -> Component.literal(systems.size() + " cave system(s) within " + range + " blocks"), false);
         for (CaveSystem s : systems)
         {
-            ctx.getSource().sendSuccess(() -> Component.literal((s.minor ? "minor " : "") + s.rarity().name().toLowerCase() + " @ " + s.x + " " + s.y + " " + s.z
+            ctx.getSource().sendSuccess(() -> Component.literal(where(network, s) + (s.minor ? "minor " : "") + s.rarity().name().toLowerCase() + " @ " + s.x + " " + s.y + " " + s.z
                     + " (" + s.shapes.size() + " shapes): " + s.summary + entrances(s)), false);
         }
         return systems.size();
+    }
+
+    /** "[C] biome abyssia:abyss_toxic, environment abyssia:toxic: " for a system: its window (or shallow), the biome at its hub and its main chamber's environment. */
+    private static String where(CaveNetwork network, CaveSystem s)
+    {
+        CaveSpace main = null;
+        for (CaveSpace space : s.spaces)
+        {
+            if (space.role == CaveSpace.Role.CHAMBER && (main == null || space.radius > main.radius)) main = space;
+        }
+        ResourceKey<Biome> biome = network.biomeAt(s.x, s.y, s.z);
+        return "[" + (s.band != null ? s.band.label() : "shallow") + "] biome " + (biome != null ? biome.location() : "?")
+                + (main != null ? ", environment " + main.environmentId : "") + ": ";
     }
 
     private static String entrances(CaveSystem s)
@@ -160,44 +180,61 @@ public final class CaveCommand
             return 0;
         }
         BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
-        int cell = network.cellSize();
-        int cx = Math.floorDiv(pos.getX(), cell), cz = Math.floorDiv(pos.getZ(), cell);
-        for (int ring = 0; ring <= LOCATE_RADIUS_CAVERN; ring++)
+        // The nearest in the shallow network and in each window (windows search a shorter way: their cells are bigger and every system is large).
+        Cavern bestCavern = null;
+        CaveSystem bestSystem = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (CaveNetwork net : network.all())
         {
-            Cavern best = null;
-            CaveSystem bestSystem = null;
-            double bestDistance = Double.MAX_VALUE;
-            for (int dx = -ring; dx <= ring; dx++)
+            int cell = net.cellSize(), rings = net.isWindow() ? LOCATE_RADIUS_CAVERN / 2 : LOCATE_RADIUS_CAVERN;
+            int cx = Math.floorDiv(pos.getX(), cell), cz = Math.floorDiv(pos.getZ(), cell);
+            for (int ring = 0; ring <= rings; ring++)
             {
-                for (int dz = -ring; dz <= ring; dz++)
+                Cavern best = null;
+                CaveSystem found = null;
+                double ringDistance = Double.MAX_VALUE;
+                for (int dx = -ring; dx <= ring; dx++)
                 {
-                    if (Math.max(Math.abs(dx), Math.abs(dz)) != ring || network.plan(cx + dx, cz + dz) == null) continue;
-                    CaveSystem system = network.system(cx + dx, cz + dz);
-                    if (system == null) continue;
-                    for (CaveSpace space : system.spaces)
+                    for (int dz = -ring; dz <= ring; dz++)
                     {
-                        Cavern c = space.cavern;
-                        if (c == null || c.space != space || c.center() != center) continue;
-                        double d = Math.hypot(c.centerX() - pos.getX(), c.centerZ() - pos.getZ());
-                        if (d < bestDistance)
+                        if (Math.max(Math.abs(dx), Math.abs(dz)) != ring || net.plan(cx + dx, cz + dz) == null) continue;
+                        CaveSystem system = net.system(cx + dx, cz + dz);
+                        if (system == null) continue;
+                        for (CaveSpace space : system.spaces)
                         {
-                            bestDistance = d;
-                            best = c;
-                            bestSystem = system;
+                            Cavern c = space.cavern;
+                            if (c == null || c.space != space || c.center() != center) continue;
+                            double d = Math.hypot(c.centerX() - pos.getX(), c.centerZ() - pos.getZ());
+                            if (d < ringDistance)
+                            {
+                                ringDistance = d;
+                                best = c;
+                                found = system;
+                            }
                         }
                     }
                 }
-            }
-            if (best != null)
-            {
-                Cavern found = best;
-                CaveSystem system = bestSystem;
-                ctx.getSource().sendSuccess(() -> Component.literal(target + " at " + (int) found.centerX() + " " + (int) found.floor0 + " " + (int) found.centerZ()
-                        + " (" + (int) Math.hypot(found.centerX() - pos.getX(), found.centerZ() - pos.getZ()) + " blocks): " + system.summary + entrances(system)), false);
-                return 1;
+                if (best != null)
+                {
+                    if (ringDistance < bestDistance)
+                    {
+                        bestDistance = ringDistance;
+                        bestCavern = best;
+                        bestSystem = found;
+                    }
+                    break;
+                }
             }
         }
-        ctx.getSource().sendFailure(Component.literal("No " + target + " within " + LOCATE_RADIUS_CAVERN * cell + " blocks"));
+        if (bestCavern != null)
+        {
+            Cavern found = bestCavern;
+            CaveSystem system = bestSystem;
+            ctx.getSource().sendSuccess(() -> Component.literal(target + " at " + (int) found.centerX() + " " + (int) found.floor0 + " " + (int) found.centerZ()
+                    + " (" + (int) Math.hypot(found.centerX() - pos.getX(), found.centerZ() - pos.getZ()) + " blocks): " + where(network, system) + system.summary + entrances(system)), false);
+            return 1;
+        }
+        ctx.getSource().sendFailure(Component.literal("No " + target + " within " + LOCATE_RADIUS_CAVERN * network.cellSize() + " blocks"));
         return 0;
     }
 
@@ -215,13 +252,15 @@ public final class CaveCommand
         }
         BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
         int cell = network.cellSize();
+        // Mega caverns exist only in the crust windows: skip the long shallow search.
+        int shallowRings = type == CaveType.MEGA_CAVERN ? -1 : LOCATE_RADIUS_CELLS;
         if (type == CaveType.SEA_ARCH || type == CaveType.SMALL_SEA_CAVE || type == CaveType.ERODED_CAVE)
         {
             if (locateMinor(ctx, network, pos, type, target)) return 1;
         }
         int cx = Math.floorDiv(pos.getX(), cell), cz = Math.floorDiv(pos.getZ(), cell);
         // Rings outward: plans are light (no layout), so a wide search stays quick.
-        for (int ring = 0; ring <= LOCATE_RADIUS_CELLS; ring++)
+        for (int ring = 0; ring <= shallowRings; ring++)
         {
             CaveNetworkGenerator.Plan best = null;
             double bestDistance = Double.MAX_VALUE;
@@ -245,12 +284,64 @@ public final class CaveCommand
                 CaveNetworkGenerator.Plan found = best;
                 CaveSystem system = network.system(found.cellX(), found.cellZ());
                 ctx.getSource().sendSuccess(() -> Component.literal(target + " at " + (int) found.x() + " " + (int) found.y() + " " + (int) found.z()
-                        + " (" + (int) Math.hypot(found.x() - pos.getX(), found.z() - pos.getZ()) + " blocks): " + system.summary + entrances(system)), false);
+                        + " (" + (int) Math.hypot(found.x() - pos.getX(), found.z() - pos.getZ()) + " blocks): " + where(network, system) + system.summary + entrances(system)), false);
                 return 1;
             }
         }
-        ctx.getSource().sendFailure(Component.literal("No " + target + " within " + LOCATE_RADIUS_CELLS * cell + " blocks"));
+        if (locateInWindows(ctx, network, pos, type, landmark, target)) return 1;
+        ctx.getSource().sendFailure(Component.literal("No " + target + " within " + LOCATE_RADIUS_CELLS * cell + " blocks"
+                + (network.windows().length > 0 ? " (shallow) or " + LOCATE_RADIUS_WINDOW + " cells (crust windows)" : "")));
         return 0;
+    }
+
+    /** The nearest plan of the type or landmark over all crust windows, searched ring by ring in each. */
+    private static boolean locateInWindows(CommandContext<CommandSourceStack> ctx, CaveNetwork network, BlockPos pos, @Nullable CaveType type,
+                                           @Nullable CaveLandmark landmark, String target)
+    {
+        CaveNetworkGenerator.Plan best = null;
+        CaveNetwork bestNet = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (CaveNetwork net : network.windows())
+        {
+            int cell = net.cellSize();
+            int cx = Math.floorDiv(pos.getX(), cell), cz = Math.floorDiv(pos.getZ(), cell);
+            for (int ring = 0; ring <= LOCATE_RADIUS_WINDOW; ring++)
+            {
+                CaveNetworkGenerator.Plan found = null;
+                double foundDistance = Double.MAX_VALUE;
+                for (int dx = -ring; dx <= ring; dx++)
+                {
+                    for (int dz = -ring; dz <= ring; dz++)
+                    {
+                        if (Math.max(Math.abs(dx), Math.abs(dz)) != ring) continue;
+                        CaveNetworkGenerator.Plan p = net.plan(cx + dx, cz + dz);
+                        if (p == null || (landmark != null ? p.landmark() != landmark : p.type() != type)) continue;
+                        double d = Math.hypot(p.x() - pos.getX(), p.z() - pos.getZ());
+                        if (d < foundDistance)
+                        {
+                            foundDistance = d;
+                            found = p;
+                        }
+                    }
+                }
+                if (found != null)
+                {
+                    if (foundDistance < bestDistance)
+                    {
+                        bestDistance = foundDistance;
+                        best = found;
+                        bestNet = net;
+                    }
+                    break;
+                }
+            }
+        }
+        if (best == null) return false;
+        CaveNetworkGenerator.Plan found = best;
+        CaveSystem system = bestNet.system(found.cellX(), found.cellZ());
+        ctx.getSource().sendSuccess(() -> Component.literal(target + " at " + (int) found.x() + " " + (int) found.y() + " " + (int) found.z()
+                + " (" + (int) Math.hypot(found.x() - pos.getX(), found.z() - pos.getZ()) + " blocks): " + where(network, system) + system.summary + entrances(system)), false);
+        return true;
     }
 
     @FunctionalInterface
@@ -315,8 +406,11 @@ public final class CaveCommand
         for (int i = 0; i < samples; i++)
         {
             int x0 = (random.nextInt(600) - 300) * 16, z0 = (random.nextInt(600) - 300) * 16;
-            List<CaveSystem> filtered = network.systemsNear(x0 - 1, z0 - 1, x0 + 16, z0 + 16);
-            for (CaveSystem s : network.systemsNearUnfiltered(x0 - 1, z0 - 1, x0 + 16, z0 + 16))
+            // The shallow network and every crust window, each against its own brute force.
+            for (CaveNetwork net : network.all())
+            {
+            List<CaveSystem> filtered = net.systemsNear(x0 - 1, z0 - 1, x0 + 16, z0 + 16);
+            for (CaveSystem s : net.systemsNearUnfiltered(x0 - 1, z0 - 1, x0 + 16, z0 + 16))
             {
                 // Only a real overlap counts: a shape or a decorated site reaching the chunk (with its one-block rim).
                 boolean reaches = false;
@@ -334,9 +428,10 @@ public final class CaveCommand
                 if (!filtered.contains(s))
                 {
                     missed++;
-                    String info = "missed chunk " + x0 + "," + z0 + ": " + s.summary;
+                    String info = "missed chunk " + x0 + "," + z0 + " (" + net.label() + "): " + s.summary;
                     ctx.getSource().sendSuccess(() -> Component.literal(info), false);
                 }
+            }
             }
         }
         int m = missed, n = systems;
@@ -344,11 +439,37 @@ public final class CaveCommand
         return m == 0 ? 1 : 0;
     }
 
+    /** Blocks above which the block census is skipped (it reads, and so generates, every block of the box). */
+    private static final long CENSUS_BLOCK_LIMIT = 6_000_000L;
+
     private static int census(CommandContext<CommandSourceStack> ctx)
     {
         int radius = IntegerArgumentType.getInteger(ctx, "radius");
-        java.util.Map<String, Integer> counts = CaveDebugRender.census(ctx.getSource().getLevel(), origin(ctx), radius,
-                IntegerArgumentType.getInteger(ctx, "y0"), IntegerArgumentType.getInteger(ctx, "y1"));
+        int y0 = Math.min(IntegerArgumentType.getInteger(ctx, "y0"), IntegerArgumentType.getInteger(ctx, "y1"));
+        int y1 = Math.max(IntegerArgumentType.getInteger(ctx, "y0"), IntegerArgumentType.getInteger(ctx, "y1"));
+        // Cave volume by environment per window, from the layouts (no chunk is generated): the share of each band's volume that is cave.
+        ServerLevel level = ctx.getSource().getLevel();
+        CaveNetwork net = level.getChunkSource().getGenerator() instanceof OceanChunkGenerator generator
+                ? generator.caveNetwork(level.getChunkSource().randomState(), level.registryAccess(), level.getSeed()) : null;
+        if (net != null && !net.isEmpty())
+        {
+            java.util.Map<String, java.util.Map<String, Long>> volume = CaveDebugRender.caveVolume(net, origin(ctx), radius, y0, y1);
+            volume.forEach((label, envs) -> {
+                long total = Math.max(1, envs.getOrDefault("total", 1L));
+                long cave = envs.entrySet().stream().filter(e -> !e.getKey().equals("total")).mapToLong(java.util.Map.Entry::getValue).sum();
+                StringBuilder line = new StringBuilder(String.format("%s: %d blocks sampled, cave %.1f%%:", label, total, cave * 100.0 / total));
+                envs.entrySet().stream().filter(e -> !e.getKey().equals("total")).sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
+                        .forEach(e -> line.append(String.format(" %s %.1f%%", e.getKey(), e.getValue() * 100.0 / Math.max(1, cave))));
+                ctx.getSource().sendSuccess(() -> Component.literal(line.toString()), false);
+            });
+        }
+        long box = (2L * radius + 1) * (2L * radius + 1) * (y1 - y0 + 1);
+        if (box > CENSUS_BLOCK_LIMIT)
+        {
+            ctx.getSource().sendSuccess(() -> Component.literal("block counts skipped (" + box + " blocks; use a smaller box, up to " + CENSUS_BLOCK_LIMIT + ")"), false);
+            return 1;
+        }
+        java.util.Map<String, Integer> counts = CaveDebugRender.census(ctx.getSource().getLevel(), origin(ctx), radius, y0, y1);
         StringBuilder line = new StringBuilder();
         counts.forEach((k, v) -> line.append(k).append('=').append(v).append(' '));
         ctx.getSource().sendSuccess(() -> Component.literal(line.toString().trim()), false);
@@ -384,7 +505,8 @@ public final class CaveCommand
         BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
         CaveShape nearest = null;
         double best = Double.MAX_VALUE;
-        for (CaveSystem s : network.systemsNear(pos.getX(), pos.getZ(), pos.getX(), pos.getZ()))
+        CaveSystem nearestSystem = null;
+        for (CaveSystem s : network.systemsNearAll(pos.getX(), pos.getZ(), pos.getX(), pos.getZ()))
         {
             for (CaveShape shape : s.shapes)
             {
@@ -394,17 +516,23 @@ public final class CaveCommand
                 {
                     best = d;
                     nearest = shape;
+                    nearestSystem = s;
                 }
             }
         }
+        ResourceKey<Biome> biomeHere = network.biomeAt(pos.getX(), pos.getY(), pos.getZ());
+        DepthBand windowHere = DepthBand.forY(pos.getY());
+        String place = "window " + (windowHere != null ? windowHere.label() : "none (shallow or above)") + ", biome " + (biomeHere != null ? biomeHere.location() : "?");
         if (nearest == null || best > 4)
         {
-            ctx.getSource().sendSuccess(() -> Component.literal("Not in a cave of the network (seabed at y " + network.seabed(pos.getX(), pos.getZ()) + ")"), false);
+            ctx.getSource().sendSuccess(() -> Component.literal("Not in a cave of the network (" + place
+                    + (windowHere == null ? ", seabed at y " + network.seabed(pos.getX(), pos.getZ()) : "") + ")"), false);
             return 0;
         }
         CaveSpace space = nearest.space;
         double distance = best;
-        ctx.getSource().sendSuccess(() -> Component.literal(space.role.name().toLowerCase() + " of a " + space.type.getSerializedName()
+        String system = nearestSystem.band != null ? "system of " + nearestSystem.band.label() : "shallow system";
+        ctx.getSource().sendSuccess(() -> Component.literal(place + "; " + system + ": " + space.role.name().toLowerCase() + " of a " + space.type.getSerializedName()
                 + (space.landmark != null ? " [" + space.landmark.getSerializedName() + "]" : "") + ", environment " + space.environmentId
                 + ", radius " + (int) space.radius + (space.hasLake() ? ", lake surface y " + space.waterLevel : "")
                 + String.format(" (%.1f blocks from its surface)", -distance)), false);

@@ -48,21 +48,21 @@ final class CavernPlanner
         CavernTemplate template = b.net.cavernTemplate(id);
         if (template == null) return;
         double r = c.radius();
-        Cavern.Tier tier = r < 24 ? Cavern.Tier.SMALL : r < 40 ? Cavern.Tier.LARGE : Cavern.Tier.MASSIVE;
+        Cavern.Tier tier = r < 24 ? Cavern.Tier.SMALL : r < 40 ? Cavern.Tier.LARGE : s.type == CaveType.MEGA_CAVERN ? Cavern.Tier.MEGA : Cavern.Tier.MASSIVE;
         double floor0 = c.floorAt(c.x(), c.z()), ceiling0 = c.ceilingAt(c.x(), c.z());
         if (Double.isNaN(floor0) || Double.isNaN(ceiling0)) return;
-        double tierScale = tier == Cavern.Tier.SMALL ? 0.7 : tier == Cavern.Tier.LARGE ? 1.0 : 1.3;
+        double tierScale = tier == Cavern.Tier.SMALL ? 0.7 : tier == Cavern.Tier.LARGE ? 1.0 : tier == Cavern.Tier.MASSIVE ? 1.3 : 1.5;
         Cavern cavern = new Cavern(id, template, tier, s, c, b.noises, floor0, ceiling0, template.wallRelief * tierScale,
                 Math.round(b.range(10, 22) * Math.sqrt(r / 24)), b.range(0, 11));
         s.cavern = cavern;
         // Rolling floor instead of a flat cut (bounds are recomputed including the wall relief).
-        double relief = tier == Cavern.Tier.SMALL ? 1.5 : tier == Cavern.Tier.LARGE ? 2.5 : 3.5;
+        double relief = tier == Cavern.Tier.SMALL ? 1.5 : tier == Cavern.Tier.LARGE ? 2.5 : tier == Cavern.Tier.MASSIVE ? 3.5 : 4.5;
         for (CaveShape.Ellipsoid lobe : c.lobes()) lobe.setFloorRelief(b.noises, relief);
         cavern.setCrystals(crystalColors(b));
 
         Site site = new Site(b, c, cavern, template, tier);
         CavernCenter center = null;
-        double centerChance = template.centerChance * (tier == Cavern.Tier.MASSIVE ? 1.0 : tier == Cavern.Tier.LARGE ? 0.65 : 0.3);
+        double centerChance = template.centerChance * (tier.ordinal() >= Cavern.Tier.MASSIVE.ordinal() ? 1.0 : tier == Cavern.Tier.LARGE ? 0.65 : 0.3);
         if (!template.centers.isEmpty() && b.rng.nextDouble() < centerChance) center = template.centers.pick(b.rng.nextDouble());
         seedPatches(site, center != null);
 
@@ -115,7 +115,7 @@ final class CavernPlanner
     {
         CaveBuilder b = site.b;
         Chamber c = site.chamber;
-        int sectors = site.tier == Cavern.Tier.MASSIVE ? 8 : 4;
+        int sectors = site.tier == Cavern.Tier.MEGA ? 12 : site.tier == Cavern.Tier.MASSIVE ? 8 : 4;
         double spin = b.rng.nextDouble() * Math.PI * 2;
         boolean open = false;
         List<Cavern.Patch> list = new ArrayList<>();
@@ -146,7 +146,7 @@ final class CavernPlanner
         {
             site.cavern.addPatch(p);
             // Thermal patches get their own vents; the existing vent code builds and zones them.
-            if (p.type() == CavernPatch.THERMAL) site.vents(p.x(), p.z(), p.radius() * 0.6, b.range(1, site.tier == Cavern.Tier.MASSIVE ? 4 : 2));
+            if (p.type() == CavernPatch.THERMAL) site.vents(p.x(), p.z(), p.radius() * 0.6, b.range(1, site.tier == Cavern.Tier.MEGA ? 6 : site.tier == Cavern.Tier.MASSIVE ? 4 : 2));
         }
     }
 
@@ -233,6 +233,15 @@ final class CavernPlanner
             return d + b.noises.displacement(space, px, py, pz);
         }
 
+        /**
+         * Steps a floor / ceiling scan from the column's middle may take: 200 as ever, more for rooms taller than 400
+         * (mega caverns: half the gap plus the wall relief), capped so a probe stays cheap.
+         */
+        private static int scanLimit(double top, double bottom)
+        {
+            return (int) Math.min(400, Math.max(200, Math.ceil((top - bottom) / 2) + 24));
+        }
+
         /** First open height above the floor of this column (NaN outside the cavern). */
         double floor(double px, double pz)
         {
@@ -240,7 +249,7 @@ final class CavernPlanner
             if (Double.isNaN(top) || Double.isNaN(bottom)) return Double.NaN;
             double yy = Math.floor((top + bottom) / 2);
             if (field(px, yy, pz) >= 0) return Double.NaN;
-            for (int i = 0; i < 200; i++, yy--)
+            for (int i = 0, limit = scanLimit(top, bottom); i < limit; i++, yy--)
             {
                 if (field(px, yy - 1, pz) >= 0) return yy;
             }
@@ -254,7 +263,7 @@ final class CavernPlanner
             if (Double.isNaN(top) || Double.isNaN(bottom)) return Double.NaN;
             double yy = Math.floor((top + bottom) / 2);
             if (field(px, yy, pz) >= 0) return Double.NaN;
-            for (int i = 0; i < 200; i++, yy++)
+            for (int i = 0, limit = scanLimit(top, bottom); i < limit; i++, yy++)
             {
                 if (field(px, yy + 1, pz) >= 0) return yy + 1;
             }

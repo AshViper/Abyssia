@@ -57,6 +57,25 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("AB02 ore veins inside the solid abyss crust (Y -376 and below), by excavator tier. Multipliers scale how many veins "
+                + "form (0 = none, fractions are resolved randomly). Take effect for newly generated chunks.").push("crust_ore");
+    }
+
+    public static final ModConfigSpec.DoubleValue CRUST_ORE_DENSITY = BUILDER
+            .comment("Global multiplier on all crust ore veins")
+            .defineInRange("density", 1.0, 0.0, 10.0);
+    public static final ModConfigSpec.DoubleValue CRUST_MK0_ORE = BUILDER
+            .comment("MK0 crust ores (iron, copper, gold, redstone, lapis, diamond, emerald)")
+            .defineInRange("mk0_ore", 1.0, 0.0, 10.0);
+    public static final ModConfigSpec.DoubleValue CRUST_MK1_ORE = BUILDER
+            .comment("MK1 crust ores (cobalt, nickel, manganese, titanium, lead, molybdenum, vanadium, zinc)")
+            .defineInRange("mk1_ore", 1.0, 0.0, 10.0);
+    public static final ModConfigSpec.DoubleValue CRUST_MK2_ORE = BUILDER
+            .comment("MK2 crust ores (tungsten, platinum, tellurium, iridium, uranium, neodymium, yttrium, thorium)")
+            .defineInRange("mk2_ore", 1.0, 0.0, 10.0);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Deep ocean vegetation").push("vegetation");
     }
 
@@ -135,6 +154,32 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("AB02 crust cave windows: free-floating cave networks inside the abyss crust, one per depth window (B' Y -650..-380,",
+                "C -1100..-650, D -1550..-1100, E -1862..-1550). The values below are per window in this order: B', C, D, E.",
+                "The shallow, seabed-relative network above is configured by [caves] and is not affected. Changing spacing, size or the",
+                "vertical link chance reshapes the layout of chunks that are not generated yet: set them before exploring new areas.").push("caves_bands");
+    }
+
+    public static final ModConfigSpec.BooleanValue BANDS_ENABLED = BUILDER
+            .comment("Generate the crust cave windows (needs the biomes' cave profiles; off = the crust stays solid)")
+            .define("enabled", true);
+    public static final ModConfigSpec.IntValue[] BAND_SPACING = bandInts("system_spacing", "Grid spacing of cave systems of this window in blocks (each cell holds at most one system; "
+            + "the lower the denser the network, the cost grows with 1/spacing squared)", new int[] {208, 224, 224, 208}, 112, 768);
+    public static final ModConfigSpec.DoubleValue[] BAND_SYSTEM_CHANCE = bandDoubles("system_chance_multiplier", "Multiplier on each biome's chance that a cell of this window "
+            + "holds a cave system (stacks with [caves] system_chance_multiplier): rarer high up, denser deeper", new double[] {0.8, 0.9, 1.0, 1.1}, 4.0);
+    public static final ModConfigSpec.DoubleValue[] BAND_SIZE = bandDoubles("size_multiplier", "Multiplier on the radius of the systems of this window "
+            + "(mega caverns stay within radius 128)", new double[] {1.0, 1.0, 1.0, 1.0}, 2.0);
+    public static final ModConfigSpec.DoubleValue[] BAND_MEGA_WEIGHT = bandDoubles("mega_cavern_multiplier", "Weight multiplier for mega caverns (radius 64-128, rare) "
+            + "in the cave profiles of this window; 0 = none", new double[] {0.5, 1.0, 1.2, 1.5}, 50.0);
+    public static final ModConfigSpec.DoubleValue[] BAND_CONNECTION = bandDoubles("connection_multiplier", "Multiplier on the chance that neighbouring cave systems "
+            + "of this window are joined by a tunnel (stacks with [caves] connection_multiplier)", new double[] {1.0, 1.0, 1.0, 1.0}, 4.0);
+    public static final ModConfigSpec.DoubleValue BAND_VERTICAL_LINK_CHANCE = BUILDER
+            .comment("Chance that a system gets a vertical shaft up into the nearest system of the window above (windows overlap by 40 blocks), "
+                    + "so the player can climb or descend through the bands; the topmost window has none. 0 = none")
+            .defineInRange("vertical_link_chance", 0.5, 0.0, 1.0);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Biome-specific seabed structures: rock spires, crystal clusters, chimney groups, volcanoes, craters, fissures,",
                 "mud mounds, kelp forests and cavern pillars (definitions and per-biome profiles are datapack data:",
                 "abyssia/seabed_structure and abyssia/seabed_structure_profile). Changing these on an existing world leaves seams",
@@ -156,6 +201,21 @@ public class Config
     private static ModConfigSpec.IntValue veinSize(String name, int value)
     {
         return BUILDER.defineInRange(name, value, 1, 600);
+    }
+
+    /** One option per cave window, named {@code <name>_<window>} (b = B', c, d, e). Static-init order: no static fields used here. */
+    private static ModConfigSpec.IntValue[] bandInts(String name, String comment, int[] defaults, int min, int max)
+    {
+        ModConfigSpec.IntValue[] values = new ModConfigSpec.IntValue[defaults.length];
+        for (int i = 0; i < values.length; i++) values[i] = BUILDER.comment(comment).defineInRange(name + "_" + "bcde".charAt(i), defaults[i], min, max);
+        return values;
+    }
+
+    private static ModConfigSpec.DoubleValue[] bandDoubles(String name, String comment, double[] defaults, double max)
+    {
+        ModConfigSpec.DoubleValue[] values = new ModConfigSpec.DoubleValue[defaults.length];
+        for (int i = 0; i < values.length; i++) values[i] = BUILDER.comment(comment).defineInRange(name + "_" + "bcde".charAt(i), defaults[i], 0.0, max);
+        return values;
     }
 
     static {
@@ -396,6 +456,31 @@ public class Config
     public static final ModConfigSpec.BooleanValue PRESSURE_ENABLED = BUILDER
             .comment("Hurt and slow players who dive deeper than their gear tier allows (survival / adventure, not in a submarine)")
             .define("enabled", true);
+    static {
+        BUILDER.pop();
+    }
+
+    static {
+        BUILDER.comment("AB02 environment hazards of the toxic / hot / frozen deep-crust biomes (see com.abyssia.hazard.HazardZone)").push("hazard");
+    }
+    public static final ModConfigSpec.BooleanValue HAZARD_ENABLED = BUILDER
+            .comment("Toxic gas, heat and cold hurt players in the special abyss biomes unless protected (survival / adventure, not in a submarine or habitat)")
+            .define("enabled", true);
+    public static final ModConfigSpec.IntValue HAZARD_PULSE_TICKS = BUILDER
+            .comment("Ticks between hazard checks; damage is scaled so that it stays per second")
+            .defineInRange("pulse_ticks", 20, 5, 200);
+    public static final ModConfigSpec.DoubleValue HAZARD_TOXIC_DAMAGE_PER_LEVEL = BUILDER
+            .comment("Extra magic damage per second and intensity level in toxic gas (half hearts; Poison is applied on top, 0 = Poison / Wither only)")
+            .defineInRange("toxic_damage_per_level", 0.5, 0.0, 20.0);
+    public static final ModConfigSpec.DoubleValue HAZARD_HEAT_DAMAGE_PER_LEVEL = BUILDER
+            .comment("Fire damage per second and intensity level in a hot biome (half hearts), before heat-proof armor")
+            .defineInRange("heat_damage_per_level", 1.0, 0.0, 20.0);
+    public static final ModConfigSpec.DoubleValue HAZARD_COLD_DAMAGE_PER_LEVEL = BUILDER
+            .comment("Freeze damage per second and intensity level in a frozen biome (half hearts), before insulating armor")
+            .defineInRange("cold_damage_per_level", 0.75, 0.0, 20.0);
+    public static final ModConfigSpec.IntValue HAZARD_INTENSITY_OVERRIDE = BUILDER
+            .comment("0 = intensity follows the depth band (B' 1, C 2, D 3, E 4); 1..4 forces that intensity everywhere")
+            .defineInRange("intensity_override", 0, 0, 4);
     static {
         BUILDER.pop();
     }

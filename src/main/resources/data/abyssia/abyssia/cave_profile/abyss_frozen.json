@@ -1,0 +1,126 @@
+{
+  "biomes": [
+    "abyssia:abyss_frozen"
+  ],
+  "system_chance": 0.75,
+  "minor_cave_chance": 0.3,
+  "connection_chance": 0.4,
+  "cave_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 22
+    },
+    {
+      "data": "medium_sea_cave",
+      "weight": 24
+    },
+    {
+      "data": "large_abyssal_cave",
+      "weight": 12
+    },
+    {
+      "data": "massive_cavern",
+      "weight": 3
+    },
+    {
+      "data": "sea_tunnel",
+      "weight": 6
+    },
+    {
+      "data": "vertical_shaft",
+      "weight": 5
+    },
+    {
+      "data": "mega_cavern",
+      "weight": 2
+    }
+  ],
+  "minor_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 6
+    },
+    {
+      "data": "sea_arch",
+      "weight": 2
+    },
+    {
+      "data": "eroded_cave",
+      "weight": 2
+    }
+  ],
+  "landmark_chance": 0.0,
+  "landmarks": [],
+  "environment": "abyssia:frozen",
+  "luminous_chance": 0.0,
+  "strata": [],
+  "ores": [
+    {
+      "data": {
+        "Name": "abyssia:cobalt_ore"
+      },
+      "weight": 4
+    },
+    {
+      "data": {
+        "Name": "abyssia:neodymium_ore"
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "Name": "abyssia:yttrium_ore"
+      },
+      "weight": 2
+    }
+  ],
+  "cavern_templates": [
+    {
+      "data": "abyssia:crystal",
+      "weight": 4
+    },
+    {
+      "data": "abyssia:mixed",
+      "weight": 2
+    },
+    {
+      "data": "abyssia:lake",
+      "weight": 2
+    }
+  ],
+  "crystal_colors": [
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:pale_crystal_cluster"
+        }
+      },
+      "weight": 4
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:cyan_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:deep_crystal_cluster"
+        }
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:blue_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:cobalt_cluster"
+        }
+      },
+      "weight": 1
+    }
+  ]
+}

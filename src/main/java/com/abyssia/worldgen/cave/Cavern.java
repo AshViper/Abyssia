@@ -19,7 +19,7 @@ import java.util.List;
  */
 public final class Cavern
 {
-    public enum Tier { SMALL, LARGE, MASSIVE }
+    public enum Tier { SMALL, LARGE, MASSIVE, MEGA }
 
     public enum Zone { FLOOR, LOWER, MIDDLE, UPPER, CEILING }
 

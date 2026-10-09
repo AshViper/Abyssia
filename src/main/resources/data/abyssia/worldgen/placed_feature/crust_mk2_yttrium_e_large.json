@@ -1,0 +1,31 @@
+{
+  "feature": "abyssia:crust_mk2_yttrium_e_large",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 17
+    },
+    {
+      "type": "abyssia:config",
+      "option": "mk2_ore"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": -1855
+        },
+        "max_inclusive": {
+          "absolute": -1550
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

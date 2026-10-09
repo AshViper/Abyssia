@@ -2,6 +2,7 @@ package com.abyssia.worldgen.cave;
 
 import com.abyssia.Abyssia;
 import com.abyssia.worldgen.DeepLayer;
+import com.abyssia.worldgen.DepthBand;
 import com.abyssia.worldgen.OceanChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
@@ -203,5 +204,65 @@ final class CaveDebugRender
             }
         }
         return counts;
+    }
+
+    /**
+     * Cave volume by environment per depth window, estimated from the layouts (no chunk is generated): a grid of samples
+     * 4 blocks apart (one sample = 64 blocks) over the box, each sample inside a carve shape counted for the environment of
+     * the shape with the lowest signed distance. Wall noise and formation rock are ignored, so the figures are for comparing
+     * bands and environments, not exact. Result: label (window, "shallow" or "other") to environment name to blocks, with
+     * the sampled total of the label under "total".
+     */
+    static Map<String, Map<String, Long>> caveVolume(CaveNetwork network, BlockPos centre, int radius, int y0, int y1)
+    {
+        int x0 = centre.getX() - radius, x1 = centre.getX() + radius, z0 = centre.getZ() - radius, z1 = centre.getZ() + radius;
+        Map<Long, java.util.List<CaveShape>> buckets = new java.util.HashMap<>();
+        for (CaveSystem s : network.systemsNearAll(x0, z0, x1, z1))
+        {
+            for (CaveShape shape : s.shapes)
+            {
+                if (shape.kind != CaveShape.Kind.CARVE || !shape.intersects(x0, y0, z0, x1, y1, z1)) continue;
+                for (int bx = Math.max(shape.minX, x0) >> 5; bx <= Math.min(shape.maxX, x1) >> 5; bx++)
+                {
+                    for (int bz = Math.max(shape.minZ, z0) >> 5; bz <= Math.min(shape.maxZ, z1) >> 5; bz++)
+                    {
+                        buckets.computeIfAbsent(((long) bx << 32) ^ (bz & 0xFFFFFFFFL), k -> new java.util.ArrayList<>()).add(shape);
+                    }
+                }
+            }
+        }
+        Map<String, Map<String, Long>> result = new java.util.LinkedHashMap<>();
+        for (DepthBand band : DepthBand.values()) result.put(band.label(), new TreeMap<>());
+        result.put("shallow", new TreeMap<>());
+        result.put("other", new TreeMap<>());
+        for (int x = x0; x <= x1; x += 4)
+        {
+            for (int z = z0; z <= z1; z += 4)
+            {
+                java.util.List<CaveShape> bucket = buckets.get(((long) (x >> 5) << 32) ^ ((z >> 5) & 0xFFFFFFFFL));
+                for (int y = y0; y <= y1; y += 4)
+                {
+                    DepthBand band = DepthBand.forY(y);
+                    Map<String, Long> volume = result.get(band != null ? band.label() : y >= DeepLayer.DEEP_BOTTOM_Y ? "shallow" : "other");
+                    volume.merge("total", 64L, Long::sum);
+                    if (bucket == null) continue;
+                    CaveShape best = null;
+                    double bestDistance = 0;
+                    for (CaveShape shape : bucket)
+                    {
+                        if (y < shape.minY || y > shape.maxY || x < shape.minX || x > shape.maxX || z < shape.minZ || z > shape.maxZ) continue;
+                        double d = shape.distance(x + 0.5, y + 0.5, z + 0.5);
+                        if (d < bestDistance)
+                        {
+                            bestDistance = d;
+                            best = shape;
+                        }
+                    }
+                    if (best != null) volume.merge(best.space.environmentId.getPath(), 64L, Long::sum);
+                }
+            }
+        }
+        result.values().removeIf(m -> m.getOrDefault("total", 0L) == 0);
+        return result;
     }
 }

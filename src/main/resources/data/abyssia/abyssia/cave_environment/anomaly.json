@@ -1,0 +1,200 @@
+{
+  "geology": {
+    "wall": [
+      {
+        "data": {
+          "Name": "abyssia:dark_cave_rock"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:crystal_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:volcanic_glass"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:trench_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "floor": [
+      {
+        "data": {
+          "Name": "abyssia:crystal_sediment"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:cave_mud"
+        },
+        "weight": 1
+      }
+    ],
+    "ceiling": [
+      {
+        "data": {
+          "Name": "abyssia:dark_cave_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:volcanic_glass"
+        },
+        "weight": 2
+      }
+    ],
+    "accents": [
+      {
+        "data": {
+          "Name": "abyssia:violet_crystal_block"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_crystal_block"
+        },
+        "weight": 1
+      }
+    ],
+    "accent_chance": 0.08
+  },
+  "flora": {
+    "floor": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:violet_abyssal_grass"
+          },
+          "max_height": 2
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_plant"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "ceiling": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_vine"
+          },
+          "min_height": 2,
+          "max_height": 6
+        },
+        "weight": 1
+      }
+    ],
+    "glow": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_crystal_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:glowtip_grass"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:lumen_quill"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "bright": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:abyssal_bloom"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:hadal_bloom"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "density": 0.12,
+    "glow_ratio": 0.4,
+    "bright_ratio": 0.08
+  },
+  "formations": {
+    "speleothem": {
+      "Name": "abyssia:crystal_stalactite"
+    },
+    "speleothem_density": 0.06,
+    "crystals": [
+      {
+        "data": {
+          "Name": "abyssia:abyssal_crystal_cluster"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:pressure_crystal_cluster"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:crystal_needle"
+        },
+        "weight": 2
+      }
+    ],
+    "crystal_density": 0.08,
+    "debris": [
+      {
+        "data": {
+          "Name": "abyssia:crystal_shards"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:cave_rubble"
+        },
+        "weight": 2
+      }
+    ]
+  }
+}

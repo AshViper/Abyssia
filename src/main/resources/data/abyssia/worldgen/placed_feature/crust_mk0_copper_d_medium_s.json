@@ -1,0 +1,31 @@
+{
+  "feature": "abyssia:crust_mk0_copper_d_medium",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 3
+    },
+    {
+      "type": "abyssia:config",
+      "option": "mk0_ore"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": -1550
+        },
+        "max_inclusive": {
+          "absolute": -1100
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

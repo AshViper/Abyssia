@@ -339,6 +339,7 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
     private static final BlockState AIR = Blocks.AIR.defaultBlockState();
     private static final BlockState STONE = Blocks.STONE.defaultBlockState();
     private static final int NO_WATER = Integer.MIN_VALUE;
+    private static final java.util.function.Predicate<BlockState> IS_WATER = state -> state == WATER;
 
     /**
      * Turns the top block of each column's first water run below the bedrock band, and of its first water run in the
@@ -365,6 +366,12 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
         for (int y = from; y > stop && y >= minY; y--)
         {
             LevelChunkSection section = sections[(y - minY) >> 4];
+            // AB02: the abyss is a solid crust now, so most columns hold no water down to the bedrock: skip dry sections whole.
+            if (section.hasOnlyAir() || !section.maybeHas(IS_WATER))
+            {
+                y -= y & 15;
+                continue;
+            }
             if (section.getBlockState(x, y & 15, z) == WATER)
             {
                 section.setBlockState(x, y & 15, z, AIR, false);

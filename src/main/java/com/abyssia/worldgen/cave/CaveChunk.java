@@ -129,7 +129,7 @@ public final class CaveChunk
         {
             for (CaveShape shape : s.shapes)
             {
-                if (!shape.intersects(bx0, network.minY(), bz0, bx1, network.maxY(), bz1)) continue;
+                if (!shape.intersects(bx0, network.minY(), bz0, bx1, network.carveTopY(), bz1)) continue;
                 shapes.add(shape);
                 lo = Math.min(lo, shape.minY);
                 hi = Math.max(hi, shape.maxY);
@@ -143,7 +143,7 @@ public final class CaveChunk
         }
         if (lo > hi) return null;
         lo = Math.max(lo, network.minY() + 1);
-        hi = Math.min(hi, network.maxY() - 2);
+        hi = Math.min(hi, network.carveTopY() - 2);
         if (lo > hi) return null;
         CaveChunk ctx = new CaveChunk(network, chunk, systems, lo, hi);
         for (CaveShape shape : shapes)
@@ -173,9 +173,14 @@ public final class CaveChunk
                 if (vent.x() >= bx0 - 12 && vent.x() <= bx1 + 12 && vent.z() >= bz0 - 12 && vent.z() <= bz1 + 12) ctx.vents.add(vent);
             }
         }
-        for (int lz = 0; lz < 16; lz++)
+        // A crust window has no seabed: strata count depth below the window's top, and no column is scanned.
+        if (network.isWindow()) Arrays.fill(ctx.seabed, network.maxY());
+        else
         {
-            for (int lx = 0; lx < 16; lx++) ctx.seabed[lz * 16 + lx] = deepFloor(ctx.sections, ctx.minBuildY, lx, lz);
+            for (int lz = 0; lz < 16; lz++)
+            {
+                for (int lx = 0; lx < 16; lx++) ctx.seabed[lz * 16 + lx] = deepFloor(ctx.sections, ctx.minBuildY, lx, lz);
+            }
         }
         for (int lz = -PAD; lz < 16 + PAD; lz++)
         {
@@ -587,6 +592,8 @@ public final class CaveChunk
     /** Refresh the ocean floor heightmap after entrances were cut through the seabed and formations raised on it. */
     void finish()
     {
+        // A crust window never touches the sea floor or anything standing on it.
+        if (network.isWindow()) return;
         Heightmap.primeHeightmaps(chunk, EnumSet.of(Heightmap.Types.OCEAN_FLOOR_WG));
     }
 

@@ -1,0 +1,43 @@
+{
+  "feature": "abyssia:crust_mk1_lead_b_medium",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:weighted_list",
+        "distribution": [
+          {
+            "data": 0,
+            "weight": 55
+          },
+          {
+            "data": 1,
+            "weight": 45
+          }
+        ]
+      }
+    },
+    {
+      "type": "abyssia:config",
+      "option": "mk1_ore"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": -650
+        },
+        "max_inclusive": {
+          "absolute": -393
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

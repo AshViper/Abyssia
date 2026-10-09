@@ -98,6 +98,68 @@ final class CaveChamberGenerator
         return new Chamber(space, cx, cy, cz, rx, ry, rz, floorY, List.copyOf(list), front);
     }
 
+    /**
+     * The chamber of a mega cavern (radius r = 64-128): a wide, low main hall plus 5-8 more lobes of three kinds, so it
+     * is not a ball: tall narrow chimneys rising from the hall's floor, wing halls (wide and flat, at their own heights,
+     * with their own level floors: steps between halls) and rounder side rooms. Lobes stay within 1.5 r of the centre
+     * and inside the window's Y range. {@code vertical} is the type's factor (the hall is a share of it).
+     */
+    static Chamber megaChamber(CaveBuilder b, CaveSpace space, double cx, double cy, double cz, double r, double vertical, boolean flatFloor)
+    {
+        double rx = r * b.range(0.9, 1.1), rz = r * b.range(0.9, 1.1);
+        double ry = Math.max(2.5, r * vertical * b.range(0.55, 0.8));
+        double floorY = flatFloor ? cy - ry * b.range(0.45, 0.65) : Double.NaN;
+        double front = b.rng.nextDouble() * Math.PI * 2;
+        double lowest = b.minCarveY() + 3, highest = b.net.maxY() - 8;
+        List<CaveShape.Ellipsoid> list = new ArrayList<>();
+        list.add(lobe(b, space, cx, cy, cz, rx, ry, rz, floorY));
+        int extra = b.range(5, 8);
+        for (int i = 0; i < extra; i++)
+        {
+            double angle = b.rng.nextDouble() * Math.PI * 2, roll = b.rng.nextDouble();
+            double dist, lrx, lry, lrz, ly;
+            int kind;
+            if (roll < 0.3)
+            {
+                // Chimney: narrow and tall, standing on the hall's floor.
+                kind = 0;
+                dist = r * b.range(0.15, 0.65);
+                double cr = r * b.range(0.14, 0.26);
+                lrx = cr * b.range(0.9, 1.2);
+                lrz = cr * b.range(0.9, 1.2);
+                lry = r * vertical * b.range(0.7, 1.1);
+                ly = (Double.isNaN(floorY) ? cy - ry * 0.5 : floorY - 2) + lry * 0.9;
+            }
+            else if (roll < 0.65)
+            {
+                // Wing hall: wide and flat, at its own height.
+                kind = 1;
+                dist = r * b.range(0.5, 0.8);
+                double lr = r * b.range(0.4, 0.6);
+                lrx = lr * b.range(0.85, 1.15);
+                lrz = lr * b.range(0.85, 1.15);
+                lry = Math.max(2.5, lr * vertical * b.range(0.4, 0.7));
+                ly = cy + b.range(-0.4, 0.4) * ry;
+            }
+            else
+            {
+                // Side room: rounder.
+                kind = 2;
+                dist = r * b.range(0.55, 0.8);
+                double lr = r * b.range(0.3, 0.5);
+                lrx = lr * b.range(0.85, 1.15);
+                lrz = lr * b.range(0.85, 1.15);
+                lry = Math.max(2.5, lr * vertical * b.range(0.8, 1.2));
+                ly = cy + b.range(-0.6, 0.6) * ry;
+            }
+            lry = Math.min(lry, (highest - lowest) / 2 - 2);
+            ly = Mth.clamp(ly, lowest + lry, highest - lry);
+            double lfloor = kind == 1 && flatFloor ? ly - lry * b.range(0.45, 0.65) : Double.NaN;
+            list.add(lobe(b, space, cx + Math.cos(angle) * dist, ly, cz + Math.sin(angle) * dist, lrx, lry, lrz, lfloor));
+        }
+        return new Chamber(space, cx, cy, cz, rx, ry, rz, floorY, List.copyOf(list), front);
+    }
+
     private static CaveShape.Ellipsoid lobe(CaveBuilder b, CaveSpace space, double x, double y, double z, double rx, double ry, double rz, double floorY)
     {
         CaveShape.Ellipsoid e = new CaveShape.Ellipsoid(space, CaveShape.Kind.CARVE, null, null, true, x, y, z, rx, ry, rz, floorY);

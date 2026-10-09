@@ -2,6 +2,7 @@ package com.abyssia.worldgen.cave;
 
 import com.abyssia.thermal.ThermalVentType;
 import com.abyssia.thermal.VentActivity;
+import com.abyssia.worldgen.DepthBand;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -34,10 +35,20 @@ public final class CaveSystem
     public final String summary;
     public final int x, y, z;
     public final int minX, minY, minZ, maxX, maxY, maxZ;
+    /** The crust window this system belongs to; null for the shallow (seabed-relative) network. */
+    @Nullable
+    public final DepthBand band;
 
     public CaveSystem(int cellX, int cellZ, boolean minor, CaveType type, @Nullable CaveLandmark landmark, List<CaveShape> shapes,
                       List<CaveSpace> spaces, List<Site> sites, List<Vent> vents, String summary, int x, int y, int z)
     {
+        this(cellX, cellZ, minor, type, landmark, shapes, spaces, sites, vents, summary, x, y, z, null);
+    }
+
+    public CaveSystem(int cellX, int cellZ, boolean minor, CaveType type, @Nullable CaveLandmark landmark, List<CaveShape> shapes,
+                      List<CaveSpace> spaces, List<Site> sites, List<Vent> vents, String summary, int x, int y, int z, @Nullable DepthBand band)
+    {
+        this.band = band;
         this.cellX = cellX;
         this.cellZ = cellZ;
         this.minor = minor;

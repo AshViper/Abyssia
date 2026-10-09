@@ -21,13 +21,22 @@ import java.util.stream.Stream;
  */
 public class ConfigPlacement extends PlacementModifier
 {
-    private static final Map<String, DoubleSupplier> OPTIONS = Map.of(
-            "vegetation", () -> Config.VEGETATION_ENABLED.get() ? Config.VEGETATION_DENSITY.get() : 0,
-            "giant_plants", () -> Config.VEGETATION_ENABLED.get() ? Config.GIANT_PLANT_CHANCE.get() / 0.1 : 0,
-            "glowing_plants", () -> Config.VEGETATION_ENABLED.get() ? Config.GLOWING_PLANT_CHANCE.get() / 0.03 : 0,
-            "abyssal_forests", () -> Config.VEGETATION_ENABLED.get() && Config.ABYSSAL_FORESTS.get() ? 1 : 0,
-            "crystals", () -> Config.CRYSTAL_FIELDS.get() ? 1 : 0,
-            "thermal_vents", () -> Config.THERMAL_VENTS.get() ? 1 : 0);
+    private static final Map<String, DoubleSupplier> OPTIONS = Map.ofEntries(
+            opt("vegetation", () -> Config.VEGETATION_ENABLED.get() ? Config.VEGETATION_DENSITY.get() : 0),
+            opt("giant_plants", () -> Config.VEGETATION_ENABLED.get() ? Config.GIANT_PLANT_CHANCE.get() / 0.1 : 0),
+            opt("glowing_plants", () -> Config.VEGETATION_ENABLED.get() ? Config.GLOWING_PLANT_CHANCE.get() / 0.03 : 0),
+            opt("abyssal_forests", () -> Config.VEGETATION_ENABLED.get() && Config.ABYSSAL_FORESTS.get() ? 1 : 0),
+            opt("crystals", () -> Config.CRYSTAL_FIELDS.get() ? 1 : 0),
+            opt("thermal_vents", () -> Config.THERMAL_VENTS.get() ? 1 : 0),
+            // AB02 crust ores: the tier multiplier times the global crust density (0 disables)
+            opt("mk0_ore", () -> Config.CRUST_MK0_ORE.get() * Config.CRUST_ORE_DENSITY.get()),
+            opt("mk1_ore", () -> Config.CRUST_MK1_ORE.get() * Config.CRUST_ORE_DENSITY.get()),
+            opt("mk2_ore", () -> Config.CRUST_MK2_ORE.get() * Config.CRUST_ORE_DENSITY.get()));
+
+    private static Map.Entry<String, DoubleSupplier> opt(String name, DoubleSupplier factor)
+    {
+        return Map.entry(name, factor);
+    }
 
     public static final MapCodec<ConfigPlacement> CODEC = Codec.STRING.comapFlatMap(
             option -> OPTIONS.containsKey(option)

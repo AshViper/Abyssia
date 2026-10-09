@@ -1,0 +1,31 @@
+{
+  "feature": "abyssia:crust_mk1_molybdenum_e_huge",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 273
+    },
+    {
+      "type": "abyssia:config",
+      "option": "mk1_ore"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": -1855
+        },
+        "max_inclusive": {
+          "absolute": -1550
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

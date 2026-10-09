@@ -93,8 +93,10 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
         VeinConfig config = context.config();
         BlockPos origin = context.origin();
 
+        // AB02 crust mode: a vein inside the solid abyss crust, centred on the placed position (no seabed, no exposure)
+        boolean crust = config.crust();
         int target = config.size().blocks(random);
-        boolean exposed = Config.SURFACE_VEINS_ENABLED.get()
+        boolean exposed = !crust && Config.SURFACE_VEINS_ENABLED.get()
                 && random.nextDouble() < Math.min(1.0, Config.EXPOSED_VEIN_CHANCE.get() * config.exposure()
                 * (config.size() == Size.HUGE ? 3 : config.size() == Size.LARGE ? 2 : 1));
         Shape shape = Shape.values()[random.nextInt(Shape.values().length)];
@@ -112,8 +114,8 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
         double[] dir = direction(shape, random);
 
         // Exposed veins straddle the seabed; buried ones sit a few blocks under it.
-        int floor = DeepFloorPlacement.surface(level, origin.getX(), origin.getZ(), origin.getY());
-        double cy = exposed ? floor - 0.5 : floor - r - 2 - random.nextInt(6);
+        int floor = crust ? origin.getY() : DeepFloorPlacement.surface(level, origin.getX(), origin.getZ(), origin.getY());
+        double cy = crust ? origin.getY() + 0.5 : exposed ? floor - 0.5 : floor - r - 2 - random.nextInt(6);
         if (cy - r < level.getMinBuildHeight() + 3) return false;
         double cx = origin.getX() + 0.5, cz = origin.getZ() + 0.5;
 
@@ -153,6 +155,8 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
         cells.sort((a, b) -> Integer.compare(BlockPos.getY(a.getKey()), BlockPos.getY(b.getKey())));
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         int ores = 0;
+        int oreMinX = Integer.MAX_VALUE, oreMinY = Integer.MAX_VALUE, oreMinZ = Integer.MAX_VALUE;
+        int oreMaxX = Integer.MIN_VALUE, oreMaxY = Integer.MIN_VALUE, oreMaxZ = Integer.MIN_VALUE;
         for (Map.Entry<Long, Double> cell : cells)
         {
             pos.set(cell.getKey());
@@ -174,13 +178,19 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
             BlockState state;
             if (d < 0.55) state = random.nextFloat() < 0.9f ? config.ore() : config.host();
             else if (d < 0.9) state = random.nextFloat() < 0.4f ? config.ore() : config.host();
-            else if (water) continue;
+            else if (water || crust) continue; // the crust vein leaves no host halo at its rim
             else state = config.host();
-            if (state == config.ore()) ores++;
+            if (state == config.ore())
+            {
+                ores++;
+                oreMinX = Math.min(oreMinX, pos.getX()); oreMaxX = Math.max(oreMaxX, pos.getX());
+                oreMinY = Math.min(oreMinY, pos.getY()); oreMaxY = Math.max(oreMaxY, pos.getY());
+                oreMinZ = Math.min(oreMinZ, pos.getZ()); oreMaxZ = Math.max(oreMaxZ, pos.getZ());
+            }
             level.setBlock(pos, state, 2);
         }
 
-        decorateSurface(level, random, config, cx, cz, r, exposed, floor);
+        if (!crust) decorateSurface(level, random, config, cx, cz, r, exposed, floor);
 
         // Register the ore deposit for tracking
         if (ores > 0 && level.getLevel() instanceof net.minecraft.server.level.ServerLevel serverLevel
@@ -194,6 +204,12 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
                     cx - MAX_REACH, minY, cz - MAX_REACH,
                     cx + MAX_REACH, maxY, cz + MAX_REACH
             );
+            // Crust veins can be long and steep (up to +-13 blocks any way): the box is exactly the placed ore, so the
+            // excavator's radius test and neighbouring deposits are not blurred by a 26 x 26 column.
+            if (crust)
+            {
+                bounds = new AABB(oreMinX, oreMinY, oreMinZ, oreMaxX + 1, oreMaxY + 1, oreMaxZ + 1).inflate(0.5);
+            }
             BlockPos centerPos = BlockPos.containing(cx, cy, cz);
             ResourceLocation mineralId = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(config.ore().getBlock());
             // worldgen runs on worker threads: queue, the main thread registers (OreDepositFlusher)
@@ -250,16 +266,19 @@ public class OreVeinFeature extends Feature<OreVeinFeature.VeinConfig>
 
     /**
      * @param exposure multiplier on the configured chance of breaking through the seabed
+     * @param crust    AB02 crust mode: no seabed lookup, the vein is centred on the placed position inside the solid crust
+     *                 (only blocks of #abyssia:vein_replaceable are replaced; exposure and nodules are not used)
      */
     public record VeinConfig(BlockState ore, BlockState host, Optional<BlockState> cluster,
-                         Size size, float exposure) implements FeatureConfiguration
+                         Size size, float exposure, boolean crust) implements FeatureConfiguration
     {
         public static final Codec<VeinConfig> CODEC = RecordCodecBuilder.create(i -> i.group(
                 BlockState.CODEC.fieldOf("ore").forGetter(VeinConfig::ore),
                 BlockState.CODEC.fieldOf("host").forGetter(VeinConfig::host),
                 BlockState.CODEC.lenientOptionalFieldOf("cluster").forGetter(VeinConfig::cluster),
                 SIZE_CODEC.fieldOf("size").forGetter(VeinConfig::size),
-                Codec.floatRange(0f, 10f).lenientOptionalFieldOf("exposure", 1f).forGetter(VeinConfig::exposure)
+                Codec.floatRange(0f, 10f).lenientOptionalFieldOf("exposure", 1f).forGetter(VeinConfig::exposure),
+                Codec.BOOL.lenientOptionalFieldOf("crust", false).forGetter(VeinConfig::crust)
         ).apply(i, VeinConfig::new));
     }
 }
