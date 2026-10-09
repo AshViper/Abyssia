@@ -618,6 +618,18 @@ public class Config
             .comment("Operators (permission level 2) skip the research locks like creative players do")
             .define("op_bypass", true);
 
+    public static final ForgeConfigSpec.BooleanValue RESEARCH_GATE_MACHINES = BUILDER
+            .comment("Machines named by a technology's unlocks (abyssia:machine/<block>) cannot be placed or used until that technology is unlocked")
+            .define("gate_machines", true);
+
+    public static final ForgeConfigSpec.BooleanValue RESEARCH_GATE_BUILDINGS = BUILDER
+            .comment("Habitat build menu entries named by a technology's unlocks (abyssia:building/<entry>) are locked until it is unlocked")
+            .define("gate_buildings", true);
+
+    public static final ForgeConfigSpec.BooleanValue RESEARCH_JEI_HIDE_LOCKED = BUILDER
+            .comment("JEI hides recipes whose result is locked by a technology (abyssia:recipe/<item>) and the recipes of locked machines (display only)")
+            .define("jei_hide_locked", true);
+
     static
     {
         BUILDER.pop();

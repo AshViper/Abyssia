@@ -1,0 +1,35 @@
+{
+  "id": "abyssia:technology/mk1_metals",
+  "type": "recipe",
+  "title": "technology.abyssia.mk1_metals",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_manganese",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/mineral_deposit_nickel",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/mineral_deposit_titanium",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/alloy_smelting",
+    "abyssia:technology/cobalt_processing"
+  ],
+  "unlocks": [
+    "abyssia:recipe/manganese_ingot",
+    "abyssia:recipe/nickel_ingot",
+    "abyssia:recipe/titanium_ingot",
+    "abyssia:recipe/lead_ingot",
+    "abyssia:recipe/zinc_ingot",
+    "abyssia:recipe/molybdenum_ingot",
+    "abyssia:recipe/vanadium_ingot"
+  ],
+  "icon": "abyssia:titanium_ore"
+}

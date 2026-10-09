@@ -1,0 +1,27 @@
+{
+  "id": "abyssia:technology/thermal_alloys",
+  "type": "recipe",
+  "title": "technology.abyssia.thermal_alloys",
+  "tier": "mk1",
+  "depth_band": "C",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/vent_sulfur_rock",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/env_volcanic_ash",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/cobalt_processing",
+    "abyssia:technology/thermal_survey"
+  ],
+  "unlocks": [
+    "abyssia:recipe/thermal_alloy_ingot",
+    "abyssia:recipe/heat_resistant_alloy_ingot",
+    "abyssia:recipe/thermal_reagent"
+  ],
+  "icon": "abyssia:thermal_alloy_ingot"
+}

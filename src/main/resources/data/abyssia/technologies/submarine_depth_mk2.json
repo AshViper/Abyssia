@@ -1,0 +1,22 @@
+{
+  "id": "abyssia:technology/submarine_depth_mk2",
+  "type": "recipe",
+  "title": "technology.abyssia.submarine_depth_mk2",
+  "tier": "mk2",
+  "depth_band": "D",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_platinum",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/submarine_depth_mk1",
+    "abyssia:technology/mk2_metals"
+  ],
+  "unlocks": [
+    "abyssia:recipe/submarine_upgrade_depth_mk2",
+    "abyssia:recipe/submarine_upgrade_maneuver_thruster"
+  ],
+  "icon": "abyssia:submarine_upgrade_depth_mk2"
+}

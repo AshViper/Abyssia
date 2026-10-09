@@ -1,0 +1,21 @@
+{
+  "id": "abyssia:technology/biofuel_power",
+  "type": "building",
+  "title": "technology.abyssia.biofuel_power",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_giant_kelp",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/habitat_rooms"
+  ],
+  "unlocks": [
+    "abyssia:building/biofuel_generator",
+    "abyssia:machine/auxiliary_generator"
+  ],
+  "icon": "abyssia:giant_kelp"
+}

@@ -97,6 +97,16 @@ public final class HabitatBuilder
             message(player, Component.translatable("message.abyssia.research.building_locked"));
             return Result.PERMISSION;
         }
+        // AB05: the entry itself may be locked by a technology (abyssia:building/<entry id>, gated iff some technology lists it)
+        if (com.abyssia.Config.RESEARCH_GATE_BUILDINGS.get())
+        {
+            var locked = com.abyssia.research.ResearchManager.lockedBy(player, com.abyssia.research.ResearchManager.key("building", entry.id()));
+            if (locked.isPresent())
+            {
+                message(player, Component.translatable("message.abyssia.research.building_locked_by", Component.translatable(locked.get().titleKey())));
+                return Result.PERMISSION;
+            }
+        }
         if (JOBS.containsKey(player.getUUID()))
         {
             message(player, Component.translatable(MSG + "busy"));

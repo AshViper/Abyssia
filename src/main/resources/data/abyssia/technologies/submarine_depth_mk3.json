@@ -1,0 +1,21 @@
+{
+  "id": "abyssia:technology/submarine_depth_mk3",
+  "type": "recipe",
+  "title": "technology.abyssia.submarine_depth_mk3",
+  "tier": "mk2",
+  "depth_band": "E",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_mariana_snailfish",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/submarine_depth_mk2",
+    "abyssia:technology/tungsten_alloys"
+  ],
+  "unlocks": [
+    "abyssia:recipe/submarine_upgrade_depth_mk3"
+  ],
+  "icon": "abyssia:submarine_upgrade_depth_mk3"
+}

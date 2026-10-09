@@ -1,0 +1,21 @@
+{
+  "id": "abyssia:technology/habitat_furnishing",
+  "type": "building",
+  "title": "technology.abyssia.habitat_furnishing",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_glowtip_grass",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/habitat_rooms"
+  ],
+  "unlocks": [
+    "abyssia:building/large_locker",
+    "abyssia:building/wall_workbench"
+  ],
+  "icon": "abyssia:iron_plate"
+}

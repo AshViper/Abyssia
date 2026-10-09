@@ -1,0 +1,20 @@
+{
+  "id": "abyssia:technology/deep_sea_map",
+  "type": "recipe",
+  "title": "technology.abyssia.deep_sea_map",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_viperfish",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/wreck_research"
+  ],
+  "unlocks": [
+    "abyssia:recipe/deep_sea_map"
+  ],
+  "icon": "abyssia:deep_sea_map"
+}

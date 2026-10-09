@@ -1,0 +1,22 @@
+{
+  "id": "abyssia:technology/submarine",
+  "type": "building",
+  "title": "technology.abyssia.submarine",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_titanium",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/moon_pool",
+    "abyssia:technology/mk1_metals"
+  ],
+  "unlocks": [
+    "abyssia:building/submarine_dock",
+    "abyssia:recipe/submarine"
+  ],
+  "icon": "abyssia:submarine"
+}

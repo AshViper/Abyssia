@@ -1,0 +1,32 @@
+{
+  "id": "abyssia:technology/mk2_metals",
+  "type": "recipe",
+  "title": "technology.abyssia.mk2_metals",
+  "tier": "mk2",
+  "depth_band": "C",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_uranium",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/mineral_deposit_neodymium",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/mineral_deposit_yttrium",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/mk1_metals",
+    "abyssia:technology/cobalt_processing"
+  ],
+  "unlocks": [
+    "abyssia:recipe/uranium_ingot",
+    "abyssia:recipe/neodymium_ingot",
+    "abyssia:recipe/yttrium_ingot",
+    "abyssia:recipe/thorium_ingot"
+  ],
+  "icon": "abyssia:uranium_ore"
+}

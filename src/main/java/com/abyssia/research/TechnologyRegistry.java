@@ -41,6 +41,8 @@ public final class TechnologyRegistry extends SimpleJsonResourceReloadListener
     private static volatile Map<ResourceLocation, Technology> raw = Map.of();
     private static volatile Map<ResourceLocation, Technology> valid = Map.of();
     private static volatile List<Technology> ordered = List.of();
+    /** unlock key -> the valid technologies listing it (a key in here is "gated"); rebuilt on every reload */
+    private static volatile Map<ResourceLocation, List<Technology>> gatedKeys = Map.of();
 
     private TechnologyRegistry()
     {
@@ -140,6 +142,9 @@ public final class TechnologyRegistry extends SimpleJsonResourceReloadListener
         }
         valid = Map.copyOf(work);
         ordered = work.values().stream().sorted(Comparator.comparing((Technology t) -> t.id().toString())).toList();
+        Map<ResourceLocation, List<Technology>> keys = new LinkedHashMap<>();
+        for (Technology t : ordered) for (ResourceLocation k : t.unlocks()) keys.computeIfAbsent(k, x -> new ArrayList<>()).add(t);
+        gatedKeys = keys;
         LOGGER.info("{} technologies valid", ordered.size());
     }
 
@@ -173,6 +178,19 @@ public final class TechnologyRegistry extends SimpleJsonResourceReloadListener
     public static List<Technology> all()
     {
         return ordered;
+    }
+
+    /** The key is gated: some valid technology lists it in {@code unlocks} (keys nobody lists are free). */
+    public static boolean isGated(ResourceLocation key)
+    {
+        return gatedKeys.containsKey(key);
+    }
+
+    /** The first technology (by id) that unlocks the key, if the key is gated. */
+    public static Optional<Technology> gatingTech(ResourceLocation key)
+    {
+        List<Technology> list = gatedKeys.get(key);
+        return list == null || list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
 
     /** Valid technologies whose {@code unlocks} contain the key. */

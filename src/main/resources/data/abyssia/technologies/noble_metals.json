@@ -1,0 +1,25 @@
+{
+  "id": "abyssia:technology/noble_metals",
+  "type": "recipe",
+  "title": "technology.abyssia.noble_metals",
+  "tier": "mk2",
+  "depth_band": "D",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_platinum",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/mineral_deposit_tellurium",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/mk2_metals"
+  ],
+  "unlocks": [
+    "abyssia:recipe/platinum_ingot",
+    "abyssia:recipe/tellurium_ingot"
+  ],
+  "icon": "abyssia:platinum_ore"
+}

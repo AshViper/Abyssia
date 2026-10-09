@@ -75,6 +75,40 @@ public final class ResearchManager
         return false;
     }
 
+    /** {@code abyssia:<kind>/<path>}: the unlock key of a machine, building entry, recipe result or upgrade. */
+    public static ResourceLocation key(String kind, String path)
+    {
+        return ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, kind + "/" + path);
+    }
+
+    /** Some technology lists the key in its unlocks (client: from the synced definitions). Not affected by bypass. */
+    public static boolean isKeyGated(Player player, ResourceLocation key)
+    {
+        return player.level().isClientSide ? ClientResearch.isKeyGated(key) : TechnologyRegistry.isGated(key);
+    }
+
+    /**
+     * Data-driven gate: true when the key is not gated, when the player bypasses, or when a technology listing the key is
+     * unlocked. Client and server use the same rule (the client copy is display only).
+     */
+    public static boolean isKeyUnlocked(Player player, ResourceLocation key)
+    {
+        if (bypass(player)) return true;
+        if (player.level().isClientSide) return ClientResearch.isKeyUnlocked(key);
+        List<Technology> granting = TechnologyRegistry.granting(key);
+        if (granting.isEmpty()) return true;
+        ResearchData data = ResearchData.load(player);
+        for (Technology t : granting) if (data.unlocked.contains(t.id())) return true;
+        return false;
+    }
+
+    /** The technology that still locks the key for the player (empty when the key is usable). */
+    public static Optional<Technology> lockedBy(Player player, ResourceLocation key)
+    {
+        if (isKeyUnlocked(player, key)) return Optional.empty();
+        return player.level().isClientSide ? ClientResearch.lockedBy(key) : TechnologyRegistry.gatingTech(key);
+    }
+
     /** Discoveries any technology asks of the target (at least 1). */
     public static int neededFor(ResourceLocation target)
     {

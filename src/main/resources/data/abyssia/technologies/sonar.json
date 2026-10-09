@@ -1,0 +1,20 @@
+{
+  "id": "abyssia:technology/sonar",
+  "type": "recipe",
+  "title": "technology.abyssia.sonar",
+  "tier": "mk1",
+  "depth_band": "C",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_gulper_eel",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/submarine_depth_mk1"
+  ],
+  "unlocks": [
+    "abyssia:recipe/submarine_upgrade_sonar_scanner"
+  ],
+  "icon": "abyssia:submarine_upgrade_sonar_scanner"
+}

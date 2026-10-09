@@ -1,0 +1,25 @@
+{
+  "id": "abyssia:technology/scanner_mk2",
+  "type": "upgrade",
+  "title": "technology.abyssia.scanner_mk2",
+  "tier": "mk2",
+  "depth_band": "C",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_yttrium",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/mineral_deposit_neodymium",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/scanner_mk1",
+    "abyssia:technology/mk2_metals"
+  ],
+  "unlocks": [
+    "abyssia:upgrade/scanner_mk2"
+  ],
+  "icon": "abyssia:lidar_scanner"
+}

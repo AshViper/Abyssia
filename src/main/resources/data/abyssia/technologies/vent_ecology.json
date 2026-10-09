@@ -1,0 +1,28 @@
+{
+  "id": "abyssia:technology/vent_ecology",
+  "type": "recipe",
+  "title": "technology.abyssia.vent_ecology",
+  "tier": "mk2",
+  "depth_band": "D",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_thermal_tube",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_tubeworm",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_supergiant_amphipod",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/thermal_alloys"
+  ],
+  "unlocks": [
+    "abyssia:recipe/abyssal_light_core"
+  ],
+  "icon": "abyssia:abyssal_light_core"
+}

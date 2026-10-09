@@ -1,0 +1,23 @@
+{
+  "id": "abyssia:technology/submarine_depth_mk1",
+  "type": "recipe",
+  "title": "technology.abyssia.submarine_depth_mk1",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_cobalt",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/submarine",
+    "abyssia:technology/cobalt_processing"
+  ],
+  "unlocks": [
+    "abyssia:recipe/submarine_upgrade_depth_mk1",
+    "abyssia:recipe/submarine_upgrade_pressure_hull",
+    "abyssia:recipe/submarine_upgrade_high_capacity_battery"
+  ],
+  "icon": "abyssia:submarine_upgrade_depth_mk1"
+}

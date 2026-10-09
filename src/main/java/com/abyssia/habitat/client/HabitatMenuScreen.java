@@ -5,7 +5,10 @@ import com.abyssia.habitat.HabitatBuilder;
 import com.abyssia.habitat.build.BuildCategory;
 import com.abyssia.habitat.build.BuildEntry;
 import com.abyssia.habitat.build.BuildRegistry;
+import com.abyssia.Config;
 import com.abyssia.registry.ModHabitat;
+import com.abyssia.research.ResearchManager;
+import com.abyssia.research.Technology;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,6 +21,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * H02 / BT01a build menu: a tab per BuildCategory, then one row per entry of the selected category (icon, name,
@@ -56,6 +60,13 @@ public class HabitatMenuScreen extends Screen
 
     private int tabWidth() { return WIDTH / TABS.length; }
 
+    /** AB05: the technology that still locks this entry for the local player (empty when free). The server decides; this is display only. */
+    private static Optional<Technology> lockedBy(Player player, BuildEntry entry)
+    {
+        if (player == null || !Config.RESEARCH_GATE_BUILDINGS.get()) return Optional.empty();
+        return ResearchManager.lockedBy(player, ResearchManager.key("building", entry.id()));
+    }
+
     private static boolean hasIcon(ResourceLocation icon)
     {
         return ICON_PRESENT.computeIfAbsent(icon, r -> Minecraft.getInstance().getResourceManager().getResource(r).isPresent());
@@ -87,10 +98,12 @@ public class HabitatMenuScreen extends Screen
         List<BuildEntry> entries = entries();
         if (entries.isEmpty())
             g.drawCenteredString(font, Component.translatable("screen." + Abyssia.MODID + ".habitat.empty"), width / 2, y0 + ROW_H / 2 - 4, 0x8090A0);
+        Component lockTip = null;
         for (int i = 0; i < entries.size(); i++)
         {
             BuildEntry entry = entries.get(i);
             int y = y0 + i * ROW_H;
+            Optional<Technology> lock = lockedBy(player, entry);
             boolean hover = mouseX >= x0 && mouseX < x0 + WIDTH && mouseY >= y && mouseY < y + ROW_H - 2;
             g.fill(x0, y, x0 + WIDTH, y + ROW_H - 2, i == selected ? 0xC0205060 : hover ? 0xA0182830 : 0x90101820);
             if (i == selected) g.drawString(font, "▶", x0 + 3, y + 5, 0x9FEFFF);
@@ -113,7 +126,20 @@ public class HabitatMenuScreen extends Screen
                     g.renderTooltip(font, cost.getHoverName(), mouseX, mouseY);
                 cx += 18 + font.width(text) + gap;
             }
+            if (lock.isPresent())
+            {
+                // greyed row with a padlock; the tooltip names the technology
+                g.fill(x0, y, x0 + WIDTH, y + ROW_H - 2, 0xA0000000);
+                int lx = x0 + WIDTH - 16, ly = y + ROW_H / 2 - 5;
+                g.fill(lx + 2, ly, lx + 8, ly + 1, 0xFFB0B0B0);
+                g.fill(lx + 2, ly, lx + 3, ly + 5, 0xFFB0B0B0);
+                g.fill(lx + 7, ly, lx + 8, ly + 5, 0xFFB0B0B0);
+                g.fill(lx, ly + 5, lx + 10, ly + 12, 0xFFE0B040);
+                g.fill(lx + 4, ly + 7, lx + 6, ly + 10, 0xFF604010);
+                if (hover) lockTip = Component.translatable("screen." + Abyssia.MODID + ".habitat.locked", Component.translatable(lock.get().titleKey()));
+            }
         }
+        if (lockTip != null) g.renderTooltip(font, lockTip, mouseX, mouseY);
         g.drawCenteredString(font, Component.translatable("screen." + Abyssia.MODID + ".habitat.hint"), width / 2,
                 y0 + rows() * ROW_H + 2, 0x8090A0);
         super.render(g, mouseX, mouseY, partialTick);

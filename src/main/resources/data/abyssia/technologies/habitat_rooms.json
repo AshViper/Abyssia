@@ -1,0 +1,24 @@
+{
+  "id": "abyssia:technology/habitat_rooms",
+  "type": "building",
+  "title": "technology.abyssia.habitat_rooms",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/wreck_core",
+      "count": 5
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/wreck_research",
+    "abyssia:technology/alloy_smelting"
+  ],
+  "unlocks": [
+    "abyssia:building/room",
+    "abyssia:building/corridor",
+    "abyssia:building/ladder",
+    "abyssia:building/vertical_hatch"
+  ],
+  "icon": "abyssia:iron_plate"
+}
