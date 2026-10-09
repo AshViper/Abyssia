@@ -1,0 +1,28 @@
+{
+  "id": "abyssia:technology/hadal_materials",
+  "type": "recipe",
+  "title": "technology.abyssia.hadal_materials",
+  "tier": "mk2",
+  "depth_band": "E",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_pressure_gourd",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_silt_comb",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_hadal_bloom",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/advanced_materials"
+  ],
+  "unlocks": [
+    "abyssia:recipe/hadal_plating"
+  ],
+  "icon": "abyssia:hadal_plating"
+}

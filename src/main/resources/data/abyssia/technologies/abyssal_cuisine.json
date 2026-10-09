@@ -1,0 +1,32 @@
+{
+  "id": "abyssia:technology/abyssal_cuisine",
+  "type": "recipe",
+  "title": "technology.abyssia.abyssal_cuisine",
+  "tier": "mk2",
+  "depth_band": "D",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_yunohana_crab",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_goemon_squat_lobster",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_ohara_shrimp",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_vent_eelpout",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/deep_sea_cuisine"
+  ],
+  "unlocks": [
+    "abyssia:recipe/cooked_eelpout_flesh"
+  ],
+  "icon": "abyssia:cooked_eelpout_flesh"
+}

@@ -1,0 +1,28 @@
+{
+  "id": "abyssia:technology/thermal_textiles",
+  "type": "recipe",
+  "title": "technology.abyssia.thermal_textiles",
+  "tier": "mk1",
+  "depth_band": "C",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_heat_moss",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_vent_grass",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_thermal_plant",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/thermal_survey"
+  ],
+  "unlocks": [
+    "abyssia:recipe/thermal_felt"
+  ],
+  "icon": "abyssia:thermal_felt"
+}

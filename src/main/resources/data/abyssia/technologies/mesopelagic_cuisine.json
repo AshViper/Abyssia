@@ -1,0 +1,50 @@
+{
+  "id": "abyssia:technology/mesopelagic_cuisine",
+  "type": "recipe",
+  "title": "technology.abyssia.mesopelagic_cuisine",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_alfonsino",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_deepwater_redfish",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_sablefish",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_goblin_shark",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_abyssal_mushroom",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/fish_cooking"
+  ],
+  "unlocks": [
+    "abyssia:recipe/cooked_alfonsino",
+    "abyssia:recipe/cooked_deepwater_redfish",
+    "abyssia:recipe/cooked_blue_ling",
+    "abyssia:recipe/cooked_sablefish",
+    "abyssia:recipe/cooked_greenland_halibut",
+    "abyssia:recipe/cooked_black_scabbardfish",
+    "abyssia:recipe/cooked_orange_roughy",
+    "abyssia:recipe/cooked_shark_flesh",
+    "abyssia:recipe/cooked_viper_flesh",
+    "abyssia:recipe/cooked_angler_flesh",
+    "abyssia:recipe/mushroom_stew",
+    "abyssia:recipe/mushroom_fish_grill",
+    "abyssia:recipe/mushroom_fish_pie",
+    "abyssia:recipe/mushroom_fish_stew",
+    "abyssia:recipe/fish_mushroom_skewer"
+  ],
+  "icon": "abyssia:cooked_sablefish"
+}

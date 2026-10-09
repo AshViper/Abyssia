@@ -38,7 +38,7 @@ public class DatabaseScreen extends Screen
     }
 
     /** one list row; details are built when it is selected */
-    private record Entry(Component name, Component status, int color, List<Component> detail) {}
+    private record Entry(Component name, String label, Component status, int color, List<Component> detail) {}
 
     private static final int W = 360, H = 224, TAB_W = 70, LIST_W = 122, ROW = 12, PAD = 4;
     private static final int GREEN = 0xFF58E6A0, GRAY = 0xFF8A949E, YELLOW = 0xFFFFD866, WHITE = 0xFFFFFFFF;
@@ -47,6 +47,10 @@ public class DatabaseScreen extends Screen
     private final Button[] tabButtons = new Button[Tab.values().length];
     private List<Entry> entries = List.of();
     private int selected, listScroll, detailScroll;
+    private boolean draggingBar;
+    private List<FormattedCharSequence> cachedLines;
+    private Entry cachedFor;
+    private int cachedWidth, cachedStatusLines;
     private int left, top;
 
     public DatabaseScreen()
@@ -99,6 +103,12 @@ public class DatabaseScreen extends Screen
         {
             // broken sync data: show what we have
         }
+        if (t != Tab.TECHNOLOGIES)
+        {
+            // the fauna / resource lists are long: alphabetical by displayed name
+            java.text.Collator collator = java.text.Collator.getInstance();
+            out.sort((a, b) -> collator.compare(a.label(), b.label()));
+        }
         return out;
     }
 
@@ -115,7 +125,7 @@ public class DatabaseScreen extends Screen
         List<Component> detail = new ArrayList<>();
         detail.add(Component.translatable("screen.abyssia.database.category", target.category()));
         if (!target.descKey().isEmpty() && I18n.exists(target.descKey())) detail.add(Component.translatable(target.descKey()));
-        return new Entry(name, status, color, detail);
+        return new Entry(name, name.getString(), status, color, detail);
     }
 
     private static Entry techEntry(ResearchView.Tech tech)
@@ -143,7 +153,7 @@ public class DatabaseScreen extends Screen
             detail.add(Component.translatable("screen.abyssia.database.unlocks"));
             for (String u : tech.unlocks()) detail.add(Component.literal("  " + u));
         }
-        return new Entry(tech.title(), status, unlocked ? GREEN : GRAY, detail);
+        return new Entry(tech.title(), tech.title().getString(), status, unlocked ? GREEN : GRAY, detail);
     }
 
     // ----- layout -----
@@ -183,13 +193,16 @@ public class DatabaseScreen extends Screen
             int idx = listScroll + i, y = lt + i * ROW;
             Entry e = entries.get(idx);
             if (idx == selected) g.fill(lx, y, lx + lw, y + ROW, 0x80406080);
-            g.drawString(font, font.plainSubstrByWidth(e.name().getString(), lw - 8), lx + 3, y + 2, e.color(), false);
+            // status marker (green = scanned / unlocked, yellow = fragments, gray = unknown / locked), then the name
+            g.fill(lx + 3, y + 3, lx + 7, y + 7, e.color());
+            g.drawString(font, font.plainSubstrByWidth(e.label(), lw - 18), lx + 10, y + 2, e.color(), false);
         }
         if (entries.size() > rows)
         {
             int barH = Math.max(8, (listBottom() - lt) * rows / entries.size());
             int barY = lt + (listBottom() - lt - barH) * listScroll / Math.max(1, entries.size() - rows);
-            g.fill(lx + lw - 2, barY, lx + lw, barY + barH, 0xFF8A949E);
+            g.fill(lx + lw - 4, lt, lx + lw, listBottom(), 0x40FFFFFF);
+            g.fill(lx + lw - 4, barY, lx + lw, barY + barH, draggingBar ? 0xFFD0D6DC : 0xFF8A949E);
         }
 
         // detail
@@ -198,17 +211,26 @@ public class DatabaseScreen extends Screen
         if (selected >= 0 && selected < entries.size())
         {
             Entry e = entries.get(selected);
-            List<FormattedCharSequence> lines = new ArrayList<>();
-            lines.addAll(font.split(e.name(), dw - 8));
-            lines.addAll(font.split(e.status(), dw - 8));
-            lines.add(FormattedCharSequence.EMPTY);
-            for (Component c : e.detail()) lines.addAll(font.split(c, dw - 8));
+            // the wrapped lines are rebuilt only when the selection / tab / panel width changes (not every frame)
+            if (cachedLines == null || cachedFor != e || cachedWidth != dw)
+            {
+                List<FormattedCharSequence> built = new ArrayList<>();
+                built.addAll(font.split(e.name(), dw - 8));
+                cachedStatusLines = font.split(e.status(), dw - 8).size();
+                built.addAll(font.split(e.status(), dw - 8));
+                built.add(FormattedCharSequence.EMPTY);
+                for (Component c : e.detail()) built.addAll(font.split(c, dw - 8));
+                cachedLines = built;
+                cachedFor = e;
+                cachedWidth = dw;
+            }
+            List<FormattedCharSequence> lines = cachedLines;
             int maxScroll = Math.max(0, lines.size() - (listBottom() - lt - 4) / 10);
             detailScroll = Mth.clamp(detailScroll, 0, maxScroll);
             g.enableScissor(dx, lt, dx + dw, listBottom());
-            for (int i = detailScroll; i < lines.size(); i++)
+            for (int i = detailScroll; i < lines.size() && lt + 3 + (i - detailScroll) * 10 < listBottom(); i++)
             {
-                int color = i == 0 ? WHITE : i < 1 + font.split(e.status(), dw - 8).size() ? e.color() : 0xFFD0D6DC;
+                int color = i == 0 ? WHITE : i < 1 + cachedStatusLines ? e.color() : 0xFFD0D6DC;
                 g.drawString(font, lines.get(i), dx + 4, lt + 3 + (i - detailScroll) * 10, color, false);
             }
             g.disableScissor();
@@ -221,6 +243,13 @@ public class DatabaseScreen extends Screen
     public boolean mouseClicked(double mx, double my, int button)
     {
         if (super.mouseClicked(mx, my, button)) return true;
+        if (button == 0 && entries.size() > visibleRows() && mx >= listX() + LIST_W - 6 && mx < listX() + LIST_W
+                && my >= listTop() && my < listBottom())
+        {
+            draggingBar = true;
+            dragScrollTo(my);
+            return true;
+        }
         if (button == 0 && mx >= listX() && mx < listX() + LIST_W && my >= listTop() && my < listBottom())
         {
             int idx = listScroll + (int) ((my - listTop()) / ROW);
@@ -229,12 +258,33 @@ public class DatabaseScreen extends Screen
         return false;
     }
 
+    private void dragScrollTo(double my)
+    {
+        int range = Math.max(1, entries.size() - visibleRows());
+        double f = (my - listTop()) / Math.max(1, listBottom() - listTop());
+        listScroll = Mth.clamp((int) Math.round(f * range), 0, range);
+    }
+
+    @Override
+    public boolean mouseDragged(double mx, double my, int button, double dx, double dy)
+    {
+        if (draggingBar) { dragScrollTo(my); return true; }
+        return super.mouseDragged(mx, my, button, dx, dy);
+    }
+
+    @Override
+    public boolean mouseReleased(double mx, double my, int button)
+    {
+        draggingBar = false;
+        return super.mouseReleased(mx, my, button);
+    }
+
     @Override
     public boolean mouseScrolled(double mx, double my, double delta)
     {
         int dir = delta > 0 ? -1 : 1;
         if (mx >= detailX()) detailScroll = Math.max(0, detailScroll + dir);
-        else listScroll = Mth.clamp(listScroll + dir, 0, Math.max(0, entries.size() - visibleRows()));
+        else listScroll = Mth.clamp(listScroll + dir * 3, 0, Math.max(0, entries.size() - visibleRows()));
         return true;
     }
 

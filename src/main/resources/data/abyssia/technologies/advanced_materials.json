@@ -1,0 +1,30 @@
+{
+  "id": "abyssia:technology/advanced_materials",
+  "type": "recipe",
+  "title": "technology.abyssia.advanced_materials",
+  "tier": "mk2",
+  "depth_band": "D",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_oil_bladder_weed",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_glasslace",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_oil_kelp",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/luminous_materials",
+    "abyssia:technology/fibre_weaving"
+  ],
+  "unlocks": [
+    "abyssia:recipe/refined_oil",
+    "abyssia:recipe/crystal_lens"
+  ],
+  "icon": "abyssia:crystal_lens"
+}

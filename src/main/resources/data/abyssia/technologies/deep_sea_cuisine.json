@@ -1,0 +1,35 @@
+{
+  "id": "abyssia:technology/deep_sea_cuisine",
+  "type": "recipe",
+  "title": "technology.abyssia.deep_sea_cuisine",
+  "tier": "mk1",
+  "depth_band": "C",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_blobfish",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_patagonian_toothfish",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_sea_pig",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_atolla_jelly",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/mesopelagic_cuisine"
+  ],
+  "unlocks": [
+    "abyssia:recipe/cooked_blobfish",
+    "abyssia:recipe/cooked_patagonian_toothfish",
+    "abyssia:recipe/jellyfish_skewer",
+    "abyssia:recipe/jellyfish_stew"
+  ],
+  "icon": "abyssia:cooked_blobfish"
+}
