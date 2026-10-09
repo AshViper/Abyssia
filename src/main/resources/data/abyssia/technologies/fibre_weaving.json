@@ -1,0 +1,30 @@
+{
+  "id": "abyssia:technology/fibre_weaving",
+  "type": "recipe",
+  "title": "technology.abyssia.fibre_weaving",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_abyssal_grass",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_strandweed",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_amber_fan",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/hydroponics"
+  ],
+  "unlocks": [
+    "abyssia:recipe/fiber_rope",
+    "abyssia:recipe/sea_cloth",
+    "abyssia:recipe/marine_adhesive"
+  ],
+  "icon": "abyssia:fiber_rope"
+}

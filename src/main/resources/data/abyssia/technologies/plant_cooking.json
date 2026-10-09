@@ -1,0 +1,30 @@
+{
+  "id": "abyssia:technology/plant_cooking",
+  "type": "recipe",
+  "title": "technology.abyssia.plant_cooking",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_deep_kelp",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_sea_fern",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/fish_cooking"
+  ],
+  "unlocks": [
+    "abyssia:recipe/grilled_kelp",
+    "abyssia:recipe/kelp_soup",
+    "abyssia:recipe/kelp_fish_grill",
+    "abyssia:recipe/kelp_fish_pie",
+    "abyssia:recipe/kelp_fish_skewer",
+    "abyssia:recipe/kelp_fish_stew",
+    "abyssia:recipe/abyssal_vegetable_stew"
+  ],
+  "icon": "abyssia:kelp_soup"
+}

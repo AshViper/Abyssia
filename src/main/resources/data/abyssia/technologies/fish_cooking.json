@@ -1,0 +1,31 @@
+{
+  "id": "abyssia:technology/fish_cooking",
+  "type": "recipe",
+  "title": "technology.abyssia.fish_cooking",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_hagfish",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_firefly_squid",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_japanese_spider_crab",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/wreck_research"
+  ],
+  "unlocks": [
+    "abyssia:recipe/cooked_abyssal_fish",
+    "abyssia:recipe/preserved_fish",
+    "abyssia:recipe/fish_soup",
+    "abyssia:recipe/fish_pie"
+  ],
+  "icon": "abyssia:cooked_abyssal_fish"
+}

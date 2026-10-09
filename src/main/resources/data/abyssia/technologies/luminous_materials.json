@@ -1,0 +1,29 @@
+{
+  "id": "abyssia:technology/luminous_materials",
+  "type": "recipe",
+  "title": "technology.abyssia.luminous_materials",
+  "tier": "mk1",
+  "depth_band": "C",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_lumen_quill",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_glow_anemone",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_abyssal_bloom",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/hydroponics"
+  ],
+  "unlocks": [
+    "abyssia:recipe/lumen_cell",
+    "abyssia:recipe/advanced_lumen_cell"
+  ],
+  "icon": "abyssia:lumen_cell"
+}

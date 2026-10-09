@@ -1,0 +1,24 @@
+{
+  "id": "abyssia:technology/hydroponics",
+  "type": "machine",
+  "title": "technology.abyssia.hydroponics",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_sea_fern",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_strandweed",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/wreck_research"
+  ],
+  "unlocks": [
+    "abyssia:machine/hydro_planter"
+  ],
+  "icon": "abyssia:hydro_planter"
+}

@@ -1,0 +1,36 @@
+{
+  "id": "abyssia:technology/hadal_cuisine",
+  "type": "recipe",
+  "title": "technology.abyssia.hadal_cuisine",
+  "tier": "mk2",
+  "depth_band": "E",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_pressure_gourd",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_mariana_snailfish",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_scaly_foot_snail",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/abyssal_cuisine",
+    "abyssia:technology/hadal_materials"
+  ],
+  "unlocks": [
+    "abyssia:recipe/gourd_fish_grill",
+    "abyssia:recipe/gourd_fish_pie",
+    "abyssia:recipe/gourd_fish_skewer",
+    "abyssia:recipe/gourd_fish_stew",
+    "abyssia:recipe/gourd_kelp_salad",
+    "abyssia:recipe/gourd_pie",
+    "abyssia:recipe/gourd_soup",
+    "abyssia:recipe/smoked_gourd"
+  ],
+  "icon": "abyssia:gourd_soup"
+}
