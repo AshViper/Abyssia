@@ -41,6 +41,12 @@ public final class CaveSpace
      */
     @Nullable
     public Cavern cavern;
+    /**
+     * AB03: the hall this space belongs to (the hall itself and its formations), set while the layout is built; null elsewhere.
+     * Its rock and surfaces take the environment's hall look.
+     */
+    @Nullable
+    public CaveShape.Hall hall;
     /** Plant density multiplier for this space (plant chambers in cavern walls are overgrown). */
     public double vegetationBoost = 1.0;
     /** Share of luminous plants relative to its environment (the backs of wall pockets stay dark). */
@@ -73,6 +79,12 @@ public final class CaveSpace
     public double maxDisplacement()
     {
         return shapeAmp + detailAmp * (1 - smoothness) + shelfAmp + (cavern != null ? cavern.reliefAmplitude() : 0);
+    }
+
+    /** The hall's own space (not a formation or pocket of it). */
+    public boolean isHall()
+    {
+        return hall != null && hall.space == this;
     }
 
     public boolean hasLake()

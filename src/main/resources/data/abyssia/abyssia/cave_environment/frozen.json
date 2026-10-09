@@ -1,0 +1,359 @@
+{
+  "geology": {
+    "wall": [
+      {
+        "data": {
+          "Name": "abyssia:frozen_rock"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:crystal_cave_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:wet_cave_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "floor": [
+      {
+        "data": {
+          "Name": "abyssia:icy_sediment"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:frost_silt"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:crystal_sediment"
+        },
+        "weight": 1
+      }
+    ],
+    "ceiling": [
+      {
+        "data": {
+          "Name": "abyssia:frozen_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:crystal_cave_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accents": [
+      {
+        "data": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_crystal_block"
+        },
+        "weight": 2
+      }
+    ],
+    "accent_chance": 0.08
+  },
+  "flora": {
+    "floor": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:glasslace"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:teal_abyssal_grass"
+          },
+          "max_height": 2
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_plant"
+          }
+        },
+        "weight": 2
+      }
+    ],
+    "wall": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:wall_fern"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "glow": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_crystal_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:crystal_plant"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:glasslace"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "density": 0.1,
+    "glow_ratio": 0.3,
+    "bright_ratio": 0.0
+  },
+  "formations": {
+    "speleothem": {
+      "Name": "abyssia:crystal_stalactite"
+    },
+    "speleothem_density": 0.1,
+    "crystals": [
+      {
+        "data": {
+          "Name": "abyssia:pale_crystal_cluster"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:crystal_needle"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:deep_crystal_cluster"
+        },
+        "weight": 2
+      }
+    ],
+    "crystal_density": 0.08,
+    "debris": [
+      {
+        "data": {
+          "Name": "abyssia:crystal_shards"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:cave_rubble"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "hall": {
+    "look": {
+      "wall": [
+        {
+          "data": {
+            "Name": "minecraft:packed_ice"
+          },
+          "weight": 4
+        },
+        {
+          "data": {
+            "Name": "abyssia:frozen_rock"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:blue_ice"
+          },
+          "weight": 1
+        }
+      ],
+      "floor": [
+        {
+          "data": {
+            "Name": "minecraft:snow_block"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:icy_sediment"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:frost_silt"
+          },
+          "weight": 1
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "Name": "minecraft:packed_ice"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:frozen_rock"
+          },
+          "weight": 2
+        }
+      ],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "minecraft:blue_ice"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:white_crystal_block"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.2,
+      "glow": [
+        {
+          "data": {
+            "Name": "abyssia:deep_crystal_block"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:sea_lantern"
+          },
+          "weight": 1
+        }
+      ],
+      "glow_chance": 0.012,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:sea_lantern"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:pearlescent_froglight"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": [
+        {
+          "data": {
+            "Name": "minecraft:packed_ice"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:blue_ice"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:icy_sediment"
+          },
+          "weight": 1
+        }
+      ]
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:glasslace"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [],
+      "ceiling": [],
+      "floor_density": 0.05,
+      "wall_density": 0.0,
+      "ceiling_density": 0.0
+    },
+    "form": {
+      "step_min": 1,
+      "step_max": 2,
+      "shore_min": 0.45,
+      "shore_max": 0.75,
+      "islands": 0.8,
+      "plateaus": 0.0,
+      "beacons": 1.0,
+      "vents": 0.0,
+      "column_clusters": 1.0,
+      "trunks": 1.0,
+      "spires": 1.0,
+      "stalactites": 1.0,
+      "beacon": {
+        "state": {
+          "Name": "abyssia:crystal_kelp"
+        }
+      },
+      "column_block": {
+        "Name": "minecraft:blue_ice"
+      }
+    }
+  }
+}

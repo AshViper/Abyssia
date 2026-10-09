@@ -1,0 +1,147 @@
+{
+  "biomes": [
+    "abyssia:abyss_ruins"
+  ],
+  "system_chance": 0.8,
+  "minor_cave_chance": 0.3,
+  "connection_chance": 0.45,
+  "cave_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 22
+    },
+    {
+      "data": "medium_sea_cave",
+      "weight": 24
+    },
+    {
+      "data": "large_abyssal_cave",
+      "weight": 14
+    },
+    {
+      "data": "massive_cavern",
+      "weight": 4
+    },
+    {
+      "data": "sea_tunnel",
+      "weight": 6
+    },
+    {
+      "data": "vertical_shaft",
+      "weight": 5
+    },
+    {
+      "data": "mega_cavern",
+      "weight": 4
+    }
+  ],
+  "minor_types": [
+    {
+      "data": "small_sea_cave",
+      "weight": 6
+    },
+    {
+      "data": "sea_arch",
+      "weight": 2
+    },
+    {
+      "data": "eroded_cave",
+      "weight": 2
+    }
+  ],
+  "landmark_chance": 0.03,
+  "landmarks": [
+    {
+      "data": "ancient_mineral_chamber",
+      "weight": 3
+    },
+    {
+      "data": "giant_stalactite_chamber",
+      "weight": 2
+    }
+  ],
+  "environment": "abyssia:anomaly",
+  "luminous_chance": 0.0,
+  "strata": [],
+  "ores": [
+    {
+      "data": {
+        "Name": "abyssia:platinum_ore"
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "Name": "abyssia:iridium_ore"
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "Name": "abyssia:tellurium_ore"
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "Name": "abyssia:uranium_ore"
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "Name": "abyssia:tungsten_ore"
+      },
+      "weight": 2
+    }
+  ],
+  "cavern_templates": [
+    {
+      "data": "abyssia:ruins_like_geology",
+      "weight": 6
+    },
+    {
+      "data": "abyssia:mineral",
+      "weight": 2
+    },
+    {
+      "data": "abyssia:mixed",
+      "weight": 1
+    }
+  ],
+  "crystal_colors": [
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:violet_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:abyssal_crystal_cluster"
+        }
+      },
+      "weight": 3
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:cyan_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:deep_crystal_cluster"
+        }
+      },
+      "weight": 2
+    },
+    {
+      "data": {
+        "crystal": {
+          "Name": "abyssia:white_crystal_block"
+        },
+        "cluster": {
+          "Name": "abyssia:pale_crystal_cluster"
+        }
+      },
+      "weight": 1
+    }
+  ]
+}

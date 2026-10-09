@@ -11,6 +11,7 @@ Biome, feature, density function and noise folders are regenerated from scratch.
 """
 import copy
 import json
+import math
 import os
 import re
 import shutil
@@ -189,8 +190,8 @@ ABYSS = dict(
     canyons=(0.35, 0.06, 16.0, -1.2),  # narrow canyons ~77 blocks deep
     offset_limit=3.0,              # seabed offset clamp: keeps the floor 25+ blocks over the bedrock
     ceiling_relief=16,
-    rift=dict(cell=320, chance=0.6, radius=(10, 16), max_seabed=0.35, carve=16.0, open_below=-205),
-    continents=-1.9,               # router continentalness of the abyss: abyss biomes sit at -2..-1.7, the deep layer's at -1.5 and up
+    rift=dict(cell=320, chance=0.6, radius=(10, 16), max_seabed=0.35, carve=16.0, open_below=-205, shaft_bottom=-560),
+    # (the abyss router's continentalness is a function of Y now: ABYSS_CLIMATE, abyss_code)
 )
 
 # ---------------------------------------------------------------- ocean world floor
@@ -384,17 +385,16 @@ def terrain():
     write("density_function/overworld/abyss_rift", abyss_rift(A("overworld/deep_seabed_offset_nr")))
     shaft_gate = grad(ar["open_below"], ar["open_below"] + 8, -20.0, 20.0)  # open below `open_below`, a no-op above
     shaft_in_deep = lambda rift_fn: dmax(mul(-ar["carve"], rift_fn), shaft_gate)
-    # Rock slab + ceiling with a noisy underside (like the deep layer's), open water under it down to the seabed, rock below.
-    abyss_ceiling = add(grad(ABYSS_CEILING_BOTTOM_Y - 16, ABYSS_CEILING_BOTTOM_Y + 32, -2.0, 4.0),
-                        mul(-ab["ceiling_relief"] / 8.0, A("ceiling_depth")))
-    abyss_gate = grad(ABYSS_CEILING_BOTTOM_Y - 16, ABYSS_CEILING_BOTTOM_Y - 8, 20.0, -20.0)  # the shaft is open above, a no-op below
-    ABY_GRAD = grad(ABYSS_SEABED_BASE_Y - 512, ABYSS_SEABED_BASE_Y + 256, 8.0, -4.0)  # zero at ABYSS_SEABED_BASE_Y, 1 per 64 blocks
+    # AB02: the abyss layer is a solid crust (the custom caves, caverns and ores of the depth bands live in it). Only the
+    # hadal shafts pierce it, from the deep layer's floors down to `shaft_bottom`, where they end in a rounded pool.
+    abyss_gate = grad(ar["shaft_bottom"] - 8, ar["shaft_bottom"], 20.0, -20.0)  # the shaft is open above shaft_bottom, a no-op below
+    ABYSS_SOLID = 2.0
 
     def abyss_density(rift_fn):
-        return dmin(dmax(add(ABY_GRAD, A("abyss_seabed_offset")), abyss_ceiling), dmax(mul(-ar["carve"], rift_fn), abyss_gate))
+        return dmin(ABYSS_SOLID, dmax(mul(-ar["carve"], rift_fn), abyss_gate))
     write("density_function/abyss_density", abyss_density(A("abyss_rift")))
     write("density_function/overworld/abyss_density", abyss_density(A("overworld/abyss_rift")))
-    write("density_function/abyss_initial_density", add(ABY_GRAD, A("abyss_seabed_offset")))
+    write("density_function/abyss_initial_density", ABYSS_SOLID)  # solid all the way: the deep seabed search stays monotone
 
     def deep_density(seabed_offset, openings, rift_fn):
         # Deep layer: terrain and caves, under the ceiling (max: caves never cut into it), opened by the shafts; the
@@ -529,6 +529,24 @@ GEOLOGY = {
     "abyss_garden": dict(surface=[(0.0, "organic_sediment"), (None, "abyssal_mud")], sub="abyssal_mud", rock="deep_sea_rock"),
     "abyss_crystal": dict(surface=[(0.3, "crystal_rock"), (None, "crystal_sediment")], sub="crystal_sediment", rock="crystal_rock",
                           ceiling=[(0.4, "deep_crystal_block"), (None, "crystal_rock")]),
+    # AB02 depth-band biomes (only cave walls and bare surfaces see these)
+    "abyss_toxic": dict(surface=[(0.4, "sulfur_deposit"), (None, "mineral_sediment")], sub="mineral_sediment", rock="thermal_rock"),
+    "abyss_toxic_vents": dict(surface=[(0.2, "sulfur_deposit"), (None, "mineral_sediment")], sub="mineral_sediment", rock="vent_rock",
+                              ceiling=[(None, "thermal_rock")]),
+    "abyss_volcanic": dict(surface=[(0.6, "molten_volcanic_rock"), (0.0, "volcanic_ash"), (None, "volcanic_rock")],
+                           sub="volcanic_rock", rock="volcanic_rock", ceiling=[(None, "volcanic_rock")]),
+    "abyss_magma": dict(surface=[(0.3, "molten_volcanic_rock"), (None, "volcanic_glass")], sub="volcanic_rock", rock="volcanic_rock",
+                        ceiling=[(0.4, "molten_volcanic_rock"), (None, "volcanic_glass")]),
+    "abyss_geothermal": dict(surface=[(0.4, "sulfur_deposit"), (None, "mineral_sediment")], sub="mineral_sediment", rock="thermal_rock",
+                             ceiling=[(None, "thermal_rock")]),
+    "abyss_frozen": dict(surface=[(0.4, "icy_sediment"), (None, "frost_silt")], sub="icy_sediment", rock="frozen_rock",
+                         ceiling=[(None, "frozen_rock")]),
+    "abyss_cryo": dict(surface=[(0.3, "crystal_rock"), (None, "icy_sediment")], sub="frost_silt", rock="frozen_rock",
+                       ceiling=[(0.4, "deep_crystal_block"), (None, "frozen_rock")]),
+    "abyss_anomaly": dict(surface=[(0.5, "crystal_rock"), (None, "deep_mud")], sub="deep_sediment", rock="trench_rock",
+                          ceiling=[(0.45, "volcanic_glass"), (None, "trench_rock")]),
+    "abyss_ruins": dict(surface=[(0.55, "ancient_masonry"), (None, "ruin_gravel")], sub="ruin_sediment", rock="ancient_masonry",
+                        ceiling=[(None, "ancient_masonry")]),
 }
 DEFAULT_BIOME = "deep_sea"
 
@@ -1116,8 +1134,202 @@ CAVE_ENVIRONMENTS = {
                    density=0.15, glow_ratio=0.12, bright_ratio=0.03),
         speleothem="abyssal_stalactite", speleothem_density=0.07, crystals=[("pressure_crystal_cluster", 3), ("deep_crystal_cluster", 1)],
         crystal_density=0.02, debris=[("cave_rubble", 3)]),
+    # AB02 hazard environments. Toxic: sulfur and mineral sediment, sickly glowing growth.
+    "toxic": environment(
+        [("mineral_cave_rock", 3), ("sulfur_vent_rock", 3), ("dark_cave_rock", 2)],
+        [("mineral_sediment", 4), ("cave_mud", 2), ("sulfur_deposit", 1)],
+        [("mineral_cave_rock", 2), ("dark_cave_rock", 2), ("sulfur_vent_rock", 1)],
+        [("sulfur_deposit", 3), ("cave_mineral_crust", 2), ("sulfur_vent_rock", 2)], 0.14,
+        flora=dict(floor=[("vent_grass", 3), (("ashen_abyssal_grass", 1, 2), 2), ("heat_moss", 1), ("cave_sponge", 1)],
+                   wall=[("wall_mineral_vine", 3)],
+                   ceiling=[(("cave_root", 1, 3), 3), (("cave_vine", 2, 5), 1)],
+                   glow=[("thermal_plant", 2), ("glowtip_grass", 2), ("abyssal_mushroom", 2), ("lumen_quill", 1)],
+                   bright=[("abyssal_bloom", 1)],
+                   density=0.2, glow_ratio=0.3, bright_ratio=0.03),
+        speleothem="mineral_stalactite", speleothem_density=0.08,
+        crystals=[("sulfur_cluster", 4), ("manganese_nodules", 1), ("nickel_cluster", 1)], crystal_density=0.03,
+        debris=[("cave_rubble", 3), ("seafloor_pebbles", 1)]),
+    # Magma: dark basalt with molten rock accents, sulfur and thermal vent formations (no lava fluid).
+    "magma": environment(
+        [("thermal_cave_rock", 4), ("black_vent_rock", 3), ("dark_cave_rock", 3)],
+        [("volcanic_ash", 3), ("mineral_sediment", 2), ("cave_mud", 1)],
+        [("black_vent_rock", 3), ("thermal_cave_rock", 2), ("dark_cave_rock", 1)],
+        [("molten_volcanic_rock", 3), ("sulfur_deposit", 2), ("sulfur_vent_rock", 2)], 0.1,
+        flora=dict(floor=[("vent_grass", 2), (("thermal_tube", 1, 4), 2), ("heat_moss", 2)],
+                   wall=[("wall_mineral_vine", 2)],
+                   ceiling=[(("cave_root", 1, 2), 1)],
+                   glow=[("thermal_plant", 3)],
+                   density=0.12, glow_ratio=0.25, bright_ratio=0.0),
+        speleothem="thermal_stalactite", speleothem_density=0.12,
+        crystals=[("small_thermal_crystal_bud", 3), ("medium_thermal_crystal_bud", 2), ("thermal_crystal_cluster", 1), ("sulfur_cluster", 3)],
+        crystal_density=0.04, debris=[("cave_rubble", 3), ("seafloor_pebbles", 1)]),
+    # Frozen: icy and frozen rock, white and cyan crystal clusters, very sparse life.
+    "frozen": environment(
+        [("frozen_rock", 4), ("crystal_cave_rock", 2), ("wet_cave_rock", 1)],
+        [("icy_sediment", 4), ("frost_silt", 3), ("crystal_sediment", 1)],
+        [("frozen_rock", 3), ("crystal_cave_rock", 1)],
+        [("white_crystal_block", 1), ("deep_crystal_block", 2)], 0.08,
+        flora=dict(floor=[("glasslace", 2), (("teal_abyssal_grass", 1, 2), 1), ("crystal_plant", 2)],
+                   wall=[("wall_fern", 1)],
+                   glow=[("cave_crystal_plant", 2), ("crystal_plant", 2), ("glasslace", 1)],
+                   density=0.1, glow_ratio=0.3, bright_ratio=0.0),
+        speleothem="crystal_stalactite", speleothem_density=0.1,
+        crystals=[("pale_crystal_cluster", 4), ("crystal_needle", 3), ("deep_crystal_cluster", 2)], crystal_density=0.08,
+        debris=[("crystal_shards", 4), ("cave_rubble", 1)]),
+    # Anomaly: dark crystal rock and volcanic glass, violet crystals, odd floating glow.
+    "anomaly": environment(
+        [("dark_cave_rock", 4), ("crystal_rock", 2), ("volcanic_glass", 3), ("trench_rock", 1)],
+        [("crystal_sediment", 2), ("deep_sediment", 2), ("cave_mud", 1)],
+        [("dark_cave_rock", 3), ("volcanic_glass", 2)],
+        [("violet_crystal_block", 2), ("deep_crystal_block", 1)], 0.08,
+        flora=dict(floor=[(("violet_abyssal_grass", 1, 2), 2), ("crystal_plant", 1)],
+                   ceiling=[(("cave_vine", 2, 6), 1)],
+                   glow=[("cave_crystal_plant", 2), ("glowtip_grass", 1), ("lumen_quill", 1)],
+                   bright=[("abyssal_bloom", 2), ("hadal_bloom", 1)],
+                   density=0.12, glow_ratio=0.4, bright_ratio=0.08),
+        speleothem="crystal_stalactite", speleothem_density=0.06,
+        crystals=[("abyssal_crystal_cluster", 4), ("pressure_crystal_cluster", 2), ("crystal_needle", 2)], crystal_density=0.08,
+        debris=[("crystal_shards", 3), ("cave_rubble", 2)]),
 }
 
+
+
+# AB03: halls (the main chamber of large/massive/mega caverns, radius 16+, water-filled like every cave): a smooth domed vault over
+# a terraced basin. Per environment (CaveEnvironment "hall"): look = rock of floors/walls/roof, "basin" floor under the terraces,
+# large organic "mosaic" patches on walls and roof, embedded light blocks ("glow", chance per surface block) and the bright
+# blocks lining the glowing niche in the far wall ("window"); life = extra (luminous) plants on terrace ledges, risers and roof;
+# form = terrace steps, basin reach (share of the radius), islands/plateaus, light columns ("beacon" plant, "beacons" per hall),
+# extra vents, column clusters of "column_block", and the multipliers of trunks, spires and giant stalactites.
+def hall_style(wall=(), floor=(), ceiling=(), mosaic=(), mosaic_coverage=0.0, glow=(), glow_chance=0.0, window=(), basin=(),
+               life_floor=(), life_wall=(), life_ceiling=(), floor_density=0.0, wall_density=0.0, ceiling_density=0.0,
+               step=(1, 2), shore=(0.5, 0.75), islands=1.0, plateaus=0.0, beacon=None, beacons=0.0, vents=0.0,
+               column_block=None, column_clusters=0.0, trunks=1.0, spires=1.0, stalactites=1.0):
+    look = {"wall": blocks(wall), "floor": blocks(floor), "ceiling": blocks(ceiling), "mosaic": blocks(mosaic), "mosaic_coverage": mosaic_coverage,
+            "glow": blocks(glow), "glow_chance": glow_chance, "window": blocks(window), "basin": blocks(basin)}
+    life = {"floor": plants(life_floor), "wall": plants(life_wall), "ceiling": plants(life_ceiling),
+            "floor_density": floor_density, "wall_density": wall_density, "ceiling_density": ceiling_density}
+    form = {"step_min": step[0], "step_max": step[1], "shore_min": shore[0], "shore_max": shore[1], "islands": islands, "plateaus": plateaus,
+            "beacons": beacons, "vents": vents, "column_clusters": column_clusters, "trunks": trunks, "spires": spires, "stalactites": stalactites}
+    if beacon:
+        form["beacon"] = pl(beacon)
+    if column_block:
+        form["column_block"] = state(column_block)
+    return {"look": look, "life": life, "form": form}
+
+
+_GLOW_FLOOR = [("glowtip_grass", 3), ("cave_crystal_plant", 2), ("cave_bloom", 1)]
+_GLOW_CEILING = [(("cave_vine", 3, 12), 3), (("abyssal_vine", 4, 14), 1)]
+HALL_STYLES = {
+    # Plain: grey-blue rock, pale streaks, warm window, a few light columns.
+    "abyssal": hall_style(
+        wall=[("abyssal_cave_rock", 4), ("dark_cave_rock", 3), ("minecraft:deepslate", 2), ("minecraft:tuff", 1)],
+        floor=[("cave_sediment", 3), ("abyssal_cave_rock", 2), ("minecraft:tuff", 1)],
+        ceiling=[("dark_cave_rock", 3), ("abyssal_cave_rock", 2)],
+        mosaic=[("layered_cave_rock", 2), ("minecraft:calcite", 1)], mosaic_coverage=0.14,
+        glow=[("lumen_rock", 3), ("deep_crystal_block", 1)], glow_chance=0.012,
+        window=[("minecraft:ochre_froglight", 2), ("minecraft:shroomlight", 1)], basin=[("cave_mud", 3), ("cave_sediment", 2)],
+        life_floor=_GLOW_FLOOR, life_wall=[("luminous_moss", 1)], life_ceiling=_GLOW_CEILING,
+        floor_density=0.05, wall_density=0.03, ceiling_density=0.025,
+        step=(1, 2), shore=(0.5, 0.78), islands=1.0, plateaus=0.2, beacon="crystal_kelp", beacons=0.8),
+    "luminous": hall_style(
+        wall=[("wet_cave_rock", 4), ("abyssal_cave_rock", 2), ("crystal_cave_rock", 1)],
+        floor=[("cave_sediment", 3), ("crystal_sediment", 1)], ceiling=[("wet_cave_rock", 3), ("crystal_cave_rock", 1)],
+        mosaic=[("crystal_cave_rock", 2), ("minecraft:calcite", 1)], mosaic_coverage=0.12,
+        glow=[("lumen_rock", 2), ("deep_crystal_block", 2)], glow_chance=0.02,
+        window=[("minecraft:sea_lantern", 1), ("minecraft:verdant_froglight", 1)], basin=[("cave_mud", 2), ("crystal_sediment", 1)],
+        life_floor=[("cave_crystal_plant", 3), ("glowtip_grass", 3), ("cave_bloom", 1), ("abyssal_bloom", 1)], life_wall=[("luminous_moss", 1)],
+        life_ceiling=_GLOW_CEILING, floor_density=0.09, wall_density=0.06, ceiling_density=0.05,
+        step=(1, 1), shore=(0.4, 0.65), islands=0.8, beacon="crystal_kelp", beacons=2.0),
+    # Lush (image 3): grey stone walls with moss-green floors, fine stair-step terraces, many glow plants and light columns.
+    "forest": hall_style(
+        wall=[("organic_cave_rock", 3), ("minecraft:stone", 2), ("wet_cave_rock", 2), ("minecraft:andesite", 1)],
+        floor=[("organic_sediment", 4), ("cave_mud", 1)], ceiling=[("organic_cave_rock", 2), ("minecraft:stone", 1)],
+        mosaic=[("minecraft:stone", 2), ("minecraft:andesite", 1)], mosaic_coverage=0.2,
+        glow=[("lumen_rock", 1)], glow_chance=0.008,
+        window=[("minecraft:verdant_froglight", 1), ("minecraft:ochre_froglight", 1)], basin=[("organic_sediment", 2), ("cave_mud", 2)],
+        life_floor=[("glowtip_grass", 3), ("cave_crystal_plant", 2), ("cave_bloom", 1)], life_wall=[("luminous_moss", 2), ("wall_fern", 1)],
+        life_ceiling=[(("cave_vine", 3, 14), 3)], floor_density=0.08, wall_density=0.06, ceiling_density=0.05,
+        step=(1, 1), shore=(0.35, 0.6), islands=0.6, beacon="crystal_kelp", beacons=1.5, trunks=1.4),
+    "underground_sea": hall_style(
+        glow=[("lumen_rock", 1), ("deep_crystal_block", 1)], glow_chance=0.01, mosaic=[("eroded_cave_rock", 1)], mosaic_coverage=0.15,
+        window=[("minecraft:sea_lantern", 1)], basin=[("cave_mud", 2), ("cave_sediment", 1)],
+        life_floor=_GLOW_FLOOR, life_ceiling=_GLOW_CEILING, floor_density=0.04, ceiling_density=0.02,
+        step=(1, 2), shore=(0.7, 0.9), islands=1.4, beacon="crystal_kelp", beacons=1.0),
+    "eroded": hall_style(
+        mosaic=[("layered_cave_rock", 1)], mosaic_coverage=0.1, glow=[("lumen_rock", 1)], glow_chance=0.008,
+        window=[("minecraft:sea_lantern", 1)], life_floor=_GLOW_FLOOR, floor_density=0.04,
+        step=(1, 2), shore=(0.5, 0.8), beacon="crystal_kelp", beacons=0.6),
+    "trench": hall_style(
+        wall=[("dark_cave_rock", 3), ("trench_rock", 3), ("minecraft:deepslate", 1)],
+        mosaic=[("trench_rock", 1)], mosaic_coverage=0.1, glow=[("deep_crystal_block", 1)], glow_chance=0.008,
+        window=[("minecraft:sea_lantern", 1)], step=(2, 3), shore=(0.5, 0.8), plateaus=0.4, beacon="crystal_kelp", beacons=0.5),
+    "mineral": hall_style(
+        wall=[("mineral_cave_rock", 4), ("layered_cave_rock", 2), ("mineral_host_rock", 2), ("minecraft:tuff", 1)],
+        floor=[("mineral_sediment", 3), ("minecraft:tuff", 1)], ceiling=[("mineral_cave_rock", 2), ("layered_cave_rock", 1)],
+        mosaic=[("cave_mineral_crust", 2), ("minecraft:calcite", 1)], mosaic_coverage=0.15,
+        glow=[("lumen_rock", 2), ("deep_crystal_block", 1)], glow_chance=0.01, window=[("minecraft:shroomlight", 1)],
+        life_floor=[("cave_crystal_plant", 1)], floor_density=0.03, step=(1, 2), plateaus=0.3, vents=0.3),
+    "crystal": hall_style(
+        wall=[("crystal_cave_rock", 4), ("crystal_rock", 2), ("minecraft:calcite", 2)],
+        floor=[("crystal_sediment", 3), ("minecraft:calcite", 2)], ceiling=[("crystal_cave_rock", 3), ("minecraft:calcite", 1)],
+        mosaic=[("deep_crystal_block", 2), ("cyan_crystal_block", 2), ("blue_crystal_block", 1)], mosaic_coverage=0.12,
+        glow=[("deep_crystal_block", 1)], glow_chance=0.012, window=[("minecraft:sea_lantern", 1)], basin=[("crystal_sediment", 2), ("minecraft:calcite", 1)],
+        life_floor=[("crystal_plant", 2), ("cave_crystal_plant", 2), ("glasslace", 1)], floor_density=0.06,
+        step=(1, 2), islands=1.2, beacon="crystal_kelp", beacons=1.5, column_block="deep_crystal_block", column_clusters=1.0),
+    # Hot (image 4): black basalt and blackstone mosaicked with magma, a basin floor of glowing magma fields, ringed basalt
+    # plateaus rising from it with basalt column clusters, vents. No lava: everything solid, the hall stays water-filled.
+    "thermal": hall_style(
+        wall=[("minecraft:basalt", 3), ("minecraft:blackstone", 3), ("volcanic_rock", 2), ("thermal_cave_rock", 1)],
+        floor=[("minecraft:basalt", 2), ("minecraft:smooth_basalt", 2), ("minecraft:blackstone", 1), ("volcanic_ash", 1)],
+        ceiling=[("minecraft:blackstone", 3), ("minecraft:basalt", 2), ("black_vent_rock", 1)],
+        mosaic=[("minecraft:magma_block", 5), ("molten_volcanic_rock", 1)], mosaic_coverage=0.28,
+        window=[("minecraft:shroomlight", 1)],
+        basin=[("minecraft:magma_block", 5), ("molten_volcanic_rock", 2), ("minecraft:basalt", 1), ("sulfur_deposit", 1)],
+        life_floor=[("thermal_plant", 1)], floor_density=0.02,
+        step=(2, 3), shore=(0.65, 0.88), islands=1.6, plateaus=0.8, vents=1.5, column_block="minecraft:basalt", column_clusters=1.2,
+        trunks=0.6, spires=0.6),
+    "magma": hall_style(
+        wall=[("minecraft:blackstone", 3), ("minecraft:basalt", 3), ("black_vent_rock", 2), ("volcanic_rock", 1)],
+        floor=[("minecraft:basalt", 2), ("minecraft:smooth_basalt", 2), ("minecraft:blackstone", 1)],
+        ceiling=[("minecraft:blackstone", 3), ("minecraft:basalt", 2)],
+        mosaic=[("minecraft:magma_block", 5), ("molten_volcanic_rock", 2)], mosaic_coverage=0.35,
+        window=[("minecraft:shroomlight", 1)],
+        basin=[("minecraft:magma_block", 5), ("molten_volcanic_rock", 2), ("minecraft:basalt", 1), ("sulfur_deposit", 1)],
+        life_floor=[("thermal_plant", 1)], floor_density=0.015,
+        step=(2, 3), shore=(0.7, 0.9), islands=1.8, plateaus=0.85, vents=2.0, column_block="minecraft:basalt", column_clusters=1.5,
+        trunks=0.6, spires=0.5),
+    # Frozen: packed ice and frozen rock with blue ice patches, an ice basin, blue ice column clusters, cold crystal light.
+    "frozen": hall_style(
+        wall=[("minecraft:packed_ice", 4), ("frozen_rock", 3), ("minecraft:blue_ice", 1)],
+        floor=[("minecraft:snow_block", 3), ("icy_sediment", 2), ("frost_silt", 1)], ceiling=[("minecraft:packed_ice", 3), ("frozen_rock", 2)],
+        mosaic=[("minecraft:blue_ice", 3), ("white_crystal_block", 1)], mosaic_coverage=0.2,
+        glow=[("deep_crystal_block", 3), ("minecraft:sea_lantern", 1)], glow_chance=0.012,
+        window=[("minecraft:sea_lantern", 2), ("minecraft:pearlescent_froglight", 1)],
+        basin=[("minecraft:packed_ice", 3), ("minecraft:blue_ice", 2), ("icy_sediment", 1)],
+        life_floor=[("crystal_plant", 2), ("cave_crystal_plant", 2), ("glasslace", 1)], floor_density=0.05,
+        step=(1, 2), shore=(0.45, 0.75), islands=0.8, beacon="crystal_kelp", beacons=1.0, column_block="minecraft:blue_ice", column_clusters=1.0),
+    # Toxic: sickly yellow-green sulfur and mineral stone, yellow and green glowing growths.
+    "toxic": hall_style(
+        wall=[("mineral_cave_rock", 3), ("sulfur_vent_rock", 3), ("minecraft:tuff", 2), ("minecraft:end_stone", 1)],
+        floor=[("sulfur_deposit", 3), ("mineral_sediment", 3)], ceiling=[("sulfur_vent_rock", 2), ("mineral_cave_rock", 2)],
+        mosaic=[("sulfur_deposit", 3), ("minecraft:end_stone", 1)], mosaic_coverage=0.25,
+        glow=[("minecraft:ochre_froglight", 3), ("minecraft:verdant_froglight", 2)], glow_chance=0.012,
+        window=[("minecraft:verdant_froglight", 1)], basin=[("sulfur_deposit", 2), ("mineral_sediment", 2), ("cave_mud", 1)],
+        life_floor=[("thermal_plant", 2), ("abyssal_mushroom", 2), ("glowtip_grass", 1)], life_wall=[("wall_mineral_vine", 1)],
+        life_ceiling=[(("cave_vine", 2, 8), 1)], floor_density=0.06, wall_density=0.03, ceiling_density=0.02,
+        step=(1, 2), plateaus=0.3, vents=0.8, column_block="sulfur_vent_rock", column_clusters=0.5),
+    # Anomaly: dark stone and volcanic glass with violet crystal and crying obsidian.
+    "anomaly": hall_style(
+        wall=[("dark_cave_rock", 3), ("volcanic_glass", 2), ("minecraft:blackstone", 1), ("crystal_rock", 1)],
+        floor=[("crystal_sediment", 2), ("minecraft:smooth_basalt", 2), ("deep_sediment", 1)], ceiling=[("dark_cave_rock", 2), ("volcanic_glass", 2)],
+        mosaic=[("violet_crystal_block", 3), ("minecraft:crying_obsidian", 2), ("minecraft:amethyst_block", 1)], mosaic_coverage=0.15,
+        glow=[("minecraft:crying_obsidian", 2), ("deep_crystal_block", 1)], glow_chance=0.012,
+        window=[("minecraft:pearlescent_froglight", 1)], basin=[("minecraft:smooth_basalt", 2), ("crystal_sediment", 1)],
+        life_floor=[("hadal_bloom", 1), ("abyssal_bloom", 1), ("cave_crystal_plant", 2)], floor_density=0.05,
+        step=(2, 3), plateaus=0.5, islands=1.2, beacon="crystal_kelp", beacons=1.0, column_block="violet_crystal_block", column_clusters=0.8),
+}
+for _name, _style in HALL_STYLES.items():
+    CAVE_ENVIRONMENTS[_name]["hall"] = _style
 
 def profile(biomes, system_chance, cave_types, environment, strata, ores, *, minor=0.3, connection=0.4, minor_types=None,
             landmark_chance=0.0, landmarks=None, luminous=0.0, templates=None, crystals=None):
@@ -1210,6 +1422,56 @@ CAVE_PROFILES = {
                              templates={"crystal": 6, "mixed": 2, "lake": 1}, crystals={"cyan": 3, "blue": 2, "violet": 1, "white": 1, "green": 1}),
 }
 
+# AB02: one profile per abyss biome. Free-floating cave systems of a depth band pick their environment from the biome at the
+# system's position. Strata are depth-below-seabed (no seabed in the crust): none. "mega_cavern" (CaveType.MEGA_CAVERN) is left out
+# of plain and garden (weight 0) and rare in the hazard / crystal biomes, common in the anomaly ones.
+ABYSS_ORES = {
+    "plain": {"manganese_ore": 4, "deep_nickel_ore": 3, "vanadium_ore": 2, "lead_ore": 2, "zinc_ore": 1},
+    "heat": {"titanium_ore": 3, "molybdenum_ore": 3, "zinc_ore": 2, "thorium_ore": 1, "tungsten_ore": 1},
+    "cold": {"cobalt_ore": 4, "neodymium_ore": 2, "yttrium_ore": 2},
+    "deep": {"platinum_ore": 2, "iridium_ore": 2, "tellurium_ore": 2, "uranium_ore": 2, "tungsten_ore": 2},
+}
+_BASIC = {"small_sea_cave": 22, "medium_sea_cave": 24, "large_abyssal_cave": 12, "massive_cavern": 3, "sea_tunnel": 6, "vertical_shaft": 5}
+CAVE_PROFILES.update({
+    "abyss_plain": profile(["abyss_plain"], 0.75, {**_BASIC, "mineral_cave": 6}, "abyssal", [], ABYSS_ORES["plain"],
+                           minor=0.3, connection=0.4, landmark_chance=0.02, luminous=0.2,
+                           landmarks={"giant_stalactite_chamber": 2, "ancient_mineral_chamber": 1},
+                           templates={"mixed": 4, "ruins_like_geology": 2, "mineral": 2, "lake": 1}, crystals={"cyan": 3, "blue": 2, "white": 1}),
+    "abyss_garden": profile(["abyss_garden"], 0.8, {**_BASIC, "large_abyssal_cave": 14, "vertical_shaft": 4}, "forest", [], ABYSS_ORES["plain"],
+                            minor=0.4, connection=0.45, landmark_chance=0.03, luminous=0.15,
+                            landmarks={"giant_kelp_cavern": 3, "deep_cave_forest": 3},
+                            templates={"forest": 6, "mixed": 2, "lake": 2}, crystals={"green": 3, "cyan": 2, "white": 1}),
+    "abyss_crystal": profile(["abyss_crystal"], 0.8, {**_BASIC, "crystal_cave": 20, "mega_cavern": 2}, "crystal", [], ABYSS_ORES["cold"],
+                             minor=0.35, connection=0.45, landmark_chance=0.03, luminous=0.35,
+                             landmarks={"massive_crystal_chamber": 4},
+                             templates={"crystal": 6, "mixed": 2}, crystals={"cyan": 3, "blue": 2, "violet": 1, "white": 1}),
+    "abyss_toxic": profile(["abyss_toxic"], 0.75, {**_BASIC, "mega_cavern": 2}, "toxic", [], ABYSS_ORES["plain"],
+                           minor=0.3, connection=0.4, templates={"mineral": 4, "mixed": 3, "ruins_like_geology": 1}, crystals={"green": 3, "amber": 2}),
+    "abyss_toxic_vents": profile(["abyss_toxic_vents"], 0.8, {**_BASIC, "mega_cavern": 2, "vertical_shaft": 8}, "toxic", [], ABYSS_ORES["plain"],
+                                 minor=0.3, connection=0.45, templates={"mineral": 4, "thermal": 3, "mixed": 1}, crystals={"green": 3, "amber": 2}),
+    "abyss_volcanic": profile(["abyss_volcanic"], 0.8, {**_BASIC, "thermal_cave": 15, "mega_cavern": 3}, "thermal", [], ABYSS_ORES["heat"],
+                              minor=0.3, connection=0.4, landmark_chance=0.03, landmarks={"thermal_cathedral": 3},
+                              minor_types={"small_sea_cave": 6, "sea_arch": 1},
+                              templates={"thermal": 6, "mineral": 2, "ruins_like_geology": 2}, crystals={"amber": 4, "white": 1}),
+    "abyss_magma": profile(["abyss_magma"], 0.8, {**_BASIC, "large_abyssal_cave": 14, "massive_cavern": 4, "mega_cavern": 3}, "magma", [], ABYSS_ORES["heat"],
+                           minor=0.25, connection=0.4, templates={"thermal": 6, "mineral": 2, "ruins_like_geology": 2}, crystals={"amber": 5, "white": 1}),
+    "abyss_geothermal": profile(["abyss_geothermal"], 0.8, {**_BASIC, "thermal_cave": 10, "mega_cavern": 3}, "magma", [], ABYSS_ORES["heat"],
+                                minor=0.3, connection=0.45, landmark_chance=0.03, landmarks={"thermal_cathedral": 4},
+                                templates={"thermal": 6, "mineral": 3, "mixed": 1}, crystals={"amber": 4, "white": 1}),
+    "abyss_frozen": profile(["abyss_frozen"], 0.75, {**_BASIC, "mega_cavern": 2}, "frozen", [], ABYSS_ORES["cold"],
+                            minor=0.3, connection=0.4, templates={"crystal": 4, "mixed": 2, "lake": 2}, crystals={"white": 4, "cyan": 3, "blue": 1}),
+    "abyss_cryo": profile(["abyss_cryo"], 0.8, {**_BASIC, "crystal_cave": 8, "mega_cavern": 3}, "frozen", [], ABYSS_ORES["cold"],
+                          minor=0.3, connection=0.45, landmark_chance=0.03, landmarks={"massive_crystal_chamber": 3},
+                          templates={"crystal": 6, "mixed": 1}, crystals={"white": 4, "cyan": 3, "blue": 2}),
+    "abyss_anomaly": profile(["abyss_anomaly"], 0.85, {**_BASIC, "large_abyssal_cave": 14, "massive_cavern": 4, "mega_cavern": 5}, "anomaly", [],
+                             ABYSS_ORES["deep"], minor=0.25, connection=0.4, landmark_chance=0.03, landmarks={"massive_crystal_chamber": 2},
+                             templates={"ruins_like_geology": 4, "crystal": 3, "mixed": 1}, crystals={"violet": 4, "white": 1, "blue": 1}),
+    "abyss_ruins": profile(["abyss_ruins"], 0.8, {**_BASIC, "large_abyssal_cave": 14, "massive_cavern": 4, "mega_cavern": 4}, "anomaly", [],
+                           ABYSS_ORES["deep"], minor=0.3, connection=0.45, landmark_chance=0.03,
+                           landmarks={"ancient_mineral_chamber": 3, "giant_stalactite_chamber": 2},
+                           templates={"ruins_like_geology": 6, "mineral": 2, "mixed": 1}, crystals={"violet": 3, "cyan": 2, "white": 1}),
+})
+
 
 def cavern_template(patches, structures, *, deep=None, forest=None, hanging=None, ceiling_glow=0.02, wall_relief=1.5, center_chance=0.4,
                     centers=None):
@@ -1300,7 +1562,7 @@ def caves():
     for name, template in CAVERN_TEMPLATES.items():
         write_data(os.path.join(CAVE_DIR, "cavern_template", name + ".json"), template)
     covered = {b for p in CAVE_PROFILES.values() for b in p["biomes"]}
-    missing = {A(b) for b in DEEP_BIOMES} - covered
+    missing = {A(b) for b in [*DEEP_BIOMES, *ABYSS_BIOMES]} - covered
     assert not missing, f"deep biomes without a cave profile: {missing}"
 
 
@@ -1316,6 +1578,18 @@ def write_data(path, obj):
 # Global orders per generation step: every biome lists a subset in this order, so feature order stays consistent.
 LANDFORM_ORDER = ["seabed_structures", "rock_spire", "abyssal_spire", "trench_spire", "thermal_spire", "crystal_spire"]
 VEIN_ORDER = [f"vein_{m}_{s}" for m in MINERALS for s in ("small", "medium", "large", "huge")] + [f"vein_{m}_rare" for m in RARE_VEINS] +     [f"vein_{m}_vanilla" for m in VANILLA_VEINS]
+# AB02: the crust's ore veins come from the optional module tools/crust_ores.py (VEIN_FEATURE_ORDER, biome_features(biome_id)).
+try:
+    import crust_ores as CRUST_ORES
+    VEIN_ORDER = VEIN_ORDER + [f for f in CRUST_ORES.VEIN_FEATURE_ORDER if f not in VEIN_ORDER]
+
+    def crust_biome_features(biome_id):
+        return list(CRUST_ORES.biome_features(biome_id))
+except ImportError:
+    CRUST_ORES = None
+
+    def crust_biome_features(biome_id):
+        return []
 DECOR_ORDER = ["vent_fields", "cave_deep_crystals", "cave_abyssal_mushrooms"]
 VEG_ORDER = ["seabed_structure_dressing", "meadow_green_normal", "meadow_green_sparse", "meadow_organic_dense", "meadow_organic_full", "meadow_ashen_normal",
              "meadow_ancient_normal", "meadow_crystal_normal", "meadow_thermal_sparse", "meadow_thermal_normal",
@@ -1366,20 +1640,152 @@ DEEP_BIOMES = {
     "frost_abyss": (0x4A7AAE, 0x13304C, ["rock_spire"], ["cave_deep_crystals"],
                     ["meadow_ancient_normal", "void_kelp", "patch_pressure_crystal", "patch_deep_crystal_cluster", "seafloor_pebbles"]),
 }
-# The abyss layer's biomes (continentalness -2..-1.7, see biome_sources): water colour, fog colour and vegetation, all of it
-# the deep layer's features cloned onto the abyss floor (abyss_features). No landforms, structures, veins or caves yet.
+# The abyss layer's biomes (AB02, see biome_sources): water colour and fog colour. The abyss is a solid crust, so there is no
+# seabed vegetation (the AbyssFloorPlacement class stays for hadal shaft floors); ore veins come from tools/crust_ores.py.
 ABYSS_BIOMES = {
-    "abyss_plain": (0x05050F, 0x000002,
-                    ["meadow_ancient_normal", "giant_tube_scattered", "patch_black_coral", "patch_hadal_bloom", "glow_plants_ancient",
-                     "patch_pressure_crystal"]),
-    "abyss_garden": (0x0B2A3A, 0x01080C,
-                     ["meadow_organic_dense", "sponge_plants", "patch_abyssal_bloom", "patch_abyssal_mushroom", "glow_plants_deep",
-                      "glow_plants_ancient", "floating_blooms", "large_deep_kelp"]),
-    "abyss_crystal": (0x1A2A5A, 0x040818,
-                      ["meadow_crystal_normal", "crystal_plants", "glow_plants_crystal", "crystal_garden", "crystal_spikes",
-                       "patch_deep_crystal_cluster", "patch_pressure_crystal"]),
+    "abyss_plain": (0x05050F, 0x000002),
+    "abyss_garden": (0x0B2A3A, 0x01080C),
+    "abyss_crystal": (0x1A2A5A, 0x040818),
+    "abyss_toxic": (0x2F4A12, 0x141C04),         # sickly green
+    "abyss_toxic_vents": (0x4A5A14, 0x1C2206),   # sickly yellow-green
+    "abyss_volcanic": (0x4A1408, 0x240602),      # deep red
+    "abyss_magma": (0x6A2205, 0x3A0E00),         # orange-red
+    "abyss_geothermal": (0x6A4A12, 0x2E1E06),    # amber
+    "abyss_frozen": (0x7AA8C8, 0x1C3448),        # pale blue
+    "abyss_cryo": (0xA8D0E0, 0x2A4E60),          # white-blue
+    "abyss_anomaly": (0x2A0A4A, 0x08001A),       # violet-black
+    "abyss_ruins": (0x2A5A5A, 0x0A1C1C),         # dull teal
 }
-ABYSS_SUFFIX = "_abyss"
+# Hazard tags (read by com.abyssia.hazard as TagKey<Biome> abyssia:hazard/toxic|heat|cold)
+ABYSS_HAZARD_TAGS = {
+    "toxic": ["abyss_toxic", "abyss_toxic_vents", "abyss_anomaly"],
+    "heat": ["abyss_volcanic", "abyss_magma", "abyss_geothermal"],
+    "cold": ["abyss_frozen", "abyss_cryo"],
+}
+
+# ---- depth bands of the abyss crust (AB02)
+# Router continentalness of the abyss = abyss_code(Y) + a wobble (ABYSS_BAND_WOBBLE x biome_fuzz noise, about +-60 blocks of
+# band border), so the borders of the depth bands are not flat planes. The code runs -1.70 at Y -376 to -2.00 at Y CRUST_BOTTOM_Y (-998).
+ABYSS_CRUST_BOTTOM_Y = DL["CRUST_BOTTOM_Y"]
+ABYSS_BAND_WOBBLE = 0.012
+
+
+def abyss_code(y):
+    t = min(1.0, max(0.0, (ABYSS_TOP_Y - y) / (ABYSS_TOP_Y - ABYSS_CRUST_BOTTOM_Y)))
+    return -1.70 - 0.30 * t
+
+
+# Bands as (Y top, Y bottom): B' continues the shallow B band below the old deep layer. Entries of a band sit at its
+# continentalness range (touching at the borders: the wobble above makes the border irregular, so the biome sets change
+# along a crooked line); B' extends up to -1.70 and E down to -2.0, beyond the wobble the nearest range wins.
+ABYSS_BANDS = {"B": (ABYSS_TOP_Y, DL["BAND_C_TOP_Y"]), "C": (DL["BAND_C_TOP_Y"], DL["BAND_D_TOP_Y"]),
+               "D": (DL["BAND_D_TOP_Y"], DL["BAND_E_TOP_Y"]), "E": (DL["BAND_E_TOP_Y"], ABYSS_CRUST_BOTTOM_Y)}
+
+# Hazard biome tails per band. The regional noises (temperature = region_temperature, humidity = region_habitat,
+# weirdness = region_volcanic, erosion = region_erosion) are each ~N(0, 0.28); every biome takes the tail of one noise, the rules
+# below are applied in priority order and carve disjoint boxes (abyss_partition). None = the biome does not occur in the band.
+#   heat    weirdness above this -> volcanic (magma where weirdness > `magma`, geothermal where temperature > `geo`)
+#   crys    weirdness below -this -> crystal (cryo where temperature < `cryo`)
+#   toxic   humidity above this -> toxic (toxic_vents where temperature > `vent`)
+#   frozen  temperature below this -> frozen
+#   anomaly erosion above this -> anomaly;  ruins  erosion below this -> ruins
+#   garden  humidity above this (weirdness -0.33..0.33) -> garden (not a hazard)
+# Expected hazard share of the area (model: independent N(0,0.28), abyss_shares()): B' 10-20%, C 15-25%, D 25-40%, E 30-50%.
+ABYSS_TAILS = {
+    "B": dict(heat=None, magma=None, geo=None, crys=None, cryo=None, toxic=0.42, vent=None, frozen=-0.36, anomaly=None, ruins=None, garden=0.30),  # hazard ~16%
+    "C": dict(heat=0.40, magma=None, geo=0.10, crys=0.33, cryo=-0.25, toxic=0.48, vent=0.15, frozen=-0.36, anomaly=None, ruins=None, garden=0.30),  # ~21%
+    "D": dict(heat=0.33, magma=0.50, geo=0.10, crys=0.33, cryo=-0.20, toxic=0.38, vent=0.15, frozen=-0.32, anomaly=0.55, ruins=None, garden=None),  # ~32%
+    "E": dict(heat=0.29, magma=0.46, geo=0.10, crys=0.33, cryo=-0.18, toxic=0.32, vent=0.15, frozen=-0.30, anomaly=0.45, ruins=-0.48, garden=None),  # ~42%
+}
+ABYSS_NOISE_STD = 0.28
+ABYSS_HAZARD_TARGETS = {"B": (0.10, 0.20), "C": (0.15, 0.25), "D": (0.25, 0.40), "E": (0.30, 0.50)}
+ABYSS_NON_HAZARD = {"abyss_plain", "abyss_garden", "abyss_crystal"}
+GARDEN_WEIRDNESS = (-0.33, 0.33)
+ABYSS_DIMS = ("temperature", "humidity", "erosion", "weirdness")
+
+
+def _box_sub(a, b):
+    """The boxes of a without b (boxes: dim -> (lo, hi))."""
+    if any(min(a[d][1], b[d][1]) <= max(a[d][0], b[d][0]) for d in ABYSS_DIMS):
+        return [a]
+    out, cur = [], dict(a)
+    for d in ABYSS_DIMS:
+        lo, hi = cur[d]
+        if lo < b[d][0]:
+            out.append({**cur, d: (lo, b[d][0])})
+        if hi > b[d][1]:
+            out.append({**cur, d: (b[d][1], hi)})
+        cur[d] = (max(lo, b[d][0]), min(hi, b[d][1]))
+    return out
+
+
+def abyss_rules(t):
+    """(biome, box) in priority order for one band's tails."""
+    full = {d: (-2.0, 2.0) for d in ABYSS_DIMS}
+    box = lambda **kw: {**full, **kw}
+    rules = []
+    if t["heat"] is not None:
+        heat = (t["heat"], 2.0)
+        if t["geo"] is not None:
+            rules.append(("abyss_geothermal", box(weirdness=heat, temperature=(t["geo"], 2.0))))
+        if t["magma"] is not None:
+            rules.append(("abyss_magma", box(weirdness=(t["magma"], 2.0))))
+        rules.append(("abyss_volcanic", box(weirdness=heat)))
+    if t["crys"] is not None:
+        low = (-2.0, -t["crys"])
+        if t["cryo"] is not None:
+            rules.append(("abyss_cryo", box(weirdness=low, temperature=(-2.0, t["cryo"]))))
+        rules.append(("abyss_crystal", box(weirdness=low)))
+    if t["toxic"] is not None:
+        if t["vent"] is not None:
+            rules.append(("abyss_toxic_vents", box(humidity=(t["toxic"], 2.0), temperature=(t["vent"], 2.0))))
+        rules.append(("abyss_toxic", box(humidity=(t["toxic"], 2.0))))
+    if t["frozen"] is not None:
+        rules.append(("abyss_frozen", box(temperature=(-2.0, t["frozen"]))))
+    if t["anomaly"] is not None:
+        rules.append(("abyss_anomaly", box(erosion=(t["anomaly"], 2.0))))
+    if t["ruins"] is not None:
+        rules.append(("abyss_ruins", box(erosion=(-2.0, t["ruins"]))))
+    if t["garden"] is not None:
+        rules.append(("abyss_garden", box(humidity=(t["garden"], 2.0), weirdness=GARDEN_WEIRDNESS)))
+    rules.append(("abyss_plain", box()))
+    return rules
+
+
+def abyss_partition(t):
+    """Disjoint (biome, box) pieces covering the whole climate space of one band: each rule minus the rules before it."""
+    out, taken = [], []
+    for biome, box in abyss_rules(t):
+        pieces = [box]
+        for earlier in taken:
+            pieces = [p for q in pieces for p in _box_sub(q, earlier)]
+        out += [(biome, p) for p in pieces]
+        taken.append(box)
+    return out
+
+
+def abyss_shares():
+    """Area share per band and biome under the model of independent N(0, ABYSS_NOISE_STD) region noises."""
+    cdf = lambda x: 0.5 * (1 + math.erf(x / (ABYSS_NOISE_STD * math.sqrt(2))))
+    shares = {}
+    for band, t in ABYSS_TAILS.items():
+        s = {}
+        for biome, box in abyss_partition(t):
+            p = 1.0
+            for d in ABYSS_DIMS:
+                p *= cdf(box[d][1]) - cdf(box[d][0])
+            s[biome] = s.get(biome, 0.0) + p
+        shares[band] = s
+    return shares
+
+
+def check_abyss_shares():
+    for band, s in abyss_shares().items():
+        hazard = sum(v for b, v in s.items() if b not in ABYSS_NON_HAZARD)
+        lo, hi = ABYSS_HAZARD_TARGETS[band]
+        assert lo <= hazard <= hi, f"abyss band {band}: hazard share {hazard:.3f} outside {lo}..{hi}"
+        assert abs(sum(s.values()) - 1.0) < 1e-6, (band, s)
+        assert set(s) <= set(ABYSS_BIOMES), set(s) - set(ABYSS_BIOMES)
 # Deep biomes without seabed structure profiles yet (tools/seabed_structures.py PROFILES): the painter skips them.
 NO_STRUCTURE_PROFILE = {"sunken_ruins", "bone_graveyard", "brine_lakes", "glow_gardens", "frost_abyss"}
 
@@ -1409,22 +1815,10 @@ def deep_biome(name):
                          "water_creature": [{"type": "minecraft:squid", "weight": 3, "minCount": 1, "maxCount": 3}]}}
 
 
-def abyss_features():
-    """The deep layer's floor features cloned onto the abyss floor: the same configured feature, placed by
-    abyssia:abyss_floor, with no metre-depth filter (the abyss is under every band). Adds the clones to VEG_ORDER."""
-    clones = []
-    for name in dict.fromkeys(n for veg in (b[2] for b in ABYSS_BIOMES.values()) for n in veg):
-        cf, placement = PLACED[name]
-        assert DEEP_FLOOR in placement, f"{name} does not sit on the deep floor"
-        PLACED[name + ABYSS_SUFFIX] = (cf, [ABYSS_FLOOR if p == DEEP_FLOOR else p for p in placement if p.get("type") != A("depth")])
-        clones.append(name)
-    VEG_ORDER.extend(n + ABYSS_SUFFIX for n in VEG_ORDER[:] if n in clones)
-
-
 def abyss_biome(name):
-    water, fog, veg = ABYSS_BIOMES[name]
+    water, fog = ABYSS_BIOMES[name]
     features = [[] for _ in range(11)]
-    features[9] = ordered(VEG_ORDER, [n + ABYSS_SUFFIX for n in veg])
+    features[6] = ordered(VEIN_ORDER, crust_biome_features(name))   # crust ore veins (tools/crust_ores.py); no seabed vegetation
     effects = {"fog_color": fog, "sky_color": 0, "water_color": water, "water_fog_color": fog,
                "mood_sound": {"block_search_extent": 8, "offset": 2.0, "sound": "minecraft:ambient.cave", "tick_delay": 3000}}
     return {"carvers": {}, "downfall": 0.5, "has_precipitation": False, "temperature": 0.5, "effects": effects,
@@ -1453,6 +1847,11 @@ def biomes():
     # abyssia:deep_layer: every biome of the deep layer (for code that tells the layers apart by biome).
     tag = os.path.join(ROOT, "abyssia", "tags", "worldgen", "biome", "deep_layer.json")
     write_data(tag, {"replace": False, "values": [A(b) for b in [*DEEP_BIOMES, *ABYSS_BIOMES]]})
+    # abyssia:hazard/toxic | heat | cold: the biomes of each environmental hazard (read by com.abyssia.hazard)
+    for kind, members in ABYSS_HAZARD_TAGS.items():
+        assert set(members) <= set(ABYSS_BIOMES), members
+        write_data(os.path.join(ROOT, "abyssia", "tags", "worldgen", "biome", "hazard", kind + ".json"),
+                   {"replace": False, "values": [A(b) for b in members]})
 
 
 def check_feature_layers():
@@ -1577,14 +1976,13 @@ def biome_sources():
         params(A("deep_forest"), continentalness=Y(0, 999), humidity=(0.6, 2), weirdness=W),
         params(A("thermal_vents"), continentalness=Y(-95, 125), humidity=(-2, H[0]), weirdness=W),
     ]
-    # The abyss layer: continentalness -2..-1.7 (the abyss router sits at ABYSS continents, the deep layer's entries start
-    # at -1.5), told apart like the other provinces: humid -> garden, crystal weirdness -> crystal, the rest plain.
-    AC = (-2, -1.7)
-    deep += [
-        params(A("abyss_plain"), continentalness=AC, **normal),
-        params(A("abyss_garden"), continentalness=AC, humidity=(H[1], 2), weirdness=W),
-        params(A("abyss_crystal"), continentalness=AC, weirdness=(-2, W[0])),
-    ]
+    # The abyss layer: continentalness -2..-1.7 by depth band (abyss_code), the biomes of a band are disjoint boxes of the
+    # four regional noises (ABYSS_TAILS / abyss_partition), so the nearest-entry search never has ties.
+    check_abyss_shares()
+    for band, (top, bottom) in ABYSS_BANDS.items():
+        cont = (round(abyss_code(bottom), 4), round(abyss_code(top), 4))
+        for biome, box in abyss_partition(ABYSS_TAILS[band]):
+            deep.append(params(A(biome), continentalness=cont, **{d: box[d] for d in ABYSS_DIMS}))
     for entry in deep:
         entry["parameters"]["depth"] = LAYER_DEPTH["deep"]
 
@@ -1625,8 +2023,10 @@ DEEP_CLIMATE = dict(
 )
 
 
-# The abyss layer's climate: the deep layer's, except the continentalness that picks the abyss biomes.
-ABYSS_CLIMATE = dict(DEEP_CLIMATE, continents=ABYSS["continents"])
+# The abyss layer's climate: the deep layer's, except the continentalness that picks the abyss biomes. AB02: it follows
+# the depth band (see abyss_code), with a wobble so the band borders are not flat horizontal planes.
+ABYSS_CLIMATE = dict(DEEP_CLIMATE, continents=add(grad(ABYSS_CRUST_BOTTOM_Y, ABYSS_TOP_Y, abyss_code(ABYSS_CRUST_BOTTOM_Y), abyss_code(ABYSS_TOP_Y)),
+                                                  mul(ABYSS_BAND_WOBBLE, snoise(A("biome_fuzz"), 1.0))))
 
 
 def ocean_surface_rules(rule):
@@ -1814,7 +2214,8 @@ def main():
     resource_plants()
     add_resource_plants()
     vent_fields()
-    abyss_features()
+    if CRUST_ORES is not None:
+        CRUST_ORES.register(CONFIGURED, PLACED)   # AB02 crust ore veins (tools/crust_ores.py)
     for name, cf in CONFIGURED.items():
         write("configured_feature/" + name, cf)
     for name, (cf, placement) in PLACED.items():

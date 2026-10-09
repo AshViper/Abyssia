@@ -1,0 +1,31 @@
+{
+  "feature": "abyssia:crust_mk1_vanadium_c_medium",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 17
+    },
+    {
+      "type": "abyssia:config",
+      "option": "mk1_ore"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": -700
+        },
+        "max_inclusive": {
+          "absolute": -540
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

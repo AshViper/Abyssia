@@ -978,8 +978,14 @@ BIOME_NAMES = {
     "brine_lakes": ("Brine Lakes", "塩水湖帯"), "glow_gardens": ("Glow Gardens", "発光花園"),
     "frost_abyss": ("Frost Abyss", "氷晶の深淵"), "abyssal_rift": ("Abyssal Rift", "深淵の裂け目"),
     "deep_fissure": ("Deep Sea Fissure", "深海の割れ目"),
-    "abyss_plain": ("Abyssal Depths", "最深部の平原"), "abyss_garden": ("Depths Garden", "最深部の花園"),
-    "abyss_crystal": ("Depths Crystal Fields", "最深部の結晶原"),
+    "abyss_plain": ("Abyssal Plain", "深海平原"), "abyss_garden": ("Depths Garden", "最深部の花園"),
+    "abyss_crystal": ("Crystal Cavern", "結晶空洞"),
+    # AB02: depth-banded abyss biomes
+    "abyss_toxic": ("Toxic Cavern", "毒性空洞"), "abyss_toxic_vents": ("Toxic Vent Field", "毒性噴出孔地帯"),
+    "abyss_volcanic": ("Volcanic Rift", "火山裂け目"), "abyss_magma": ("Magma Chamber", "マグマ空洞"),
+    "abyss_geothermal": ("Geothermal Cavern", "地熱空洞"), "abyss_frozen": ("Frozen Abyss", "極寒深海"),
+    "abyss_cryo": ("Cryogenic Cavern", "極寒空洞"), "abyss_anomaly": ("Abyssal Anomaly", "深海異常地帯"),
+    "abyss_ruins": ("Ancient Deep Ruins", "深海古代遺跡地帯"),
 }
 
 # ================================================================ models

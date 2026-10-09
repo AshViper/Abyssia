@@ -190,5 +190,91 @@
         "weight": 2
       }
     ]
+  },
+  "hall": {
+    "look": {
+      "wall": [],
+      "floor": [],
+      "ceiling": [],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "abyssia:layered_cave_rock"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.1,
+      "glow": [
+        {
+          "data": {
+            "Name": "abyssia:lumen_rock"
+          },
+          "weight": 1
+        }
+      ],
+      "glow_chance": 0.008,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:sea_lantern"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": []
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:glowtip_grass"
+            }
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_bloom"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [],
+      "ceiling": [],
+      "floor_density": 0.04,
+      "wall_density": 0.0,
+      "ceiling_density": 0.0
+    },
+    "form": {
+      "step_min": 1,
+      "step_max": 2,
+      "shore_min": 0.5,
+      "shore_max": 0.8,
+      "islands": 1.0,
+      "plateaus": 0.0,
+      "beacons": 0.6,
+      "vents": 0.0,
+      "column_clusters": 0.0,
+      "trunks": 1.0,
+      "spires": 1.0,
+      "stalactites": 1.0,
+      "beacon": {
+        "state": {
+          "Name": "abyssia:crystal_kelp"
+        }
+      }
+    }
   }
 }

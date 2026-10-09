@@ -231,5 +231,164 @@
         "weight": 1
       }
     ]
+  },
+  "hall": {
+    "look": {
+      "wall": [
+        {
+          "data": {
+            "Name": "abyssia:crystal_cave_rock"
+          },
+          "weight": 4
+        },
+        {
+          "data": {
+            "Name": "abyssia:crystal_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:calcite"
+          },
+          "weight": 2
+        }
+      ],
+      "floor": [
+        {
+          "data": {
+            "Name": "abyssia:crystal_sediment"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:calcite"
+          },
+          "weight": 2
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "Name": "abyssia:crystal_cave_rock"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:calcite"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "abyssia:deep_crystal_block"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:cyan_crystal_block"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:blue_crystal_block"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.12,
+      "glow": [
+        {
+          "data": {
+            "Name": "abyssia:deep_crystal_block"
+          },
+          "weight": 1
+        }
+      ],
+      "glow_chance": 0.012,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:sea_lantern"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": [
+        {
+          "data": {
+            "Name": "abyssia:crystal_sediment"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:calcite"
+          },
+          "weight": 1
+        }
+      ]
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:glasslace"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [],
+      "ceiling": [],
+      "floor_density": 0.06,
+      "wall_density": 0.0,
+      "ceiling_density": 0.0
+    },
+    "form": {
+      "step_min": 1,
+      "step_max": 2,
+      "shore_min": 0.5,
+      "shore_max": 0.75,
+      "islands": 1.2,
+      "plateaus": 0.0,
+      "beacons": 1.5,
+      "vents": 0.0,
+      "column_clusters": 1.0,
+      "trunks": 1.0,
+      "spires": 1.0,
+      "stalactites": 1.0,
+      "beacon": {
+        "state": {
+          "Name": "abyssia:crystal_kelp"
+        }
+      },
+      "column_block": {
+        "Name": "abyssia:deep_crystal_block"
+      }
+    }
   }
 }

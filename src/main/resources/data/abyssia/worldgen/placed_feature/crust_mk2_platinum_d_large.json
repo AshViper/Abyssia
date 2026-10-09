@@ -1,0 +1,31 @@
+{
+  "feature": "abyssia:crust_mk2_platinum_d_large",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 31
+    },
+    {
+      "type": "abyssia:config",
+      "option": "mk2_ore"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": -860
+        },
+        "max_inclusive": {
+          "absolute": -700
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

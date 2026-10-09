@@ -1,0 +1,31 @@
+{
+  "feature": "abyssia:crust_mk1_lead_e_huge",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 954
+    },
+    {
+      "type": "abyssia:config",
+      "option": "mk1_ore"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": -991
+        },
+        "max_inclusive": {
+          "absolute": -860
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

@@ -190,5 +190,133 @@
         "weight": 2
       }
     ]
+  },
+  "hall": {
+    "look": {
+      "wall": [
+        {
+          "data": {
+            "Name": "abyssia:mineral_cave_rock"
+          },
+          "weight": 4
+        },
+        {
+          "data": {
+            "Name": "abyssia:layered_cave_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:mineral_host_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:tuff"
+          },
+          "weight": 1
+        }
+      ],
+      "floor": [
+        {
+          "data": {
+            "Name": "abyssia:mineral_sediment"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:tuff"
+          },
+          "weight": 1
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "Name": "abyssia:mineral_cave_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:layered_cave_rock"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "abyssia:cave_mineral_crust"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:calcite"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.15,
+      "glow": [
+        {
+          "data": {
+            "Name": "abyssia:lumen_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:deep_crystal_block"
+          },
+          "weight": 1
+        }
+      ],
+      "glow_chance": 0.01,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:shroomlight"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": []
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_crystal_plant"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [],
+      "ceiling": [],
+      "floor_density": 0.03,
+      "wall_density": 0.0,
+      "ceiling_density": 0.0
+    },
+    "form": {
+      "step_min": 1,
+      "step_max": 2,
+      "shore_min": 0.5,
+      "shore_max": 0.75,
+      "islands": 1.0,
+      "plateaus": 0.3,
+      "beacons": 0.0,
+      "vents": 0.3,
+      "column_clusters": 0.0,
+      "trunks": 1.0,
+      "spires": 1.0,
+      "stalactites": 1.0
+    }
   }
 }

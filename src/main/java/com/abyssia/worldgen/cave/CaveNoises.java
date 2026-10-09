@@ -137,6 +137,18 @@ public final class CaveNoises
         return Mth.clamp(v, 0.0, 0.999);
     }
 
+    /** AB03: large organic patches (-1..1, a dozen to a few dozen blocks across) for hall mosaics: magma on basalt, ice in ice. */
+    public double mosaic(int x, int y, int z)
+    {
+        return cluster.getValue(x * 0.045 + 71.3, y * 0.06, z * 0.045) * 0.7 + cluster.getValue(x * 0.13, y * 0.16 - 19.1, z * 0.13) * 0.3;
+    }
+
+    /** Threshold on {@link #mosaic} that covers about {@code coverage} (0..1) of the surfaces. */
+    public static double mosaicThreshold(double coverage)
+    {
+        return (1 - 2 * coverage) * 0.45;
+    }
+
     /** 0..1, slowly varying: which species a patch is made of. */
     public double species(double x, double y, double z)
     {

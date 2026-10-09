@@ -1,0 +1,43 @@
+{
+  "feature": "abyssia:crust_mk0_iron_c_medium",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:weighted_list",
+        "distribution": [
+          {
+            "data": 0,
+            "weight": 59
+          },
+          {
+            "data": 1,
+            "weight": 41
+          }
+        ]
+      }
+    },
+    {
+      "type": "abyssia:config",
+      "option": "mk0_ore"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": -700
+        },
+        "max_inclusive": {
+          "absolute": -540
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

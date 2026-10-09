@@ -1,0 +1,344 @@
+{
+  "geology": {
+    "wall": [
+      {
+        "data": {
+          "Name": "abyssia:thermal_cave_rock"
+        },
+        "weight": 4
+      },
+      {
+        "data": {
+          "Name": "abyssia:black_vent_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:dark_cave_rock"
+        },
+        "weight": 3
+      }
+    ],
+    "floor": [
+      {
+        "data": {
+          "Name": "abyssia:volcanic_ash"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:mineral_sediment"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:cave_mud"
+        },
+        "weight": 1
+      }
+    ],
+    "ceiling": [
+      {
+        "data": {
+          "Name": "abyssia:black_vent_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:thermal_cave_rock"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:dark_cave_rock"
+        },
+        "weight": 1
+      }
+    ],
+    "accents": [
+      {
+        "data": {
+          "Name": "abyssia:molten_volcanic_rock"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:sulfur_deposit"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:sulfur_vent_rock"
+        },
+        "weight": 2
+      }
+    ],
+    "accent_chance": 0.1
+  },
+  "flora": {
+    "floor": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:vent_grass"
+          }
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_tube"
+          },
+          "max_height": 4
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:heat_moss"
+          }
+        },
+        "weight": 2
+      }
+    ],
+    "wall": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:wall_mineral_vine"
+          }
+        },
+        "weight": 2
+      }
+    ],
+    "ceiling": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:cave_root"
+          },
+          "max_height": 2
+        },
+        "weight": 1
+      }
+    ],
+    "glow": [
+      {
+        "data": {
+          "state": {
+            "Name": "abyssia:thermal_plant"
+          }
+        },
+        "weight": 3
+      }
+    ],
+    "density": 0.12,
+    "glow_ratio": 0.25,
+    "bright_ratio": 0.0
+  },
+  "formations": {
+    "speleothem": {
+      "Name": "abyssia:thermal_stalactite"
+    },
+    "speleothem_density": 0.12,
+    "crystals": [
+      {
+        "data": {
+          "Name": "abyssia:small_thermal_crystal_bud"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:medium_thermal_crystal_bud"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:thermal_crystal_cluster"
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:sulfur_cluster"
+        },
+        "weight": 3
+      }
+    ],
+    "crystal_density": 0.04,
+    "debris": [
+      {
+        "data": {
+          "Name": "abyssia:cave_rubble"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:seafloor_pebbles"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  "hall": {
+    "look": {
+      "wall": [
+        {
+          "data": {
+            "Name": "minecraft:blackstone"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:basalt"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:black_vent_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:volcanic_rock"
+          },
+          "weight": 1
+        }
+      ],
+      "floor": [
+        {
+          "data": {
+            "Name": "minecraft:basalt"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:smooth_basalt"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:blackstone"
+          },
+          "weight": 1
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "Name": "minecraft:blackstone"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:basalt"
+          },
+          "weight": 2
+        }
+      ],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "minecraft:magma_block"
+          },
+          "weight": 5
+        },
+        {
+          "data": {
+            "Name": "abyssia:molten_volcanic_rock"
+          },
+          "weight": 2
+        }
+      ],
+      "mosaic_coverage": 0.35,
+      "glow": [],
+      "glow_chance": 0.0,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:shroomlight"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": [
+        {
+          "data": {
+            "Name": "minecraft:magma_block"
+          },
+          "weight": 5
+        },
+        {
+          "data": {
+            "Name": "abyssia:molten_volcanic_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:basalt"
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "abyssia:sulfur_deposit"
+          },
+          "weight": 1
+        }
+      ]
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:thermal_plant"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [],
+      "ceiling": [],
+      "floor_density": 0.015,
+      "wall_density": 0.0,
+      "ceiling_density": 0.0
+    },
+    "form": {
+      "step_min": 2,
+      "step_max": 3,
+      "shore_min": 0.7,
+      "shore_max": 0.9,
+      "islands": 1.8,
+      "plateaus": 0.85,
+      "beacons": 0.0,
+      "vents": 2.0,
+      "column_clusters": 1.5,
+      "trunks": 0.6,
+      "spires": 0.5,
+      "stalactites": 1.0,
+      "column_block": {
+        "Name": "minecraft:basalt"
+      }
+    }
+  }
+}

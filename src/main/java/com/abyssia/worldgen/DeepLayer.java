@@ -21,13 +21,24 @@ public final class DeepLayer
     /** Overworld Y = old deep-ocean Y + SHIFT. */
     public static final int SHIFT = -240;
     /** Bottom of the world (bedrock floor of the abyss layer). */
-    public static final int MIN_Y = -1872;
+    public static final int MIN_Y = -1008;
     /** Bottom of the deep layer as it was before the abyss layer existed (its seabeds reach about Y -362): old deep Y -128. */
     public static final int DEEP_BOTTOM_Y = -368;
     /** Top of the abyss layer (exclusive, a multiple of 8): everything below is the abyss, rock down to its ceiling. */
     public static final int ABYSS_TOP_Y = -376;
     /** Lowest underside of the abyss layer's rock ceiling; its shafts and the deep layer's hadal floors stay above it. */
     public static final int ABYSS_CEILING_BOTTOM_Y = -408;
+    /*
+     * AB02 depth bands (inbox/specs/AB02-deep-bands.md). The abyss layer is a solid crust (caves, caverns and ores live
+     * in it); the bands are only where biomes, cave windows and ore ranges change: A -64..-300 (the deep layer's seabed
+     * and its rock), B' -380..-540, C -540..-700, D -700..-860, E -860..-998 (the world bottom is Y -1008; scaled from 1865 down to 1000 deep for chunk speed). Borders are blended with noise, never a flat line.
+     */
+    public static final int BAND_B_TOP_Y = -300;
+    public static final int BAND_C_TOP_Y = -540;
+    public static final int BAND_D_TOP_Y = -700;
+    public static final int BAND_E_TOP_Y = -860;
+    /** Lowest Y caves and ores reach (5+ blocks of rock stay over the bedrock at MIN_Y). */
+    public static final int CRUST_BOTTOM_Y = -998;
     /** The abyss seabed is this Y + 64 x its seabed offset (about Y -1840 .. -1460): the layer holds ~1300 blocks of open water. */
     public static final int ABYSS_SEABED_BASE_Y = -1650;
     /** Bottom of the bedrock band between the ocean world and the deep layer; everything below is the deep layer. */

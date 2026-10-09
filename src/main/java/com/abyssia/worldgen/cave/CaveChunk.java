@@ -129,7 +129,7 @@ public final class CaveChunk
         {
             for (CaveShape shape : s.shapes)
             {
-                if (!shape.intersects(bx0, network.minY(), bz0, bx1, network.maxY(), bz1)) continue;
+                if (!shape.intersects(bx0, network.minY(), bz0, bx1, network.carveTopY(), bz1)) continue;
                 shapes.add(shape);
                 lo = Math.min(lo, shape.minY);
                 hi = Math.max(hi, shape.maxY);
@@ -143,7 +143,7 @@ public final class CaveChunk
         }
         if (lo > hi) return null;
         lo = Math.max(lo, network.minY() + 1);
-        hi = Math.min(hi, network.maxY() - 2);
+        hi = Math.min(hi, network.carveTopY() - 2);
         if (lo > hi) return null;
         CaveChunk ctx = new CaveChunk(network, chunk, systems, lo, hi);
         for (CaveShape shape : shapes)
@@ -173,9 +173,14 @@ public final class CaveChunk
                 if (vent.x() >= bx0 - 12 && vent.x() <= bx1 + 12 && vent.z() >= bz0 - 12 && vent.z() <= bz1 + 12) ctx.vents.add(vent);
             }
         }
-        for (int lz = 0; lz < 16; lz++)
+        // A crust window has no seabed: strata count depth below the window's top, and no column is scanned.
+        if (network.isWindow()) Arrays.fill(ctx.seabed, network.maxY());
+        else
         {
-            for (int lx = 0; lx < 16; lx++) ctx.seabed[lz * 16 + lx] = deepFloor(ctx.sections, ctx.minBuildY, lx, lz);
+            for (int lz = 0; lz < 16; lz++)
+            {
+                for (int lx = 0; lx < 16; lx++) ctx.seabed[lz * 16 + lx] = deepFloor(ctx.sections, ctx.minBuildY, lx, lz);
+            }
         }
         for (int lz = -PAD; lz < 16 + PAD; lz++)
         {
@@ -336,6 +341,11 @@ public final class CaveChunk
             CaveSpace space = shape.space;
             double reach = shape.noisy ? space.maxDisplacement() : 0;
             boolean lake = space.hasLake();
+            if (shape instanceof CaveShape.Hall hall)
+            {
+                computeHall(hall, si, reach);
+                continue;
+            }
             int ax = Math.max(shape.minX, x0 - PAD), bx = Math.min(shape.maxX, x0 + 15 + PAD);
             int az = Math.max(shape.minZ, z0 - PAD), bz = Math.min(shape.maxZ, z0 + 15 + PAD);
             int ay = Math.max(shape.minY, yMin), by = Math.min(shape.maxY, yMax);
@@ -361,6 +371,45 @@ public final class CaveChunk
                             dome[idx] = (float) s;
                             domeOwner[idx] = (short) si;
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * A hall's field, column by column (its floor and outline are 2D): the vault (walls and roof) takes the wall noise, the
+     * floor does not, so terraces stay flat; the field is the larger of the two.
+     */
+    private void computeHall(CaveShape.Hall hall, int si, double reach)
+    {
+        CaveSpace space = hall.space;
+        int ax = Math.max(hall.minX, x0 - PAD), bx = Math.min(hall.maxX, x0 + 15 + PAD);
+        int az = Math.max(hall.minZ, z0 - PAD), bz = Math.min(hall.maxZ, z0 + 15 + PAD);
+        int ay = Math.max(hall.minY, yMin), by = Math.min(hall.maxY, yMax);
+        double[] col = new double[4];
+        for (int z = az; z <= bz; z++)
+        {
+            int row = (z - z0 + PAD) * SIZE;
+            for (int x = ax; x <= bx; x++)
+            {
+                hall.column(x + 0.5, z + 0.5, col);
+                // Far outside the outline the whole column is rock.
+                if (col[0] - col[1] - reach > WALL_DEPTH + 0.5) continue;
+                double floor = col[3];
+                for (int y = ay; y <= by; y++)
+                {
+                    double ground = floor - (y + 0.5);
+                    if (ground > WALL_DEPTH + 0.5) continue;
+                    double v = hall.vault(col, y + 0.5);
+                    if (v - reach > WALL_DEPTH + 0.5) continue;
+                    int idx = index(x - x0, y, z - z0);
+                    if (v + reach > -0.5) v += displacement(space, idx, x, y, z, row + x - x0 + PAD);
+                    double s = Math.max(v, ground);
+                    if (s < field[idx])
+                    {
+                        field[idx] = (float) s;
+                        owner[idx] = (short) si;
                     }
                 }
             }
@@ -587,6 +636,8 @@ public final class CaveChunk
     /** Refresh the ocean floor heightmap after entrances were cut through the seabed and formations raised on it. */
     void finish()
     {
+        // A crust window never touches the sea floor or anything standing on it.
+        if (network.isWindow()) return;
         Heightmap.primeHeightmaps(chunk, EnumSet.of(Heightmap.Types.OCEAN_FLOOR_WG));
     }
 

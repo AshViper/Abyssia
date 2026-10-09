@@ -23,13 +23,15 @@ public enum CaveType implements StringRepresentable
     CRYSTAL_CAVE("crystal_cave", Size.MEDIUM, 8, 20, 0.75, 1.6, 0.0, 1, 2, "crystal"),
     THERMAL_CAVE("thermal_cave", Size.MEDIUM, 8, 20, 0.7, 2.0, 0.0, 1, 2, "thermal"),
     ERODED_CAVE("eroded_cave", Size.MEDIUM, 6, 14, 0.8, 0.6, 0.85, 1, 2, "eroded"),
-    UNDERGROUND_SEA("underground_sea", Size.MASSIVE, 40, 72, 0.3, 2.0, 0.3, 1, 2, "underground_sea");
+    UNDERGROUND_SEA("underground_sea", Size.MASSIVE, 40, 72, 0.3, 2.0, 0.3, 1, 2, "underground_sea"),
+    /** AB02: halls 128-256 wide, only in the crust windows (never in the shallow network); built from wide flat halls, chimneys and rooms. */
+    MEGA_CAVERN("mega_cavern", Size.MEGA, 64, 128, 0.62, 3.5, 0.0, 2, 4, null);
 
     public static final Codec<CaveType> CODEC = StringRepresentable.fromEnum(CaveType::values);
 
     public enum Size
     {
-        SMALL(Rarity.COMMON), MEDIUM(Rarity.COMMON), LARGE(Rarity.UNCOMMON), MASSIVE(Rarity.RARE);
+        SMALL(Rarity.COMMON), MEDIUM(Rarity.COMMON), LARGE(Rarity.UNCOMMON), MASSIVE(Rarity.RARE), MEGA(Rarity.RARE);
 
         public final Rarity rarity;
 

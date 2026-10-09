@@ -22,9 +22,9 @@
 - 流れ: 要求 → (必要なら Haiku が判断) → Sonnet が実装 → ビルド・テスト（**実際の結果で検証**、AI の推測で成功と判断しない）→ 失敗は Sonnet が修正（3 回まで）→ 直らなければ Opus 1 回 → 成功したら必要なときだけ Haiku が Obsidian に要約。
 - Opus で直したら、原因と再発防止を Vault に残す（再び Opus を呼ばないため）。
 
-## 3. サブエージェント: 最大 3、通信なし
+## 3. サブエージェント: 最大 6、通信なし
 
-- **最大 3 つ**、標準は 0〜1。独立して分けられる作業だけ。同じコードを複数に調べさせない。
+- **最大 6 つ**（2026-10-09 にユーザーが 3→6 に変更）、標準は 0〜1。独立して分けられる作業だけ。同じコードを複数に調べさせない。サブエージェントのエフォートは**高**（Agent の `effort: "high"` を渡す）。
 - **エージェント同士は通信しない。** メインだけが結果を受け取り統合する。依頼文は自己完結（対象ファイル・行範囲・仕様・受け入れ条件）にし、会話の経緯や Vault の全文を渡さない。`SendMessage` での往復や、あるエージェントの出力を次へ中継する連鎖を作らない。
 - 返答は `STATUS / FILES / NOTES`（10 行以内）か JSON。検証・判断は読み取り専用で `PASS/FAIL`、`APPROVE/REJECT/MODIFY` だけ。
 - **Decision Agent**（Haiku）はアーキテクチャ変更・新ライブラリ・API/DB 変更・複数案の比較・性能/セキュリティ・既存設計との矛盾の可能性があるときだけ。**Verification Agent**（Sonnet）は大きな変更のときだけ。ビルドとテストが先。
@@ -40,10 +40,11 @@
 - **最小変更。** 無関係なリファクタ・命名変更をしない。原因候補 → 最小の検証 → 修正の順で、闇雲に変えない。同じ修正を繰り返さない。
 - 確認が要るのは、破壊的変更・大量削除・公開環境・課金・セキュリティ影響・方針が複数で選択が必要・意図が不明なとき。それ以外は自律的に進める。
 - 繰り返す手順は skill / CLI に寄せる（`mem`、`port-forge`、`tools/memory.py`、`tools/mc_format.py`）。ツールは Claude 専用にせず、ユーザーも使える CLI（JSON 可、副作用を明示、可能なら dry-run）にする。
+- **ワールド生成・バランスの変更は、仕様書の完了条件を 1 項目ずつ実機で確認する**（2026-10-09 ユーザー指示）。実機 = scratch サーバー（`/abyssia map`・`caves census|locate|stats`・`execute if block|biome`・チャンク生成時間）と、見た目・環境効果はクライアント（AutoShot 等）。複数シードと両ワールド型（normal / ocean_world）、Forge と NeoForge の両方で行い、結果は数値で報告する。確認していない項目・確認できない項目（プレイヤー不在でのギミック等）は「未検証」と書き、実装済み・成功と報告しない。重いデバッグコマンドはサーバーを 60 秒止めるので小さい範囲で回す。
 
 ## 6. このプロジェクト（Abyssia）
 
 - **ベースは NeoForge 1.21.1**（branch `NeoForge1.21.1`、worktree `F:\Java\Abyssia-NeoForge`）。ここで実装・テストし、**Forge 1.20.1（`main`、`F:\Java\Abyssia`）へ移植**して、両方に入って完了（skill `port-forge`）。パッケージ・クラス名・modid は変えない。データは `python tools/mc_format.py --to-forge F:/Java/Abyssia`（1.21→1.20）。
 - `tools/` の生成ツールの出力は**手編集しない**（生成元を直して再実行）。`tools/texture_locks` のテクスチャは再生成で消さない。
 - gradle・実機テストはメインが実行（サブエージェントはしない）。dev client の実行中は gradle を回さない。実機確認は `F:\Java\Abyssia-scratch-*` のコピーで行い、本体の `run/` に触れない。
-- ユーザーへの返答は**日本語**。仕様書は Haiku（`memo`）が書く（単純な依頼は省略）。**ChatGPT はテクスチャ画像の生成だけ**。agentflow の運用は Vault `modules/agentflow.md`（`memory.py show agentflow <見出し>`）。完了時は Obsidian にメモし、commit/push は依頼どおり。
+- ユーザーへの返答は**日本語**。**プラン（設計・仕様の立案）は ChatGPT（Claude in Chrome 経由）が考える**（2026-10-09 ユーザー指示、従来は Haiku/メイン）。メインは ChatGPT のプランを受け取り、現行コードとの矛盾・実現性を確認して実装に回す（矛盾があれば根拠を添えてユーザーに確認）。Haiku（`memo`）は仕様書の清書・Vault 記録だけ。ChatGPT はほかにテクスチャ画像の生成も行う。agentflow の運用は Vault `modules/agentflow.md`（`memory.py show agentflow <見出し>`）。完了時は Obsidian にメモし、commit/push は依頼どおり。

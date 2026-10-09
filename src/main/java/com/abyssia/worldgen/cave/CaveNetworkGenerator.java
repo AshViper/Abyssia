@@ -1,6 +1,7 @@
 package com.abyssia.worldgen.cave;
 
 import com.abyssia.Config;
+import com.abyssia.worldgen.DepthBand;
 import com.abyssia.worldgen.cave.CaveChamberGenerator.Chamber;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -30,24 +31,31 @@ final class CaveNetworkGenerator
     private static final long BUILD_SALT = 0x6275696C64L;
     private static final long LINK_SALT = 0x6C696E6B73L;
     private static final long MINOR_SALT = 0x6D696E6F72L;
+    private static final long VLINK_SALT = 0x766C696E6BL;
 
     private CaveNetworkGenerator() {}
 
     /** Where a system's hub is and what it is; enough for neighbours to connect to it. */
+    /**
+     * {@code hall} (AB03): the hub is a hall; then {@code y} is its reference level (basin below, terraces above) and
+     * {@code radius * vertical} the height of its vault above it.
+     */
     record Plan(int cellX, int cellZ, long seed, CaveProfile profile, CaveType type, @Nullable CaveLandmark landmark, ResourceLocation environment,
-                double x, double y, double z, double radius, double vertical, int waterLevel, boolean grand)
+                double x, double y, double z, double radius, double vertical, int waterLevel, boolean grand, boolean hall)
     {
         /** Where tunnels meet the hub: below the water of a lake, a little under the centre otherwise. */
         double portY()
         {
+            if (hall) return y + 3;
             double ry = Math.max(2.5, radius * vertical);
             return waterLevel != CaveSpace.NO_WATER_LEVEL ? Math.min(y, waterLevel - 5) : y - ry * 0.2;
         }
     }
 
-    private static long cellSeed(long worldSeed, long salt, int cellX, int cellZ)
+    /** Random stream of a cell: the window's salt (0 for the shallow network) keeps every window's streams apart. */
+    private static long cellSeed(CaveNetwork net, long salt, int cellX, int cellZ)
     {
-        return RandomSupport.mixStafford13(worldSeed ^ salt ^ cellX * 0x632BE59BD9B4E019L ^ cellZ * 0x9E3779B97F4A7C15L);
+        return RandomSupport.mixStafford13(net.seed() ^ net.salt() ^ salt ^ cellX * 0x632BE59BD9B4E019L ^ cellZ * 0x9E3779B97F4A7C15L);
     }
 
     // ---------------------------------------------------------------- plans
@@ -55,7 +63,8 @@ final class CaveNetworkGenerator
     @Nullable
     static Plan plan(CaveNetwork net, int cellX, int cellZ)
     {
-        long seed = cellSeed(net.seed(), PLAN_SALT, cellX, cellZ);
+        if (net.isWindow()) return planWindow(net, cellX, cellZ);
+        long seed = cellSeed(net, PLAN_SALT, cellX, cellZ);
         RandomSource rng = new XoroshiroRandomSource(seed);
         int cell = net.cellSize(), margin = cell / 6;
         int ax = cellX * cell + margin + rng.nextInt(cell - 2 * margin);
@@ -70,7 +79,7 @@ final class CaveNetworkGenerator
             landmark = profile.landmarks.pick(rng.nextDouble());
         }
         CaveType type = landmark != null ? (landmark.hasLake() ? CaveType.UNDERGROUND_SEA : CaveType.MASSIVE_CAVERN) : net.caveTypes(profile).pick(rng.nextDouble());
-        if (type == null) return null;
+        if (type == null || type == CaveType.MEGA_CAVERN) return null;  // mega caverns only exist in the crust windows
         boolean lake = Config.UNDERGROUND_LAKES.get() && (type == CaveType.UNDERGROUND_SEA || (landmark != null && landmark.hasLake()));
         if (type == CaveType.UNDERGROUND_SEA && !lake) type = CaveType.MASSIVE_CAVERN;
 
@@ -82,13 +91,23 @@ final class CaveNetworkGenerator
         double x = ax + (rng.nextDouble() - 0.5) * cell * 0.15, z = az + (rng.nextDouble() - 0.5) * cell * 0.15;
 
         // Fit under the seabed, shrinking where the sea floor is too low; a landmark that cannot fit is given up.
+        boolean hall = landmark == null && CaveChamberGenerator.hallType(type);
+        double hallFactor = hall ? 0.9 + 0.2 * rng.nextDouble() : 1;
         double y = Double.NaN;
         for (int attempt = 0; attempt < 8 && Double.isNaN(y); attempt++)
         {
             double ry = Math.max(2.5, radius * vertical);
             double cover = 8 + rng.nextDouble() * (12 + radius * 0.35);
             if (type == CaveType.VERTICAL_SHAFT) cover += 30 + rng.nextDouble() * 70;
-            if (lake)
+            if (hall && radius >= CavernPlanner.MIN_RADIUS && CaveChamberGenerator.hallType(type))
+            {
+                // A hall: its reference level, low enough that the vault stays under the seabed.
+                double height = CaveChamberGenerator.hallHeight(radius) * hallFactor;
+                double top = net.lowestSeabed(x, z, radius * 1.3) - cover - CaveChamberGenerator.hallAbove(height, radius);
+                double bottom = net.minY() + 12 + CaveChamberGenerator.hallBelow(radius);
+                y = top >= bottom ? Math.floor(top - rng.nextDouble() * Math.min(16, top - bottom)) : Double.NaN;
+            }
+            else if (lake)
             {
                 y = CaveChamberGenerator.lakeY(net, x, z, radius, ry, net.lowestSeabed(x, z, radius) - cover - ry);
             }
@@ -123,9 +142,120 @@ final class CaveNetworkGenerator
         String envName = landmark != null ? landmark.environment : type.environment;
         ResourceLocation env = envName != null ? net.environmentId(envName, profile) : profile.environment;
         if (envName == null && net.luminous(profile, Mth.floor(x), Mth.floor(z))) env = net.environmentId("luminous", profile);
-        int waterLevel = lake ? Mth.floor(y + Math.max(2.5, radius * vertical) * Mth.lerp(rng.nextDouble(), 0.1, 0.35)) : CaveSpace.NO_WATER_LEVEL;
+        hall = hall && radius >= CavernPlanner.MIN_RADIUS && CaveChamberGenerator.hallType(type);
+        if (hall) vertical = CaveChamberGenerator.hallHeight(radius) * hallFactor / radius;
+        int waterLevel = lake && !hall ? Mth.floor(y + Math.max(2.5, radius * vertical) * Mth.lerp(rng.nextDouble(), 0.1, 0.35)) : CaveSpace.NO_WATER_LEVEL;
         boolean grand = landmark != null || (type.size.ordinal() >= CaveType.Size.LARGE.ordinal() && type != CaveType.UNDERGROUND_SEA && rng.nextFloat() < 0.25f);
-        return new Plan(cellX, cellZ, seed, profile, type, landmark, env, x, y, z, radius, vertical, waterLevel, grand);
+        return new Plan(cellX, cellZ, seed, profile, type, landmark, env, x, y, z, radius, vertical, waterLevel, grand, hall);
+    }
+
+    // ---------------------------------------------------------------- window plans
+
+    /** Vertical room (blocks above / below the centre) a system of this type and radius needs inside its window. */
+    private static double[] verticalNeed(CaveType type, double radius, double ry, boolean lake)
+    {
+        if (type == CaveType.MEGA_CAVERN) return new double[] {radius * 1.05 + 14, radius * 0.5 + 14};
+        if (lake) return new double[] {ry * 1.35 + 14, ry * 1.2 + 10};
+        return new double[] {ry * 1.5 + 14, ry * 1.5 + 14};
+    }
+
+    /**
+     * A free-floating system of a crust window: its height is drawn first (one draw places it in the window whatever it
+     * turns out to be), the biome and so the profile and environment are read at that very spot, and the hub is
+     * squeezed into the room its size needs (or the system shrinks until it fits). No seabed is involved.
+     */
+    @Nullable
+    private static Plan planWindow(CaveNetwork net, int cellX, int cellZ)
+    {
+        long seed = cellSeed(net, PLAN_SALT, cellX, cellZ);
+        RandomSource rng = new XoroshiroRandomSource(seed);
+        int index = net.band().ordinal();
+        int cell = net.cellSize(), margin = cell / 6;
+        int ax = cellX * cell + margin + rng.nextInt(cell - 2 * margin);
+        int az = cellZ * cell + margin + rng.nextInt(cell - 2 * margin);
+        double yFrac = rng.nextDouble();
+        CaveProfile profile = net.profileAt(ax, net.minY() + (int) (yFrac * (net.maxY() - net.minY())), az);
+        if (profile == null) return null;
+        if (rng.nextFloat() >= profile.systemChance * Config.CAVE_SYSTEM_CHANCE.get() * Config.BAND_SYSTEM_CHANCE[index].get()) return null;
+
+        CaveLandmark landmark = null;
+        if (!profile.landmarks.isEmpty() && rng.nextFloat() < profile.landmarkChance * Config.LANDMARK_CHANCE.get())
+        {
+            landmark = profile.landmarks.pick(rng.nextDouble());
+        }
+        CaveType type = landmark != null ? (landmark.hasLake() ? CaveType.UNDERGROUND_SEA : CaveType.MASSIVE_CAVERN) : net.caveTypes(profile).pick(rng.nextDouble());
+        if (type == null || !net.allows(type)) return null;
+        boolean lake = Config.UNDERGROUND_LAKES.get() && (type == CaveType.UNDERGROUND_SEA || (landmark != null && landmark.hasLake()));
+        if (type == CaveType.UNDERGROUND_SEA && !lake) type = CaveType.MASSIVE_CAVERN;
+
+        double sizeBias = 0.85 + 0.3 * (net.noises().field2(ax * 0.0015, az * 0.0015, 33) * 0.5 + 0.5);
+        double sizeMultiplier = Config.BAND_SIZE[index].get();
+        double radius = landmark != null ? Mth.lerp(rng.nextDouble(), landmark.minRadius, landmark.maxRadius)
+                : Mth.lerp(rng.nextDouble(), type.minRadius, type.maxRadius) * sizeBias * sizeMultiplier;
+        if (type == CaveType.MEGA_CAVERN) radius = Mth.clamp(radius, type.minRadius, type.maxRadius);
+        double vertical = landmark != null ? landmark.vertical : type.vertical;
+        double x = ax + (rng.nextDouble() - 0.5) * cell * 0.15, z = az + (rng.nextDouble() - 0.5) * cell * 0.15;
+        boolean hall = landmark == null && CaveChamberGenerator.hallType(type);
+        double hallFactor = hall ? 0.9 + 0.2 * rng.nextDouble() : 1;
+
+        double y = Double.NaN;
+        for (int attempt = 0; attempt < 10 && Double.isNaN(y); attempt++)
+        {
+            double ry = Math.max(2.5, radius * vertical);
+            // A hall: y is its reference level, the vault above it, the basin below.
+            boolean asHall = hall && radius >= CavernPlanner.MIN_RADIUS && CaveChamberGenerator.hallType(type);
+            double[] need = asHall ? new double[] {CaveChamberGenerator.hallAbove(CaveChamberGenerator.hallHeight(radius) * hallFactor, radius),
+                    CaveChamberGenerator.hallBelow(radius)} : verticalNeed(type, radius, ry, lake);
+            double lo = net.minY() + 12 + need[1], hi = net.maxY() - 12 - need[0];
+            if (hi >= lo)
+            {
+                y = lo + yFrac * (hi - lo);
+                if (asHall) y = Math.floor(y);
+                break;
+            }
+            radius *= 0.85;
+            if (type == CaveType.MEGA_CAVERN && radius < type.minRadius * 0.85)
+            {
+                type = CaveType.MASSIVE_CAVERN;
+                radius = Math.min(radius, 60);
+                vertical = type.vertical;
+            }
+            else if (type != CaveType.MEGA_CAVERN && radius < Math.max(3, type.minRadius * 0.55))
+            {
+                if (landmark != null || type.size.ordinal() >= CaveType.Size.LARGE.ordinal())
+                {
+                    landmark = null;
+                    lake = false;
+                    type = CaveType.MEDIUM_SEA_CAVE;
+                    radius = Mth.lerp(rng.nextDouble(), 8, 12);
+                    vertical = type.vertical;
+                }
+                else
+                {
+                    type = CaveType.SMALL_SEA_CAVE;
+                    radius = 4;
+                    vertical = type.vertical;
+                }
+            }
+        }
+        if (Double.isNaN(y)) return null;
+
+        // The environment is the one of the biome at the system's own spot (it may differ from the biome at the drawn height).
+        CaveProfile here = net.profileAt(Mth.floor(x), Mth.floor(y), Mth.floor(z));
+        if (here != null) profile = here;
+        String envName = landmark != null ? landmark.environment : type.environment;
+        ResourceLocation env = envName != null ? net.environmentId(envName, profile) : profile.environment;
+        if (envName == null && net.luminous(profile, Mth.floor(x), Mth.floor(z))) env = net.environmentId("luminous", profile);
+        hall = hall && radius >= CavernPlanner.MIN_RADIUS && CaveChamberGenerator.hallType(type);
+        if (hall)
+        {
+            y = Math.floor(y);
+            vertical = CaveChamberGenerator.hallHeight(radius) * hallFactor / radius;
+        }
+        int waterLevel = lake && !hall ? Mth.floor(y + Math.max(2.5, radius * vertical) * Mth.lerp(rng.nextDouble(), 0.1, 0.35)) : CaveSpace.NO_WATER_LEVEL;
+        boolean grand = landmark != null || (type.size.ordinal() >= CaveType.Size.LARGE.ordinal() && type.size != CaveType.Size.MEGA
+                && type != CaveType.UNDERGROUND_SEA && rng.nextFloat() < 0.25f);
+        return new Plan(cellX, cellZ, seed, profile, type, landmark, env, x, y, z, radius, vertical, waterLevel, grand, hall);
     }
 
     // ---------------------------------------------------------------- systems
@@ -133,7 +263,7 @@ final class CaveNetworkGenerator
     static CaveSystem build(CaveNetwork net, int cellX, int cellZ)
     {
         Plan p = net.plan(cellX, cellZ);
-        if (p == null) return empty(cellX, cellZ, false);
+        if (p == null) return empty(net, cellX, cellZ, false);
         CaveBuilder b = new CaveBuilder(net, p.seed() ^ BUILD_SALT, p.profile(), Mth.floor(p.x()), Mth.floor(p.z()));
         if (p.grand()) grandRoute(b, p);
         else
@@ -143,6 +273,11 @@ final class CaveNetworkGenerator
                 case SMALL_SEA_CAVE -> small(b, p);
                 case LARGE_ABYSSAL_CAVE -> large(b, p, 3, 4, 0.5);
                 case MASSIVE_CAVERN -> massive(b, p);
+                case MEGA_CAVERN ->
+                {
+                    if (p.hall()) megaHall(b, p);
+                    else mega(b, p);
+                }
                 case SEA_TUNNEL -> seaTunnel(b, p);
                 case VERTICAL_SHAFT -> verticalShaft(b, p);
                 case TRENCH_CAVE -> trench(b, p);
@@ -155,14 +290,21 @@ final class CaveNetworkGenerator
         return b.finish(cellX, cellZ, false, p.type(), p.landmark(), p.x(), p.y(), p.z());
     }
 
-    private static CaveSystem empty(int cellX, int cellZ, boolean minor)
+    private static CaveSystem empty(CaveNetwork net, int cellX, int cellZ, boolean minor)
     {
-        return new CaveSystem(cellX, cellZ, minor, CaveType.SMALL_SEA_CAVE, null, List.of(), List.of(), List.of(), List.of(), "", 0, 0, 0);
+        return new CaveSystem(cellX, cellZ, minor, CaveType.SMALL_SEA_CAVE, null, List.of(), List.of(), List.of(), List.of(), "", 0, 0, 0, net.band());
+    }
+
+    /** Windows have no minor caves (they are seabed-bound). */
+    static CaveSystem noMinor(CaveNetwork net, int cellX, int cellZ)
+    {
+        return empty(net, cellX, cellZ, true);
     }
 
     /** The system's main chamber at its hub. */
     private static Chamber hub(CaveBuilder b, Plan p, int lobes, boolean flatFloor)
     {
+        if (p.hall()) return hallHub(b, p);
         CaveSpace space = b.space(CaveSpace.Role.CHAMBER, p.type(), p.landmark(), p.environment(), p.x(), p.y(), p.z(), p.radius(), p.waterLevel());
         Chamber c = CaveChamberGenerator.chamber(b, space, p.x(), p.y(), p.z(), p.radius(), p.vertical(), lobes, flatFloor && !space.hasLake());
         if (space.hasLake()) CaveChamberGenerator.islands(b, c);
@@ -171,10 +313,67 @@ final class CaveNetworkGenerator
         return c;
     }
 
+    /** AB03: the hub of a large, massive or mega cavern: a hall (domed vault, terraced basin, columns; see {@link CaveShape.Hall}). */
+    private static Chamber hallHub(CaveBuilder b, Plan p)
+    {
+        CaveSpace space = b.hallSpace(p.type(), p.landmark(), p.environment(), p.x(), p.y(), p.z(), p.radius());
+        Chamber c = CaveChamberGenerator.hall(b, space, p.x(), p.z(), p.radius(), Mth.floor(p.y()), p.radius() * p.vertical(), b.rng.nextDouble() * Math.PI * 2);
+        CaveChamberGenerator.furnish(b, c);
+        b.route.add(describe(c));
+        return c;
+    }
+
+    /**
+     * AB03: a mega cavern whose main hall is one immense vault (r 64-128), with a few satellite halls around it (each joined to it
+     * by a wide passage) and the usual branches.
+     */
+    private static void megaHall(CaveBuilder b, Plan p)
+    {
+        Chamber hub = hallHub(b, p);
+        int rooms = b.range(2, 4);
+        double base = b.rng.nextDouble() * Math.PI * 2;
+        for (int i = 0; i < rooms; i++) satelliteHall(b, p, hub, base + i * Math.PI * 2 / rooms + (b.rng.nextDouble() - 0.5) * 0.6);
+        branches(b, p, hub, b.range(2, 3), 0);
+    }
+
+    /** A hall (or, too small for one, a plain chamber) beside a mega hall, clear of its outline, joined by a wide passage. */
+    private static void satelliteHall(CaveBuilder b, Plan p, Chamber hub, double angle)
+    {
+        double r = p.radius() * b.range(0.2, 0.32);
+        double reach = Math.max(hub.rx(), hub.rz()) * 1.2;
+        double dist = reach + r * 1.2 + b.range(10, 22);
+        double x = hub.x() + Math.cos(angle) * dist, z = hub.z() + Math.sin(angle) * dist;
+        Chamber c;
+        if (r >= CavernPlanner.MIN_RADIUS)
+        {
+            double height = CaveChamberGenerator.hallHeight(r) * b.range(0.85, 1.1);
+            double lo = b.minCarveY() + CaveChamberGenerator.hallBelow(r) + 4, hi = b.net.maxY() - 12 - CaveChamberGenerator.hallAbove(height, r);
+            if (hi < lo) return;
+            int level = Mth.floor(Mth.clamp(hub.y() + b.range(-14, 14), lo, hi));
+            CaveType type = r >= 32 ? CaveType.MASSIVE_CAVERN : CaveType.LARGE_ABYSSAL_CAVE;
+            CaveSpace space = b.hallSpace(type, null, hub.space().environmentId, x, level, z, r);
+            c = CaveChamberGenerator.hall(b, space, x, z, r, level, height, angle + Math.PI);
+        }
+        else
+        {
+            double ry = Math.max(2.5, r * 0.62);
+            double lo = b.minCarveY() + ry * 1.6 + 14, hi = b.net.maxY() - 12 - ry * 1.6 - 14;
+            if (hi < lo) return;
+            double y = Mth.clamp(hub.y() + b.range(-6, 10), lo, hi);
+            CaveSpace space = b.space(CaveSpace.Role.CHAMBER, CaveType.MASSIVE_CAVERN, null, hub.space().environmentId, x, y, z, r, CaveSpace.NO_WATER_LEVEL);
+            c = CaveChamberGenerator.chamber(b, space, x, y, z, r, 0.62, b.range(3, 5), b.rng.nextFloat() < 0.7f, angle + Math.PI);
+        }
+        CaveChamberGenerator.furnish(b, c);
+        double tr = b.range(5.0, 8.5);
+        CaveTunnelGenerator.tunnel(b, tunnelSpace(b, p, hub.space().environmentId, tr), hub.port(angle, 0), c.port(angle + Math.PI, 0), tr, tr, 0.8, 0.9);
+        b.route.add("hall > " + describe(c));
+    }
+
     private static String describe(Chamber c)
     {
         String env = c.space().environmentId.getPath();
-        String size = c.radius() < 8 ? "small" : c.radius() < 16 ? "medium" : c.radius() < 32 ? "large" : "massive";
+        String size = c.space().type == CaveType.MEGA_CAVERN ? "mega" : c.radius() < 8 ? "small" : c.radius() < 16 ? "medium" : c.radius() < 32 ? "large" : "massive";
+        if (c.hall() != null) return size + " " + env + " hall r" + Mth.floor(c.radius()) + " h" + Mth.floor(c.hall().apexY() - c.hall().level);
         return (c.space().hasLake() ? "underground lake" : size + " " + env + " chamber") + " r" + Mth.floor(c.radius());
     }
 
@@ -255,6 +454,53 @@ final class CaveNetworkGenerator
         if (b.rng.nextBoolean()) entranceTo(b, p, c, angle + Math.PI, b.range(20, 40), b.range(3.0, 4.0), false);
         branches(b, p, c, b.range(2, 4), 0);
         if (b.rng.nextFloat() < 0.6f) skylight(b, p, c, angle + Math.PI / 2);
+    }
+
+    /**
+     * A mega cavern (crust windows only): a wide, low main hall with tall chimneys and wing halls (see
+     * {@link CaveChamberGenerator#megaChamber}), a few satellite rooms joined to it by wide passages, and rifts cut into the
+     * floor; the cavern pipeline adds pillars, steps and the rest. No way to the sea: it is reached by connectors and links.
+     */
+    private static void mega(CaveBuilder b, Plan p)
+    {
+        CaveSpace space = b.space(CaveSpace.Role.CHAMBER, p.type(), p.landmark(), p.environment(), p.x(), p.y(), p.z(), p.radius(), CaveSpace.NO_WATER_LEVEL);
+        Chamber hub = CaveChamberGenerator.megaChamber(b, space, p.x(), p.y(), p.z(), p.radius(), p.vertical(), b.rng.nextFloat() < 0.75f);
+        CaveChamberGenerator.furnish(b, hub);
+        b.route.add(describe(hub));
+        int rooms = b.range(2, 4);
+        double base = b.rng.nextDouble() * Math.PI * 2;
+        for (int i = 0; i < rooms; i++) satelliteRoom(b, p, hub, base + i * Math.PI * 2 / rooms + (b.rng.nextDouble() - 0.5) * 0.6);
+        int rifts = b.range(1, 3);
+        for (int i = 0; i < rifts; i++)
+        {
+            double a = b.rng.nextDouble() * Math.PI;
+            double fx = hub.x() + b.range(-0.5, 0.5) * hub.rx(), fz = hub.z() + b.range(-0.5, 0.5) * hub.rz();
+            double floor = hub.floorAt(fx, fz);
+            if (Double.isNaN(floor)) continue;
+            double half = b.range(15, 35), w = b.range(2.2, 4.0);
+            b.add(new CaveShape.Capsule(hub.space(), CaveShape.Kind.CARVE, null, null, true, fx - Math.cos(a) * half, floor - 4, fz - Math.sin(a) * half,
+                    fx + Math.cos(a) * half, floor - 4, fz + Math.sin(a) * half, w, w, b.range(4.0, 7.0)));
+        }
+        if (rifts > 0) b.route.add("floor rifts");
+        branches(b, p, hub, b.range(2, 3), 0);
+    }
+
+    /** A massive hall beside a mega cavern's main hall, joined to it by a wide passage. */
+    private static void satelliteRoom(CaveBuilder b, Plan p, Chamber hub, double angle)
+    {
+        double r = p.radius() * b.range(0.2, 0.32);
+        double dist = p.radius() * b.range(1.0, 1.2);
+        double x = hub.x() + Math.cos(angle) * dist, z = hub.z() + Math.sin(angle) * dist;
+        double ry = Math.max(2.5, r * 0.62);
+        double lo = b.minCarveY() + ry * 1.6 + 14, hi = b.net.maxY() - 12 - ry * 1.6 - 14;
+        if (hi < lo) return;
+        double y = Mth.clamp(hub.y() + b.range(-0.5, 0.5) * p.radius() * 0.5, lo, hi);
+        CaveSpace space = b.space(CaveSpace.Role.CHAMBER, CaveType.MASSIVE_CAVERN, null, hub.space().environmentId, x, y, z, r, CaveSpace.NO_WATER_LEVEL);
+        Chamber c = CaveChamberGenerator.chamber(b, space, x, y, z, r, 0.62, b.range(3, 5), b.rng.nextFloat() < 0.7f, angle + Math.PI);
+        CaveChamberGenerator.furnish(b, c);
+        double tr = b.range(5.0, 8.5);
+        CaveTunnelGenerator.tunnel(b, tunnelSpace(b, p, hub.space().environmentId, tr), hub.port(angle, -0.1), c.port(angle + Math.PI, -0.1), tr, tr, 0.8, 0.9);
+        b.route.add("hall > " + describe(c));
     }
 
     private static void trench(CaveBuilder b, Plan p)
@@ -344,7 +590,7 @@ final class CaveNetworkGenerator
             double roll = b.rng.nextDouble();
             Branch kind = roll < 0.4 ? Branch.SIDE : roll < 0.72 ? Branch.DEEP : roll < 0.86 ? Branch.SHAFT : Branch.THERMAL;
             if (kind == Branch.THERMAL && !b.thermalContext() && !from.space().environmentId.getPath().equals("thermal")) kind = Branch.DEEP;
-            if (kind == Branch.SHAFT && (level > 0 || from.space().hasLake())) kind = Branch.SIDE;
+            if (kind == Branch.SHAFT && (level > 0 || from.space().hasLake() || b.net.isWindow())) kind = Branch.SIDE;  // no sea floor to open onto in a window
             Chamber sub = switch (kind)
             {
                 case SIDE -> sideCave(b, p, from, angle);
@@ -543,8 +789,9 @@ final class CaveNetworkGenerator
     @Nullable
     private static RandomSource link(CaveNetwork net, Plan p, Plan q, int d)
     {
-        RandomSource r = new XoroshiroRandomSource(cellSeed(net.seed(), LINK_SALT + LINKS[d][0], p.cellX(), p.cellZ()));
+        RandomSource r = new XoroshiroRandomSource(cellSeed(net, LINK_SALT + LINKS[d][0], p.cellX(), p.cellZ()));
         double chance = (p.profile().connectionChance + q.profile().connectionChance) * 0.5 * Config.CAVE_CONNECTION_CHANCE.get();
+        if (net.isWindow()) chance *= Config.BAND_CONNECTION[net.band().ordinal()].get();
         return r.nextDouble() < chance ? r : null;
     }
 
@@ -555,7 +802,8 @@ final class CaveNetworkGenerator
      */
     static boolean mayReach(CaveNetwork net, Plan p, int x0, int z0, int x1, int z1)
     {
-        double local = p.grand() ? 340 : p.radius() + 200;
+        // Mega caverns: lobes reach 1.5 x the radius, satellite rooms about 1.75 x, plus the branches off them.
+        double local = p.type() == CaveType.MEGA_CAVERN ? p.radius() * 2.1 + 240 : p.grand() ? 340 : p.radius() + 200;
         if (distance(p.x(), p.z(), x0, z0, x1, z1) <= local) return true;
         for (int d = 0; d < LINKS.length; d++)
         {
@@ -567,7 +815,53 @@ final class CaveNetworkGenerator
             if (Math.max(p.x(), q.x()) + margin >= x0 && Math.min(p.x(), q.x()) - margin <= x1
                     && Math.max(p.z(), q.z()) + margin >= z0 && Math.min(p.z(), q.z()) - margin <= z1) return true;
         }
+        VLink v = net.isWindow() ? vlink(net, p) : null;
+        if (v != null)
+        {
+            Plan q = v.q();
+            double length = Math.sqrt(Mth.square(q.x() - p.x()) + Mth.square(q.portY() - p.portY()) + Mth.square(q.z() - p.z()));
+            double margin = length * 0.33 + 24;
+            if (Math.max(p.x(), q.x()) + margin >= x0 && Math.min(p.x(), q.x()) - margin <= x1
+                    && Math.max(p.z(), q.z()) + margin >= z0 && Math.min(p.z(), q.z()) - margin <= z1) return true;
+        }
         return false;
+    }
+
+    /** A vertical link from a system up to a system of the window above: its target and the stream deciding its details. */
+    record VLink(Plan q, RandomSource rng) {}
+
+    /**
+     * The vertical link of this system, if any: with {@code vertical_link_chance} a system gets a shaft up to the hub of
+     * the nearest system of the window above (searched in the 3 x 3 cells around it, within a bounded distance), so the
+     * player can climb through the bands. None if the window above has no system close enough (nothing to meet), none
+     * from a lake hub (its gas shell would seal the shaft), none from the topmost window.
+     */
+    @Nullable
+    static VLink vlink(CaveNetwork net, Plan p)
+    {
+        CaveNetwork above = net.above();
+        if (above == null || p.waterLevel() != CaveSpace.NO_WATER_LEVEL) return null;
+        RandomSource r = new XoroshiroRandomSource(cellSeed(net, VLINK_SALT, p.cellX(), p.cellZ()));
+        if (r.nextDouble() >= Config.BAND_VERTICAL_LINK_CHANCE.get()) return null;
+        int ac = above.cellSize();
+        int cx = Math.floorDiv(Mth.floor(p.x()), ac), cz = Math.floorDiv(Mth.floor(p.z()), ac);
+        Plan best = null;
+        double bestDistance = Math.max(ac, 240);
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dz = -1; dz <= 1; dz++)
+            {
+                Plan q = above.plan(cx + dx, cz + dz);
+                if (q == null) continue;
+                double d = Math.hypot(q.x() - p.x(), q.z() - p.z());
+                if (d < bestDistance)
+                {
+                    bestDistance = d;
+                    best = q;
+                }
+            }
+        }
+        return best == null ? null : new VLink(best, r);
     }
 
     private static double distance(double x, double z, int x0, int z0, int x1, int z1)
@@ -591,6 +885,27 @@ final class CaveNetworkGenerator
             CaveTunnelGenerator.tunnel(b, tunnel, new Vec3(p.x(), p.portY(), p.z()), new Vec3(q.x(), q.portY(), q.z()), radius, radius, 1.2, 0.85);
             b.route.add("connector to cell " + q.cellX() + "," + q.cellZ());
         }
+        if (b.net.isWindow()) verticalLink(b, p);
+    }
+
+    /**
+     * The shaft from the hub up past the window's top (at least {@link DepthBand#OVERLAP} blocks into the window above,
+     * up to the level of the target's hub), then a passage over to that hub.
+     */
+    private static void verticalLink(CaveBuilder b, Plan p)
+    {
+        VLink v = vlink(b.net, p);
+        if (v == null) return;
+        Plan q = v.q();
+        double radius = 3.0 + v.rng().nextDouble() * 2.5;
+        double y0 = p.portY(), yTop = Math.max(q.portY(), b.net.maxY() + DepthBand.OVERLAP);
+        CaveSpace shaft = b.space(CaveSpace.Role.SHAFT, CaveType.VERTICAL_SHAFT, null, p.environment(), p.x(), (y0 + yTop) / 2, p.z(), radius, CaveSpace.NO_WATER_LEVEL);
+        CaveTunnelGenerator.shaft(b, shaft, p.x(), p.z(), yTop, y0, radius);
+        if (Math.hypot(q.x() - p.x(), q.z() - p.z()) > radius)
+        {
+            CaveTunnelGenerator.tunnel(b, tunnelSpace(b, p, p.environment(), radius), new Vec3(p.x(), yTop, p.z()), new Vec3(q.x(), q.portY(), q.z()), radius, radius, 0.6, 0.85);
+        }
+        b.route.add("vertical link up to " + b.net.above().label() + " cell " + q.cellX() + "," + q.cellZ());
     }
 
     // ---------------------------------------------------------------- minor caves
@@ -598,18 +913,18 @@ final class CaveNetworkGenerator
     /** Small sea caves, sea arches and short eroded passages scattered between the systems. */
     static CaveSystem buildMinor(CaveNetwork net, int cellX, int cellZ)
     {
-        RandomSource rng = new XoroshiroRandomSource(cellSeed(net.seed(), MINOR_SALT, cellX, cellZ));
+        RandomSource rng = new XoroshiroRandomSource(cellSeed(net, MINOR_SALT, cellX, cellZ));
         int cell = CaveNetwork.MINOR_CELL, margin = 10;
         int ax = cellX * cell + margin + rng.nextInt(cell - 2 * margin), az = cellZ * cell + margin + rng.nextInt(cell - 2 * margin);
         CaveProfile profile = net.profile(ax, az);
-        if (profile == null || rng.nextFloat() >= profile.minorCaveChance * Config.MINOR_CAVE_CHANCE.get()) return empty(cellX, cellZ, true);
+        if (profile == null || rng.nextFloat() >= profile.minorCaveChance * Config.MINOR_CAVE_CHANCE.get()) return empty(net, cellX, cellZ, true);
         int sy = net.seabed(ax, az);
-        if (sy > net.maxEntranceY() || sy < net.minY() + 24) return empty(cellX, cellZ, true);
+        if (sy > net.maxEntranceY() || sy < net.minY() + 24) return empty(net, cellX, cellZ, true);
         CaveType type = profile.minorTypes.isEmpty() ? CaveType.SMALL_SEA_CAVE : profile.minorTypes.pick(rng.nextDouble());
         CaveBuilder b = new CaveBuilder(net, rng.nextLong(), profile, ax, az);
         ResourceLocation env = type.environment != null ? net.environmentId(type.environment, profile) : profile.environment;
         if (type.environment == null && net.luminous(profile, ax, az)) env = net.environmentId("luminous", profile);
-        Plan p = new Plan(cellX, cellZ, 0, profile, type, null, env, ax, sy - 10, az, 5, type.vertical, CaveSpace.NO_WATER_LEVEL, false);
+        Plan p = new Plan(cellX, cellZ, 0, profile, type, null, env, ax, sy - 10, az, 5, type.vertical, CaveSpace.NO_WATER_LEVEL, false, false);
         switch (type)
         {
             case SEA_ARCH ->
@@ -617,7 +932,7 @@ final class CaveNetworkGenerator
                 CaveSpace arch = b.space(CaveSpace.Role.ARCH, CaveType.SEA_ARCH, null, env, ax, sy, az, 6, CaveSpace.NO_WATER_LEVEL);
                 double angle = b.rng.nextDouble() * Math.PI;
                 double span = b.range(14, 30);
-                if (!CaveEntranceGenerator.arch(b, arch, ax, az, angle, span, b.range(7, 18), b.range(2.2, 4.0))) return empty(cellX, cellZ, true);
+                if (!CaveEntranceGenerator.arch(b, arch, ax, az, angle, span, b.range(7, 18), b.range(2.2, 4.0))) return empty(net, cellX, cellZ, true);
                 if (b.rng.nextFloat() < 0.35f) minorCave(b, p, ax + Math.cos(angle) * span * 0.6, az + Math.sin(angle) * span * 0.6);
             }
             case ERODED_CAVE -> erodedPassage(b, p, ax, az, sy);
