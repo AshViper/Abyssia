@@ -219,11 +219,12 @@ public class GuideBookScreen extends Screen
         int nameX = tocLo + iconSz + 3 + romanW;
         TocSheet cur = null;
         int y = 0;
-        for (int i = 0; i < data.chapters.size() && i < 10; i++)
+        int gap = data.chapters.size() > 10 ? 0 : 2;   // 11+ chapters: tighter rows so the contents stay on one page
+        for (int i = 0; i < data.chapters.size(); i++)
         {
             GuideBookData.Chapter ch = data.chapters.get(i);
             List<String> lines = wrap(data.tr(ch.titleKey()), tocHi - nameX);
-            int h = Math.max(iconSz + 2, lines.size() * 8 + 2);
+            int h = Math.max(iconSz + gap, lines.size() * 8 + gap);
             if (cur == null || y + h > tocLim)
             {
                 cur = new TocSheet();
