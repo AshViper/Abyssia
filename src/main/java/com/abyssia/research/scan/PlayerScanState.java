@@ -37,8 +37,13 @@ import java.util.UUID;
 public final class PlayerScanState
 {
     public static final int GRACE_TICKS = 6, SEND_INTERVAL = 4;
-    /** MK0 scanner distance (MK1/MK2 later: 24 / 32) */
-    public static final double MK0_RANGE = 16.0;
+    /** MK0 scanner distance; MK1 / MK2 (technologies scanner_mk1 / scanner_mk2) reach 24 / 32 blocks */
+    public static final double MK0_RANGE = 16.0, MK1_RANGE = 24.0, MK2_RANGE = 32.0;
+    /** scan time multipliers of MK1 / MK2; a scan never takes less than {@link #MIN_SCAN_TICKS} */
+    public static final double MK1_TIME = 0.8, MK2_TIME = 0.65;
+    public static final int MIN_SCAN_TICKS = 40;
+    private static final ResourceLocation SCANNER_MK1 = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "technology/scanner_mk1");
+    private static final ResourceLocation SCANNER_MK2 = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "technology/scanner_mk2");
 
     /** what the item should do after a tick */
     public enum Tick { RUNNING, SCAN_DONE, IDLE_DONE }
@@ -51,17 +56,35 @@ public final class PlayerScanState
 
     private PlayerScanState() {}
 
+    /** Scanner distance of this player: 16 base, 24 with scanner_mk1, 32 with scanner_mk2. */
+    public static double scannerRange(ServerPlayer player)
+    {
+        if (ResearchManager.isUnlocked(player, SCANNER_MK2)) return MK2_RANGE;
+        if (ResearchManager.isUnlocked(player, SCANNER_MK1)) return MK1_RANGE;
+        return MK0_RANGE;
+    }
+
+    /** Scan time multiplier of this player's scanner tier. */
+    public static double scanTimeScale(ServerPlayer player)
+    {
+        if (ResearchManager.isUnlocked(player, SCANNER_MK2)) return MK2_TIME;
+        if (ResearchManager.isUnlocked(player, SCANNER_MK1)) return MK1_TIME;
+        return 1.0;
+    }
+
     /** One server tick of a held scanner. */
     public static Tick tick(ServerPlayer player)
     {
         PlayerScanState s = STATES.computeIfAbsent(player.getUUID(), id -> new PlayerScanState());
         ServerLevel level = player.serverLevel();
-        HitResult hit = raycast(player, level);
+        double scanRange = scannerRange(player);
+        HitResult hit = raycast(player, level, scanRange);
         var target = hit == null ? null : ScanTargetRegistry.find(player, hit).orElse(null);
         boolean tooFar = false;
         if (target != null)
         {
-            double reach = Math.min((double) target.range(), MK0_RANGE);
+            // the target's own range is its MK0 limit; better scanners scale it (16 -> 24 -> 32)
+            double reach = target.range() * scanRange / MK0_RANGE;
             if (player.getEyePosition().distanceTo(hit.getLocation()) > reach + 0.5) { target = null; tooFar = true; }
         }
 
@@ -73,7 +96,7 @@ public final class PlayerScanState
                 if (s.targetId != null) send(player, s.targetId, 0, ScanProgressPayload.ABORTED);
                 s.targetId = id;
                 s.startTick = level.getGameTime();
-                s.duration = Math.max(1, (int) Math.round(target.scanSeconds() * 20.0));
+                s.duration = Math.max(MIN_SCAN_TICKS, (int) Math.round(target.scanSeconds() * 20.0 * scanTimeScale(player)));
                 s.elapsed = 0;
                 s.sinceSend = SEND_INTERVAL;
             }
@@ -142,16 +165,16 @@ public final class PlayerScanState
         AbyssiaNetwork.sendTo(player, new ScanProgressPayload(id, progress, state));
     }
 
-    /** First scan target along the look vector: block (outline) or entity, whichever is nearer, within the MK0 distance. */
-    private static HitResult raycast(ServerPlayer player, ServerLevel level)
+    /** First scan target along the look vector: block (outline) or entity, whichever is nearer, within the scanner distance. */
+    private static HitResult raycast(ServerPlayer player, ServerLevel level, double range)
     {
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getLookAngle();
-        Vec3 end = eye.add(look.scale(MK0_RANGE));
+        Vec3 end = eye.add(look.scale(range));
         BlockHitResult block = level.clip(new ClipContext(eye, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-        double maxSq = block.getType() == HitResult.Type.MISS ? MK0_RANGE * MK0_RANGE : eye.distanceToSqr(block.getLocation());
+        double maxSq = block.getType() == HitResult.Type.MISS ? range * range : eye.distanceToSqr(block.getLocation());
         EntityHitResult entity = ProjectileUtil.getEntityHitResult(player, eye, end,
-                player.getBoundingBox().expandTowards(look.scale(MK0_RANGE)).inflate(1.0),
+                player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0),
                 e -> !e.isSpectator() && e.isPickable(), maxSq);
         if (entity != null) return entity;
         return block.getType() == HitResult.Type.MISS ? null : block;

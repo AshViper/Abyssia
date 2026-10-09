@@ -30,6 +30,7 @@ public class DatabaseScreen extends Screen
         static Tab ofCategory(String category)
         {
             String c = category == null ? "" : category.toLowerCase(Locale.ROOT);
+            if (c.contains("vent") || c.contains("wreck") || c.contains("environment") || c.contains("site")) return PLACES;
             if (c.contains("fauna") || c.contains("creature") || c.contains("mob") || c.contains("animal") || c.contains("entity")) return FAUNA;
             if (c.contains("resource") || c.contains("plant") || c.contains("mineral") || c.contains("ore") || c.contains("deposit")) return RESOURCES;
             return PLACES;

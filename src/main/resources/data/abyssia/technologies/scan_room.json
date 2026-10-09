@@ -1,0 +1,21 @@
+{
+  "id": "abyssia:technology/scan_room",
+  "type": "building",
+  "title": "technology.abyssia.scan_room",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/env_crystal_cluster",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/habitat_rooms"
+  ],
+  "unlocks": [
+    "abyssia:building/scan_room",
+    "abyssia:building/scan_upgrade"
+  ],
+  "icon": "abyssia:abyssal_crystal_shard"
+}

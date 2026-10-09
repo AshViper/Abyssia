@@ -1,0 +1,20 @@
+{
+  "id": "abyssia:technology/current_power",
+  "type": "building",
+  "title": "technology.abyssia.current_power",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_fangtooth",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/power_distribution"
+  ],
+  "unlocks": [
+    "abyssia:building/current_turbine"
+  ],
+  "icon": "abyssia:iron_plate"
+}

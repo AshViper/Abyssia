@@ -1,0 +1,25 @@
+{
+  "id": "abyssia:technology/scanner_mk1",
+  "type": "upgrade",
+  "title": "technology.abyssia.scanner_mk1",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_nickel",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/mineral_deposit_lead",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/basic_metallurgy",
+    "abyssia:technology/mk1_metals"
+  ],
+  "unlocks": [
+    "abyssia:upgrade/scanner_mk1"
+  ],
+  "icon": "abyssia:lidar_scanner"
+}

@@ -22,7 +22,10 @@ public final class ClientResearch
     private static volatile List<ScanTarget> targets = List.of();
     private static volatile Map<ResourceLocation, Integer> fragments = Map.of();
     private static volatile Set<ResourceLocation> unlocked = Set.of();
+    /** unlock key -> technologies listing it (gated keys), derived from {@link #technologies} */
+    private static volatile Map<ResourceLocation, List<Technology>> gated = Map.of();
     private static final List<Consumer<ResourceLocation>> UNLOCK_LISTENERS = new CopyOnWriteArrayList<>();
+    private static final List<Runnable> REFRESH_LISTENERS = new CopyOnWriteArrayList<>();
 
     private ClientResearch() {}
 
@@ -94,6 +97,40 @@ public final class ClientResearch
         return unlocked;
     }
 
+    /** Some synced technology lists the key in its unlocks (such keys are locked until one of them is unlocked). */
+    public static boolean isKeyGated(ResourceLocation key)
+    {
+        return gated.containsKey(key);
+    }
+
+    /** True when the key is not gated, or a technology listing it is unlocked. (Creative/op bypass is not applied here.) */
+    public static boolean isKeyUnlocked(ResourceLocation key)
+    {
+        List<Technology> list = gated.get(key);
+        if (list == null) return true;
+        for (Technology t : list) if (unlocked.contains(t.id())) return true;
+        return false;
+    }
+
+    /** The technology that still locks the key; empty when the key is free or already unlocked. */
+    public static Optional<Technology> lockedBy(ResourceLocation key)
+    {
+        List<Technology> list = gated.get(key);
+        if (list == null || list.isEmpty() || isKeyUnlocked(key)) return Optional.empty();
+        return Optional.of(list.get(0));
+    }
+
+    /** Called on the client main thread after every full sync or delta (lock states may have changed). */
+    public static void addRefreshListener(Runnable listener)
+    {
+        REFRESH_LISTENERS.add(listener);
+    }
+
+    private static void refreshed()
+    {
+        for (Runnable l : new ArrayList<>(REFRESH_LISTENERS)) l.run();
+    }
+
     /** Called on the client main thread for every unlock toast (the technology id). */
     public static void addUnlockListener(Consumer<ResourceLocation> listener)
     {
@@ -106,6 +143,10 @@ public final class ClientResearch
         targets = List.copyOf(msg.targets());
         fragments = new HashMap<>(msg.fragments());
         unlocked = new HashSet<>(msg.unlocked());
+        Map<ResourceLocation, List<Technology>> keys = new HashMap<>();
+        for (Technology t : technologies) for (ResourceLocation k : t.unlocks()) keys.computeIfAbsent(k, x -> new ArrayList<>()).add(t);
+        gated = keys;
+        refreshed();
     }
 
     static void applyDelta(ResearchDeltaPayload msg)
@@ -116,6 +157,7 @@ public final class ClientResearch
         Set<ResourceLocation> u = new HashSet<>(unlocked);
         u.addAll(msg.unlocked());
         unlocked = u;
+        refreshed();
     }
 
     static void onUnlocked(ResourceLocation technology)

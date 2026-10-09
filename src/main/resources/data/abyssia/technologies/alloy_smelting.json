@@ -1,0 +1,20 @@
+{
+  "id": "abyssia:technology/alloy_smelting",
+  "type": "machine",
+  "title": "technology.abyssia.alloy_smelting",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_copper",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/basic_metallurgy"
+  ],
+  "unlocks": [
+    "abyssia:machine/alloy_furnace"
+  ],
+  "icon": "abyssia:alloy_furnace"
+}

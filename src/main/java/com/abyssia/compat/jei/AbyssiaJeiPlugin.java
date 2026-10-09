@@ -52,7 +52,7 @@ public class AbyssiaJeiPlugin implements IModPlugin
     }
 
     /** The processing machines and their blocks (the generators take fuel or heat, not recipes). */
-    private static Map<MachineKind, DeferredBlock<Block>> machines()
+    static Map<MachineKind, DeferredBlock<Block>> machines()
     {
         Map<MachineKind, DeferredBlock<Block>> map = new EnumMap<>(MachineKind.class);
         map.put(MachineKind.CRUSHER, ModIndustry.CRUSHER);
@@ -61,6 +61,19 @@ public class AbyssiaJeiPlugin implements IModPlugin
         map.put(MachineKind.HIGH_TEMP_FURNACE, ModIndustry.HIGH_TEMP_FURNACE);
         map.put(MachineKind.SELECTIVE_LEACHING_SEPARATOR, ModIndustry.SELECTIVE_LEACHING_SEPARATOR);
         return map;
+    }
+
+    /** AB05: hide recipes the local player has not unlocked (see LockedRecipeFilter). */
+    @Override
+    public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime jeiRuntime)
+    {
+        LockedRecipeFilter.start(jeiRuntime);
+    }
+
+    @Override
+    public void onRuntimeUnavailable()
+    {
+        LockedRecipeFilter.stop();
     }
 
     @Override

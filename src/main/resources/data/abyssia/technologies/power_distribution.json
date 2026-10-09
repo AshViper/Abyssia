@@ -1,0 +1,23 @@
+{
+  "id": "abyssia:technology/power_distribution",
+  "type": "building",
+  "title": "technology.abyssia.power_distribution",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_gold",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/alloy_smelting",
+    "abyssia:technology/habitat_rooms"
+  ],
+  "unlocks": [
+    "abyssia:building/wireless_power_relay",
+    "abyssia:building/charging_station",
+    "abyssia:machine/energy_device"
+  ],
+  "icon": "abyssia:energy_cable"
+}

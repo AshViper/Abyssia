@@ -1,0 +1,26 @@
+{
+  "id": "abyssia:technology/tungsten_alloys",
+  "type": "recipe",
+  "title": "technology.abyssia.tungsten_alloys",
+  "tier": "mk2",
+  "depth_band": "E",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_tungsten",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/mineral_deposit_iridium",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/noble_metals"
+  ],
+  "unlocks": [
+    "abyssia:recipe/tungsten_ingot",
+    "abyssia:recipe/iridium_ingot",
+    "abyssia:recipe/tungsten_alloy_ingot"
+  ],
+  "icon": "abyssia:tungsten_ore"
+}

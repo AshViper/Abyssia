@@ -1,0 +1,22 @@
+{
+  "id": "abyssia:technology/habitat_entrance",
+  "type": "building",
+  "title": "technology.abyssia.habitat_entrance",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_lanternfish",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/habitat_rooms"
+  ],
+  "unlocks": [
+    "abyssia:building/entrance",
+    "abyssia:building/open_entrance",
+    "abyssia:building/glass_wall"
+  ],
+  "icon": "abyssia:lanternfish_spawn_egg"
+}
