@@ -1,0 +1,34 @@
+{
+  "id": "abyssia:technology/survey_geology_c",
+  "type": "research",
+  "title": "technology.abyssia.survey_geology_c",
+  "tier": "mk1",
+  "depth_band": "C",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/env_bone_sediment",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/env_brine_pool",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/env_frost_silt",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/env_sulfur_deposit",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/vent_mineral_rock",
+      "count": 1
+    }
+  ],
+  "prerequisites": [],
+  "unlocks": [
+    "abyssia:recipe/thermal_ration"
+  ],
+  "icon": "abyssia:sulfur"
+}

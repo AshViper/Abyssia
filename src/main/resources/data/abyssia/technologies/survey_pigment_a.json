@@ -1,0 +1,32 @@
+{
+  "id": "abyssia:technology/survey_pigment_a",
+  "type": "research",
+  "title": "technology.abyssia.survey_pigment_a",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/plant_cave_coral",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_cave_tube_plant",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_tube_plant",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/plant_abyssal_moss",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/wreck_research"
+  ],
+  "unlocks": [
+    "abyssia:recipe/deep_pigment"
+  ],
+  "icon": "abyssia:deep_pigment"
+}

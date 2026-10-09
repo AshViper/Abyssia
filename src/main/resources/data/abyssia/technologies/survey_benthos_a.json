@@ -1,0 +1,30 @@
+{
+  "id": "abyssia:technology/survey_benthos_a",
+  "type": "research",
+  "title": "technology.abyssia.survey_benthos_a",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_dumbo_octopus",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_silky_medusa",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_brittle_star",
+      "count": 1
+    },
+    {
+      "target": "abyssia:scan_target/fauna_sea_lily",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/wreck_research"
+  ],
+  "unlocks": [],
+  "icon": "abyssia:lidar_scanner"
+}
