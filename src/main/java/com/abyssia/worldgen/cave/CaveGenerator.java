@@ -95,7 +95,11 @@ public final class CaveGenerator
             List<Cavern> caverns = MassiveCavernDecorator.caverns(ctx);
             List<Cavern> halls = HallDecorator.halls(caverns);
             if (!caverns.isEmpty()) MassiveCavernDecorator.water(ctx, caverns);
-            if (!halls.isEmpty()) HallDecorator.windows(ctx, halls);
+            if (!halls.isEmpty())
+            {
+                HallDecorator.windows(ctx, halls);
+                HallDecorator.lights(ctx, halls);
+            }
             ThermalCaveGenerator.vents(ctx);
             CaveDecorationGenerator.formationTips(ctx);
             CaveDecorationGenerator.crystals(ctx);

@@ -61,6 +61,8 @@ public final class DeepOceanClientEffects
     private static float ventHaze;
     /** How deep inside a large cavern the camera is (0..1), eased: clear near water, hazy middle, far walls hidden. */
     private static float cavernHaze;
+    /** AB04: the same probe for the hall tweaks (independent of the cavern_fog switch), eased. */
+    private static float hallHaze;
 
     private static int ambientCooldown = 200;
 
@@ -74,6 +76,7 @@ public final class DeepOceanClientEffects
     {
         fogEnd = -1;
         cavernHaze = 0;
+        hallHaze = 0;
     }
 
     /** 0 at the surface, 1 at the old transition depth (Y -40). */
@@ -106,6 +109,8 @@ public final class DeepOceanClientEffects
         ventHaze += (smoothstep(Mth.clamp(heat, 0f, 1f)) - ventHaze) * 0.05f;
         float cavern = player.isUnderWater() && ClientConfig.CAVERN_FOG.get() ? CaveAmbience.cavernFactor() : 0f;
         cavernHaze += (cavern - cavernHaze) * 0.03f;
+        float hall = player.isUnderWater() ? CaveAmbience.cavernFactor() : 0f;
+        hallHaze += (hall - hallHaze) * 0.03f;
     }
 
     // Suspended particles are handled by MarineSnowClientManager.
@@ -147,7 +152,9 @@ public final class DeepOceanClientEffects
         // Hot vent water is cloudy with minerals.
         factor *= 1f - VENT_FOG * ventHaze;
         // Large caverns: a little hazier, so the far walls dissolve instead of closing the space off like a box.
-        factor *= Mth.lerp(cavernHaze, 1f, ClientConfig.CAVERN_FOG_DISTANCE.get().floatValue());
+        // AB04 halls: see further across the vault instead (the probe that finds caverns finds the halls).
+        if (ClientConfig.HALL_FOG.get()) factor *= Mth.lerp(hallHaze, 1f, ClientConfig.HALL_FOG_DISTANCE.get().floatValue());
+        else factor *= Mth.lerp(cavernHaze, 1f, ClientConfig.CAVERN_FOG_DISTANCE.get().floatValue());
         end *= Math.max(MIN_FOG_FACTOR, factor);
         if (player.hasEffect(MobEffects.NIGHT_VISION) || player.hasEffect(MobEffects.CONDUIT_POWER)) end *= 2f;
         // EN01: Deep Sight pushes the fog out (+64 / +144 blocks; the render distance still caps it in onRenderFog) and
@@ -197,6 +204,8 @@ public final class DeepOceanClientEffects
         MobEffectInstance sight = player.getEffect(ModMobEffects.DEEP_SIGHT.get());
         if (sight != null) share = Mth.lerp(sight.getAmplifier() >= 1 ? 0.65f : 0.35f, share, SURFACE_FOG_START);
         float near = end * Mth.lerp(cavernHaze, share, ClientConfig.CAVERN_FOG_CLEAR.get().floatValue());
+        // AB04: the water right around you in a hall stays clear.
+        if (ClientConfig.HALL_NEAR_CLEAR.get()) near = Math.min(end * 0.9f, Math.max(near, ClientConfig.HALL_NEAR_CLEAR_DISTANCE.get() * hallHaze));
         event.setNearPlaneDistance(near);
         event.setFarPlaneDistance(end);
         event.setCanceled(true);
@@ -211,6 +220,8 @@ public final class DeepOceanClientEffects
         if (player == null) return;
         double y = player.getEyeY();
         if (!abyssiaFog(player.level(), y)) return;
+        // The biome's own water fog colour, before depth darkens it (the hall tint aims at it).
+        float biomeR = event.getRed(), biomeG = event.getGreen(), biomeB = event.getBlue();
         float brightness = deepCurve(y)
                 ? Mth.lerp(abyssDepth01(y), 0.35f, 0.05f)
                 : Mth.lerp(oceanDepth01(y), 1f, 0.35f);
@@ -226,6 +237,52 @@ public final class DeepOceanClientEffects
         event.setRed(Mth.lerp(haze, event.getRed() * brightness, grey));
         event.setGreen(Mth.lerp(haze, event.getGreen() * brightness, grey));
         event.setBlue(Mth.lerp(haze, event.getBlue() * brightness, grey));
+        if (hallHaze > 0.01f) hallFogColor(event, biomeR, biomeG, biomeB);
         ShaderFogPass.color(event.getRed(), event.getGreen(), event.getBlue());
+    }
+
+    /** Biome water colour scaled to this brightness is what the hall tint aims at. */
+    private static final float HALL_TINT_BRIGHTNESS = 0.3f;
+
+    /**
+     * AB04: inside a hall, tint the fog toward the biome's water colour and keep it above a minimum brightness, so walls,
+     * columns and light silhouettes read against a coloured haze instead of black. Only the fog colour (a render correction).
+     */
+    private static void hallFogColor(ViewportEvent.ComputeFogColor event, float biomeR, float biomeG, float biomeB)
+    {
+        float r = event.getRed(), g = event.getGreen(), b = event.getBlue();
+        if (ClientConfig.HALL_FOG_TINT.get())
+        {
+            float t = hallHaze * ClientConfig.HALL_FOG_TINT_STRENGTH.get().floatValue();
+            r = Mth.lerp(t, r, biomeR * HALL_TINT_BRIGHTNESS);
+            g = Mth.lerp(t, g, biomeG * HALL_TINT_BRIGHTNESS);
+            b = Mth.lerp(t, b, biomeB * HALL_TINT_BRIGHTNESS);
+        }
+        if (ClientConfig.HALL_BRIGHTNESS_FLOOR.get())
+        {
+            float floor = hallHaze * ClientConfig.HALL_BRIGHTNESS_FLOOR_VALUE.get().floatValue();
+            float luma = 0.3f * r + 0.59f * g + 0.11f * b;
+            if (luma < floor)
+            {
+                if (luma > 1e-4f)
+                {
+                    float k = Math.min(floor / luma, 8f);
+                    r = Math.min(1f, r * k);
+                    g = Math.min(1f, g * k);
+                    b = Math.min(1f, b * k);
+                }
+                luma = 0.3f * r + 0.59f * g + 0.11f * b;
+                if (luma < floor)
+                {
+                    float add = floor - luma;
+                    r += add;
+                    g += add;
+                    b += add;
+                }
+            }
+        }
+        event.setRed(r);
+        event.setGreen(g);
+        event.setBlue(b);
     }
 }

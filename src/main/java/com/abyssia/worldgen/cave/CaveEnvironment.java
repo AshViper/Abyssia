@@ -33,9 +33,10 @@ public final class CaveEnvironment
      * of its floors, walls and roof (empty lists keep the environment's geology), the {@code basin} floor below the terraces
      * (magma fields, ice...), large organic {@code mosaic} patches covering {@code mosaic_coverage} of walls and roof (magma on
      * basalt, blue ice in packed ice...), embedded light blocks ({@code glow}, chance per surface block) and the bright blocks
-     * lining the far-wall window. {@code life}: extra (luminous) plants on terrace ledges, walls and roof. {@code form}: terrace
+     * lining the far-wall window; AB04: {@code lights} for the hall's light grid on walls, roof and ledges, and {@code landmark} for
+     * its landmarks (roof crystal clusters, glowing columns, window outlines, island lights). {@code life}: extra (luminous) plants on terrace ledges, walls and roof. {@code form}: terrace
      * steps, how much of the floor the basin covers, islands, plateaus, light columns ({@code beacon}: a luminous column plant,
-     * {@code beacons} per hall size), extra vents, and the column clusters.
+     * {@code beacons} per hall size), extra vents, the column clusters, and {@code light_spacing} (multiplier on the light grid spacing).
      */
     public record HallStyle(HallLook look, HallLife life, HallForm form)
     {
@@ -49,10 +50,12 @@ public final class CaveEnvironment
 
     public record HallLook(SimpleWeightedRandomList<BlockState> wall, SimpleWeightedRandomList<BlockState> floor, SimpleWeightedRandomList<BlockState> ceiling,
                            SimpleWeightedRandomList<BlockState> mosaic, float mosaicCoverage, SimpleWeightedRandomList<BlockState> glow, float glowChance,
-                           SimpleWeightedRandomList<BlockState> window, SimpleWeightedRandomList<BlockState> basin)
+                           SimpleWeightedRandomList<BlockState> window, SimpleWeightedRandomList<BlockState> basin,
+                           SimpleWeightedRandomList<BlockState> lights, SimpleWeightedRandomList<BlockState> landmark)
     {
         public static final HallLook DEFAULT = new HallLook(SimpleWeightedRandomList.empty(), SimpleWeightedRandomList.empty(), SimpleWeightedRandomList.empty(),
-                SimpleWeightedRandomList.empty(), 0f, SimpleWeightedRandomList.empty(), 0f, SimpleWeightedRandomList.empty(), SimpleWeightedRandomList.empty());
+                SimpleWeightedRandomList.empty(), 0f, SimpleWeightedRandomList.empty(), 0f, SimpleWeightedRandomList.empty(), SimpleWeightedRandomList.empty(),
+                SimpleWeightedRandomList.empty(), SimpleWeightedRandomList.empty());
         public static final Codec<HallLook> CODEC = RecordCodecBuilder.create(i -> i.group(
                 STATES.optionalFieldOf("wall", SimpleWeightedRandomList.empty()).forGetter(HallLook::wall),
                 STATES.optionalFieldOf("floor", SimpleWeightedRandomList.empty()).forGetter(HallLook::floor),
@@ -62,7 +65,9 @@ public final class CaveEnvironment
                 STATES.optionalFieldOf("glow", SimpleWeightedRandomList.empty()).forGetter(HallLook::glow),
                 Codec.floatRange(0, 1).optionalFieldOf("glow_chance", 0f).forGetter(HallLook::glowChance),
                 STATES.optionalFieldOf("window", SimpleWeightedRandomList.empty()).forGetter(HallLook::window),
-                STATES.optionalFieldOf("basin", SimpleWeightedRandomList.empty()).forGetter(HallLook::basin)
+                STATES.optionalFieldOf("basin", SimpleWeightedRandomList.empty()).forGetter(HallLook::basin),
+                STATES.optionalFieldOf("lights", SimpleWeightedRandomList.empty()).forGetter(HallLook::lights),
+                STATES.optionalFieldOf("landmark", SimpleWeightedRandomList.empty()).forGetter(HallLook::landmark)
         ).apply(i, HallLook::new));
     }
 
@@ -81,9 +86,9 @@ public final class CaveEnvironment
     }
 
     public record HallForm(int stepMin, int stepMax, float shoreMin, float shoreMax, float islands, float plateaus, Optional<PlantEntry> beacon, float beacons,
-                           float vents, Optional<BlockState> columnBlock, float columnClusters, float trunks, float spires, float stalactites)
+                           float vents, Optional<BlockState> columnBlock, float columnClusters, float trunks, float spires, float stalactites, float lightSpacing)
     {
-        public static final HallForm DEFAULT = new HallForm(1, 2, 0.5f, 0.75f, 1f, 0f, Optional.empty(), 0f, 0f, Optional.empty(), 0f, 1f, 1f, 1f);
+        public static final HallForm DEFAULT = new HallForm(1, 2, 0.5f, 0.75f, 1f, 0f, Optional.empty(), 0f, 0f, Optional.empty(), 0f, 1f, 1f, 1f, 1f);
         public static final Codec<HallForm> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.intRange(1, 4).optionalFieldOf("step_min", 1).forGetter(HallForm::stepMin),
                 Codec.intRange(1, 4).optionalFieldOf("step_max", 2).forGetter(HallForm::stepMax),
@@ -98,7 +103,8 @@ public final class CaveEnvironment
                 Codec.floatRange(0, 4).optionalFieldOf("column_clusters", 0f).forGetter(HallForm::columnClusters),
                 Codec.floatRange(0, 4).optionalFieldOf("trunks", 1f).forGetter(HallForm::trunks),
                 Codec.floatRange(0, 4).optionalFieldOf("spires", 1f).forGetter(HallForm::spires),
-                Codec.floatRange(0, 4).optionalFieldOf("stalactites", 1f).forGetter(HallForm::stalactites)
+                Codec.floatRange(0, 4).optionalFieldOf("stalactites", 1f).forGetter(HallForm::stalactites),
+                Codec.floatRange(0.4f, 4).optionalFieldOf("light_spacing", 1f).forGetter(HallForm::lightSpacing)
         ).apply(i, HallForm::new));
     }
 
@@ -192,6 +198,8 @@ public final class CaveEnvironment
     public final HallStyle hall;
     /** Hall look and life, flattened; the hall rock falls back to the environment's own geology where empty. */
     public final Palette<BlockState> hallWall, hallFloor, hallCeiling, hallMosaic, hallGlow, hallWindow, hallBasin;
+    /** AB04: hall light grid blocks (falling back to the glow blocks, then sea lanterns) and landmark light blocks (falling back to the window's). */
+    public final Palette<BlockState> hallLights, hallLandmark;
     public final Palette<PlantEntry> hallFloorPlants, hallWallPlants, hallCeilingPlants;
 
     public CaveEnvironment(Geology geology, Flora flora, Formations formations, HallStyle hall)
@@ -206,6 +214,10 @@ public final class CaveEnvironment
         this.hallMosaic = Palette.of(hall.look().mosaic());
         this.hallGlow = Palette.of(hall.look().glow());
         this.hallWindow = Palette.of(hall.look().window());
+        SimpleWeightedRandomList<BlockState> lights = !hall.look().lights().isEmpty() ? hall.look().lights() : !hall.look().glow().isEmpty() ? hall.look().glow()
+                : SimpleWeightedRandomList.single(net.minecraft.world.level.block.Blocks.SEA_LANTERN.defaultBlockState());
+        this.hallLights = Palette.of(lights);
+        this.hallLandmark = !hall.look().landmark().isEmpty() ? Palette.of(hall.look().landmark()) : !hallWindow.isEmpty() ? hallWindow : hallLights;
         this.hallBasin = hall.look().basin().unwrap().isEmpty() ? hallFloor : Palette.of(hall.look().basin());
         this.hallFloorPlants = Palette.of(hall.life().floor());
         this.hallWallPlants = Palette.of(hall.life().wall());

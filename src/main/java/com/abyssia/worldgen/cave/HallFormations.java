@@ -89,7 +89,7 @@ final class HallFormations
             }
         }
         if (form.beacon().isPresent() && form.beacons() > 0) beacons(s, h, count(b, form.beacons() * (1 + area / 8000), 10));
-        window(s, h);
+        lighting(s, h, form);
     }
 
     /** Expected count with a random spread, rounded at random, capped. */
@@ -256,21 +256,173 @@ final class HallFormations
         }
     }
 
-    /**
-     * A glowing niche high in the far wall (opposite the entrance side), carved into the hall and lined with the look's
-     * window blocks by {@link HallDecorator}: the bright opening that draws the eye across the hall.
-     */
-    private static void window(Site s, CaveShape.Hall h)
+    // ---------------------------------------------------------------- AB04 lighting
+
+    /** Hall size class for the lighting budgets: 0 large, 1 massive, 2 mega. */
+    private static int sizeClass(Site s)
     {
-        if (s.space.environment.hallWindow.isEmpty() || s.tier == Cavern.Tier.SMALL) return;
+        if (s.space.type == CaveType.MEGA_CAVERN) return 2;
+        return Math.max(s.chamber.rx(), s.chamber.rz()) >= 32 ? 1 : 0;
+    }
+
+    /**
+     * AB04: light reaches about 15 blocks, so a hall is lit near and middle distance by a grid of light patches over its
+     * surfaces (spacing set here, placed per block by {@link HallDecorator#lights}), and read from afar by its landmarks,
+     * whose glowing blocks show as silhouettes: crystal clusters hanging from the roof, giant columns veined with light,
+     * windows (wall niches whose mouths are outlined in light) and lights standing on islands.
+     * <pre>
+     *            roof clusters  glowing columns  windows  island lights  grid spacing wall / roof / floor
+     *   large    1              0-1              1        0-1            ~13 / 13 / 8
+     *   massive  1-2            1-2              2-4      1              ~18 / 18 / 11
+     *   mega     2-3            2-4              4-6      1-2            ~27 / 27 / 16 (radius 100)
+     * </pre>
+     */
+    private static void lighting(Site s, CaveShape.Hall h, CaveEnvironment.HallForm form)
+    {
         CaveBuilder b = s.b;
-        double angle = s.chamber.front() + Math.PI + b.range(-0.4, 0.4);
-        double y = h.level + (h.apexY() - h.level) * b.range(0.3, 0.5);
+        int size = sizeClass(s);
+        double r = Math.max(h.rx, h.rz);
+        double spacing = Mth.clamp(10 + r * 0.17, 13, 30) * form.lightSpacing();
+        s.cavern.lightWall = spacing;
+        s.cavern.lightCeiling = spacing;
+        s.cavern.lightFloor = Math.max(6, spacing * 0.6);
+        s.cavern.lightCap = size == 0 ? 160 : size == 1 ? 128 : 112;
+        Palette<BlockState> landmark = s.space.environment.hallLandmark;
+        if (landmark.isEmpty()) return;
+
+        int roof = size == 0 ? 1 : size == 1 ? b.range(1, 2) : b.range(2, 3);
+        for (int i = 0; i < roof; i++)
+        {
+            double[] p = s.point(0.65, 6);
+            if (p != null && roofCluster(s, p[0], p[1], landmark, size)) s.cavern.landmarks++;
+        }
+        int columns = size == 0 ? b.range(0, 1) : size == 1 ? b.range(1, 2) : b.range(2, 4);
+        for (int i = 0; i < columns; i++)
+        {
+            double[] p = s.point(0.7, 10);
+            if (p != null && glowColumn(s, p[0], p[1], Mth.clamp(r * 0.06, 2.5, 6.0) * b.range(0.85, 1.15), landmark)) s.cavern.landmarks++;
+        }
+        int windows = size == 0 ? 1 : size == 1 ? b.range(2, 4) : b.range(4, 6);
+        double base = s.chamber.front() + Math.PI;
+        for (int i = 0; i < windows; i++)
+        {
+            // The first faces the entrance side from across the hall; the others spread round the walls.
+            double angle = base + (i == 0 ? 0 : (i % 2 == 1 ? 1 : -1) * ((i + 1) / 2) * Math.PI * 2 / (windows + 1)) + b.range(-0.25, 0.25);
+            window(s, h, angle, b.range(0.25, 0.55), Mth.clamp(r * (size == 2 ? 0.07 : 0.1), 4, 11) * b.range(0.8, 1.2));
+        }
+        int lights = size == 0 ? b.range(0, 1) : size == 1 ? 1 : b.range(1, 2);
+        for (int i = 0; i < lights; i++)
+        {
+            if (islandLight(s, h, i, landmark, size)) s.cavern.landmarks++;
+        }
+    }
+
+    /** Crystals of light hanging from the roof in a cluster: one long, the rest shorter around it. */
+    private static boolean roofCluster(Site s, double x, double z, Palette<BlockState> palette, int size)
+    {
+        CaveBuilder b = s.b;
+        double c = s.ceiling(x, z), f = s.floor(x, z);
+        if (Double.isNaN(c) || Double.isNaN(f) || c - f < 16) return false;
+        BlockState block = palette.pick(b.rng.nextDouble());
+        int n = b.range(6, 10 + size * 4);
+        double spread = 3 + size * 2.5;
+        for (int k = 0; k < n; k++)
+        {
+            double a = b.rng.nextDouble() * Math.PI * 2, d = k == 0 ? 0 : Math.sqrt(b.rng.nextDouble()) * spread;
+            double px = x + Math.cos(a) * d, pz = z + Math.sin(a) * d;
+            double pc = s.ceiling(px, pz);
+            if (Double.isNaN(pc)) continue;
+            double length = Math.min((pc - f) * 0.4, (k == 0 ? 8 + size * 5 : 3 + size * 2) * b.range(0.7, 1.3));
+            double width = (k == 0 ? 1.4 + size * 0.4 : 0.8 + size * 0.2) * b.range(0.8, 1.2);
+            double tilt = b.range(0.0, 0.35);
+            double ex = px + Math.cos(a) * length * tilt, ez = pz + Math.sin(a) * length * tilt;
+            b.add(new CaveShape.Capsule(s.formation, CaveShape.Kind.FILL, block, null, false, px, pc + 2, pz, ex, pc - length, ez, width, 0.35, 1.0));
+        }
+        s.take(x, z, spread);
+        return true;
+    }
+
+    /** A giant column, floor to roof, straight and ribbed, with veins of light spiralling round its skin. */
+    private static boolean glowColumn(Site s, double x, double z, double rb, Palette<BlockState> palette)
+    {
+        CaveBuilder b = s.b;
+        double[] sp = span(s, x, z, rb);
+        if (sp == null || sp[1] - sp[0] < 16) return false;
+        double waist = b.range(0.7, 0.85);
+        java.util.function.DoubleUnaryOperator profile = v -> {
+            double u = Math.abs(v - 0.5) * 2;
+            return rb * (waist + (1 - waist) * u * u) + rb * 0.5 * (1 - smooth(v / 0.1)) + rb * 0.5 * (1 - smooth((1 - v) / 0.12));
+        };
+        b.add(column(s, null, x, z, sp[2] - s.anchor, sp[3] + s.anchor, sp[0], sp[1], 0, 0.06, profile, Math.round(b.range(6, 10)), b.range(0.05, 0.1)));
+        BlockState light = palette.pick(b.rng.nextDouble());
+        int veins = b.range(2, 3);
+        double turns = (sp[1] - sp[0]) / b.range(14, 22), phase = b.rng.nextDouble() * Math.PI * 2;
+        int steps = Mth.ceil((sp[1] - sp[0]) / 2.5);
+        for (int vIdx = 0; vIdx < veins; vIdx++)
+        {
+            double prevX = 0, prevY = 0, prevZ = 0;
+            for (int i = 0; i <= steps; i++)
+            {
+                double v = i / (double) steps, y = Mth.lerp(v, sp[0], sp[1]);
+                double a = phase + vIdx * Math.PI * 2 / veins + v * turns * Math.PI * 2;
+                double rr = profile.applyAsDouble(v) * 0.95;
+                double px = x + Math.cos(a) * rr, pz = z + Math.sin(a) * rr;
+                if (i > 0) b.add(new CaveShape.Capsule(s.formation, CaveShape.Kind.ORE, light, null, false, prevX, prevY, prevZ, px, y, pz, 0.9, 0.9, 1.0));
+                prevX = px;
+                prevY = y;
+                prevZ = pz;
+            }
+        }
+        s.take(x, z, rb * 2.4);
+        return true;
+    }
+
+    /**
+     * A window: a niche cut into the wall at this bearing and relative height, its mouth outlined in light by
+     * {@link HallDecorator#windows} (the outline and a few points inside, never filled).
+     */
+    private static void window(Site s, CaveShape.Hall h, double angle, double height, double radius)
+    {
+        double y = h.level + (h.apexY() - h.level) * height;
         double[] w = s.wall(angle, y);
         if (w == null) return;
-        double radius = Mth.clamp(Math.max(h.rx, h.rz) * 0.09, 4, 12);
         double x = w[0] + w[3] * radius * 0.5, z = w[2] + w[4] * radius * 0.5;
-        b.add(new CaveShape.Ellipsoid(s.space, CaveShape.Kind.CARVE, null, null, true, x, y, z, radius, radius * 1.3, radius, Double.NaN));
-        s.cavern.setWindow(new Cavern.Window(x, y, z, radius));
+        s.b.add(new CaveShape.Ellipsoid(s.space, CaveShape.Kind.CARVE, null, null, true, x, y, z, radius, radius * 1.3, radius, Double.NaN));
+        s.cavern.addWindow(new Cavern.Window(x, y, z, radius, w[3], w[4]));
+    }
+
+    /** A light standing on an island (or a high terrace): a rock tower with a lamp of light blocks on top. */
+    private static boolean islandLight(Site s, CaveShape.Hall h, int index, Palette<BlockState> palette, int size)
+    {
+        CaveBuilder b = s.b;
+        double x, z;
+        if (index < h.islandCount())
+        {
+            double[] island = h.island(index);
+            x = island[0];
+            z = island[1];
+        }
+        else
+        {
+            double[] p = null;
+            for (int attempt = 0; attempt < 6 && p == null; attempt++)
+            {
+                double[] q = s.point(0.8, 6);
+                if (q != null && h.floor(q[0], q[1]) > h.level + 1) p = q;
+            }
+            if (p == null) return false;
+            x = p[0];
+            z = p[1];
+        }
+        double f = s.floor(x, z), c = s.ceiling(x, z);
+        if (Double.isNaN(f) || Double.isNaN(c) || c - f < 16) return false;
+        double height = Math.min(c - f - 6, (6 + size * 5) * b.range(0.8, 1.3));
+        double rb = 1.4 + size * 0.4;
+        b.add(column(s, null, x, z, f - 3, f + height, f, f + height, 0.3, 0.1, v -> rb * (1.35 - 0.45 * v), 0, 0));
+        double lamp = 1.4 + size * 0.45;
+        b.add(new CaveShape.Ellipsoid(s.formation, CaveShape.Kind.FILL, palette.pick(b.rng.nextDouble()), null, false, x, f + height + lamp * 0.6, z,
+                lamp, lamp * 1.2, lamp, Double.NaN));
+        s.take(x, z, 4);
+        return true;
     }
 }

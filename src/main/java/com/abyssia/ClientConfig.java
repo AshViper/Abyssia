@@ -46,6 +46,31 @@ public final class ClientConfig
     public static final ForgeConfigSpec.BooleanValue CAVERN_SNOW_DEPTH = BUILDER
             .comment("Marine snow depth cue in large caverns: flakes near you larger and brighter, distant ones smaller and fainter. The particle budget is unchanged")
             .define("cavern_snow_depth_cue", true);
+    // AB04: halls (the large, massive and mega caverns) are judged by the same long-range cavern probe; each tweak can be switched off.
+    public static final ForgeConfigSpec.BooleanValue HALL_FOG = BUILDER
+            .comment("Halls: see further inside large caverns (replaces cavern_fog_distance_multiplier there)")
+            .define("hall_fog", true);
+    public static final ForgeConfigSpec.DoubleValue HALL_FOG_DISTANCE = BUILDER
+            .comment("Fog distance multiplier deep inside a hall (1.35 x 144 = about 194 blocks; the render distance still caps it)")
+            .defineInRange("hall_fog_distance_multiplier", 1.35, 0.5, 2.5);
+    public static final ForgeConfigSpec.BooleanValue HALL_FOG_TINT = BUILDER
+            .comment("Halls: tint the fog toward the biome's water colour, so silhouettes stand out against coloured haze instead of black")
+            .define("hall_fog_tint", true);
+    public static final ForgeConfigSpec.DoubleValue HALL_FOG_TINT_STRENGTH = BUILDER
+            .comment("How far the hall fog colour moves toward the biome water colour (at 30% of its brightness)")
+            .defineInRange("hall_fog_tint_strength", 0.65, 0.0, 1.0);
+    public static final ForgeConfigSpec.BooleanValue HALL_NEAR_CLEAR = BUILDER
+            .comment("Halls: keep the water around you clear of fog")
+            .define("hall_near_clear", true);
+    public static final ForgeConfigSpec.IntValue HALL_NEAR_CLEAR_DISTANCE = BUILDER
+            .comment("Blocks around the camera kept clear of fog inside a hall")
+            .defineInRange("hall_near_clear_distance", 12, 0, 48);
+    public static final ForgeConfigSpec.BooleanValue HALL_BRIGHTNESS_FLOOR = BUILDER
+            .comment("Halls: keep the fog colour from falling below a minimum brightness (render correction only: block light and mob spawning are unchanged)")
+            .define("hall_brightness_floor", true);
+    public static final ForgeConfigSpec.DoubleValue HALL_BRIGHTNESS_FLOOR_VALUE = BUILDER
+            .comment("Minimum brightness (luminance 0..1) of the fog colour deep inside a hall")
+            .defineInRange("hall_brightness_floor_value", 0.08, 0.0, 0.5);
 
     static {
         BUILDER.pop();
