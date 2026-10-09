@@ -1,7 +1,6 @@
 package com.abyssia.item.scanner;
 
-import com.abyssia.progress.WreckProgress;
-import com.abyssia.registry.ModWrecks;
+import com.abyssia.research.scan.PlayerScanState;
 import com.abyssia.worldgen.deposit.OreDeposit;
 import com.abyssia.worldgen.deposit.OreDepositManager;
 import net.minecraft.ChatFormatting;
@@ -37,9 +36,10 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * LS01 lidar scanner: hold right-click for {@link #SCAN_TICKS}, then the ore deposits (OreDepositManager) within
- * {@link #RADIUS} blocks are reported in chat, nearest first: mineral, scale class, ore left, bearing and distance.
- * WRK01: a wreck core under the crosshair is analysed (WreckProgress); enough of them unlock the habitat constructor.
+ * LS01 lidar scanner: hold right-click while looking at an ore deposit (OreDepositManager): the deposit under the crosshair is
+ * reported (mineral, scale class, ore left, bearing and distance); the deposits around are NOT listed (user, 2026-10-09).
+ * AB05: while held, the server scans the target under the crosshair (PlayerScanState, scan_targets data, MK0 distance 16) and
+ * finishes it through ResearchManager.scan; the HUD is fed by ScanProgressPayload. Without a target the deposit under the crosshair (if any) is reported after SCAN_TICKS.
  */
 public class LidarScannerItem extends Item
 {
@@ -69,7 +69,7 @@ public class LidarScannerItem extends Item
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remaining)
     {
-        int elapsed = SCAN_TICKS - remaining;
+        int elapsed = getUseDuration(stack, entity) - remaining;
         if (level.isClientSide)
         {
             if (elapsed % 4 == 0)
@@ -79,11 +79,27 @@ public class LidarScannerItem extends Item
                 level.addParticle(ParticleTypes.GLOW, at.x, at.y, at.z, look.x * 0.15, look.y * 0.15, look.z * 0.15);
             }
         }
-        else if (elapsed % 12 == 0)
+        else if (entity instanceof ServerPlayer player)
         {
-            level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CONDUIT_AMBIENT_SHORT,
-                    SoundSource.PLAYERS, 0.5F, 1.0F + 0.6F * elapsed / SCAN_TICKS);
+            if (elapsed % 12 == 0)
+                level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CONDUIT_AMBIENT_SHORT,
+                        SoundSource.PLAYERS, 0.5F, 1.0F + 0.6F * (elapsed % SCAN_TICKS) / SCAN_TICKS);
+            if (PlayerScanState.tick(player) != PlayerScanState.Tick.RUNNING)
+            {
+                // scan complete (ResearchManager.scan ran) or nothing scannable for SCAN_TICKS: deposit list, cooldown, stop
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CONDUIT_ACTIVATE,
+                        SoundSource.PLAYERS, 0.7F, 1.6F);
+                reportDeposits(player, (ServerLevel) level);
+                player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+                player.stopUsingItem();
+            }
         }
+    }
+
+    @Override
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft)
+    {
+        if (!level.isClientSide && entity instanceof ServerPlayer player) PlayerScanState.abort(player);
     }
 
     @Override
@@ -94,62 +110,25 @@ public class LidarScannerItem extends Item
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CONDUIT_ACTIVATE,
                     SoundSource.PLAYERS, 0.7F, 1.6F);
             reportDeposits(player, (ServerLevel) level);
-            reportWreck(player, (ServerLevel) level);
             player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
         }
         return stack;
     }
 
-    /**
-     * Chat report: the deposit under the crosshair first (also on the action bar), then the nearest other deposits that
-     * still hold ore (horizontal distance within {@link #RADIUS}).
-     */
+    /** Report of the deposit under the crosshair only (chat and action bar); nothing about the deposits around. */
     public static void reportDeposits(ServerPlayer player, ServerLevel level)
     {
         Vec3 here = player.position();
         BlockPos pos = player.blockPosition();
         OreDeposit target = lookedAt(player, level);
-        List<OreDeposit> found = OreDepositManager.findNearby(level, pos, RADIUS).stream()
-                .filter(d -> d.remainingOre() > 0 && horizontal(here, d.center()) <= RADIUS
-                        && (target == null || !d.depositId().equals(target.depositId())))
-                .sorted(Comparator.comparingDouble(d -> d.center().distSqr(pos)))
-                .limit(MAX_RESULTS).toList();
-        if (target != null)
+        if (target == null)
         {
-            Component line = Component.translatable(MSG + "target", entry(target, here, pos)).withStyle(ChatFormatting.GREEN);
-            player.sendSystemMessage(line);
-            player.displayClientMessage(line, true);
-        }
-        if (found.isEmpty())
-        {
-            if (target == null)
-                player.sendSystemMessage(Component.translatable(MSG + "none", RADIUS).withStyle(ChatFormatting.GRAY));
+            player.sendSystemMessage(Component.translatable(MSG + "none").withStyle(ChatFormatting.GRAY));
             return;
         }
-        player.sendSystemMessage(Component.translatable(MSG + "header", found.size()).withStyle(ChatFormatting.AQUA));
-        for (OreDeposit d : found)
-            player.sendSystemMessage(entry(d, here, pos).copy().withStyle(ChatFormatting.GRAY));
-    }
-
-    /** WRK01: analyses the wreck core the crosshair rests on (same reach as {@link #lookedAt}). */
-    public static void reportWreck(ServerPlayer player, ServerLevel level)
-    {
-        Vec3 eye = player.getEyePosition();
-        Vec3 end = eye.add(player.getLookAngle().scale(RADIUS));
-        BlockHitResult hit = level.clip(new ClipContext(eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
-        if (hit.getType() == HitResult.Type.MISS || !level.getBlockState(hit.getBlockPos()).is(ModWrecks.WRECK_CORE.get())) return;
-        BlockPos core = hit.getBlockPos();
-        int need = WreckProgress.required();
-        if (!WreckProgress.add(player, core))
-        {
-            player.sendSystemMessage(Component.translatable("message.abyssia.wreck.known").withStyle(ChatFormatting.GRAY));
-            return;
-        }
-        int n = WreckProgress.count(player);
-        player.sendSystemMessage(Component.translatable("message.abyssia.wreck.analyzed", n, need).withStyle(ChatFormatting.GREEN));
-        level.sendParticles(ParticleTypes.GLOW, core.getX() + 0.5, core.getY() + 0.5, core.getZ() + 0.5, 20, 0.7, 0.7, 0.7, 0.05);
-        level.playSound(null, core, SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 0.8F, 1.3F);
-        if (n == need) player.sendSystemMessage(Component.translatable("message.abyssia.wreck.unlocked").withStyle(ChatFormatting.AQUA));
+        Component line = Component.translatable(MSG + "target", entry(target, here, pos)).withStyle(ChatFormatting.GREEN);
+        player.sendSystemMessage(line);
+        player.displayClientMessage(line, true);
     }
 
     /** The deposit whose region contains the first solid block along the look vector (null: looking at nothing of one). */
@@ -198,7 +177,7 @@ public class LidarScannerItem extends Item
         lines.add(Component.translatable("tooltip.abyssia.lidar_scanner.use").withStyle(ChatFormatting.GRAY));
     }
 
-    @Override public int getUseDuration(ItemStack stack, LivingEntity entity) { return SCAN_TICKS; }
+    @Override public int getUseDuration(ItemStack stack, LivingEntity entity) { return 72000; }  // ends by scan completion / release
     @Override public UseAnim getUseAnimation(ItemStack stack) { return UseAnim.NONE; }
 
     @Override

@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
-    private static final String PROTOCOL = "8";  // 8: large locker rename. 6: submarine lights / undock (SUB02). 7: WR01 relay links
+    private static final String PROTOCOL = "9";  // 9: AB05 research payloads. 8: large locker rename. 6: submarine lights / undock (SUB02). 7: WR01 relay links
 
     private AbyssiaNetwork() {}
 
@@ -34,6 +34,16 @@ public final class AbyssiaNetwork
         // large locker name field (C2S)
         registrar.playToServer(com.abyssia.furniture.LockerRenamePacket.TYPE, com.abyssia.furniture.LockerRenamePacket.STREAM_CODEC,
                 com.abyssia.furniture.LockerRenamePacket::handle);
+        // AB05 scan progress for the HUD (S2C)
+        registrar.playToClient(com.abyssia.research.scan.ScanProgressPayload.TYPE, com.abyssia.research.scan.ScanProgressPayload.STREAM_CODEC,
+                com.abyssia.research.scan.ScanProgressPayload::handle);
+        // AB05 research state: full sync, delta, unlock toast (S2C)
+        registrar.playToClient(com.abyssia.research.ResearchSyncPayload.TYPE, com.abyssia.research.ResearchSyncPayload.STREAM_CODEC,
+                com.abyssia.research.ResearchSyncPayload::handle);
+        registrar.playToClient(com.abyssia.research.ResearchDeltaPayload.TYPE, com.abyssia.research.ResearchDeltaPayload.STREAM_CODEC,
+                com.abyssia.research.ResearchDeltaPayload::handle);
+        registrar.playToClient(com.abyssia.research.TechUnlockedPayload.TYPE, com.abyssia.research.TechUnlockedPayload.STREAM_CODEC,
+                com.abyssia.research.TechUnlockedPayload::handle);
     }
 
     public static void sendToServer(CustomPacketPayload message)

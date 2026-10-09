@@ -1,0 +1,11 @@
+{
+  "id": "abyssia:technology/cobalt_processing",
+  "type": "machine",
+  "title": "technology.abyssia.cobalt_processing",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [ { "target": "abyssia:scan_target/mineral_deposit_cobalt", "count": 1 } ],
+  "prerequisites": [ "abyssia:technology/basic_metallurgy" ],
+  "unlocks": [ "abyssia:machine/high_temp_furnace", "abyssia:machine/selective_leaching_separator" ],
+  "icon": "abyssia:cobalt_ore"
+}
