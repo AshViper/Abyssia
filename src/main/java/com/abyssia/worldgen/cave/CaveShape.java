@@ -256,6 +256,12 @@ public abstract class CaveShape
             return islands.length / 5;
         }
 
+        /** Island i: {x, z, radius, height above the level}. */
+        public double[] island(int i)
+        {
+            return new double[] {islands[i * 5], islands[i * 5 + 1], islands[i * 5 + 2], islands[i * 5 + 3]};
+        }
+
         /**
          * Column values at (x, z) into {@code out}: horizontal distance from the centre, distance from the centre to the
          * outline along that bearing, normalized radius q (0 centre, 1 outline) and the floor (lowest open block).

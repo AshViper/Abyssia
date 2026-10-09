@@ -48,8 +48,11 @@ public final class Cavern
     /** AB03: a column of light (a tall luminous plant) rising from a hall's floor, at a block column. */
     public record Beacon(int x, int z) {}
 
-    /** AB03: a glowing niche high in a hall's far wall. */
-    public record Window(double x, double y, double z, double radius) {}
+    /**
+     * AB03/AB04: a niche in a hall's wall whose mouth is outlined in light: centre, radius (its height is 1.3 x), and the
+     * outward horizontal direction (into the rock).
+     */
+    public record Window(double x, double y, double z, double radius, double outX, double outZ) {}
 
     private static final int KELP_CELL = 11;
     private static final int ROOT_CELL = 17;
@@ -70,8 +73,12 @@ public final class Cavern
     @Nullable
     public final CaveShape.Hall hall;
     private List<Beacon> beacons = new ArrayList<>();
-    @Nullable
-    private Window window;
+    private List<Window> windows = new ArrayList<>();
+    /** AB04: light grid spacing on walls, roof and floor/ledges (blocks), and the most grid light blocks one chunk may place. */
+    double lightWall, lightCeiling, lightFloor;
+    int lightCap;
+    /** AB04: landmarks planned (roof crystal clusters, glowing columns, island lights), for the report. */
+    int landmarks;
     /** Planned formations, for the hall report: trunks and fused pillars, spires, giant stalactites, column clusters. */
     int trunks, spires, stalactites, clusters;
     private final CaveNoises noises;
@@ -132,9 +139,9 @@ public final class Cavern
         beacons.add(beacon);
     }
 
-    void setWindow(Window window)
+    void addWindow(Window window)
     {
-        this.window = window;
+        windows.add(window);
     }
 
     public List<Beacon> beacons()
@@ -142,10 +149,9 @@ public final class Cavern
         return beacons;
     }
 
-    @Nullable
-    public Window window()
+    public List<Window> windows()
     {
-        return window;
+        return windows;
     }
 
     /** One-line hall report (dimensions and formations), or null for a lobed cavern. */
@@ -156,11 +162,10 @@ public final class Cavern
         double floor = hall.floor(hall.cx, hall.cz);
         return String.format("hall %s, %s, %d x %d wide, basin floor y %d, terrace level y %d, roof apex y %d (%d above the level, %d above the basin), "
                         + "walls to y %d, terrace step %d, basin %.0f%% of the radius, %d islands, %d trunks/pillars, %d spires, %d giant stalactites, "
-                        + "%d column clusters, %d light columns%s",
+                        + "%d column clusters, %d light columns, %d landmarks, %d windows, light grid %.0f/%.0f/%.0f (wall/roof/floor)",
                 space.environmentId.getPath(), tier.name().toLowerCase(), Math.round(hall.rx * 2), Math.round(hall.rz * 2), (int) floor, hall.level,
                 (int) hall.apexY(), (int) (hall.apexY() - hall.level), (int) (hall.apexY() - floor), (int) hall.springY, hall.step, hall.shore * 100,
-                hall.islandCount(), trunks, spires, stalactites, clusters, beacons.size(),
-                window != null ? String.format(", window @ %d %d %d", (int) window.x(), (int) window.y(), (int) window.z()) : "");
+                hall.islandCount(), trunks, spires, stalactites, clusters, beacons.size(), landmarks, windows.size(), lightWall, lightCeiling, lightFloor);
     }
 
     void setCrystals(List<CavernTemplate.CrystalColor> colors)
@@ -183,6 +188,7 @@ public final class Cavern
         gardens = List.copyOf(gardens);
         crystals = List.copyOf(crystals);
         beacons = List.copyOf(beacons);
+        windows = List.copyOf(windows);
     }
 
     List<Patch> patches()

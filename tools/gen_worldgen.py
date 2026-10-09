@@ -1206,16 +1206,20 @@ CAVE_ENVIRONMENTS = {
 # blocks lining the glowing niche in the far wall ("window"); life = extra (luminous) plants on terrace ledges, risers and roof;
 # form = terrace steps, basin reach (share of the radius), islands/plateaus, light columns ("beacon" plant, "beacons" per hall),
 # extra vents, column clusters of "column_block", and the multipliers of trunks, spires and giant stalactites.
+# AB04 lighting: "lights" = the light grid on walls/roof/floor (colour by block choice; vanilla light has no RGB), "landmark" = roof
+# crystal clusters, glowing column veins, window outlines and island lamps; "light_spacing" scales the grid (~13 large .. ~27 mega).
 def hall_style(wall=(), floor=(), ceiling=(), mosaic=(), mosaic_coverage=0.0, glow=(), glow_chance=0.0, window=(), basin=(),
                life_floor=(), life_wall=(), life_ceiling=(), floor_density=0.0, wall_density=0.0, ceiling_density=0.0,
                step=(1, 2), shore=(0.5, 0.75), islands=1.0, plateaus=0.0, beacon=None, beacons=0.0, vents=0.0,
-               column_block=None, column_clusters=0.0, trunks=1.0, spires=1.0, stalactites=1.0):
+               column_block=None, column_clusters=0.0, trunks=1.0, spires=1.0, stalactites=1.0, lights=(), landmark=(), light_spacing=1.0):
     look = {"wall": blocks(wall), "floor": blocks(floor), "ceiling": blocks(ceiling), "mosaic": blocks(mosaic), "mosaic_coverage": mosaic_coverage,
-            "glow": blocks(glow), "glow_chance": glow_chance, "window": blocks(window), "basin": blocks(basin)}
+            "glow": blocks(glow), "glow_chance": glow_chance, "window": blocks(window), "basin": blocks(basin),
+            "lights": blocks(lights), "landmark": blocks(landmark)}
     life = {"floor": plants(life_floor), "wall": plants(life_wall), "ceiling": plants(life_ceiling),
             "floor_density": floor_density, "wall_density": wall_density, "ceiling_density": ceiling_density}
     form = {"step_min": step[0], "step_max": step[1], "shore_min": shore[0], "shore_max": shore[1], "islands": islands, "plateaus": plateaus,
-            "beacons": beacons, "vents": vents, "column_clusters": column_clusters, "trunks": trunks, "spires": spires, "stalactites": stalactites}
+            "beacons": beacons, "vents": vents, "column_clusters": column_clusters, "trunks": trunks, "spires": spires, "stalactites": stalactites,
+            "light_spacing": light_spacing}
     if beacon:
         form["beacon"] = pl(beacon)
     if column_block:
@@ -1236,7 +1240,8 @@ HALL_STYLES = {
         window=[("minecraft:ochre_froglight", 2), ("minecraft:shroomlight", 1)], basin=[("cave_mud", 3), ("cave_sediment", 2)],
         life_floor=_GLOW_FLOOR, life_wall=[("luminous_moss", 1)], life_ceiling=_GLOW_CEILING,
         floor_density=0.05, wall_density=0.03, ceiling_density=0.025,
-        step=(1, 2), shore=(0.5, 0.78), islands=1.0, plateaus=0.2, beacon="crystal_kelp", beacons=0.8),
+        step=(1, 2), shore=(0.5, 0.78), islands=1.0, plateaus=0.2, beacon="crystal_kelp", beacons=0.8,
+        lights=[('minecraft:sea_lantern', 3), ('deep_crystal_block', 1)], landmark=[('minecraft:sea_lantern', 2), ('deep_crystal_block', 1)]),
     "luminous": hall_style(
         wall=[("wet_cave_rock", 4), ("abyssal_cave_rock", 2), ("crystal_cave_rock", 1)],
         floor=[("cave_sediment", 3), ("crystal_sediment", 1)], ceiling=[("wet_cave_rock", 3), ("crystal_cave_rock", 1)],
@@ -1245,7 +1250,8 @@ HALL_STYLES = {
         window=[("minecraft:sea_lantern", 1), ("minecraft:verdant_froglight", 1)], basin=[("cave_mud", 2), ("crystal_sediment", 1)],
         life_floor=[("cave_crystal_plant", 3), ("glowtip_grass", 3), ("cave_bloom", 1), ("abyssal_bloom", 1)], life_wall=[("luminous_moss", 1)],
         life_ceiling=_GLOW_CEILING, floor_density=0.09, wall_density=0.06, ceiling_density=0.05,
-        step=(1, 1), shore=(0.4, 0.65), islands=0.8, beacon="crystal_kelp", beacons=2.0),
+        step=(1, 1), shore=(0.4, 0.65), islands=0.8, beacon="crystal_kelp", beacons=2.0,
+        lights=[('minecraft:sea_lantern', 2), ('minecraft:verdant_froglight', 2), ('deep_crystal_block', 1)], landmark=[('deep_crystal_block', 2), ('minecraft:verdant_froglight', 1)]),
     # Lush (image 3): grey stone walls with moss-green floors, fine stair-step terraces, many glow plants and light columns.
     "forest": hall_style(
         wall=[("organic_cave_rock", 3), ("minecraft:stone", 2), ("wet_cave_rock", 2), ("minecraft:andesite", 1)],
@@ -1255,33 +1261,39 @@ HALL_STYLES = {
         window=[("minecraft:verdant_froglight", 1), ("minecraft:ochre_froglight", 1)], basin=[("organic_sediment", 2), ("cave_mud", 2)],
         life_floor=[("glowtip_grass", 3), ("cave_crystal_plant", 2), ("cave_bloom", 1)], life_wall=[("luminous_moss", 2), ("wall_fern", 1)],
         life_ceiling=[(("cave_vine", 3, 14), 3)], floor_density=0.08, wall_density=0.06, ceiling_density=0.05,
-        step=(1, 1), shore=(0.35, 0.6), islands=0.6, beacon="crystal_kelp", beacons=1.5, trunks=1.4),
+        step=(1, 1), shore=(0.35, 0.6), islands=0.6, beacon="crystal_kelp", beacons=1.5, trunks=1.4,
+        lights=[('minecraft:verdant_froglight', 3), ('minecraft:shroomlight', 1)], landmark=[('minecraft:verdant_froglight', 2), ('minecraft:ochre_froglight', 1)]),
     "underground_sea": hall_style(
         glow=[("lumen_rock", 1), ("deep_crystal_block", 1)], glow_chance=0.01, mosaic=[("eroded_cave_rock", 1)], mosaic_coverage=0.15,
         window=[("minecraft:sea_lantern", 1)], basin=[("cave_mud", 2), ("cave_sediment", 1)],
         life_floor=_GLOW_FLOOR, life_ceiling=_GLOW_CEILING, floor_density=0.04, ceiling_density=0.02,
-        step=(1, 2), shore=(0.7, 0.9), islands=1.4, beacon="crystal_kelp", beacons=1.0),
+        step=(1, 2), shore=(0.7, 0.9), islands=1.4, beacon="crystal_kelp", beacons=1.0,
+        lights=[('minecraft:sea_lantern', 3)], landmark=[('minecraft:sea_lantern', 2), ('deep_crystal_block', 1)]),
     "eroded": hall_style(
         mosaic=[("layered_cave_rock", 1)], mosaic_coverage=0.1, glow=[("lumen_rock", 1)], glow_chance=0.008,
         window=[("minecraft:sea_lantern", 1)], life_floor=_GLOW_FLOOR, floor_density=0.04,
-        step=(1, 2), shore=(0.5, 0.8), beacon="crystal_kelp", beacons=0.6),
+        step=(1, 2), shore=(0.5, 0.8), beacon="crystal_kelp", beacons=0.6,
+        lights=[('minecraft:sea_lantern', 2), ('deep_crystal_block', 1)], landmark=[('minecraft:sea_lantern', 1)]),
     "trench": hall_style(
         wall=[("dark_cave_rock", 3), ("trench_rock", 3), ("minecraft:deepslate", 1)],
         mosaic=[("trench_rock", 1)], mosaic_coverage=0.1, glow=[("deep_crystal_block", 1)], glow_chance=0.008,
-        window=[("minecraft:sea_lantern", 1)], step=(2, 3), shore=(0.5, 0.8), plateaus=0.4, beacon="crystal_kelp", beacons=0.5),
+        window=[("minecraft:sea_lantern", 1)], step=(2, 3), shore=(0.5, 0.8), plateaus=0.4, beacon="crystal_kelp", beacons=0.5,
+        lights=[('minecraft:sea_lantern', 1), ('deep_crystal_block', 2)], landmark=[('deep_crystal_block', 2), ('minecraft:pearlescent_froglight', 1)]),
     "mineral": hall_style(
         wall=[("mineral_cave_rock", 4), ("layered_cave_rock", 2), ("mineral_host_rock", 2), ("minecraft:tuff", 1)],
         floor=[("mineral_sediment", 3), ("minecraft:tuff", 1)], ceiling=[("mineral_cave_rock", 2), ("layered_cave_rock", 1)],
         mosaic=[("cave_mineral_crust", 2), ("minecraft:calcite", 1)], mosaic_coverage=0.15,
         glow=[("lumen_rock", 2), ("deep_crystal_block", 1)], glow_chance=0.01, window=[("minecraft:shroomlight", 1)],
-        life_floor=[("cave_crystal_plant", 1)], floor_density=0.03, step=(1, 2), plateaus=0.3, vents=0.3),
+        life_floor=[("cave_crystal_plant", 1)], floor_density=0.03, step=(1, 2), plateaus=0.3, vents=0.3,
+        lights=[('minecraft:ochre_froglight', 2), ('minecraft:sea_lantern', 1)], landmark=[('minecraft:shroomlight', 1), ('minecraft:ochre_froglight', 1)]),
     "crystal": hall_style(
         wall=[("crystal_cave_rock", 4), ("crystal_rock", 2), ("minecraft:calcite", 2)],
         floor=[("crystal_sediment", 3), ("minecraft:calcite", 2)], ceiling=[("crystal_cave_rock", 3), ("minecraft:calcite", 1)],
         mosaic=[("deep_crystal_block", 2), ("cyan_crystal_block", 2), ("blue_crystal_block", 1)], mosaic_coverage=0.12,
         glow=[("deep_crystal_block", 1)], glow_chance=0.012, window=[("minecraft:sea_lantern", 1)], basin=[("crystal_sediment", 2), ("minecraft:calcite", 1)],
         life_floor=[("crystal_plant", 2), ("cave_crystal_plant", 2), ("glasslace", 1)], floor_density=0.06,
-        step=(1, 2), islands=1.2, beacon="crystal_kelp", beacons=1.5, column_block="deep_crystal_block", column_clusters=1.0),
+        step=(1, 2), islands=1.2, beacon="crystal_kelp", beacons=1.5, column_block="deep_crystal_block", column_clusters=1.0,
+        lights=[('deep_crystal_block', 2), ('minecraft:pearlescent_froglight', 1), ('minecraft:sea_lantern', 1)], landmark=[('minecraft:pearlescent_froglight', 2), ('deep_crystal_block', 2)]),
     # Hot (image 4): black basalt and blackstone mosaicked with magma, a basin floor of glowing magma fields, ringed basalt
     # plateaus rising from it with basalt column clusters, vents. No lava: everything solid, the hall stays water-filled.
     "thermal": hall_style(
@@ -1293,7 +1305,8 @@ HALL_STYLES = {
         basin=[("minecraft:magma_block", 5), ("molten_volcanic_rock", 2), ("minecraft:basalt", 1), ("sulfur_deposit", 1)],
         life_floor=[("thermal_plant", 1)], floor_density=0.02,
         step=(2, 3), shore=(0.65, 0.88), islands=1.6, plateaus=0.8, vents=1.5, column_block="minecraft:basalt", column_clusters=1.2,
-        trunks=0.6, spires=0.6),
+        trunks=0.6, spires=0.6,
+        lights=[('minecraft:magma_block', 2), ('minecraft:ochre_froglight', 2), ('minecraft:shroomlight', 1)], landmark=[('minecraft:shroomlight', 2), ('minecraft:ochre_froglight', 1)]),
     "magma": hall_style(
         wall=[("minecraft:blackstone", 3), ("minecraft:basalt", 3), ("black_vent_rock", 2), ("volcanic_rock", 1)],
         floor=[("minecraft:basalt", 2), ("minecraft:smooth_basalt", 2), ("minecraft:blackstone", 1)],
@@ -1303,7 +1316,8 @@ HALL_STYLES = {
         basin=[("minecraft:magma_block", 5), ("molten_volcanic_rock", 2), ("minecraft:basalt", 1), ("sulfur_deposit", 1)],
         life_floor=[("thermal_plant", 1)], floor_density=0.015,
         step=(2, 3), shore=(0.7, 0.9), islands=1.8, plateaus=0.85, vents=2.0, column_block="minecraft:basalt", column_clusters=1.5,
-        trunks=0.6, spires=0.5),
+        trunks=0.6, spires=0.5,
+        lights=[('minecraft:magma_block', 2), ('minecraft:shroomlight', 2), ('minecraft:ochre_froglight', 1)], landmark=[('minecraft:shroomlight', 2), ('minecraft:ochre_froglight', 1)]),
     # Frozen: packed ice and frozen rock with blue ice patches, an ice basin, blue ice column clusters, cold crystal light.
     "frozen": hall_style(
         wall=[("minecraft:packed_ice", 4), ("frozen_rock", 3), ("minecraft:blue_ice", 1)],
@@ -1313,7 +1327,8 @@ HALL_STYLES = {
         window=[("minecraft:sea_lantern", 2), ("minecraft:pearlescent_froglight", 1)],
         basin=[("minecraft:packed_ice", 3), ("minecraft:blue_ice", 2), ("icy_sediment", 1)],
         life_floor=[("crystal_plant", 2), ("cave_crystal_plant", 2), ("glasslace", 1)], floor_density=0.05,
-        step=(1, 2), shore=(0.45, 0.75), islands=0.8, beacon="crystal_kelp", beacons=1.0, column_block="minecraft:blue_ice", column_clusters=1.0),
+        step=(1, 2), shore=(0.45, 0.75), islands=0.8, beacon="crystal_kelp", beacons=1.0, column_block="minecraft:blue_ice", column_clusters=1.0,
+        lights=[('minecraft:sea_lantern', 3), ('minecraft:pearlescent_froglight', 1)], landmark=[('minecraft:sea_lantern', 2), ('minecraft:pearlescent_froglight', 1)]),
     # Toxic: sickly yellow-green sulfur and mineral stone, yellow and green glowing growths.
     "toxic": hall_style(
         wall=[("mineral_cave_rock", 3), ("sulfur_vent_rock", 3), ("minecraft:tuff", 2), ("minecraft:end_stone", 1)],
@@ -1323,7 +1338,8 @@ HALL_STYLES = {
         window=[("minecraft:verdant_froglight", 1)], basin=[("sulfur_deposit", 2), ("mineral_sediment", 2), ("cave_mud", 1)],
         life_floor=[("thermal_plant", 2), ("abyssal_mushroom", 2), ("glowtip_grass", 1)], life_wall=[("wall_mineral_vine", 1)],
         life_ceiling=[(("cave_vine", 2, 8), 1)], floor_density=0.06, wall_density=0.03, ceiling_density=0.02,
-        step=(1, 2), plateaus=0.3, vents=0.8, column_block="sulfur_vent_rock", column_clusters=0.5),
+        step=(1, 2), plateaus=0.3, vents=0.8, column_block="sulfur_vent_rock", column_clusters=0.5,
+        lights=[('minecraft:verdant_froglight', 2), ('minecraft:ochre_froglight', 2)], landmark=[('minecraft:verdant_froglight', 2), ('minecraft:ochre_froglight', 1)]),
     # Anomaly: dark stone and volcanic glass with violet crystal and crying obsidian.
     "anomaly": hall_style(
         wall=[("dark_cave_rock", 3), ("volcanic_glass", 2), ("minecraft:blackstone", 1), ("crystal_rock", 1)],
@@ -1332,7 +1348,8 @@ HALL_STYLES = {
         glow=[("minecraft:crying_obsidian", 2), ("deep_crystal_block", 1)], glow_chance=0.012,
         window=[("minecraft:pearlescent_froglight", 1)], basin=[("minecraft:smooth_basalt", 2), ("crystal_sediment", 1)],
         life_floor=[("hadal_bloom", 1), ("abyssal_bloom", 1), ("cave_crystal_plant", 2)], floor_density=0.05,
-        step=(2, 3), plateaus=0.5, islands=1.2, beacon="crystal_kelp", beacons=1.0, column_block="violet_crystal_block", column_clusters=0.8),
+        step=(2, 3), plateaus=0.5, islands=1.2, beacon="crystal_kelp", beacons=1.0, column_block="violet_crystal_block", column_clusters=0.8,
+        lights=[('minecraft:pearlescent_froglight', 2), ('minecraft:crying_obsidian', 2)], landmark=[('minecraft:pearlescent_froglight', 2), ('minecraft:crying_obsidian', 1)]),
 }
 for _name, _style in HALL_STYLES.items():
     CAVE_ENVIRONMENTS[_name]["hall"] = _style
