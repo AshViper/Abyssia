@@ -14,8 +14,8 @@
     }
   },
   "noise": {
-    "min_y": -1872,
-    "height": 2192,
+    "min_y": -1008,
+    "height": 1328,
     "size_horizontal": 1,
     "size_vertical": 2
   },
@@ -28,24 +28,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1872,
+        "from_y": -1008,
         "to_y": 320,
-        "from_value": -1872,
+        "from_value": -1008,
         "to_value": 320
       },
-      "min_inclusive": -1873,
+      "min_inclusive": -1009,
       "max_exclusive": -378,
       "when_in_range": "abyssia:region_temperature",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1872,
+          "from_y": -1008,
           "to_y": 320,
-          "from_value": -1872,
+          "from_value": -1008,
           "to_value": 320
         },
-        "min_inclusive": -1873,
+        "min_inclusive": -1009,
         "max_exclusive": -66,
         "when_in_range": "abyssia:region_temperature",
         "when_out_of_range": {
@@ -71,24 +71,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1872,
+        "from_y": -1008,
         "to_y": 320,
-        "from_value": -1872,
+        "from_value": -1008,
         "to_value": 320
       },
-      "min_inclusive": -1873,
+      "min_inclusive": -1009,
       "max_exclusive": -378,
       "when_in_range": "abyssia:region_habitat",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1872,
+          "from_y": -1008,
           "to_y": 320,
-          "from_value": -1872,
+          "from_value": -1008,
           "to_value": 320
         },
-        "min_inclusive": -1873,
+        "min_inclusive": -1009,
         "max_exclusive": -66,
         "when_in_range": "abyssia:region_habitat",
         "when_out_of_range": 0.0
@@ -98,18 +98,18 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1872,
+        "from_y": -1008,
         "to_y": 320,
-        "from_value": -1872,
+        "from_value": -1008,
         "to_value": 320
       },
-      "min_inclusive": -1873,
+      "min_inclusive": -1009,
       "max_exclusive": -378,
       "when_in_range": {
         "type": "minecraft:add",
         "argument1": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1862,
+          "from_y": -998,
           "to_y": -376,
           "from_value": -2.0,
           "to_value": -1.7
@@ -132,12 +132,12 @@
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1872,
+          "from_y": -1008,
           "to_y": 320,
-          "from_value": -1872,
+          "from_value": -1008,
           "to_value": 320
         },
-        "min_inclusive": -1873,
+        "min_inclusive": -1009,
         "max_exclusive": -66,
         "when_in_range": {
           "type": "minecraft:clamp",
@@ -204,24 +204,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1872,
+        "from_y": -1008,
         "to_y": 320,
-        "from_value": -1872,
+        "from_value": -1008,
         "to_value": 320
       },
-      "min_inclusive": -1873,
+      "min_inclusive": -1009,
       "max_exclusive": -378,
       "when_in_range": "abyssia:region_erosion",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1872,
+          "from_y": -1008,
           "to_y": 320,
-          "from_value": -1872,
+          "from_value": -1008,
           "to_value": 320
         },
-        "min_inclusive": -1873,
+        "min_inclusive": -1009,
         "max_exclusive": -66,
         "when_in_range": "abyssia:region_erosion",
         "when_out_of_range": {
@@ -235,24 +235,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1872,
+        "from_y": -1008,
         "to_y": 320,
-        "from_value": -1872,
+        "from_value": -1008,
         "to_value": 320
       },
-      "min_inclusive": -1873,
+      "min_inclusive": -1009,
       "max_exclusive": -378,
       "when_in_range": 10.0,
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1872,
+          "from_y": -1008,
           "to_y": 320,
-          "from_value": -1872,
+          "from_value": -1008,
           "to_value": 320
         },
-        "min_inclusive": -1873,
+        "min_inclusive": -1009,
         "max_exclusive": -66,
         "when_in_range": 10.0,
         "when_out_of_range": -10.0
@@ -262,24 +262,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1872,
+        "from_y": -1008,
         "to_y": 320,
-        "from_value": -1872,
+        "from_value": -1008,
         "to_value": 320
       },
-      "min_inclusive": -1873,
+      "min_inclusive": -1009,
       "max_exclusive": -378,
       "when_in_range": "abyssia:region_volcanic",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1872,
+          "from_y": -1008,
           "to_y": 320,
-          "from_value": -1872,
+          "from_value": -1008,
           "to_value": 320
         },
-        "min_inclusive": -1873,
+        "min_inclusive": -1009,
         "max_exclusive": -66,
         "when_in_range": "abyssia:region_volcanic",
         "when_out_of_range": {
@@ -293,24 +293,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1872,
+        "from_y": -1008,
         "to_y": 320,
-        "from_value": -1872,
+        "from_value": -1008,
         "to_value": 320
       },
-      "min_inclusive": -1873,
+      "min_inclusive": -1009,
       "max_exclusive": -378,
       "when_in_range": "abyssia:abyss_initial_density",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1872,
+          "from_y": -1008,
           "to_y": 320,
-          "from_value": -1872,
+          "from_value": -1008,
           "to_value": 320
         },
-        "min_inclusive": -1873,
+        "min_inclusive": -1009,
         "max_exclusive": -66,
         "when_in_range": {
           "type": "minecraft:add",
@@ -642,10 +642,10 @@
                 "type": "minecraft:vertical_gradient",
                 "random_name": "minecraft:bedrock_floor",
                 "true_at_and_below": {
-                  "absolute": -1872
+                  "absolute": -1008
                 },
                 "false_at_and_above": {
-                  "absolute": -1867
+                  "absolute": -1003
                 }
               },
               "then_run": {

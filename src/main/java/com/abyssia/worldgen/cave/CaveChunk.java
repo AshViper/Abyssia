@@ -341,6 +341,11 @@ public final class CaveChunk
             CaveSpace space = shape.space;
             double reach = shape.noisy ? space.maxDisplacement() : 0;
             boolean lake = space.hasLake();
+            if (shape instanceof CaveShape.Hall hall)
+            {
+                computeHall(hall, si, reach);
+                continue;
+            }
             int ax = Math.max(shape.minX, x0 - PAD), bx = Math.min(shape.maxX, x0 + 15 + PAD);
             int az = Math.max(shape.minZ, z0 - PAD), bz = Math.min(shape.maxZ, z0 + 15 + PAD);
             int ay = Math.max(shape.minY, yMin), by = Math.min(shape.maxY, yMax);
@@ -366,6 +371,45 @@ public final class CaveChunk
                             dome[idx] = (float) s;
                             domeOwner[idx] = (short) si;
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * A hall's field, column by column (its floor and outline are 2D): the vault (walls and roof) takes the wall noise, the
+     * floor does not, so terraces stay flat; the field is the larger of the two.
+     */
+    private void computeHall(CaveShape.Hall hall, int si, double reach)
+    {
+        CaveSpace space = hall.space;
+        int ax = Math.max(hall.minX, x0 - PAD), bx = Math.min(hall.maxX, x0 + 15 + PAD);
+        int az = Math.max(hall.minZ, z0 - PAD), bz = Math.min(hall.maxZ, z0 + 15 + PAD);
+        int ay = Math.max(hall.minY, yMin), by = Math.min(hall.maxY, yMax);
+        double[] col = new double[4];
+        for (int z = az; z <= bz; z++)
+        {
+            int row = (z - z0 + PAD) * SIZE;
+            for (int x = ax; x <= bx; x++)
+            {
+                hall.column(x + 0.5, z + 0.5, col);
+                // Far outside the outline the whole column is rock.
+                if (col[0] - col[1] - reach > WALL_DEPTH + 0.5) continue;
+                double floor = col[3];
+                for (int y = ay; y <= by; y++)
+                {
+                    double ground = floor - (y + 0.5);
+                    if (ground > WALL_DEPTH + 0.5) continue;
+                    double v = hall.vault(col, y + 0.5);
+                    if (v - reach > WALL_DEPTH + 0.5) continue;
+                    int idx = index(x - x0, y, z - z0);
+                    if (v + reach > -0.5) v += displacement(space, idx, x, y, z, row + x - x0 + PAD);
+                    double s = Math.max(v, ground);
+                    if (s < field[idx])
+                    {
+                        field[idx] = (float) s;
+                        owner[idx] = (short) si;
                     }
                 }
             }

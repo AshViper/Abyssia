@@ -58,6 +58,7 @@ final class CavernPlanner
         // Rolling floor instead of a flat cut (bounds are recomputed including the wall relief).
         double relief = tier == Cavern.Tier.SMALL ? 1.5 : tier == Cavern.Tier.LARGE ? 2.5 : tier == Cavern.Tier.MASSIVE ? 3.5 : 4.5;
         for (CaveShape.Ellipsoid lobe : c.lobes()) lobe.setFloorRelief(b.noises, relief);
+        if (c.hall() != null) c.hall().rebound();
         cavern.setCrystals(crystalColors(b));
 
         Site site = new Site(b, c, cavern, template, tier);
@@ -65,6 +66,13 @@ final class CavernPlanner
         double centerChance = template.centerChance * (tier.ordinal() >= Cavern.Tier.MASSIVE.ordinal() ? 1.0 : tier == Cavern.Tier.LARGE ? 0.65 : 0.3);
         if (!template.centers.isEmpty() && b.rng.nextDouble() < centerChance) center = template.centers.pick(b.rng.nextDouble());
         seedPatches(site, center != null);
+        if (c.hall() != null)
+        {
+            // AB03: a hall has its own terraced floor, columns and stalactites.
+            HallFormations.plan(site, center);
+            cavern.freeze();
+            return;
+        }
 
         CavernFormations.floorTerrain(site);
         CavernFormations.wallFormation(site);
@@ -228,6 +236,13 @@ final class CavernPlanner
 
         double field(double px, double py, double pz)
         {
+            CaveShape.Hall hall = chamber.hall();
+            if (hall != null)
+            {
+                double[] col = new double[4];
+                hall.column(px, pz, col);
+                return Math.max(hall.vault(col, py) + b.noises.displacement(space, px, py, pz), col[3] - py);
+            }
             double d = Double.MAX_VALUE;
             for (CaveShape.Ellipsoid lobe : chamber.lobes()) d = Math.min(d, lobe.distance(px, py, pz));
             return d + b.noises.displacement(space, px, py, pz);
@@ -245,6 +260,13 @@ final class CavernPlanner
         /** First open height above the floor of this column (NaN outside the cavern). */
         double floor(double px, double pz)
         {
+            CaveShape.Hall hall = chamber.hall();
+            if (hall != null)
+            {
+                // The floor is exact (no wall noise on it); NaN where the wall stands over it.
+                double f = hall.floor(px, pz);
+                return field(px, f + 0.5, pz) < 0 ? f : Double.NaN;
+            }
             double top = chamber.ceilingAt(px, pz), bottom = chamber.floorAt(px, pz);
             if (Double.isNaN(top) || Double.isNaN(bottom)) return Double.NaN;
             double yy = Math.floor((top + bottom) / 2);
@@ -259,6 +281,20 @@ final class CavernPlanner
         /** Lowest solid height of the roof over this column (NaN outside the cavern). */
         double ceiling(double px, double pz)
         {
+            CaveShape.Hall hall = chamber.hall();
+            if (hall != null)
+            {
+                // From just under the vault's reach of wall noise, up to the first solid block.
+                double c = hall.ceiling(px, pz), f = hall.floor(px, pz);
+                if (Double.isNaN(c)) return Double.NaN;
+                double yy = Math.floor(Math.max(f, c - space.maxDisplacement() - 2));
+                if (field(px, yy + 0.5, pz) >= 0) return Double.NaN;
+                for (int i = 0; i < 64; i++, yy++)
+                {
+                    if (field(px, yy + 1.5, pz) >= 0) return yy + 1;
+                }
+                return Double.NaN;
+            }
             double top = chamber.ceilingAt(px, pz), bottom = chamber.floorAt(px, pz);
             if (Double.isNaN(top) || Double.isNaN(bottom)) return Double.NaN;
             double yy = Math.floor((top + bottom) / 2);

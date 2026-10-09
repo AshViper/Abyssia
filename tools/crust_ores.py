@@ -38,11 +38,20 @@ A = lambda n: "abyssia:" + n
 # ================================================================ bands (absolute Y of the placement point, inclusive)
 # A vein reaches at most 13 blocks from the placed point (OreVeinFeature.MAX_REACH), so B' stops at -393 (the vein stays below
 # -380) and E starts at -1855 (stays >= 4 above the world bottom -1872).
-BANDS = {          # id: (y_lo, y_hi, label)
-    "b": (-650, -393, "B'"),
-    "c": (-1100, -650, "C"),
-    "d": (-1550, -1100, "D"),
-    "e": (-1855, -1550, "E"),
+def _dl():
+    import os, re
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src", "main", "java", "com", "abyssia", "worldgen", "DeepLayer.java")
+    with open(path, encoding="utf-8") as f:
+        return {m.group(1): int(m.group(2)) for m in re.finditer(r"static final int (\w+) = (-?\d+);", f.read())}
+
+
+_DL = _dl()
+_BOTTOM = _DL["MIN_Y"] + 17           # a vein reaches 13 blocks: stays >= 4 above the world bottom
+BANDS = {          # id: (y_lo, y_hi, label), from DeepLayer.BAND_*_TOP_Y (the vein stays below -380: top = ABYSS_TOP_Y - 17)
+    "b": (_DL["BAND_C_TOP_Y"], _DL["ABYSS_TOP_Y"] - 17, "B'"),
+    "c": (_DL["BAND_D_TOP_Y"], _DL["BAND_C_TOP_Y"], "C"),
+    "d": (_DL["BAND_E_TOP_Y"], _DL["BAND_D_TOP_Y"], "D"),
+    "e": (_BOTTOM, _DL["BAND_E_TOP_Y"], "E"),
 }
 BAND_ORDER = ["b", "c", "d", "e"]
 

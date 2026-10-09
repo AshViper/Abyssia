@@ -11,6 +11,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -50,6 +51,11 @@ public final class CaveCommand
     /** Cavern centre landmarks are found by building whole systems, so that search stays nearer. */
     private static final int LOCATE_RADIUS_CAVERN = 16;
     private static final String CAVERN_PREFIX = "cavern_";
+    /** AB03: {@code hall[_<environment>][_<large|massive|mega>]} locate targets; environments are cave_environment ids plus aliases. */
+    private static final String HALL_PREFIX = "hall";
+    private static final List<String> HALL_SIZES = List.of("large", "massive", "mega");
+    private static final List<String> HALL_ENVIRONMENTS = List.of("abyssal", "plain", "luminous", "forest", "crystal", "mineral", "thermal", "volcanic", "magma",
+            "hot", "frozen", "toxic", "anomaly", "eroded", "trench", "underground_sea");
 
     private CaveCommand() {}
 
@@ -60,6 +66,13 @@ public final class CaveCommand
         Arrays.stream(CaveType.values()).forEach(t -> targets.add(t.getSerializedName()));
         Arrays.stream(CaveLandmark.values()).forEach(l -> targets.add(l.getSerializedName()));
         Arrays.stream(CavernCenter.values()).forEach(c -> targets.add(CAVERN_PREFIX + c.getSerializedName()));
+        targets.add(HALL_PREFIX);
+        for (String env : HALL_ENVIRONMENTS)
+        {
+            targets.add(HALL_PREFIX + "_" + env);
+            for (String size : HALL_SIZES) targets.add(HALL_PREFIX + "_" + env + "_" + size);
+        }
+        for (String size : HALL_SIZES) targets.add(HALL_PREFIX + "_" + size);
         event.getDispatcher().register(Commands.literal(Abyssia.MODID).requires(s -> s.hasPermission(2))
                 .then(Commands.literal("caves")
                         .then(Commands.literal("list")
@@ -71,23 +84,28 @@ public final class CaveCommand
                                         .suggests((c, b) -> SharedSuggestionProvider.suggest(targets, b))
                                         .executes(ctx -> locate(ctx, StringArgumentType.getString(ctx, "target")))))
                         .then(Commands.literal("here").executes(CaveCommand::here))
+                        .then(Commands.literal("hall")
+                                .executes(ctx -> hall(ctx, Mth.floor(ctx.getSource().getPosition().x), Mth.floor(ctx.getSource().getPosition().z)))
+                                .then(Commands.argument("x", IntegerArgumentType.integer())
+                                        .then(Commands.argument("z", IntegerArgumentType.integer())
+                                                .executes(ctx -> hall(ctx, IntegerArgumentType.getInteger(ctx, "x"), IntegerArgumentType.getInteger(ctx, "z"))))))
                         .then(Commands.literal("slice")
-                                .then(Commands.argument("y", IntegerArgumentType.integer(-1872, -64))
+                                .then(Commands.argument("y", IntegerArgumentType.integer(DeepLayer.MIN_Y, -64))
                                         .then(Commands.argument("radius", IntegerArgumentType.integer(8, 256))
                                                 .executes(ctx -> render(ctx, () -> CaveDebugRender.slice(ctx.getSource().getLevel(), origin(ctx),
                                                         IntegerArgumentType.getInteger(ctx, "y"), IntegerArgumentType.getInteger(ctx, "radius")))))))
                         .then(Commands.literal("section")
                                 .then(Commands.argument("axis", StringArgumentType.word()).suggests((c, b) -> SharedSuggestionProvider.suggest(List.of("x", "z"), b))
                                         .then(Commands.argument("radius", IntegerArgumentType.integer(8, 256))
-                                                .then(Commands.argument("y0", IntegerArgumentType.integer(-1872, -64))
-                                                        .then(Commands.argument("y1", IntegerArgumentType.integer(-1872, -64))
+                                                .then(Commands.argument("y0", IntegerArgumentType.integer(DeepLayer.MIN_Y, -64))
+                                                        .then(Commands.argument("y1", IntegerArgumentType.integer(DeepLayer.MIN_Y, -64))
                                                                 .executes(ctx -> render(ctx, () -> CaveDebugRender.section(ctx.getSource().getLevel(), origin(ctx),
                                                                         StringArgumentType.getString(ctx, "axis").equals("x"), IntegerArgumentType.getInteger(ctx, "radius"),
                                                                         IntegerArgumentType.getInteger(ctx, "y0"), IntegerArgumentType.getInteger(ctx, "y1")))))))))
                         .then(Commands.literal("census")
                                 .then(Commands.argument("radius", IntegerArgumentType.integer(1, 128))
-                                        .then(Commands.argument("y0", IntegerArgumentType.integer(-1872, -64))
-                                                .then(Commands.argument("y1", IntegerArgumentType.integer(-1872, -64))
+                                        .then(Commands.argument("y0", IntegerArgumentType.integer(DeepLayer.MIN_Y, -64))
+                                                .then(Commands.argument("y1", IntegerArgumentType.integer(DeepLayer.MIN_Y, -64))
                                                         .executes(CaveCommand::census)))))
                         .then(Commands.literal("verify")
                                 .then(Commands.argument("samples", IntegerArgumentType.integer(1, 5000))
@@ -154,6 +172,11 @@ public final class CaveCommand
         {
             if (space.cavern == null || space.cavern.space != space) continue;
             Cavern c = space.cavern;
+            if (c.hall != null)
+            {
+                out.append(" {").append(c.hallReport()).append(" @").append((int) c.hall.cx).append(' ').append(c.hall.level + 2).append(' ').append((int) c.hall.cz).append('}');
+                continue;
+            }
             out.append(" {").append(c.templateId.getPath()).append(' ').append(c.tier.name().toLowerCase()).append(" cavern @")
                     .append((int) c.x).append(' ').append((int) c.floor0).append(' ').append((int) c.z)
                     .append(c.center() != null ? ", centre " + c.center().getSerializedName() : "").append(", ").append(c.lakes().size()).append(" lakes}");
@@ -243,6 +266,7 @@ public final class CaveCommand
         CaveNetwork network = network(ctx);
         if (network == null) return 0;
         if (target.startsWith(CAVERN_PREFIX)) return locateCavern(ctx, network, target);
+        if (target.equals(HALL_PREFIX) || target.startsWith(HALL_PREFIX + "_")) return locateHall(ctx, network, target);
         CaveType type = Stream.of(CaveType.values()).filter(t -> t.getSerializedName().equals(target)).findFirst().orElse(null);
         CaveLandmark landmark = Stream.of(CaveLandmark.values()).filter(l -> l.getSerializedName().equals(target)).findFirst().orElse(null);
         if (type == null && landmark == null)
@@ -540,7 +564,122 @@ public final class CaveCommand
         {
             Cavern cavern = space.cavern;
             ctx.getSource().sendSuccess(() -> Component.literal(cavern.describe(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)), false);
+            if (cavern.hall != null) ctx.getSource().sendSuccess(() -> Component.literal(cavern.hallReport()), false);
         }
+        return 1;
+    }
+
+    /** {@code /abyssia caves hall [x z]}: the hall over this column (any network), with its dimensions and formations. */
+    private static int hall(CommandContext<CommandSourceStack> ctx, int x, int z)
+    {
+        CaveNetwork network = network(ctx);
+        if (network == null) return 0;
+        int found = 0;
+        for (CaveSystem s : network.systemsNearAll(x, z, x, z))
+        {
+            for (CaveSpace space : s.spaces)
+            {
+                Cavern c = space.cavern;
+                if (c == null || c.space != space || c.hall == null || c.hall.q(x + 0.5, z + 0.5) > 1.15) continue;
+                found++;
+                String text = "[" + (s.band != null ? s.band.label() : "shallow") + "] " + s.type.getSerializedName() + " @ " + (int) c.hall.cx + " " + (c.hall.level + 2)
+                        + " " + (int) c.hall.cz + ": " + c.hallReport();
+                ctx.getSource().sendSuccess(() -> Component.literal(text), false);
+            }
+        }
+        if (found == 0) ctx.getSource().sendFailure(Component.literal("No hall over " + x + " " + z + " (try /abyssia caves locate hall)"));
+        return found;
+    }
+
+    /** Whether a plan's hub is a hall matching {@code hall[_<environment>][_<size>]}. */
+    private static boolean hallMatches(CaveNetworkGenerator.Plan p, String target)
+    {
+        if (!p.hall()) return false;
+        String rest = target.length() > HALL_PREFIX.length() ? target.substring(HALL_PREFIX.length() + 1) : "";
+        for (String size : HALL_SIZES)
+        {
+            if (rest.equals(size) || rest.endsWith("_" + size))
+            {
+                CaveType type = size.equals("large") ? CaveType.LARGE_ABYSSAL_CAVE : size.equals("massive") ? CaveType.MASSIVE_CAVERN : CaveType.MEGA_CAVERN;
+                if (p.type() != type) return false;
+                rest = rest.equals(size) ? "" : rest.substring(0, rest.length() - size.length() - 1);
+                break;
+            }
+        }
+        if (rest.isEmpty()) return true;
+        String env = p.environment().getPath();
+        return switch (rest)
+        {
+            case "plain" -> env.equals("abyssal");
+            case "volcanic" -> env.equals("thermal");
+            case "hot" -> env.equals("thermal") || env.equals("magma");
+            default -> env.equals(rest);
+        };
+    }
+
+    /** The nearest hall of that environment and size over the shallow network and the windows (from plans), with its report. */
+    private static int locateHall(CommandContext<CommandSourceStack> ctx, CaveNetwork network, String target)
+    {
+        BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
+        CaveNetworkGenerator.Plan best = null;
+        CaveNetwork bestNet = null;
+        double bestDistance = Double.MAX_VALUE;
+        boolean megaOnly = target.endsWith("_mega");
+        for (CaveNetwork net : network.all())
+        {
+            if (megaOnly && !net.isWindow()) continue;
+            int cell = net.cellSize(), rings = net.isWindow() ? LOCATE_RADIUS_WINDOW : LOCATE_RADIUS_CELLS;
+            int cx = Math.floorDiv(pos.getX(), cell), cz = Math.floorDiv(pos.getZ(), cell);
+            for (int ring = 0; ring <= rings; ring++)
+            {
+                CaveNetworkGenerator.Plan found = null;
+                double foundDistance = Double.MAX_VALUE;
+                for (int dx = -ring; dx <= ring; dx++)
+                {
+                    for (int dz = -ring; dz <= ring; dz++)
+                    {
+                        if (Math.max(Math.abs(dx), Math.abs(dz)) != ring) continue;
+                        CaveNetworkGenerator.Plan p = net.plan(cx + dx, cz + dz);
+                        if (p == null || !hallMatches(p, target)) continue;
+                        double d = Math.hypot(p.x() - pos.getX(), p.z() - pos.getZ());
+                        if (d < foundDistance)
+                        {
+                            foundDistance = d;
+                            found = p;
+                        }
+                    }
+                }
+                if (found != null)
+                {
+                    if (foundDistance < bestDistance)
+                    {
+                        bestDistance = foundDistance;
+                        best = found;
+                        bestNet = net;
+                    }
+                    break;
+                }
+            }
+        }
+        if (best == null)
+        {
+            ctx.getSource().sendFailure(Component.literal("No " + target + " found (shallow network " + LOCATE_RADIUS_CELLS + " cells, windows " + LOCATE_RADIUS_WINDOW + " cells)"));
+            return 0;
+        }
+        CaveNetworkGenerator.Plan found = best;
+        CaveSystem system = bestNet.system(found.cellX(), found.cellZ());
+        String report = "";
+        for (CaveSpace space : system.spaces)
+        {
+            if (space.cavern != null && space.cavern.space == space && space.cavern.hall != null)
+            {
+                report = space.cavern.hallReport();
+                break;
+            }
+        }
+        String text = target + " at " + (int) found.x() + " " + ((int) found.y() + 2) + " " + (int) found.z() + " (" + (int) Math.hypot(found.x() - pos.getX(), found.z() - pos.getZ())
+                + " blocks, [" + bestNet.label() + "] " + found.type().getSerializedName() + ", environment " + found.environment().getPath() + "): " + report;
+        ctx.getSource().sendSuccess(() -> Component.literal(text), false);
         return 1;
     }
 }

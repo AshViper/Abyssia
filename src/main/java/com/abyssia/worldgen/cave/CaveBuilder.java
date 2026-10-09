@@ -83,10 +83,25 @@ final class CaveBuilder
         return space;
     }
 
-    /** A formation space (rock or crystal added into a cave) sharing the look of its cave. */
+    /** A formation space (rock or crystal added into a cave) sharing the look of its cave (and of its hall). */
     CaveSpace formationSpace(CaveSpace of)
     {
-        return space(CaveSpace.Role.FORMATION, of.type, of.landmark, of.environmentId, of.x, of.y, of.z, 2, CaveSpace.NO_WATER_LEVEL);
+        CaveSpace space = space(CaveSpace.Role.FORMATION, of.type, of.landmark, of.environmentId, of.x, of.y, of.z, 2, CaveSpace.NO_WATER_LEVEL);
+        space.hall = of.hall;
+        return space;
+    }
+
+    /**
+     * AB03: the space of a hall: walls with a broad, gentle undulation and little fine detail, so the vault reads as one smooth
+     * dome; no wall shelves (the hall has its own terraces and ledges).
+     */
+    CaveSpace hallSpace(CaveType type, @Nullable CaveLandmark landmark, ResourceLocation envId, double x, double y, double z, double radius)
+    {
+        double shape = Mth.clamp(radius * 0.035, 1.2, 4.0);
+        CaveSpace space = new CaveSpace(CaveSpace.Role.CHAMBER, type, landmark, envId, net.environment(envId, profile), profile, shape, 0.9, 0.55,
+                0, 9, CaveSpace.NO_WATER_LEVEL, x, y, z, radius, rng.nextLong());
+        spaces.add(space);
+        return space;
     }
 
     void add(CaveShape shape)

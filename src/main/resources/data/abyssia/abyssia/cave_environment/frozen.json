@@ -178,5 +178,182 @@
         "weight": 1
       }
     ]
+  },
+  "hall": {
+    "look": {
+      "wall": [
+        {
+          "data": {
+            "Name": "minecraft:packed_ice"
+          },
+          "weight": 4
+        },
+        {
+          "data": {
+            "Name": "abyssia:frozen_rock"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:blue_ice"
+          },
+          "weight": 1
+        }
+      ],
+      "floor": [
+        {
+          "data": {
+            "Name": "minecraft:snow_block"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:icy_sediment"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:frost_silt"
+          },
+          "weight": 1
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "Name": "minecraft:packed_ice"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:frozen_rock"
+          },
+          "weight": 2
+        }
+      ],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "minecraft:blue_ice"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:white_crystal_block"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.2,
+      "glow": [
+        {
+          "data": {
+            "Name": "abyssia:deep_crystal_block"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:sea_lantern"
+          },
+          "weight": 1
+        }
+      ],
+      "glow_chance": 0.012,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:sea_lantern"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:pearlescent_froglight"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": [
+        {
+          "data": {
+            "Name": "minecraft:packed_ice"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:blue_ice"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:icy_sediment"
+          },
+          "weight": 1
+        }
+      ]
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:glasslace"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [],
+      "ceiling": [],
+      "floor_density": 0.05,
+      "wall_density": 0.0,
+      "ceiling_density": 0.0
+    },
+    "form": {
+      "step_min": 1,
+      "step_max": 2,
+      "shore_min": 0.45,
+      "shore_max": 0.75,
+      "islands": 0.8,
+      "plateaus": 0.0,
+      "beacons": 1.0,
+      "vents": 0.0,
+      "column_clusters": 1.0,
+      "trunks": 1.0,
+      "spires": 1.0,
+      "stalactites": 1.0,
+      "beacon": {
+        "state": {
+          "Name": "abyssia:crystal_kelp"
+        }
+      },
+      "column_block": {
+        "Name": "minecraft:blue_ice"
+      }
+    }
   }
 }

@@ -323,6 +323,7 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
             super.buildSurface(region, structureManager, randomState, chunk);
             return;
         }
+        crustToRock(chunk, randomState);
         int[] tops = hideDeepWater(chunk);
         try
         {
@@ -333,6 +334,46 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
             restoreDeepWater(chunk, tops);
         }
         deepStoneToRock(chunk, randomState);
+    }
+
+    /**
+     * AB02: the abyss crust (everything under the deep layer's rock slab) is one uniform stone body with no surface of its
+     * own (caves are carved later and painted by CaveGeology), so running the surface rules over it is pure cost: vanilla's
+     * SurfaceSystem walks every block of the column. Here its stone is turned into abyssal rock before the rules run
+     * (they only touch the default block) and the world's bedrock floor, which is a surface rule, is written directly with
+     * the same gradient and random stream. Sections that reach the deep layer's slab are left to the surface rules.
+     */
+    private static void crustToRock(ChunkAccess chunk, RandomState randomState)
+    {
+        LevelChunkSection[] sections = chunk.getSections();
+        int minY = chunk.getMinBuildHeight(), baseX = chunk.getPos().getMinBlockX(), baseZ = chunk.getPos().getMinBlockZ();
+        BlockState rock = ModBlocks.ABYSSAL_ROCK.get().defaultBlockState();
+        BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
+        int top = DeepLayer.ABYSS_TOP_Y - 8;
+        PositionalRandomFactory floor = null;
+        for (int s = 0; s < sections.length; s++)
+        {
+            int sectionY = minY + (s << 4);
+            if (sectionY + 15 >= top) break;
+            LevelChunkSection section = sections[s];
+            if (section.hasOnlyAir() || !section.maybeHas(state -> state == STONE)) continue;
+            for (int ly = 0; ly < 16; ly++)
+            {
+                int y = sectionY + ly;
+                boolean bedrockLayer = y < DeepLayer.MIN_Y + 5;
+                if (bedrockLayer && floor == null) floor = randomState.getOrCreateRandomFactory(ResourceLocation.withDefaultNamespace("bedrock_floor"));
+                double chance = bedrockLayer ? Mth.map(y, DeepLayer.MIN_Y, DeepLayer.MIN_Y + 5, 1.0, 0.0) : 0;
+                for (int z = 0; z < 16; z++)
+                {
+                    for (int x = 0; x < 16; x++)
+                    {
+                        if (section.getBlockState(x, ly, z) != STONE) continue;
+                        boolean b = bedrockLayer && (y <= DeepLayer.MIN_Y || floor.at(baseX + x, y, baseZ + z).nextFloat() < chance);
+                        section.setBlockState(x, ly, z, b ? bedrock : rock, false);
+                    }
+                }
+            }
+        }
     }
 
     private static final BlockState WATER = Blocks.WATER.defaultBlockState();

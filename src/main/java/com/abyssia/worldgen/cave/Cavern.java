@@ -45,6 +45,12 @@ public final class Cavern
     /** Where a column sits in a giant kelp clump: q 0 at its heart, 1 at its edge; lean per block of height. */
     public record Cluster(double q, double height, int leanX, int leanZ, int leanEvery) {}
 
+    /** AB03: a column of light (a tall luminous plant) rising from a hall's floor, at a block column. */
+    public record Beacon(int x, int z) {}
+
+    /** AB03: a glowing niche high in a hall's far wall. */
+    public record Window(double x, double y, double z, double radius) {}
+
     private static final int KELP_CELL = 11;
     private static final int ROOT_CELL = 17;
 
@@ -60,6 +66,14 @@ public final class Cavern
     /** Giant plant height multiplier: very tall caverns grow 30-80 block kelp. */
     public final double forestScale;
     private final List<CaveShape.Ellipsoid> lobes;
+    /** AB03: the hall this cavern is (null for a lobed cavern). */
+    @Nullable
+    public final CaveShape.Hall hall;
+    private List<Beacon> beacons = new ArrayList<>();
+    @Nullable
+    private Window window;
+    /** Planned formations, for the hall report: trunks and fused pillars, spires, giant stalactites, column clusters. */
+    int trunks, spires, stalactites, clusters;
     private final CaveNoises noises;
     private final double relief, flutes, groovePhase;
 
@@ -86,6 +100,7 @@ public final class Cavern
         this.frontX = Math.cos(chamber.front());
         this.frontZ = Math.sin(chamber.front());
         this.lobes = chamber.lobes();
+        this.hall = chamber.hall();
         this.noises = noises;
         this.floor0 = floor0;
         this.ceiling0 = ceiling0;
@@ -112,6 +127,42 @@ public final class Cavern
         gardens.add(garden);
     }
 
+    void addBeacon(Beacon beacon)
+    {
+        beacons.add(beacon);
+    }
+
+    void setWindow(Window window)
+    {
+        this.window = window;
+    }
+
+    public List<Beacon> beacons()
+    {
+        return beacons;
+    }
+
+    @Nullable
+    public Window window()
+    {
+        return window;
+    }
+
+    /** One-line hall report (dimensions and formations), or null for a lobed cavern. */
+    @Nullable
+    public String hallReport()
+    {
+        if (hall == null) return null;
+        double floor = hall.floor(hall.cx, hall.cz);
+        return String.format("hall %s, %s, %d x %d wide, basin floor y %d, terrace level y %d, roof apex y %d (%d above the level, %d above the basin), "
+                        + "walls to y %d, terrace step %d, basin %.0f%% of the radius, %d islands, %d trunks/pillars, %d spires, %d giant stalactites, "
+                        + "%d column clusters, %d light columns%s",
+                space.environmentId.getPath(), tier.name().toLowerCase(), Math.round(hall.rx * 2), Math.round(hall.rz * 2), (int) floor, hall.level,
+                (int) hall.apexY(), (int) (hall.apexY() - hall.level), (int) (hall.apexY() - floor), (int) hall.springY, hall.step, hall.shore * 100,
+                hall.islandCount(), trunks, spires, stalactites, clusters, beacons.size(),
+                window != null ? String.format(", window @ %d %d %d", (int) window.x(), (int) window.y(), (int) window.z()) : "");
+    }
+
     void setCrystals(List<CavernTemplate.CrystalColor> colors)
     {
         crystals = colors;
@@ -131,6 +182,7 @@ public final class Cavern
         lakes = List.copyOf(lakes);
         gardens = List.copyOf(gardens);
         crystals = List.copyOf(crystals);
+        beacons = List.copyOf(beacons);
     }
 
     List<Patch> patches()
@@ -179,6 +231,7 @@ public final class Cavern
 
     public double floorAt(double px, double pz)
     {
+        if (hall != null) return hall.q(px, pz) >= 1 ? Double.NaN : hall.floor(px, pz);
         double best = Double.NaN;
         for (CaveShape.Ellipsoid lobe : lobes)
         {
@@ -190,6 +243,7 @@ public final class Cavern
 
     public double ceilingAt(double px, double pz)
     {
+        if (hall != null) return hall.ceiling(px, pz);
         double best = Double.NaN;
         for (CaveShape.Ellipsoid lobe : lobes)
         {

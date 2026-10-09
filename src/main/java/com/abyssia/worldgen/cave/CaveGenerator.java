@@ -93,7 +93,9 @@ public final class CaveGenerator
             t = phase(2, t);
             // Massive cavern decoration applies only where a planned cavern reaches this chunk.
             List<Cavern> caverns = MassiveCavernDecorator.caverns(ctx);
+            List<Cavern> halls = HallDecorator.halls(caverns);
             if (!caverns.isEmpty()) MassiveCavernDecorator.water(ctx, caverns);
+            if (!halls.isEmpty()) HallDecorator.windows(ctx, halls);
             ThermalCaveGenerator.vents(ctx);
             CaveDecorationGenerator.formationTips(ctx);
             CaveDecorationGenerator.crystals(ctx);
@@ -106,9 +108,11 @@ public final class CaveGenerator
                 MassiveCavernDecorator.giants(ctx, caverns);
                 MassiveCavernDecorator.hanging(ctx, caverns);
             }
+            if (!halls.isEmpty()) HallDecorator.beacons(ctx, halls);
             CaveVegetationGenerator.giants(ctx);
             ThermalCaveGenerator.zones(ctx);
             if (!caverns.isEmpty()) MassiveCavernDecorator.gardensAndShores(ctx, caverns);
+            if (!halls.isEmpty()) HallDecorator.life(ctx);
             CaveVegetationGenerator.grow(ctx);
             if (!caverns.isEmpty()) MassiveCavernDecorator.surfaces(ctx, caverns);
             t = phase(4, t);

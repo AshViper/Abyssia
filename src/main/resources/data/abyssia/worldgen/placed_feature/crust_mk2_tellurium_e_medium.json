@@ -2,20 +2,8 @@
   "feature": "abyssia:crust_mk2_tellurium_e_medium",
   "placement": [
     {
-      "type": "minecraft:count",
-      "count": {
-        "type": "minecraft:weighted_list",
-        "distribution": [
-          {
-            "data": 0,
-            "weight": 65
-          },
-          {
-            "data": 1,
-            "weight": 35
-          }
-        ]
-      }
+      "type": "minecraft:rarity_filter",
+      "chance": 7
     },
     {
       "type": "abyssia:config",
@@ -29,10 +17,10 @@
       "height": {
         "type": "minecraft:uniform",
         "min_inclusive": {
-          "absolute": -1855
+          "absolute": -991
         },
         "max_inclusive": {
-          "absolute": -1550
+          "absolute": -860
         }
       }
     },

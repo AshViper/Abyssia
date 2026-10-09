@@ -29,16 +29,30 @@ final class CaveChamberGenerator
 
     /** {@code front}: horizontal angle toward where the way in arrives (entrance side), for the entrance-to-core gradient. */
     record Chamber(CaveSpace space, double x, double y, double z, double rx, double ry, double rz, double floorY, List<CaveShape.Ellipsoid> lobes,
-                   double front)
+                   double front, @Nullable CaveShape.Hall hall)
     {
+        Chamber(CaveSpace space, double x, double y, double z, double rx, double ry, double rz, double floorY, List<CaveShape.Ellipsoid> lobes, double front)
+        {
+            this(space, x, y, z, rx, ry, rz, floorY, lobes, front, null);
+        }
+
         double radius()
         {
             return Math.max(rx, rz);
         }
 
-        /** A point on the wall of the main lobe, for tunnels to attach to; below the water line of a lake. */
+        /**
+         * A point on the wall of the main lobe, for tunnels to attach to; below the water line of a lake. A hall's ports lie
+         * out along the bearing over its floor, a few blocks above it, so passages open into the hall low on its walls.
+         */
         Vec3 port(double angle, double yFraction)
         {
+            if (hall != null)
+            {
+                double c = Math.cos(angle), s = Math.sin(angle);
+                double px = x + c * rx * 0.72, pz = z + s * rz * 0.72;
+                return new Vec3(px, hall.floor(px, pz) + 3 + Math.max(0, yFraction) * 8, pz);
+            }
             double py = y + ry * yFraction;
             if (space.hasLake()) py = Math.min(py, space.waterLevel - 4);
             if (!Double.isNaN(floorY)) py = Math.max(py, floorY + 2.5);
@@ -47,6 +61,7 @@ final class CaveChamberGenerator
 
         double ceilingAt(double px, double pz)
         {
+            if (hall != null) return hall.ceiling(px, pz);
             double best = Double.NaN;
             for (CaveShape.Ellipsoid lobe : lobes)
             {
@@ -58,6 +73,7 @@ final class CaveChamberGenerator
 
         double floorAt(double px, double pz)
         {
+            if (hall != null) return hall.q(px, pz) >= 1 ? Double.NaN : hall.floor(px, pz);
             double best = Double.NaN;
             for (CaveShape.Ellipsoid lobe : lobes)
             {
@@ -160,6 +176,92 @@ final class CaveChamberGenerator
         return new Chamber(space, cx, cy, cz, rx, ry, rz, floorY, List.copyOf(list), front);
     }
 
+    // ---------------------------------------------------------------- AB03 air halls
+
+    /** Cave types whose main chamber becomes a hall (radius 16+; landmarks keep their own designs). */
+    static boolean hallType(CaveType type)
+    {
+        return type == CaveType.LARGE_ABYSSAL_CAVE || type == CaveType.MASSIVE_CAVERN || type == CaveType.MEGA_CAVERN;
+    }
+
+    /** Vault apex above the reference level for a hall of radius r: 26 at r 16, 44 at 32, 70 at 64, 115 at 128. */
+    static double hallHeight(double r)
+    {
+        if (r <= 32) return Mth.lerp(Mth.clamp((r - 16) / 16, 0, 1), 26, 44);
+        if (r <= 64) return Mth.lerp((r - 32) / 32, 44, 70);
+        return Mth.lerp(Math.min(1, (r - 64) / 64), 70, 115);
+    }
+
+    private static double hallDepth(double r)
+    {
+        return Mth.clamp(r * 0.12, 5, 16);
+    }
+
+    private static double hallRelief(double r)
+    {
+        return Mth.clamp(r * 0.05, 1.2, 4.0);
+    }
+
+    /** Room a hall needs below its reference level: the basin, its relief, the wall layer and a margin. */
+    static double hallBelow(double r)
+    {
+        return hallDepth(r) * 1.15 + hallRelief(r) + 7;
+    }
+
+    /** Room a hall of this height needs above its reference level: the vault, its wall noise, the stalactite anchors and a margin. */
+    static double hallAbove(double height, double r)
+    {
+        return height + Mth.clamp(r * 0.035, 1.2, 4.0) + 4.5 + 8;
+    }
+
+    /**
+     * A hall (see {@link CaveShape.Hall}) around (cx, cz) whose reference level (basin below, terraces above) is {@code level},
+     * its vault apex {@code height} above it. The environment's hall form sets the terrace steps, how far the basin reaches and
+     * the islands and plateaus rising from it.
+     */
+    static Chamber hall(CaveBuilder b, CaveSpace space, double cx, double cz, double r, int level, double height, double front)
+    {
+        CaveEnvironment.HallForm form = space.environment.hall.form();
+        double rx = r * b.range(0.9, 1.1), rz = r * b.range(0.9, 1.1);
+        double relief = hallRelief(r), depth = hallDepth(r) * b.range(0.85, 1.15);
+        double rise = Mth.clamp(height * 0.2, 4, 22) * b.range(0.8, 1.15);
+        double spring = Math.max(rise + relief + 5, height * b.range(0.18, 0.32));
+        double vault = Math.max(8, height - spring);
+        double shore = b.range(form.shoreMin(), Math.max(form.shoreMin(), form.shoreMax()));
+        int step = b.range(form.stepMin(), Math.max(form.stepMin(), form.stepMax()));
+        // A few smooth lobes and bays on the outline (harmonics 2-5).
+        double[] amplitudes = {0.07, 0.05, 0.035, 0.025};
+        double[] harmonics = new double[amplitudes.length * 3];
+        for (int k = 0; k < amplitudes.length; k++)
+        {
+            double phase = b.rng.nextDouble() * Math.PI * 2;
+            harmonics[k * 3] = amplitudes[k] * b.range(0.4, 1.3);
+            harmonics[k * 3 + 1] = Math.cos(phase);
+            harmonics[k * 3 + 2] = Math.sin(phase);
+        }
+        // Islands and plateaus in the lake, about one per 2600 square blocks of lake.
+        double lakeArea = Math.PI * rx * rz * shore * shore;
+        int count = Math.min(9, Mth.floor(form.islands() * lakeArea / 2600 * b.range(0.6, 1.4) + b.rng.nextDouble()));
+        double[] islands = new double[count * 5];
+        for (int i = 0; i < count; i++)
+        {
+            double a = b.rng.nextDouble() * Math.PI * 2, d = b.range(0.12, 0.8) * shore;
+            double ir = b.range(3.0, Mth.clamp(r * 0.14, 4, 16));
+            boolean flat = b.rng.nextFloat() < form.plateaus();
+            double top = flat ? b.range(2.0, Math.max(2.5, Math.min(rise + 6, ir * 0.7))) : b.range(1.0, Math.max(1.5, Math.min(rise + 3, ir * 0.8)));
+            islands[i * 5] = cx + Math.cos(a) * rx * d;
+            islands[i * 5 + 1] = cz + Math.sin(a) * rz * d;
+            islands[i * 5 + 2] = ir;
+            islands[i * 5 + 3] = top;
+            islands[i * 5 + 4] = flat ? 1 : 0;
+        }
+        CaveShape.Hall shape = new CaveShape.Hall(space, b.noises, cx, cz, rx, rz, level, level + spring, vault, shore, depth, rise, relief,
+                step, harmonics, islands);
+        space.hall = shape;
+        b.add(shape);
+        return new Chamber(space, cx, level, cz, rx, spring + vault, rz, Double.NaN, List.of(), front, shape);
+    }
+
     private static CaveShape.Ellipsoid lobe(CaveBuilder b, CaveSpace space, double x, double y, double z, double rx, double ry, double rz, double floorY)
     {
         CaveShape.Ellipsoid e = new CaveShape.Ellipsoid(space, CaveShape.Kind.CARVE, null, null, true, x, y, z, rx, ry, rz, floorY);
@@ -233,7 +335,8 @@ final class CaveChamberGenerator
         CaveLandmark landmark = s.landmark;
         String env = s.environmentId.getPath();
         double r = c.radius();
-        rockFormations(b, c, landmark == CaveLandmark.GIANT_STALACTITE_CHAMBER ? 3.0 : landmark != null ? 1.4 : 1.0);
+        // A hall raises its own columns and stalactites (HallFormations, via the cavern planner).
+        if (c.hall() == null) rockFormations(b, c, landmark == CaveLandmark.GIANT_STALACTITE_CHAMBER ? 3.0 : landmark != null ? 1.4 : 1.0);
         if (env.equals("crystal") || landmark == CaveLandmark.MASSIVE_CRYSTAL_CHAMBER)
         {
             crystals(b, c, landmark == CaveLandmark.MASSIVE_CRYSTAL_CHAMBER ? Mth.floor(r / 2.2) : Mth.floor(r / 4.5) + 1,

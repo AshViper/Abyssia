@@ -237,5 +237,191 @@
         "weight": 1
       }
     ]
+  },
+  "hall": {
+    "look": {
+      "wall": [
+        {
+          "data": {
+            "Name": "abyssia:mineral_cave_rock"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:sulfur_vent_rock"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:tuff"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:end_stone"
+          },
+          "weight": 1
+        }
+      ],
+      "floor": [
+        {
+          "data": {
+            "Name": "abyssia:sulfur_deposit"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:mineral_sediment"
+          },
+          "weight": 3
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "Name": "abyssia:sulfur_vent_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:mineral_cave_rock"
+          },
+          "weight": 2
+        }
+      ],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "abyssia:sulfur_deposit"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:end_stone"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.25,
+      "glow": [
+        {
+          "data": {
+            "Name": "minecraft:ochre_froglight"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:verdant_froglight"
+          },
+          "weight": 2
+        }
+      ],
+      "glow_chance": 0.012,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:verdant_froglight"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": [
+        {
+          "data": {
+            "Name": "abyssia:sulfur_deposit"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:mineral_sediment"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:cave_mud"
+          },
+          "weight": 1
+        }
+      ]
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:thermal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:abyssal_mushroom"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:glowtip_grass"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:wall_mineral_vine"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_vine"
+            },
+            "min_height": 2,
+            "max_height": 8
+          },
+          "weight": 1
+        }
+      ],
+      "floor_density": 0.06,
+      "wall_density": 0.03,
+      "ceiling_density": 0.02
+    },
+    "form": {
+      "step_min": 1,
+      "step_max": 2,
+      "shore_min": 0.5,
+      "shore_max": 0.75,
+      "islands": 1.0,
+      "plateaus": 0.3,
+      "beacons": 0.0,
+      "vents": 0.8,
+      "column_clusters": 0.5,
+      "trunks": 1.0,
+      "spires": 1.0,
+      "stalactites": 1.0,
+      "column_block": {
+        "Name": "abyssia:sulfur_vent_rock"
+      }
+    }
   }
 }

@@ -2,20 +2,8 @@
   "feature": "abyssia:crust_mk0_redstone_d_medium",
   "placement": [
     {
-      "type": "minecraft:count",
-      "count": {
-        "type": "minecraft:weighted_list",
-        "distribution": [
-          {
-            "data": 0,
-            "weight": 56
-          },
-          {
-            "data": 1,
-            "weight": 44
-          }
-        ]
-      }
+      "type": "minecraft:rarity_filter",
+      "chance": 6
     },
     {
       "type": "abyssia:config",
@@ -29,10 +17,10 @@
       "height": {
         "type": "minecraft:uniform",
         "min_inclusive": {
-          "absolute": -1550
+          "absolute": -860
         },
         "max_inclusive": {
-          "absolute": -1100
+          "absolute": -700
         }
       }
     },

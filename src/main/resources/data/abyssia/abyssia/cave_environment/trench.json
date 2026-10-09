@@ -153,5 +153,85 @@
         "weight": 3
       }
     ]
+  },
+  "hall": {
+    "look": {
+      "wall": [
+        {
+          "data": {
+            "Name": "abyssia:dark_cave_rock"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "abyssia:trench_rock"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:deepslate"
+          },
+          "weight": 1
+        }
+      ],
+      "floor": [],
+      "ceiling": [],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "abyssia:trench_rock"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.1,
+      "glow": [
+        {
+          "data": {
+            "Name": "abyssia:deep_crystal_block"
+          },
+          "weight": 1
+        }
+      ],
+      "glow_chance": 0.008,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:sea_lantern"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": []
+    },
+    "life": {
+      "floor": [],
+      "wall": [],
+      "ceiling": [],
+      "floor_density": 0.0,
+      "wall_density": 0.0,
+      "ceiling_density": 0.0
+    },
+    "form": {
+      "step_min": 2,
+      "step_max": 3,
+      "shore_min": 0.5,
+      "shore_max": 0.8,
+      "islands": 1.0,
+      "plateaus": 0.4,
+      "beacons": 0.5,
+      "vents": 0.0,
+      "column_clusters": 0.0,
+      "trunks": 1.0,
+      "spires": 1.0,
+      "stalactites": 1.0,
+      "beacon": {
+        "state": {
+          "Name": "abyssia:crystal_kelp"
+        }
+      }
+    }
   }
 }

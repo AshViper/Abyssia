@@ -2,20 +2,8 @@
   "feature": "abyssia:crust_mk1_molybdenum_d_medium",
   "placement": [
     {
-      "type": "minecraft:count",
-      "count": {
-        "type": "minecraft:weighted_list",
-        "distribution": [
-          {
-            "data": 0,
-            "weight": 57
-          },
-          {
-            "data": 1,
-            "weight": 43
-          }
-        ]
-      }
+      "type": "minecraft:rarity_filter",
+      "chance": 7
     },
     {
       "type": "abyssia:config",
@@ -29,10 +17,10 @@
       "height": {
         "type": "minecraft:uniform",
         "min_inclusive": {
-          "absolute": -1550
+          "absolute": -860
         },
         "max_inclusive": {
-          "absolute": -1100
+          "absolute": -700
         }
       }
     },

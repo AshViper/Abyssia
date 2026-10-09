@@ -23,10 +23,10 @@ public final class DepthZone
     private static final double DEEP_SCALE_TOP_Y = DeepLayer.fromDeepY(DeepLayer.DEPTH_ORIGIN_DEEP_Y);
     /**
      * The last two points: 392 blocks is the old deep layer's floor (deep Y -128, 11750 m on the old extrapolation); under it
-     * lies the abyss layer (to Y -1872, about 1900 blocks), whose scale rises slowly instead of at 62.5 m per block.
+     * lies the abyss layer (to Y -1008, about 1030 blocks), whose scale rises slowly instead of at 62.5 m per block.
      */
-    private static final double[] BLOCKS = {0, 40, 100, 200, 300, 380, 392, 2000};
-    private static final double[] METRES = {0, 200, 1000, 4000, 6000, 11000, 11750, 17000};
+    private static final double[] BLOCKS = {0, 40, 100, 200, 300, 380, 392, 1100};
+    private static final double[] METRES = {0, 200, 1000, 4000, 6000, 11000, 11750, 14000};
 
     /** Pelagic zones by depth: sunlit, twilight, midnight, abyssal and hadal. */
     public enum Zone

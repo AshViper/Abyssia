@@ -300,5 +300,195 @@
         "weight": 2
       }
     ]
+  },
+  "hall": {
+    "look": {
+      "wall": [
+        {
+          "data": {
+            "Name": "abyssia:organic_cave_rock"
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "Name": "minecraft:stone"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:wet_cave_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:andesite"
+          },
+          "weight": 1
+        }
+      ],
+      "floor": [
+        {
+          "data": {
+            "Name": "abyssia:organic_sediment"
+          },
+          "weight": 4
+        },
+        {
+          "data": {
+            "Name": "abyssia:cave_mud"
+          },
+          "weight": 1
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "Name": "abyssia:organic_cave_rock"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:stone"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "minecraft:stone"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "minecraft:andesite"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.2,
+      "glow": [
+        {
+          "data": {
+            "Name": "abyssia:lumen_rock"
+          },
+          "weight": 1
+        }
+      ],
+      "glow_chance": 0.008,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:verdant_froglight"
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "minecraft:ochre_froglight"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": [
+        {
+          "data": {
+            "Name": "abyssia:organic_sediment"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:cave_mud"
+          },
+          "weight": 2
+        }
+      ]
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:glowtip_grass"
+            }
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_bloom"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:luminous_moss"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:wall_fern"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "ceiling": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_vine"
+            },
+            "min_height": 3,
+            "max_height": 14
+          },
+          "weight": 3
+        }
+      ],
+      "floor_density": 0.08,
+      "wall_density": 0.06,
+      "ceiling_density": 0.05
+    },
+    "form": {
+      "step_min": 1,
+      "step_max": 1,
+      "shore_min": 0.35,
+      "shore_max": 0.6,
+      "islands": 0.6,
+      "plateaus": 0.0,
+      "beacons": 1.5,
+      "vents": 0.0,
+      "column_clusters": 0.0,
+      "trunks": 1.4,
+      "spires": 1.0,
+      "stalactites": 1.0,
+      "beacon": {
+        "state": {
+          "Name": "abyssia:crystal_kelp"
+        }
+      }
+    }
   }
 }

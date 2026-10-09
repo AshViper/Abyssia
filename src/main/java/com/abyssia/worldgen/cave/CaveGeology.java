@@ -23,6 +23,17 @@ final class CaveGeology
     /** Wall rock of a space at a block: environment coating, chosen in blotches. */
     static BlockState wallRock(CaveChunk ctx, CaveSpace space, int x, int y, int z)
     {
+        if (space.hall != null)
+        {
+            // A hall's rock (also its columns and formations): the look's wall rock with its mosaic patches.
+            CaveEnvironment env = space.environment;
+            if (!env.hallMosaic.isEmpty() && ctx.noises.mosaic(x, y, z) > CaveNoises.mosaicThreshold(env.hall.look().mosaicCoverage()))
+            {
+                return env.hallMosaic.pick(ctx.noises.mottle(x, y, z, 9));
+            }
+            BlockState rock = env.hallWall.pick(ctx.noises.mottle(x, y, z, 1));
+            if (rock != null) return rock;
+        }
         BlockState state = space.environment.wall.pick(ctx.noises.mottle(x, y, z, 1));
         return state != null ? state : ModBlocks.ABYSSAL_CAVE_ROCK.get().defaultBlockState();
     }
@@ -47,7 +58,11 @@ final class CaveGeology
                     boolean ceiling = !floor && ctx.carvedHere(lx, y - 1, lz);
                     CaveEnvironment env = space.environment;
                     BlockState state;
-                    if (space.hasLake() && !floor && !ceiling && Math.abs(y - space.waterLevel) <= 1 && s < 1.5)
+                    if (space.hall != null)
+                    {
+                        state = hallSurface(ctx, space, lx, y, lz, s, floor, ceiling);
+                    }
+                    else if (space.hasLake() && !floor && !ceiling && Math.abs(y - space.waterLevel) <= 1 && s < 1.5)
                     {
                         // Bathtub ring: minerals precipitated at the lake's surface.
                         state = ModBlocks.CAVE_MINERAL_CRUST.get().defaultBlockState();
@@ -99,6 +114,39 @@ final class CaveGeology
                 }
             }
         }
+    }
+
+    /**
+     * AB03: a hall's surfaces: terrace tops in the look's floor rock, the basin below the terraces in its basin blocks (magma
+     * fields, ice), walls and roof in its rock with mosaic patches and embedded light blocks; deeper rock as any cave.
+     */
+    private static BlockState hallSurface(CaveChunk ctx, CaveSpace space, int lx, int y, int lz, float s, boolean floor, boolean ceiling)
+    {
+        CaveEnvironment env = space.environment;
+        CaveNoises noises = ctx.noises;
+        int x = ctx.x0 + lx, z = ctx.z0 + lz;
+        if (floor && s < 1.6)
+        {
+            BlockState heated = heatedFloor(ctx, x, y, z);
+            if (heated != null) return heated;
+            BlockState state = (y < space.hall.level ? env.hallBasin : env.hallFloor).pick(noises.mottle(x, y, z, 2));
+            return state != null ? state : wallRock(ctx, space, x, y, z);
+        }
+        if (s < COATING || (ceiling && s < 1.2))
+        {
+            CaveEnvironment.HallLook look = env.hall.look();
+            if (!env.hallGlow.isEmpty() && noises.hash(x, y, z, 77) < look.glowChance() * (0.3 + 1.7 * noises.patch(x, y, z, 23.9)))
+            {
+                return env.hallGlow.pick(noises.hash(x, y, z, 78));
+            }
+            if (!env.hallMosaic.isEmpty() && noises.mosaic(x, y, z) > CaveNoises.mosaicThreshold(look.mosaicCoverage()))
+            {
+                return env.hallMosaic.pick(noises.mottle(x, y, z, 9));
+            }
+            BlockState state = (ceiling ? env.hallCeiling : env.hallWall).pick(noises.mottle(x, y, z, ceiling ? 3 : 1));
+            return state != null ? state : wallRock(ctx, space, x, y, z);
+        }
+        return stratum(ctx, space, lx, y, lz);
     }
 
     /** Floor cover of a cavern ecology patch; null keeps the environment's own sediment. */

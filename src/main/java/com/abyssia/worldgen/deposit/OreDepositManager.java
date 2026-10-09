@@ -56,8 +56,7 @@ public final class OreDepositManager
         {
             final Pending p = next;
             if (p.level().isClientSide) continue;
-            boolean known = OreDepositData.get(p.level()).getAll().values().stream().anyMatch(d ->
-                    d.mineralId().equals(p.mineralId()) && d.bounds().contains(p.center().getX() + 0.5, p.center().getY() + 0.5, p.center().getZ() + 0.5));
+            boolean known = OreDepositData.get(p.level()).containsPoint(p.mineralId(), p.center().getX() + 0.5, p.center().getY() + 0.5, p.center().getZ() + 0.5);
             if (!known) register(p.level(), p.mineralId(), p.center(), p.bounds(), p.size(), p.shape(), p.totalOre());
         }
     }
@@ -142,9 +141,7 @@ public final class OreDepositManager
      */
     public static List<OreDeposit> findIntersecting(ServerLevel level, AABB searchArea)
     {
-        return OreDepositData.get(level).getAll().values().stream()
-                .filter(deposit -> deposit.bounds().intersects(searchArea))
-                .collect(Collectors.toList());
+        return OreDepositData.get(level).intersecting(searchArea);
     }
 
     /**

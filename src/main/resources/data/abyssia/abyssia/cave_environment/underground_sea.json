@@ -218,5 +218,131 @@
         "weight": 1
       }
     ]
+  },
+  "hall": {
+    "look": {
+      "wall": [],
+      "floor": [],
+      "ceiling": [],
+      "mosaic": [
+        {
+          "data": {
+            "Name": "abyssia:eroded_cave_rock"
+          },
+          "weight": 1
+        }
+      ],
+      "mosaic_coverage": 0.15,
+      "glow": [
+        {
+          "data": {
+            "Name": "abyssia:lumen_rock"
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "abyssia:deep_crystal_block"
+          },
+          "weight": 1
+        }
+      ],
+      "glow_chance": 0.01,
+      "window": [
+        {
+          "data": {
+            "Name": "minecraft:sea_lantern"
+          },
+          "weight": 1
+        }
+      ],
+      "basin": [
+        {
+          "data": {
+            "Name": "abyssia:cave_mud"
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "Name": "abyssia:cave_sediment"
+          },
+          "weight": 1
+        }
+      ]
+    },
+    "life": {
+      "floor": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:glowtip_grass"
+            }
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_crystal_plant"
+            }
+          },
+          "weight": 2
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_bloom"
+            }
+          },
+          "weight": 1
+        }
+      ],
+      "wall": [],
+      "ceiling": [
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:cave_vine"
+            },
+            "min_height": 3,
+            "max_height": 12
+          },
+          "weight": 3
+        },
+        {
+          "data": {
+            "state": {
+              "Name": "abyssia:abyssal_vine"
+            },
+            "min_height": 4,
+            "max_height": 14
+          },
+          "weight": 1
+        }
+      ],
+      "floor_density": 0.04,
+      "wall_density": 0.0,
+      "ceiling_density": 0.02
+    },
+    "form": {
+      "step_min": 1,
+      "step_max": 2,
+      "shore_min": 0.7,
+      "shore_max": 0.9,
+      "islands": 1.4,
+      "plateaus": 0.0,
+      "beacons": 1.0,
+      "vents": 0.0,
+      "column_clusters": 0.0,
+      "trunks": 1.0,
+      "spires": 1.0,
+      "stalactites": 1.0,
+      "beacon": {
+        "state": {
+          "Name": "abyssia:crystal_kelp"
+        }
+      }
+    }
   }
 }

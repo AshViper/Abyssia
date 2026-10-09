@@ -2,20 +2,8 @@
   "feature": "abyssia:crust_mk1_zinc_b_medium",
   "placement": [
     {
-      "type": "minecraft:count",
-      "count": {
-        "type": "minecraft:weighted_list",
-        "distribution": [
-          {
-            "data": 0,
-            "weight": 58
-          },
-          {
-            "data": 1,
-            "weight": 42
-          }
-        ]
-      }
+      "type": "minecraft:rarity_filter",
+      "chance": 4
     },
     {
       "type": "abyssia:config",
@@ -29,7 +17,7 @@
       "height": {
         "type": "minecraft:uniform",
         "min_inclusive": {
-          "absolute": -650
+          "absolute": -540
         },
         "max_inclusive": {
           "absolute": -393

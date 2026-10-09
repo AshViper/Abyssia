@@ -154,8 +154,8 @@ public class Config
 
     static {
         BUILDER.pop();
-        BUILDER.comment("AB02 crust cave windows: free-floating cave networks inside the abyss crust, one per depth window (B' Y -650..-380,",
-                "C -1100..-650, D -1550..-1100, E -1862..-1550). The values below are per window in this order: B', C, D, E.",
+        BUILDER.comment("AB02 crust cave windows: free-floating cave networks inside the abyss crust, one per depth window (B' Y -540..-380,",
+                "C -700..-540, D -860..-700, E -998..-860; see DeepLayer). The values below are per window in this order: B', C, D, E.",
                 "The shallow, seabed-relative network above is configured by [caves] and is not affected. Changing spacing, size or the",
                 "vertical link chance reshapes the layout of chunks that are not generated yet: set them before exploring new areas.").push("caves_bands");
     }
