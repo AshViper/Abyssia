@@ -1,4 +1,4 @@
-"""GB01 guide book text: ChatGPT's chapters/pages/ja/en (inbox/specs/GB01-text.json) -> assets/abyssia/guide/.
+"""GB01 guide book text: ChatGPT's chapters/pages/ja/en (inbox/specs/GB02-text.json; GB01-text.json is the first version) -> assets/abyssia/guide/.
 
 The ChatGPT source names icons and pictures by bare name; this expands them to the paths the loader reads
 (icons/<name>.png, textures/gui/guide/pages/<name>.png).  EXTRA pages (the guide book's own item / recipe pages)
@@ -12,7 +12,7 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(ROOT, "..", "inbox", "specs", "GB01-text.json")
+SRC = os.path.join(ROOT, "..", "inbox", "specs", "GB02-text.json")
 OUT = os.path.join(ROOT, "..", "src", "main", "resources", "assets", "abyssia", "guide")
 
 EXTRA = {
@@ -27,8 +27,8 @@ EXTRA = {
 }
 EXTRA_LANG = {
     "guide.abyssia.waypoints.deep_maps.title": ("深海の地図", "Deep Sea Maps"),
-    "guide.abyssia.waypoints.deep_maps.text": ("深海層を探索するときは「深海の白地図」を使いましょう。深海層で使用すると、地上では見ることのできない海底の地形が地図に記録されます。水深や海底の高低差も陰影で確認できます。深海への入口を探すときは「深海への海図」が便利です。使用すると、近くの深海への入口を探して地図に示します。入口が見つからない場合、海図は消費されません。",
-                                               "Use a Deep Sea Map when exploring the deep sea. When used in the deep sea layer, it records the seafloor that cannot be seen on ordinary maps. Water depth and changes in seafloor elevation are shown through map shading. When looking for a way into the deep sea, use an Abyss Chart. It searches for a nearby entrance and marks its location on the map. If no entrance can be found, the chart is not consumed."),
+    "guide.abyssia.waypoints.deep_maps.text": ("深海層を探索するときは「深海の白地図」を使いましょう。深海層で使用すると、地上では見ることのできない海底の地形が地図に記録されます。水深や海底の高低差も陰影で確認できます。深海への入口を探すときは「深海への海図」が便利です。使用すると、近くの深海への入口を探して地図に示します。入口が見つからない場合、海図は消費されません。白地図は技術「深海図」、海図は技術「深淵図」を研究すると作れます。",
+                                               "Use a Deep Sea Map when exploring the deep sea. When used in the deep sea layer, it records the seafloor that cannot be seen on ordinary maps. Water depth and changes in seafloor elevation are shown through map shading. When looking for a way into the deep sea, use an Abyss Chart. It searches for a nearby entrance and marks its location on the map. If no entrance can be found, the chart is not consumed. The map is unlocked by the Deep Sea Map technology and the chart by the Abyss Chart technology."),
     "guide.abyssia.ui.contents": ("目次", "Contents"),
     "guide.abyssia.ui.obtaining": ("入手方法", "Obtaining"),
     "guide.abyssia.ui.prev": ("前のページ", "Previous page"),
