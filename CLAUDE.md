@@ -9,22 +9,25 @@
 - 取得順: 要求 → CLAUDE.md → 関連 Memory の抜粋 → 対象コードの該当部分 → 必要な依存だけ。巨大ログ・生成物・`build`・`.git`・キャッシュは入れない。
 - 大量に読んだら、必要な事実だけを残して捨てる。同じ内容を二度読まない。出力・報告も短く（表・全文再掲・事前の説明をしない）。
 
-## 2. モデルは軽く、必要かどうかも軽量モデルで判断
+## 2. 読む係は Haiku、考える所だけ上のモデル（2026-10-09 ユーザー指示）
 
-| 作業 | モデル |
-|---|---|
-| 要求整理・必要性の判断（設計/Memory/サブエージェントが要るか）・分類・要約・Memory 更新・仕様書 | **Haiku**（agent `memo`、`decision`）。**コードは書かせない** |
-| **コーディング全般**（機械的な変更も含む）・設計書・修正・検証 | **Sonnet**（`coder-light`、`coder-standard`、`verify`） |
-| **難しい実装・同じバグが Sonnet で 3 回直らない部分** | **Opus**（`coder-heavy`、1 問題 1 回） |
+1 つの作業を 4 つのモデルで分担する。安いモデルから当て、詰まった所だけ上のモデルに上げる（エスカレート式）。
 
-- 軽量モデルは Haiku 5.5（agent 定義ではエイリアス `haiku`）、Sonnet は `claude-sonnet-5-5`、Opus は `claude-opus-5-5`。Opus を通常の実装・設計・判断・要約に使わない。メイン自身が高いモデルなら、読む・書く量の多い作業はサブエージェントに出す。
-- **必要性の判断**: 単純な作業（明確なバグ修正・typo・設定・既存パターンの実装）は判断も設計も省いて直接実装。迷うときだけ `memo` に 1 回聞く（JSON: `{needs_design, memory_terms, model, subagents}`）。設計・Decision・Verification・Memory 更新は、必要な条件を満たすときだけ。
-- 流れ: 要求 → (必要なら Haiku が判断) → Sonnet が実装 → ビルド・テスト（**実際の結果で検証**、AI の推測で成功と判断しない）→ 失敗は Sonnet が修正（3 回まで）→ 直らなければ Opus 1 回 → 成功したら必要なときだけ Haiku が Obsidian に要約。
-- Opus で直したら、原因と再発防止を Vault に残す（再び Opus を呼ばないため）。
+| モデル・effort | 担当 | agent |
+|---|---|---|
+| **Opus 5.5**（`claude-opus-5-5`）・effort **high** | **計画と最後のレビュー** | `decision`（計画・判断）、`verify`（完了前レビュー） |
+| **Sonnet 5.5**（`claude-sonnet-5-5`）・effort **medium** | **ファイル編集とテスト**（コーディング全般・修正） | `coder-light`、`coder-standard` |
+| **Haiku 5.5**（エイリアス `haiku`）・effort **low** | **コードを探して読む・資料を引く**（Vault 抜粋・要約・Memory 更新・仕様書の清書）。**コードは書かせない** | `scout`（探索・読解）、`memo`（記録） |
+| **Fable 5.1**（`/advisor fable`） | **必要な時だけ相談**。呼ぶのは次の 3 場面だけ: ①計画を決める前 ②同じエラーが 2 回出た時 ③完了と言う前 | `advisor`（読み取り専用、助言だけ） |
+
+- **Opus に「このファイルある？」を確かめさせない。** 存在確認・検索・抜粋読み・資料引きは Haiku（`scout`）に出し、Opus・Sonnet には要点だけ渡す。
+- **必要性の判断**: 単純な作業（明確なバグ修正・typo・設定・既存パターンの実装）は計画・相談を省いて Sonnet で直接実装。計画（Opus）・Fable 相談・レビュー・Memory 更新は、必要な条件を満たすときだけ。
+- 流れ: 要求 → Haiku が関連コード・資料を引く → Opus が計画（大きい作業は ①Fable に相談してから確定）→ Sonnet が編集・ビルド・テスト（**実際の結果で検証**、AI の推測で成功と判断しない）→ 同じエラーが 2 回出たら ②Fable に相談し、その助言で Sonnet が修正 → それでも直らない難所だけ `coder-heavy`（Opus、1 問題 1 回）→ Opus がレビュー → ③Fable に確認してから完了報告 → 必要なときだけ Haiku が Obsidian に要約。
+- Fable・Opus の助言で直ったら、原因と再発防止を Vault に残す（再び上のモデルを呼ばないため）。
 
 ## 3. サブエージェント: 最大 6、通信なし
 
-- **最大 6 つ**（2026-10-09 にユーザーが 3→6 に変更）、標準は 0〜1。独立して分けられる作業だけ。同じコードを複数に調べさせない。サブエージェントのエフォートは**高**（Agent の `effort: "high"` を渡す）。
+- **最大 6 つ**（2026-10-09 にユーザーが 3→6 に変更）、標準は 0〜1。独立して分けられる作業だけ。同じコードを複数に調べさせない。サブエージェントのエフォートは §2 の表どおり（Opus=high、Sonnet=medium、Haiku=low。agent 定義の `effort` に設定済みなので Agent 呼び出しで上書きしない）。
 - **エージェント同士は通信しない。** メインだけが結果を受け取り統合する。依頼文は自己完結（対象ファイル・行範囲・仕様・受け入れ条件）にし、会話の経緯や Vault の全文を渡さない。`SendMessage` での往復や、あるエージェントの出力を次へ中継する連鎖を作らない。
 - 返答は `STATUS / FILES / NOTES`（10 行以内）か JSON。検証・判断は読み取り専用で `PASS/FAIL`、`APPROVE/REJECT/MODIFY` だけ。
 - **Decision Agent**（Haiku）はアーキテクチャ変更・新ライブラリ・API/DB 変更・複数案の比較・性能/セキュリティ・既存設計との矛盾の可能性があるときだけ。**Verification Agent**（Sonnet）は大きな変更のときだけ。ビルドとテストが先。
@@ -47,4 +50,4 @@
 - **ベースは NeoForge 1.21.1**（branch `NeoForge1.21.1`、worktree `F:\Java\Abyssia-NeoForge`）。ここで実装・テストし、**Forge 1.20.1（`main`、`F:\Java\Abyssia`）へ移植**して、両方に入って完了（skill `port-forge`）。パッケージ・クラス名・modid は変えない。データは `python tools/mc_format.py --to-forge F:/Java/Abyssia`（1.21→1.20）。
 - `tools/` の生成ツールの出力は**手編集しない**（生成元を直して再実行）。`tools/texture_locks` のテクスチャは再生成で消さない。
 - gradle・実機テストはメインが実行（サブエージェントはしない）。dev client の実行中は gradle を回さない。実機確認は `F:\Java\Abyssia-scratch-*` のコピーで行い、本体の `run/` に触れない。
-- ユーザーへの返答は**日本語**。**プラン（設計・仕様の立案）は ChatGPT（Claude in Chrome 経由）が考える**（2026-10-09 ユーザー指示、従来は Haiku/メイン）。メインは ChatGPT のプランを受け取り、現行コードとの矛盾・実現性を確認して実装に回す（矛盾があれば根拠を添えてユーザーに確認）。Haiku（`memo`）は仕様書の清書・Vault 記録だけ。ChatGPT はほかにテクスチャ画像の生成も行う。agentflow の運用は Vault `modules/agentflow.md`（`memory.py show agentflow <見出し>`）。完了時は Obsidian にメモし、commit/push は依頼どおり。
+- ユーザーへの返答は**日本語**。**プラン（設計・仕様の立案）と最後のレビューは Opus**（§2、2026-10-09 ユーザー指示。同日の「ChatGPT がプラン」を置き換え）。Opus は現行コードとの矛盾・実現性を確認して Sonnet の実装に回す（矛盾や方針の選択があれば根拠を添えてユーザーに確認）。Haiku（`memo`）は仕様書の清書・Vault 記録だけ。ChatGPT（Claude in Chrome 経由）はテクスチャ画像の生成だけを行う。agentflow の運用は Vault `modules/agentflow.md`（`memory.py show agentflow <見出し>`）。完了時は Obsidian にメモし、commit/push は依頼どおり。

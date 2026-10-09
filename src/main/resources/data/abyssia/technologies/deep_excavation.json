@@ -1,0 +1,11 @@
+{
+  "id": "abyssia:technology/deep_excavation",
+  "type": "building",
+  "title": "technology.abyssia.deep_excavation",
+  "tier": "mk2",
+  "depth_band": "C",
+  "scan_requirements": [ { "target": "abyssia:scan_target/mineral_deposit_cobalt", "count": 1 } ],
+  "prerequisites": [ "abyssia:technology/deposit_excavation", "abyssia:technology/cobalt_processing" ],
+  "unlocks": [ "abyssia:building/abyssal_excavator_mk2" ],
+  "icon": "abyssia:cobalt_ore"
+}

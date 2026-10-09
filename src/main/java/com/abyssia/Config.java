@@ -611,6 +611,16 @@ public class Config
     static
     {
         BUILDER.pop();
+        BUILDER.comment("Scan research (AB05). wrecks_to_unlock above is no longer used: the count lives in data/abyssia/technologies").push("research");
+    }
+
+    public static final ForgeConfigSpec.BooleanValue RESEARCH_OP_BYPASS = BUILDER
+            .comment("Operators (permission level 2) skip the research locks like creative players do")
+            .define("op_bypass", true);
+
+    static
+    {
+        BUILDER.pop();
     }
 
     static final ForgeConfigSpec SPEC = BUILDER.build();

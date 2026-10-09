@@ -15,8 +15,8 @@ public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
     // 4: habitat constructor controls (H02). 5: waypoint beacon list / settings (W01). 7: submarine lights / undock (SUB02).
-    // 8: wireless power relay links (WR01). 9: large locker rename.
-    private static final String PROTOCOL = "9";
+    // 8: wireless power relay links (WR01). 9: large locker rename. 10: AB05 research payloads.
+    private static final String PROTOCOL = "10";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
 
@@ -45,6 +45,19 @@ public final class AbyssiaNetwork
         CHANNEL.messageBuilder(com.abyssia.furniture.LockerRenamePacket.class, 6, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(com.abyssia.furniture.LockerRenamePacket::encode).decoder(com.abyssia.furniture.LockerRenamePacket::decode)
                 .consumerMainThread(com.abyssia.furniture.LockerRenamePacket::handle).add();
+        // AB05: scan progress for the HUD, research full sync / delta, unlock toast (all S2C)
+        CHANNEL.messageBuilder(com.abyssia.research.scan.ScanProgressPayload.class, 7, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(com.abyssia.research.scan.ScanProgressPayload::encode).decoder(com.abyssia.research.scan.ScanProgressPayload::decode)
+                .consumerMainThread(com.abyssia.research.scan.ScanProgressPayload::handle).add();
+        CHANNEL.messageBuilder(com.abyssia.research.ResearchSyncPayload.class, 8, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(com.abyssia.research.ResearchSyncPayload::encode).decoder(com.abyssia.research.ResearchSyncPayload::decode)
+                .consumerMainThread(com.abyssia.research.ResearchSyncPayload::handle).add();
+        CHANNEL.messageBuilder(com.abyssia.research.ResearchDeltaPayload.class, 9, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(com.abyssia.research.ResearchDeltaPayload::encode).decoder(com.abyssia.research.ResearchDeltaPayload::decode)
+                .consumerMainThread(com.abyssia.research.ResearchDeltaPayload::handle).add();
+        CHANNEL.messageBuilder(com.abyssia.research.TechUnlockedPayload.class, 10, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(com.abyssia.research.TechUnlockedPayload::encode).decoder(com.abyssia.research.TechUnlockedPayload::decode)
+                .consumerMainThread(com.abyssia.research.TechUnlockedPayload::handle).add();
     }
 
     public static void sendToServer(Object message)
