@@ -1,7 +1,6 @@
 package com.abyssia.item;
 
 import com.abyssia.Config;
-import com.abyssia.fauna.DepthZone;
 import com.abyssia.vehicle.Submarine;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -19,15 +18,16 @@ import net.neoforged.neoforge.registries.DeferredItem;
 
 /**
  * Water pressure: the worn diving set's tier (the lowest of head / chest / legs / feet; an empty slot is tier 0) sets
- * the safe depth. Deeper than that, a survival / adventure player outside a submarine takes damage and Slowness once
+ * the lowest safe Y. Below that Y, a survival / adventure player outside a submarine takes damage and Slowness once
  * a second. Tier 1 = entry gear, 2 = deep gear, 3 = pressure gear.
  */
 public final class PressureGear
 {
-    /** Safe depth in metres per tier 0..2; tier 3 has no limit. */
-    private static final int[] SAFE_METRES = {200, 1700, 6000};
+    /** Lowest safe Y per tier 0..2 (no gear Y 23, entry Y -300, deep Y -800); tier 3 has no limit. */
+    private static final int[] SAFE_Y = {23, -300, -800};
     public static final int MAX_TIER = 3;
-    private static final int STEP_METRES = 2000;
+    /** Blocks below the safe Y per extra point of damage (1 to 3). */
+    private static final int STEP_BLOCKS = 64;
 
     private PressureGear() {}
 
@@ -63,10 +63,10 @@ public final class PressureGear
         return tier;
     }
 
-    /** Safe depth in metres for a tier, or {@link Integer#MAX_VALUE} when unlimited. */
-    public static int safeMetres(int tier)
+    /** Lowest safe Y for a tier, or {@link Integer#MIN_VALUE} when unlimited. */
+    public static int safeY(int tier)
     {
-        return tier >= MAX_TIER ? Integer.MAX_VALUE : SAFE_METRES[Math.max(0, tier)];
+        return tier >= MAX_TIER ? Integer.MIN_VALUE : SAFE_Y[Math.max(0, tier)];
     }
 
     @SubscribeEvent
@@ -77,14 +77,14 @@ public final class PressureGear
         if (player.tickCount % 20 != 0 || !Config.PRESSURE_ENABLED.get()) return;
         if (!player.isUnderWater() || player.isCreative() || player.isSpectator()) return;
         if (player.getVehicle() instanceof Submarine) return;
-        int safe = safeMetres(wornTier(player));
-        if (safe == Integer.MAX_VALUE) return;
-        double depth = DepthZone.metres(player.level(), player.getY());
-        if (depth <= safe) return;
-        float damage = Math.min(3, 1 + (int) ((depth - safe) / STEP_METRES));
+        int safe = safeY(wornTier(player));
+        if (safe == Integer.MIN_VALUE) return;
+        double y = player.getY();
+        if (y >= safe) return;
+        float damage = Math.min(3, 1 + (int) ((safe - y) / STEP_BLOCKS));
         player.hurt(player.damageSources().generic(), damage);
         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 0));
-        player.displayClientMessage(Component.translatable("message.abyssia.pressure_warning", (int) depth, safe), true);
+        player.displayClientMessage(Component.translatable("message.abyssia.pressure_warning", (int) Math.floor(y), safe), true);
     }
 
     @SubscribeEvent
@@ -102,6 +102,6 @@ public final class PressureGear
     {
         return tier >= MAX_TIER
                 ? Component.translatable(key + "_unlimited", tier)
-                : Component.translatable(key, tier, safeMetres(tier));
+                : Component.translatable(key, tier, safeY(tier));
     }
 }

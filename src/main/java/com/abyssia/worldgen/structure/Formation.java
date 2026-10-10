@@ -6,6 +6,7 @@ import com.abyssia.worldgen.structure.formation.CaveFormation;
 import com.abyssia.worldgen.structure.formation.CraterFormation;
 import com.abyssia.worldgen.structure.formation.CrystalFormation;
 import com.abyssia.worldgen.structure.formation.FallenLogFormation;
+import com.abyssia.worldgen.structure.formation.HabitatRuinFormation;
 import com.abyssia.worldgen.structure.formation.PillarFormation;
 import com.abyssia.worldgen.structure.formation.RottenTreeFormation;
 import com.abyssia.worldgen.structure.formation.RockFormation;
@@ -52,6 +53,7 @@ public interface Formation
             case SkeletonFormation.TYPE -> SkeletonFormation.CODEC;
             case ArtifactFieldFormation.TYPE -> ArtifactFieldFormation.CODEC;
             case WreckFormation.TYPE -> WreckFormation.CODEC;
+            case HabitatRuinFormation.TYPE -> HabitatRuinFormation.CODEC;
             default -> null;
         };
         return codec != null ? DataResult.success(codec) : DataResult.error(() -> "Unknown seabed structure formation: " + type);

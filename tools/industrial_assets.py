@@ -481,8 +481,10 @@ def recipes(write, data_dir):
             "K": "conductive_component", "A": "corrosion_alloy_ingot", "P": P, "R": R, "W": W}
     shaped("crusher", ["PPP", "GFG", "RWR"], mach, 1, "misc")
     shaped("refinery_furnace", ["PPP", "VFV", "PTP"], mach, 1, "misc")
-    # the furnace that makes the alloys cannot need one: nickel ingots (refinery furnace) stand in for the corrosion alloy
-    shaped("alloy_furnace", ["ATA", "KFK", "PVP"], {**mach, "A": "nickel_ingot"}, 1, "misc")
+    # BAL01: the furnace that makes the alloys cannot need one (no conductive component / pressure valve / thermal
+    # component): nickel ingots, thermal felt, a blast furnace and the frame stand in
+    shaped("alloy_furnace", ["NTN", "WFW", "PBP"],
+           {**mach, "N": "nickel_ingot", "T": "thermal_felt", "B": "minecraft:blast_furnace"}, 1, "misc")
     shaped("auxiliary_generator", ["PPP", "GFG", "WNW"], {**mach, "N": "minecraft:furnace"}, 1, "misc")
     shaped("hydrothermal_generator", ["ATA", "VFV", "PWP"], mach, 1, "misc")
     shaped("high_temp_furnace", ["HTH", "TFT", "PVP"], {**mach, "H": "heat_resistant_alloy_ingot"}, 1, "misc")

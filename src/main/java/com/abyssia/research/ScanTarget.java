@@ -35,7 +35,10 @@ public record ScanTarget(ResourceLocation id, String category, String nameKey, f
         POSITION, TYPE
     }
 
-    public record Match(MatchType type, ResourceLocation value) {}
+    public record Match(MatchType type, ResourceLocation value, int radius)
+    {
+        public Match(MatchType type, ResourceLocation value) { this(type, value, 0); }
+    }
 
     public static void write(FriendlyByteBuf buf, ScanTarget t)
     {

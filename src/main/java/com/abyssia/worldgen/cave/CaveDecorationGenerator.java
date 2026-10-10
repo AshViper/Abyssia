@@ -80,7 +80,7 @@ final class CaveDecorationGenerator
                     if (space == null || (space.environment.crystals.isEmpty() && space.cavern == null)) continue;
                     double density = space.environment.formations.crystalDensity();
                     int x = ctx.x0 + lx, z = ctx.z0 + lz;
-                    CavernPatch cavernPatch = space.cavern != null ? space.cavern.patchAt(x + 0.5, z + 0.5) : null;
+                    CavernPatch cavernPatch = space.cavern != null ? ctx.patchAt(space.cavern, lx, lz) : null;
                     // Crystal ground in a cavern crystallises even where its environment rarely does.
                     if (cavernPatch != null) density = Math.max(density, cavernPatch == CavernPatch.CRYSTAL ? 0.05 : 0) * cavernPatch.crystals;
                     if (density <= 0) continue;

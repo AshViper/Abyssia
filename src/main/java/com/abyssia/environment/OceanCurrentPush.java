@@ -66,6 +66,7 @@ public final class OceanCurrentPush
         if (drag <= 0.0 || entity.isRemoved() || entity.isPassenger() || entity.noPhysics || !entity.isInWater()) return;
         if (entity.getType().is(ModTags.IGNORES_OCEAN_CURRENT)) return;
         double exposure = entity instanceof CurrentResistant r ? 1.0 - Math.min(1f, Math.max(0f, r.getCurrentResistance())) : 1.0;
+        if (entity instanceof Player player) exposure *= 1.0 - com.abyssia.item.DivingSwimGear.currentResistance(player);
         if (exposure <= 0.0) return;
         Level level = entity.level();
         BlockPos pos = entity.blockPosition();

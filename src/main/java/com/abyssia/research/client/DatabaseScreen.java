@@ -1,5 +1,7 @@
 package com.abyssia.research.client;
 
+import com.abyssia.client.gui.UiTheme;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -41,7 +43,7 @@ public class DatabaseScreen extends Screen
     private record Entry(Component name, String label, Component status, int color, List<Component> detail) {}
 
     private static final int W = 360, H = 224, TAB_W = 70, LIST_W = 122, ROW = 12, PAD = 4;
-    private static final int GREEN = 0xFF58E6A0, GRAY = 0xFF8A949E, YELLOW = 0xFFFFD866, WHITE = 0xFFFFFFFF;
+    private static final int GREEN = 0xFF58E6A0, GRAY = UiTheme.TEXT_MUTED, YELLOW = 0xFFFFD866, WHITE = UiTheme.TEXT;
 
     private Tab tab = Tab.TECHNOLOGIES;
     private final Button[] tabButtons = new Button[Tab.values().length];
@@ -170,13 +172,13 @@ public class DatabaseScreen extends Screen
     public void renderBackground(GuiGraphics g, int mx, int my, float partialTick)
     {
         super.renderBackground(g, mx, my, partialTick);
-        g.fill(left, top, left + W, top + H, 0xE0101418);
-        g.renderOutline(left, top, W, H, 0xFF3A4450);
+        g.fill(left, top, left + W, top + H, UiTheme.PANEL);
+        g.renderOutline(left, top, W, H, UiTheme.BORDER);
         g.drawString(font, title, left + PAD + 2, top + 7, WHITE, true);
 
         // list
         int lx = listX(), lt = listTop(), lw = LIST_W;
-        g.fill(lx, lt, lx + lw, listBottom(), 0x80000000);
+        g.fill(lx, lt, lx + lw, listBottom(), UiTheme.SHADE);
         if (entries.isEmpty())
         {
             g.drawString(font, Component.translatable("screen.abyssia.database.empty"), lx + 4, lt + 4, GRAY, false);
@@ -186,7 +188,7 @@ public class DatabaseScreen extends Screen
         {
             int idx = listScroll + i, y = lt + i * ROW;
             Entry e = entries.get(idx);
-            if (idx == selected) g.fill(lx, y, lx + lw, y + ROW, 0x80406080);
+            if (idx == selected) g.fill(lx, y, lx + lw, y + ROW, UiTheme.SELECTED);
             // status marker (green = scanned / unlocked, yellow = fragments, gray = unknown / locked), then the name
             g.fill(lx + 3, y + 3, lx + 7, y + 7, e.color());
             g.drawString(font, font.plainSubstrByWidth(e.label(), lw - 18), lx + 10, y + 2, e.color(), false);
@@ -195,13 +197,13 @@ public class DatabaseScreen extends Screen
         {
             int barH = Math.max(8, (listBottom() - lt) * rows / entries.size());
             int barY = lt + (listBottom() - lt - barH) * listScroll / Math.max(1, entries.size() - rows);
-            g.fill(lx + lw - 4, lt, lx + lw, listBottom(), 0x40FFFFFF);
-            g.fill(lx + lw - 4, barY, lx + lw, barY + barH, draggingBar ? 0xFFD0D6DC : 0xFF8A949E);
+            g.fill(lx + lw - 4, lt, lx + lw, listBottom(), UiTheme.SHADE);
+            g.fill(lx + lw - 4, barY, lx + lw, barY + barH, draggingBar ? UiTheme.TEXT_PALE : UiTheme.TEXT_MUTED);
         }
 
         // detail
         int dx = detailX(), dw = left + W - PAD - dx;
-        g.fill(dx, lt, dx + dw, listBottom(), 0x80000000);
+        g.fill(dx, lt, dx + dw, listBottom(), UiTheme.SHADE);
         if (selected >= 0 && selected < entries.size())
         {
             Entry e = entries.get(selected);
@@ -224,7 +226,7 @@ public class DatabaseScreen extends Screen
             g.enableScissor(dx, lt, dx + dw, listBottom());
             for (int i = detailScroll; i < lines.size() && lt + 3 + (i - detailScroll) * 10 < listBottom(); i++)
             {
-                int color = i == 0 ? WHITE : i < 1 + cachedStatusLines ? e.color() : 0xFFD0D6DC;
+                int color = i == 0 ? WHITE : i < 1 + cachedStatusLines ? e.color() : UiTheme.TEXT_PALE;
                 g.drawString(font, lines.get(i), dx + 4, lt + 3 + (i - detailScroll) * 10, color, false);
             }
             g.disableScissor();

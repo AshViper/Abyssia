@@ -23,6 +23,10 @@ public final class ModDataComponents
     public static final Supplier<DataComponentType<CompoundTag>> SUBMARINE_UPGRADES = COMPONENTS.registerComponentType("submarine_upgrades",
             builder -> builder.persistent(CompoundTag.CODEC).networkSynchronized(ByteBufCodecs.COMPOUND_TAG));
 
+    /** Dive tank oxygen left in seconds; absent = full tank. */
+    public static final Supplier<DataComponentType<Integer>> OXYGEN = COMPONENTS.registerComponentType("oxygen",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     private ModDataComponents() {}
 
     public static void register(IEventBus modBus)

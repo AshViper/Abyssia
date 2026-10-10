@@ -9,13 +9,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ArmorItem;
@@ -28,13 +23,10 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -69,8 +61,6 @@ public final class MaterialTools
             Map.of(ArmorItem.Type.HELMET, 4, ArmorItem.Type.CHESTPLATE, 7, ArmorItem.Type.LEGGINGS, 6, ArmorItem.Type.BOOTS, 3),
             3.0F, 0.1F, 15, () -> ModItems.PRESSURE_SHELL.get());
 
-    private static final ResourceLocation SUIT_SPEED = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "diving_suit_swim_speed");
-    private static final ResourceLocation SET_SPEED = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "diving_set_swim_speed");
 
     public static DeferredItem<Item> CRUSHING_HAMMER, COBALT_PICKAXE, COBALT_SHOVEL, MANGANESE_AXE, MANGANESE_SWORD,
             MOLYBDENUM_PICKAXE, TUNGSTEN_PICKAXE, TUNGSTEN_AXE, CRYSTAL_PICKAXE, ABYSSAL_DRILL, ABYSSAL_CUTTER,
@@ -168,36 +158,9 @@ public final class MaterialTools
             event.setAmount(event.getAmount() * 0.5F);
     }
 
-    /** Diving set (any diver helmet + tank + suit leggings + abyssal flippers): +10% swim speed while worn. */
-    @SubscribeEvent
-    public static void playerTick(PlayerTickEvent.Post event)
-    {
-        Player player = event.getEntity();
-        if (player.level().isClientSide) return;
-        AttributeInstance swim = player.getAttribute(NeoForgeMod.SWIM_SPEED);
-        if (swim == null) return;
-        ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
-        boolean full = (head.is(ModTools.DIVER_HELMET.get()) || head.is(PRESSURE_DIVER_HELMET.get()))
-                && (player.getItemBySlot(EquipmentSlot.CHEST).is(DIVE_TANK.get()) || player.getItemBySlot(EquipmentSlot.CHEST).is(PRESSURE_DIVE_TANK.get()))
-                && (player.getItemBySlot(EquipmentSlot.LEGS).is(DIVING_SUIT_LEGGINGS.get()) || player.getItemBySlot(EquipmentSlot.LEGS).is(PRESSURE_SUIT_LEGGINGS.get()))
-                && (player.getItemBySlot(EquipmentSlot.FEET).is(ModTools.FLIPPERS.get()) || player.getItemBySlot(EquipmentSlot.FEET).is(PRESSURE_FLIPPERS.get()));
-        boolean has = swim.getModifier(SET_SPEED) != null;
-        if (full && !has)
-            swim.addTransientModifier(new AttributeModifier(SET_SPEED, 0.10, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-        else if (!full && has)
-            swim.removeModifier(SET_SPEED);
-    }
-
-    /** suit_swim: +5% swim speed (the armor's own defense/toughness modifiers are kept). */
+    /** Suit leggings; the swim bonus comes from the legs + feet pair (DivingSwimGear). */
     private static final class SuitLeggings extends ArmorItem
     {
         SuitLeggings(Holder<ArmorMaterial> material, Type type, Properties props) { super(material, type, props); }
-
-        @Override
-        public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack)
-        {
-            return super.getDefaultAttributeModifiers(stack).withModifierAdded(NeoForgeMod.SWIM_SPEED,
-                    new AttributeModifier(SUIT_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL), EquipmentSlotGroup.LEGS);
-        }
     }
 }

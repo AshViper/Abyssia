@@ -9,10 +9,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -22,7 +19,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.neoforged.neoforge.common.NeoForge;
 import com.abyssia.registry.ModItems;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -48,7 +44,6 @@ public final class ModTools {
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "abyssal_alloy"))),
             2.0F, 0.05F));
     public static DeferredItem<Item> PICKAXE, AXE, SHOVEL, HOE, SWORD, DIVER_HELMET, FLIPPERS;
-    private static final ResourceLocation FLIPPER_SPEED = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "flipper_swim_speed");
     private ModTools() {}
 
     public static void register(DeferredRegister.Items items, List<DeferredItem<? extends Item>> tab) {
@@ -96,12 +91,6 @@ public final class ModTools {
     static final class Flippers extends ArmorItem {
         Flippers(Holder<ArmorMaterial> material, Type type, Properties props) {
             super(material, type, props);
-        }
-        @Override public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
-            // Keep the armor's own modifiers (defense, toughness): dropping them
-            // left the flippers with no protection at all.
-            return super.getDefaultAttributeModifiers(stack).withModifierAdded(NeoForgeMod.SWIM_SPEED,
-                    new AttributeModifier(FLIPPER_SPEED, 0.35, Operation.ADD_MULTIPLIED_TOTAL), EquipmentSlotGroup.FEET);
         }
     }
 }

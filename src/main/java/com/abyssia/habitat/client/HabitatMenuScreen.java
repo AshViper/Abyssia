@@ -1,5 +1,7 @@
 package com.abyssia.habitat.client;
 
+import com.abyssia.client.gui.UiTheme;
+
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.HabitatBuilder;
 import com.abyssia.habitat.build.BuildCategory;
@@ -86,7 +88,7 @@ public class HabitatMenuScreen extends Screen
             int tx = x0 + t * tw;
             boolean hover = mouseX >= tx && mouseX < tx + tw - 2 && mouseY >= ty && mouseY < ty + TAB_H;
             boolean empty = BuildRegistry.byCategory(TABS[t]).isEmpty();
-            g.fill(tx, ty, tx + tw - 2, ty + TAB_H, t == category ? 0xC0205060 : hover ? 0xA0182830 : 0x90101820);
+            g.fill(tx, ty, tx + tw - 2, ty + TAB_H, t == category ? UiTheme.SELECTED : hover ? UiTheme.HOVER : UiTheme.IDLE);
             Component name = TABS[t].displayName();
             int colour = t == category ? 0x9FEFFF : empty ? 0x607080 : 0xC0D0E0;
             float scale = Math.min(1.0f, (tw - 6) / (float) Math.max(1, font.width(name)));
@@ -106,7 +108,7 @@ public class HabitatMenuScreen extends Screen
             int y = y0 + i * ROW_H;
             Optional<Technology> lock = lockedBy(player, entry);
             boolean hover = mouseX >= x0 && mouseX < x0 + WIDTH && mouseY >= y && mouseY < y + ROW_H - 2;
-            g.fill(x0, y, x0 + WIDTH, y + ROW_H - 2, i == selected ? 0xC0205060 : hover ? 0xA0182830 : 0x90101820);
+            g.fill(x0, y, x0 + WIDTH, y + ROW_H - 2, i == selected ? UiTheme.SELECTED : hover ? UiTheme.HOVER : UiTheme.IDLE);
             if (i == selected) g.drawString(font, "▶", x0 + 3, y + 5, 0x9FEFFF);
             ResourceLocation icon = entry.icon();
             if (icon != null && hasIcon(icon)) g.blit(icon, x0 + 12, y + 2, 0, 0, 16, 16, 16, 16);
@@ -130,11 +132,11 @@ public class HabitatMenuScreen extends Screen
             if (lock.isPresent())
             {
                 // greyed row with a padlock; the tooltip names the technology
-                g.fill(x0, y, x0 + WIDTH, y + ROW_H - 2, 0xA0000000);
+                g.fill(x0, y, x0 + WIDTH, y + ROW_H - 2, UiTheme.SHADE);
                 int lx = x0 + WIDTH - 16, ly = y + ROW_H / 2 - 5;
-                g.fill(lx + 2, ly, lx + 8, ly + 1, 0xFFB0B0B0);
-                g.fill(lx + 2, ly, lx + 3, ly + 5, 0xFFB0B0B0);
-                g.fill(lx + 7, ly, lx + 8, ly + 5, 0xFFB0B0B0);
+                g.fill(lx + 2, ly, lx + 8, ly + 1, UiTheme.TEXT_PALE);
+                g.fill(lx + 2, ly, lx + 3, ly + 5, UiTheme.TEXT_PALE);
+                g.fill(lx + 7, ly, lx + 8, ly + 5, UiTheme.TEXT_PALE);
                 g.fill(lx, ly + 5, lx + 10, ly + 12, 0xFFE0B040);
                 g.fill(lx + 4, ly + 7, lx + 6, ly + 10, 0xFF604010);
                 if (hover) lockTip = Component.translatable("screen." + Abyssia.MODID + ".habitat.locked", Component.translatable(lock.get().titleKey()));

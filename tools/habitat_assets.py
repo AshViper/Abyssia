@@ -261,9 +261,11 @@ def constructor_model():
 
 
 def recipes(write, data_dir):
-    key = {"P": f"{MOD}:iron_plate", "H": f"{MOD}:high_strength_alloy_ingot", "C": "minecraft:copper_ingot",
-           "A": f"{MOD}:abyssal_alloy_ingot", "I": "minecraft:iron_ingot", "R": "minecraft:redstone"}
+    # BAL01: the constructor builds the first excavator, so it cannot need an alloy (alloy furnace needs nickel,
+    # which only an excavator mines): iron, copper, a machine frame and a diamond only
+    key = {"P": f"{MOD}:iron_plate", "F": f"{MOD}:machine_frame", "C": "minecraft:copper_ingot",
+           "D": "minecraft:diamond", "I": "minecraft:iron_ingot", "R": "minecraft:redstone"}
     write(os.path.join(data_dir, MOD, "recipes", CONSTRUCTOR + ".json"), {
-        "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": ["PHP", "CAC", "IRI"],
+        "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": ["PFP", "CDC", "IRI"],
         "key": {k: {"item": v} for k, v in key.items()}, "result": {"item": f"{MOD}:{CONSTRUCTOR}", "count": 1}})
 

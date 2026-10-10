@@ -33,10 +33,10 @@ public class SubmarineRenderer extends EntityRenderer<Submarine>
     public void render(Submarine sub, float yaw, float partialTick, PoseStack pose, MultiBufferSource buffers, int light)
     {
         pose.pushPose();
-        pose.mulPose(Axis.YP.rotationDegrees(180.0f - yaw));
+        pose.mulPose(Axis.YP.rotationDegrees(180.0f - SubmarineSteering.yaw(sub, partialTick)));
         // SUB05: nose up / down about the hull centre (mesh front = -Z, so a positive pitch = nose down is a -X rotation)
         pose.translate(0.0, Submarine.PIVOT_Y, 0.0);
-        pose.mulPose(Axis.XP.rotationDegrees(-Mth.lerp(partialTick, sub.xRotO, sub.getXRot())));
+        pose.mulPose(Axis.XP.rotationDegrees(-SubmarineSteering.pitch(sub, partialTick)));
         pose.translate(0.0, -Submarine.PIVOT_Y, 0.0);
         PoseStack.Pose last = pose.last();
         VertexConsumer cutout = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));

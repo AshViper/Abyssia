@@ -26,7 +26,7 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * SUB02 pilot controls: W/S forward / back along the nose, A/D sideways, Space rises, Ctrl (the sprint key) dives and releases the dock,
- * G headlights, Shift = vanilla dismount, mouse = yaw + pitch (the hull faces the view). With toggle-sprint on, Ctrl is read as the physical key so the
+ * G headlights, Shift = vanilla dismount, mouse = target yaw + pitch; the hull swings there with a short lag (SUB07, SubmarineSteering). With toggle-sprint on, Ctrl is read as the physical key so the
  * toggle does not latch it. NeoForge's key lookup gives a key to every mapping bound to it, so G (shared with the
  * habitat build menu by default) works through consumeClick (Forge reads the raw key event instead).
  */

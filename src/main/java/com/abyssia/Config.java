@@ -426,26 +426,26 @@ public class Config
             .define("diver_helmet_night_vision", true);
 
     static {
-        BUILDER.comment("Underwater air time by diving gear stage (stage 1 = entry gear, stage 2 = deep gear; the best of helmet / tank counts)").push("breathing");
+        BUILDER.comment("Underwater breathing: no gear = a short breath; helmet + dive tank = breathe from the tank's oxygen").push("breathing");
     }
     public static final ModConfigSpec.BooleanValue BREATHING_ENABLED = BUILDER
-            .comment("Scale the underwater air time by diving gear stage")
+            .comment("Scale the underwater air time and use the dive tank oxygen")
             .define("enabled", true);
     public static final ModConfigSpec.IntValue BREATHING_STAGE0_SECONDS = BUILDER
-            .comment("Seconds of air without diving gear")
+            .comment("Seconds of air without diving gear (or with an empty tank)")
             .defineInRange("stage0_seconds", 120, 15, 3600);
-    public static final ModConfigSpec.IntValue BREATHING_STAGE1_SECONDS = BUILDER
-            .comment("Seconds of air with entry diving gear")
-            .defineInRange("stage1_seconds", 300, 15, 3600);
-    public static final ModConfigSpec.IntValue BREATHING_STAGE2_SECONDS = BUILDER
-            .comment("Seconds of air with deep diving gear")
-            .defineInRange("stage2_seconds", 480, 15, 3600);
-    public static final ModConfigSpec.IntValue BREATHING_STAGE1_DURABILITY_SECONDS = BUILDER
-            .comment("Underwater seconds per 1 durability lost on entry gear")
-            .defineInRange("stage1_durability_seconds", 5, 1, 600);
-    public static final ModConfigSpec.IntValue BREATHING_STAGE2_DURABILITY_SECONDS = BUILDER
-            .comment("Underwater seconds per 1 durability lost on deep gear")
-            .defineInRange("stage2_durability_seconds", 10, 1, 600);
+    public static final ModConfigSpec.IntValue TANK_ENTRY_SECONDS = BUILDER
+            .comment("Seconds of oxygen in an entry dive tank")
+            .defineInRange("tank_entry_seconds", 300, 15, 7200);
+    public static final ModConfigSpec.IntValue TANK_DEEP_SECONDS = BUILDER
+            .comment("Seconds of oxygen in a deep dive tank")
+            .defineInRange("tank_deep_seconds", 480, 15, 7200);
+    public static final ModConfigSpec.IntValue TANK_PRESSURE_SECONDS = BUILDER
+            .comment("Seconds of oxygen in a pressure dive tank")
+            .defineInRange("tank_pressure_seconds", 720, 15, 7200);
+    public static final ModConfigSpec.IntValue TANK_REFILL_SECONDS = BUILDER
+            .comment("Seconds above water to refill an empty tank")
+            .defineInRange("tank_refill_seconds", 5, 1, 600);
     static {
         BUILDER.pop();
     }
@@ -512,7 +512,7 @@ public class Config
             .comment("FE per tick while the headlights are on")
             .defineInRange("light_fe_per_tick", 1, 0, 10_000);
     public static final ModConfigSpec.DoubleValue SUBMARINE_MAX_SPEED = BUILDER
-            .comment("Top forward speed in blocks per tick (reverse / sideways 0.22, up / down 0.18). The pilot's client applies it")
+            .comment("Top forward speed in blocks per tick (sideways 0.38, up / down 0.36, reverse = sideways x 5/11.5). The pilot's client applies it")
             .defineInRange("max_speed", 0.42, 0.05, 2.0);
     public static final ModConfigSpec.IntValue SUBMARINE_DOCK_CHARGE_RATE = BUILDER
             .comment("FE per tick a dock gives its docked submarine (from the dock's own 20,000 FE buffer)")
@@ -544,17 +544,17 @@ public class Config
             .comment("Maneuver thruster: top forward speed (blocks per tick)")
             .defineInRange("thruster_forward", 0.56, 0.05, 2.0);
     public static final ModConfigSpec.DoubleValue SUB_THRUSTER_SIDE = BUILDER
-            .comment("Maneuver thruster: top reverse / sideways speed")
-            .defineInRange("thruster_side", 0.30, 0.05, 2.0);
+            .comment("Maneuver thruster: top sideways speed (reverse = 5/11.5 of it)")
+            .defineInRange("thruster_side", 0.51, 0.05, 2.0);
     public static final ModConfigSpec.DoubleValue SUB_THRUSTER_VERTICAL = BUILDER
             .comment("Maneuver thruster: top up / down speed")
-            .defineInRange("thruster_vertical", 0.23, 0.05, 2.0);
+            .defineInRange("thruster_vertical", 0.48, 0.05, 2.0);
     public static final ModConfigSpec.IntValue SUB_THRUSTER_FE = BUILDER
             .comment("Maneuver thruster: FE per tick while moving under power (replaces thrust_fe_per_tick)")
             .defineInRange("thruster_fe_per_tick", 12, 0, 10_000);
     public static final ModConfigSpec.DoubleValue SUB_THRUSTER_ACCEL = BUILDER
-            .comment("Maneuver thruster: acceleration in blocks per tick^2 (without it 0.04)")
-            .defineInRange("thruster_accel", 0.05, 0.005, 1.0);
+            .comment("Maneuver thruster: acceleration in blocks per tick^2 (without it 0.025)")
+            .defineInRange("thruster_accel", 0.032, 0.005, 1.0);
     public static final ModConfigSpec.IntValue SUBMARINE_DEPTH_BASE = BUILDER
             .comment("Rated depth in metres of a submarine without a Depth Hull upgrade")
             .defineInRange("depth_base", 300, 10, 20_000);

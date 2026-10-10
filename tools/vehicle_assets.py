@@ -18,12 +18,12 @@ RECIPES = {
     # SUB03 upgrades (spec inbox/specs/SUB03-submarine-upgrades.md section 4): pressure glass = pressure_shell,
     # motor = conductive_component (the closest existing electric part besides the propulsion screw)
     "submarine_upgrade_pressure_hull": (["APA", "PIP", "AAA"], {"A": "abyssia:abyssal_alloy_ingot", "P": "abyssia:pressure_shell",
-                                                                "I": "minecraft:iron_block"}),
+                                                                "I": "abyssia:iron_plate"}),
     "submarine_upgrade_high_capacity_battery": (["CUC", "RER", "CGC"], {"C": "abyssia:conductive_alloy_ingot", "U": "minecraft:copper_block",
                                                                         "R": "minecraft:redstone", "E": "abyssia:abyssal_energy_cell",
-                                                                        "G": "minecraft:gold_block"}),
+                                                                        "G": "minecraft:gold_ingot"}),
     "submarine_upgrade_maneuver_thruster": (["ASA", "IMI", "ARA"], {"A": "abyssia:abyssal_alloy_ingot", "S": "abyssia:propulsion_screw",
-                                                                    "I": "minecraft:iron_block", "M": "abyssia:conductive_component",
+                                                                    "I": "abyssia:iron_plate", "M": "abyssia:conductive_component",
                                                                     "R": "minecraft:redstone"}),
     # SUB06 Depth Hull Mk1..Mk3: each tier is built on the one below
     "submarine_upgrade_depth_mk1": (["AIA", "PIP", "AIA"], {"A": "abyssia:abyssal_alloy_ingot", "I": "abyssia:iron_plate",

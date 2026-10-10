@@ -1,0 +1,106 @@
+{
+  "category": "geological",
+  "tier": "large",
+  "footprint_radius": 32,
+  "max_height": 12,
+  "formation": {
+    "type": "habitat_ruin",
+    "grid": 2,
+    "nodes": [
+      2,
+      3
+    ],
+    "stack": 0.15,
+    "scan_rooms": [
+      0,
+      1
+    ],
+    "stubs": 0.25,
+    "damage": 0.45,
+    "breaches": [
+      1,
+      3
+    ],
+    "sink": [
+      0,
+      1
+    ],
+    "crates": [
+      1,
+      2
+    ],
+    "decay": [
+      {
+        "data": {
+          "Name": "abyssia:industrial_panel"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:metal_grating",
+          "Properties": {
+            "waterlogged": "true"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "debris": [
+      {
+        "data": {
+          "Name": "abyssia:industrial_panel"
+        },
+        "weight": 2
+      },
+      {
+        "data": {
+          "Name": "abyssia:metal_grating",
+          "Properties": {
+            "waterlogged": "true"
+          }
+        },
+        "weight": 1
+      },
+      {
+        "data": {
+          "Name": "abyssia:industrial_beam",
+          "Properties": {
+            "waterlogged": "true"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "silt": [
+      {
+        "data": {
+          "Name": "abyssia:deep_sediment"
+        },
+        "weight": 3
+      },
+      {
+        "data": {
+          "Name": "abyssia:abyssal_mud"
+        },
+        "weight": 1
+      }
+    ],
+    "crate": [
+      {
+        "data": {
+          "Name": "minecraft:barrel",
+          "Properties": {
+            "facing": "up"
+          }
+        },
+        "weight": 1
+      }
+    ],
+    "loot": "abyssia:chests/habitat_ruin"
+  },
+  "conditions": {
+    "max_slope": 0.5,
+    "max_y": -140
+  }
+}

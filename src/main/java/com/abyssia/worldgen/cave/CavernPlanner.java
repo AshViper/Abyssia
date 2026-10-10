@@ -48,7 +48,7 @@ final class CavernPlanner
         CavernTemplate template = b.net.cavernTemplate(id);
         if (template == null) return;
         double r = c.radius();
-        Cavern.Tier tier = r < 24 ? Cavern.Tier.SMALL : r < 40 ? Cavern.Tier.LARGE : s.type == CaveType.MEGA_CAVERN ? Cavern.Tier.MEGA : Cavern.Tier.MASSIVE;
+        Cavern.Tier tier = r < 24 ? Cavern.Tier.SMALL : r < 40 ? Cavern.Tier.LARGE : s.type.size == CaveType.Size.MEGA ? Cavern.Tier.MEGA : Cavern.Tier.MASSIVE;
         double floor0 = c.floorAt(c.x(), c.z()), ceiling0 = c.ceilingAt(c.x(), c.z());
         if (Double.isNaN(floor0) || Double.isNaN(ceiling0)) return;
         double tierScale = tier == Cavern.Tier.SMALL ? 0.7 : tier == Cavern.Tier.LARGE ? 1.0 : tier == Cavern.Tier.MASSIVE ? 1.3 : 1.5;

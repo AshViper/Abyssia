@@ -8,7 +8,10 @@ import com.abyssia.worldgen.DeepLayer;
 import com.abyssia.worldgen.cave.CaveEnvironment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.AmethystClusterBlock;
@@ -19,6 +22,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.RandomSupport;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.levelgen.synth.SimplexNoise;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 /**
  * What a {@link Formation} draws through: one structure instance clipped to one chunk and to the structure's
@@ -202,6 +206,19 @@ public final class Painter
         if (!writable(x, y, z)) return;
         BlockState current = get(x, y, z);
         if (open(current) || loose(current)) level.setBlock(pos, state, 2);
+    }
+
+    /**
+     * A loot container (barrel, chest) placed like {@link #place}, then given its loot table the way vanilla's
+     * StructurePiece.createChest does, which also works while the chunk is still a ProtoChunk. A null table leaves it empty.
+     */
+    public void container(int x, int y, int z, BlockState state, ResourceKey<LootTable> table, long seed)
+    {
+        if (!writable(x, y, z)) return;
+        BlockState current = get(x, y, z);
+        if (!(open(current) || loose(current))) return;
+        level.setBlock(pos, state, 2);
+        if (table != null) RandomizableContainer.setBlockEntityLootTable(level, RandomSource.create(seed), pos, table);
     }
 
     /** Only into open water or soft blocks: mounds and aprons settle on whatever is there. */

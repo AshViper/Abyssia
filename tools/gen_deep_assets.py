@@ -684,6 +684,8 @@ ITEMS = {
     "sulfur": lambda: powder("sulfur", MINERAL["sulfur"][1:4]),
     "thermal_crystal_shard": lambda: shards_item("thermal_crystal_shard", MINERAL["thermal"]),
     "abyssal_crystal_shard": lambda: shards_item("abyssal_crystal_shard", MINERAL["abyssal"]),
+    "deep_crystal_shard": lambda: shards_item("deep_crystal_shard", MINERAL["deep_crystal"]),
+    "pressure_crystal_shard": lambda: shards_item("pressure_crystal_shard", MINERAL["pressure"]),
     # Locked art (grey-brown recolour of deep_pigment); kept in texture_locks so regeneration cannot change it.
     "crust_powder": lambda: Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "texture_locks", "assets",
                                                     "textures", "item", "crust_powder.png")).convert("RGBA"),
@@ -911,6 +913,8 @@ ITEM_NAMES = {
     "cobalt_ingot": ("Cobalt Ingot", "コバルトインゴット"), "nickel_ingot": ("Nickel Ingot", "ニッケルインゴット"),
     "sulfur": ("Sulfur", "硫黄"), "thermal_crystal_shard": ("Thermal Crystal Shard", "熱結晶の欠片"),
     "abyssal_crystal_shard": ("Abyssal Crystal Shard", "深淵結晶の欠片"),
+    "deep_crystal_shard": ("Deep Crystal Shard", "深海結晶の欠片"),
+    "pressure_crystal_shard": ("Pressure Crystal Shard", "水圧結晶の欠片"),
     "crust_powder": ("Crust Powder", "クラスト粉末"),
 }
 ITEM_NAMES.update({_id: (_en, _ja) for _id, _en, _ja in FAUNA_DROP_ITEMS})
@@ -1215,6 +1219,8 @@ ORE_DROPS = {
     "nickel_cluster": ("abyssia:raw_nickel", 1, 1, "ore_drops"),
     "sulfur_cluster": ("abyssia:sulfur", 1, 3, "ore_drops"),
     "abyssal_crystal_cluster": ("abyssia:abyssal_crystal_shard", 2, 4, "ore_drops"),
+    "deep_crystal_cluster": ("abyssia:deep_crystal_shard", 2, 4, "ore_drops"),
+    "pressure_crystal_cluster": ("abyssia:pressure_crystal_shard", 2, 4, "ore_drops"),
     "thermal_crystal_cluster": ("abyssia:thermal_crystal_shard", 2, 4, "ore_drops"),
 }
 ORE_DROPS.update({m + "_ore": ("abyssia:raw_" + m, 1, 1, "ore_drops") for m in RARE_METALS})

@@ -1,7 +1,7 @@
 """GUI textures of the industrial blocks (features I01, I02), drawn procedurally with Pillow.
 
 Writes src/main/resources/assets/abyssia/textures/gui/industrial_<layout>.png (256x256): a deep-sea base console
-176x166 panel (ChatGPT design: inbox/specs/I01-gui-spec.md) with slot frames, the player inventory, an empty progress arrow / flame and the energy bar frame, plus
+176x166 panel (ui_kit.py frame, from the UI01 design tiles) with slot frames, the player inventory, an empty progress arrow / flame and the energy bar frame, plus
 the "full" sprites at x=176: flame 14x14 at y=0, progress arrow 24x17 at y=14, energy bar fill 12x52 at y=31.
 
 The numbers must match com.abyssia.industry.GuiLayout.  Run:  python tools/industrial_gui.py
@@ -10,6 +10,8 @@ import math
 import os
 
 from PIL import Image
+
+import ui_kit as k
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "src", "main", "resources", "assets", "abyssia", "textures", "gui")
@@ -32,129 +34,61 @@ LAYOUTS = {
     "excavator": dict(inputs=[], output=(116, 53), arrow=(80, 34), flame=None),
 }
 
-# palette: ChatGPT GUI design (inbox/specs/I01-gui-spec.md, mockup inbox/designs/I01-gui-mockup.png)
+# palette: ui_kit (UI01).  Functional colours (amber, flame) stay.
 def _c(h):
     return int(h[1:3], 16), int(h[3:5], 16), int(h[5:7], 16), 255
 
 
-PANEL = _c("#1b2229")
-PANEL_NOISE = _c("#232a33")
-FRAME = _c("#343e4a")
-BEVEL_LIGHT = _c("#6c7c8a")
-BEVEL_DARK = _c("#14181e")
-DEEP = _c("#0d1115")
-PLATE = _c("#232a33")
-RIVET = _c("#6c7c8a")
-GLOW_DARK = _c("#1d6670")
-CYAN = _c("#3ee6f0")
-CYAN_LIGHT = _c("#b8f8ff")
+AREA = k.ABYSS
+DECOR = k.NAVY
+EMPTY = k.NAVY_MID
+CYAN = k.CYAN
+CYAN_LIGHT = k.CYAN_PALE
+GLOW_DARK = k.CYAN_DEEP
 AMBER_DARK = _c("#6b4315")
 AMBER = _c("#e8a020")
 AMBER_LIGHT = _c("#ffb83d")
-AREA = _c("#232a33")
-DECOR = _c("#343e4a")
-DECOR_PIPE = _c("#2b353f")
-DECOR_LIGHT = _c("#4a5866")
-SLOT_BG = _c("#14181e")
-SLOT_LIGHT = _c("#6c7c8a")
-SLOT_DARK = _c("#232a33")
-SLOT_SHADOW = _c("#0f1419")
-OUTPUT_EDGE = _c("#9aa8b4")
-EMPTY = _c("#343e4a")
-TICK = _c("#4a5866")
 FLAME_EDGE = _c("#8a4a12")
 FLAME_ORANGE = _c("#ff7a1a")
 FLAME_LIGHT = _c("#e8a020")
 FLAME_CORE = _c("#fff0b0")
 
-TITLE_BAR = (5, 3, W - 6, 15)
-AREA_BOX = (5, 17, W - 6, 69)
-DIVIDER = (5, 70, W - 6, 81)
+TITLE_BAR = (7, 6, W - 8, 15)
+AREA_BOX = (7, 16, W - 8, 69)
+DIVIDER = (7, 70, W - 8, 81)
+
+rect, bevel = k.rect, k.bevel
+slot, big_slot, rare_slot = k.slot, k.big_slot, k.rare_slot
 
 
-def rect(img, x0, y0, x1, y1, color):
-    """Filled rectangle, inclusive corners."""
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            img.putpixel((x, y), color)
-
-
-def bevel(img, x0, y0, x1, y1, top_left, bottom_right):
-    rect(img, x0, y0, x1, y0, top_left)
-    rect(img, x0, y0, x0, y1, top_left)
-    rect(img, x0 + 1, y1, x1, y1, bottom_right)
-    rect(img, x1, y0 + 1, x1, y1, bottom_right)
-
-
-def recess(img, box, fill):
-    """Sunken area: dark top/left, frame-coloured bottom/right."""
+def title_bar(img, box, lights=True, light_x=None):
+    """Title strip: sunken, cyan gem left, optional amber status lights right."""
     x0, y0, x1, y1 = box
-    rect(img, x0, y0, x1, y1, fill)
-    bevel(img, x0, y0, x1, y1, BEVEL_DARK, FRAME)
-
-
-def rivet_plate(img, x, y):
-    rect(img, x, y, x + 7, y + 7, PLATE)
-    bevel(img, x, y, x + 7, y + 7, FRAME, BEVEL_DARK)
-    rect(img, x + 3, y + 3, x + 4, y + 4, RIVET)
-    img.putpixel((x + 5, y + 5), BEVEL_DARK)
-
-
-def glow_strip(img, x, y0, y1):
-    """2px light strip set into the side frame."""
-    rect(img, x, y0, x + 1, y1, GLOW_DARK)
-    rect(img, x, y0 + 1, x, y1 - 1, CYAN)
-    img.putpixel((x, y0 + 2), CYAN_LIGHT)
-
-
-def indicator(img, x, y):
-    rect(img, x, y, x + 1, y + 2, AMBER_DARK)
-    img.putpixel((x, y + 1), AMBER)
-    img.putpixel((x + 1, y + 1), AMBER_LIGHT)
+    k.inset(img, box, k.ABYSS)
+    k.gem(img, x0 + 2, y0 + 2, k.CYAN)
+    if lights:
+        lx = light_x if light_x is not None else x1 - 10
+        for i in range(3):
+            rect(img, lx + i * 3, y0 + 1, lx + 1 + i * 3, y1 - 1, AMBER_DARK)
+            rect(img, lx + i * 3, y0 + 2, lx + 1 + i * 3, y1 - 2, AMBER)
 
 
 def panel(img, title_lights=True):
-    rect(img, 0, 0, W - 1, H - 1, PANEL)
-    for y in range(H):  # sparse 1px noise, deterministic
-        for x in range(W):
-            if (x * 7 + y * 13 + (x * y) % 5) % 23 == 0:
-                img.putpixel((x, y), PANEL_NOISE)
-    # outer frame: dark rim, light/dark bevel, frame body
-    bevel(img, 0, 0, W - 1, H - 1, BEVEL_DARK, BEVEL_DARK)
-    bevel(img, 1, 1, W - 2, H - 2, BEVEL_LIGHT, BEVEL_DARK)
-    bevel(img, 2, 2, W - 3, H - 3, FRAME, FRAME)
-    for x in (1, W - 3):
-        glow_strip(img, x, 26, 42)
-        glow_strip(img, x, 112, 128)
-        indicator(img, x, 18)
-        indicator(img, x, 146)
-    # title bar with a cyan lamp and amber status lights
-    x0, y0, x1, y1 = TITLE_BAR
-    recess(img, TITLE_BAR, BEVEL_DARK)
-    rect(img, x0 + 1, y1, x1, y1, DEEP)
-    rect(img, 8, 6, 13, 11, GLOW_DARK)
-    rect(img, 9, 7, 12, 10, CYAN)
-    rect(img, 10, 8, 11, 9, CYAN_LIGHT)
-    for i in range(3 if title_lights else 0):  # off where the English title is long enough to reach them
-        rect(img, 158 + i * 3, 7, 159 + i * 3, 11, AMBER_DARK)
-        rect(img, 158 + i * 3, 8, 159 + i * 3, 10, AMBER)
+    k.frame(img, 0, 0, W - 1, H - 1)
+    title_bar(img, TITLE_BAR, title_lights, 158)
     # machine area with a faint vertical pipe on the right (kept clear of the status text)
-    recess(img, AREA_BOX, AREA)
+    k.inset(img, AREA_BOX, AREA)
     ax0, ay0, ax1, ay1 = AREA_BOX
-    rect(img, ax1 - 9, ay0 + 3, ax1 - 7, ay1 - 3, DECOR_PIPE)
+    rect(img, ax1 - 9, ay0 + 3, ax1 - 7, ay1 - 3, DECOR)
     for y in range(ay0 + 6, ay1 - 3, 14):
-        rect(img, ax1 - 10, y, ax1 - 6, y + 1, DECOR)
+        rect(img, ax1 - 10, y, ax1 - 6, y + 1, k.NAVY_MID)
     # divider / inventory header
     x0, y0, x1, y1 = DIVIDER
-    rect(img, x0, y0, x1, y1, BEVEL_DARK)
-    rect(img, x0, y0, x1, y0, DECOR_LIGHT)
-    rect(img, x0, y1, x1, y1, DECOR_LIGHT)
+    k.inset(img, DIVIDER, k.ABYSS)
     for x in range(64, 156, 2):
-        img.putpixel((x, 76), DECOR)
+        img.putpixel((x, 76), k.NAVY_MID)
     rect(img, 159, 75, 164, 76, CYAN)
     img.putpixel((161, 75), CYAN_LIGHT)
-    for x, y in ((0, 0), (W - 8, 0), (0, H - 8), (W - 8, H - 8), (0, 72), (W - 8, 72)):
-        rivet_plate(img, x, y)
 
 
 def gear(img, cx, cy, r):
@@ -165,36 +99,7 @@ def gear(img, cx, cy, r):
             a = math.atan2(y - cy, x - cx)
             tooth = math.cos(a * 8) > 0.35 and r <= d <= r + 2
             if r - 3 <= d <= r or tooth or d <= 2:
-                img.putpixel((x, y), DECOR_PIPE)  # darker than the empty arrow drawn over it
-
-
-def slot(img, x, y):
-    """18x18 frame around an item at (x, y)."""
-    rect(img, x - 1, y - 1, x + 16, y + 16, SLOT_BG)
-    bevel(img, x - 1, y - 1, x + 16, y + 16, SLOT_DARK, SLOT_LIGHT)
-    rect(img, x, y, x + 15, y, SLOT_SHADOW)
-    rect(img, x, y, x, y + 15, SLOT_SHADOW)
-
-
-def big_slot(img, x, y):
-    """26x26 output frame around an item at (x, y)."""
-    rect(img, x - 5, y - 5, x + 20, y + 20, SLOT_BG)
-    bevel(img, x - 5, y - 5, x + 20, y + 20, OUTPUT_EDGE, OUTPUT_EDGE)
-    bevel(img, x - 4, y - 4, x + 19, y + 19, SLOT_DARK, SLOT_LIGHT)
-    rect(img, x - 3, y - 3, x + 18, y - 3, SLOT_SHADOW)
-    rect(img, x - 3, y - 3, x - 3, y + 18, SLOT_SHADOW)
-    for cx, cy in ((x - 5, y - 5), (x + 20, y - 5), (x - 5, y + 20), (x + 20, y + 20)):
-        img.putpixel((cx, cy), GLOW_DARK)
-
-
-def rare_slot(img, x, y):
-    """18x18 rare output frame: a normal slot with the output edge and glowing corners."""
-    slot(img, x, y)
-    bevel(img, x - 1, y - 1, x + 16, y + 16, OUTPUT_EDGE, OUTPUT_EDGE)
-    rect(img, x, y, x + 15, y, SLOT_SHADOW)
-    rect(img, x, y, x, y + 15, SLOT_SHADOW)
-    for cx, cy in ((x - 1, y - 1), (x + 16, y - 1), (x - 1, y + 16), (x + 16, y + 16)):
-        img.putpixel((cx, cy), GLOW_DARK)
+                img.putpixel((x, y), DECOR)  # darker than the empty arrow drawn over it
 
 
 def droplet(img, x, y):
@@ -205,8 +110,8 @@ def droplet(img, x, y):
             inside = math.hypot(px - cx, py - cy) <= 3.2 or (py <= cy and abs(px - cx) <= (py - y) * 0.5)
             if inside:
                 img.putpixel((px, py), EMPTY)
-    img.putpixel((cx - 1, cy), DECOR_LIGHT)
-    img.putpixel((cx - 1, cy + 1), DECOR_LIGHT)
+    img.putpixel((cx - 1, cy), k.BLUE)
+    img.putpixel((cx - 1, cy + 1), k.BLUE)
 
 
 def branch(img, output, rares):
@@ -242,15 +147,8 @@ def flame_pixels():
     return out
 
 
-def energy_frame(img):
-    x0, y0 = ENERGY_X - 1, ENERGY_Y - 1
-    x1, y1 = ENERGY_X + ENERGY_W, ENERGY_Y + ENERGY_H
-    rect(img, x0, y0, x1, y1, BEVEL_LIGHT)          # tube frame
-    rect(img, ENERGY_X, ENERGY_Y, x1 - 1, y1 - 1, SLOT_BG)
-    rect(img, x0 + 1, y0, x1 - 1, y0, OUTPUT_EDGE)  # top cap highlight
-    for y in range(ENERGY_Y + 5, ENERGY_Y + ENERGY_H, 6):
-        rect(img, ENERGY_X, y, ENERGY_X + 1, y, TICK)
-        rect(img, x1 - 2, y, x1 - 1, y, TICK)
+def energy_frame(img, x=ENERGY_X, y=ENERGY_Y, w=ENERGY_W, h=ENERGY_H):
+    k.gauge_frame(img, x, y, w, h)
 
 
 def sprites(img):

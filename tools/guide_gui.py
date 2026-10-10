@@ -9,7 +9,7 @@ Writes (under src/main/resources/assets/abyssia/textures/):
                                       waypoints encyclopedia
   gui/guide/pages/abyss.png  96x64    sample illustration (any size works; it is scaled to fit)
   item/abyss_guide_book.png  16x16    item icon
-Run:  python tools/guide_gui.py
+Run:  python tools/guide_gui.py [--only buttons|book_bg|icons|pages|item]   (buttons: UI01, drawn with ui_kit.py)
 """
 import os
 import random
@@ -53,30 +53,31 @@ def book_bg():
     save(img, GUI, "book_bg.png")
 
 
-def glyph(d, row, ox, oy, col):
-    if row == 0:
-        for i in range(3):
-            d.line([ox + 6, oy + 4 + i * 3, ox + 13, oy + 4 + i * 3], fill=col)
-    elif row == 1:
-        d.line([ox + 11, oy + 3, ox + 7, oy + 7], fill=col)
-        d.line([ox + 7, oy + 7, ox + 11, oy + 10], fill=col)
-    elif row == 2:
-        d.line([ox + 8, oy + 3, ox + 12, oy + 7], fill=col)
-        d.line([ox + 12, oy + 7, ox + 8, oy + 10], fill=col)
-    else:
-        d.line([ox + 7, oy + 4, ox + 12, oy + 9], fill=col)
-        d.line([ox + 12, oy + 4, ox + 7, oy + 9], fill=col)
+GLYPHS = {  # 5x5 pixel glyphs: contents, previous, next, close
+    0: ["#####", ".....", "#####", ".....", "#####"],
+    1: ["...#.", "..#..", ".#...", "..#..", "...#."],
+    2: [".#...", "..#..", "...#.", "..#..", ".#..."],
+    3: ["#...#", ".#.#.", "..#..", ".#.#.", "#...#"],
+}
+
+
+def glyph(img, row, ox, oy, col):
+    for j, line in enumerate(GLYPHS[row]):
+        for i, ch in enumerate(line):
+            if ch == "#":
+                img.putpixel((ox + 7 + i, oy + 4 + j), col)
 
 
 def buttons():
+    """UI01: sheet drawn from the ui_kit button tiles (nine-sliced), glyph colours per state."""
+    import ui_kit as k
     img = Image.new("RGBA", (60, 56), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img)
-    fills = [((16, 40, 64, 255), CYAN), ((26, 64, 98, 255), (200, 245, 255, 255)), ((14, 24, 34, 255), (70, 90, 100, 255))]
+    states = [("normal", k.CYAN_GLOW), ("hover", k.HIGHLIGHT), ("disabled", k.STEEL_DARK)]
     for row in range(4):
-        for st, (fill, col) in enumerate(fills):
+        for st, (state, col) in enumerate(states):
             ox, oy = st * 20, row * 14
-            d.rectangle([ox, oy, ox + 19, oy + 13], fill=fill, outline=FRAME_HI if st != 2 else FRAME)
-            glyph(d, row, ox, oy, col)
+            img.paste(k.button(20, 14, state, border=6), (ox, oy))
+            glyph(img, row, ox, oy, col)
     save(img, GUI, "buttons.png")
 
 
@@ -118,4 +119,9 @@ def item():
 
 
 if __name__ == "__main__":
-    book_bg(); buttons(); icons(); sample_page(); item()
+    import sys
+    only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
+    if only:  # --only buttons : regenerate just that target
+        {"buttons": buttons, "book_bg": book_bg, "icons": icons, "pages": sample_page, "item": item}[only]()
+    else:
+        book_bg(); buttons(); icons(); sample_page(); item()

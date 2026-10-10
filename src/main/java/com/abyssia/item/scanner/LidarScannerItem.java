@@ -1,8 +1,10 @@
 package com.abyssia.item.scanner;
 
+import com.abyssia.Config;
 import com.abyssia.research.scan.PlayerScanState;
 import com.abyssia.worldgen.deposit.OreDeposit;
 import com.abyssia.worldgen.deposit.OreDepositManager;
+import com.abyssia.worldgen.structure.SeabedStructures;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -124,11 +126,35 @@ public class LidarScannerItem extends Item
         if (target == null)
         {
             player.sendSystemMessage(Component.translatable(MSG + "none").withStyle(ChatFormatting.GRAY));
-            return;
         }
-        Component line = Component.translatable(MSG + "target", entry(target, here, pos)).withStyle(ChatFormatting.GREEN);
-        player.sendSystemMessage(line);
-        player.displayClientMessage(line, true);
+        else
+        {
+            Component line = Component.translatable(MSG + "target", entry(target, here, pos)).withStyle(ChatFormatting.GREEN);
+            player.sendSystemMessage(line);
+            player.displayClientMessage(line, true);
+        }
+        Component wreck = nearestWreck(level, here, pos);
+        if (wreck != null) player.sendSystemMessage(wreck);
+    }
+
+    /** Line about the nearest placed wreck within {@link #RADIUS} (null: none, structures off or not an ocean level). */
+    @Nullable
+    private static Component nearestWreck(ServerLevel level, Vec3 here, BlockPos pos)
+    {
+        if (!Config.STRUCTURES_ENABLED.get()) return null;
+        SeabedStructures structures = SeabedStructures.of(level);
+        if (structures == null) return null;
+        SeabedStructures.Candidate best = null;
+        double bestDist = Double.MAX_VALUE;
+        for (SeabedStructures.Candidate c : structures.explain(pos.getX() - RADIUS, pos.getZ() - RADIUS, pos.getX() + RADIUS, pos.getZ() + RADIUS))
+        {
+            if (!c.placed() || c.site() == null || !c.slot().id().getPath().equals("wreck")) continue;
+            double d = Math.hypot(c.x() + 0.5 - here.x, c.z() + 0.5 - here.z);
+            if (d <= RADIUS && d < bestDist) { best = c; bestDist = d; }
+        }
+        if (best == null) return null;
+        BlockPos at = new BlockPos(best.x(), best.site().baseY, best.z());
+        return Component.translatable(MSG + "wreck", bearing(here, at), Math.round(bestDist), signed(at.getY() - pos.getY())).withStyle(ChatFormatting.AQUA);
     }
 
     /** The deposit whose region contains the first solid block along the look vector (null: looking at nothing of one). */

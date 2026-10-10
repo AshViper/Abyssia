@@ -115,6 +115,9 @@ MINERALS: dict[str, Mineral] = {
     "thermal": Mineral(("#2c0e09", "#6a2211", "#a24319", "#cf6c29", "#ecaa5a"), glow="#ffc878"),
     "abyssal": Mineral(("#1e1439", "#3a2a68", "#5f4698", "#886cc4", "#c0a8e8"), glow="#dcc8ff"),
     "deep": Mineral(("#0a202d", "#124654", "#1c6d7c", "#3b9cab", "#88cdd6"), glow="#bff4f8"),
+    # shard items: ramps taken from the block cluster pngs
+    "deep_shard": Mineral(("#14274b", "#164267", "#1f708f", "#2c9fb9", "#5ed3de"), glow="#bff4f8"),
+    "pressure_shard": Mineral(("#25195f", "#303687", "#4b5cb5", "#7992e3", "#a4bdee")),
     "pressure": Mineral(("#1b1a2e", "#343151", "#544e75", "#7a749b", "#a7a3c3")),
     "pale": Mineral(("#222935", "#485364", "#728094", "#9eaaba", "#d2dae4")),
     "ice": Mineral(("#172c3b", "#2b566b", "#46839b", "#74b3c8", "#bce3ee")),
@@ -274,6 +277,16 @@ TEXTURES: dict[str, Texture] = {
         (4.0, 12.8, 26.57, 9.6, 4.4, 3.2, 0, -0.7, 0.8), (6.8, 15.4, 26.57, 14.2, 5.4, 4.6, 0, 0.8, -0.8),
         (4.6, 15.8, 45, 7.4, 4.0, 2.8, 0, -0.5, 0.6))),
         seed=53),
+    # deep: slender upright fragments with a glowing core (matches deep_crystal_cluster)
+    "deep_crystal_shard": Texture("crystal", "deep_shard", ShardShape((
+        (5.6, 14.6, 0, 9.4, 3.4, 3.4, 0, 0.6, -0.6), (8.2, 15.6, 0, 14.6, 4.0, 4.6, 0, -0.7, 0.8),
+        (10.8, 15.0, 0, 10.6, 3.4, 3.4, 0, 0.5, -0.6)), core=True),
+        seed=97),
+    # pressure: wide flat blades leaning ~45 degrees, long tapering tips (matches pressure_crystal_cluster)
+    "pressure_crystal_shard": Texture("crystal", "pressure_shard", ShardShape((
+        (3.6, 13.6, 45, 9.0, 4.8, 3.8, 0, -0.5, 0.6), (5.4, 15.8, 45, 15.0, 5.6, 5.6, 0, 0.8, -0.8),
+        (4.0, 15.8, 45, 8.0, 4.2, 3.2, 0, 0.5, -0.6))),
+        seed=101),
     # thermal: thick, stubby fragments leaning left (mirror of abyssal's lean), warm core
     "thermal_crystal_shard": Texture("crystal", "thermal", ShardShape((
         (12.4, 13.4, -26.57, 8.4, 4.6, 3.0, 0, 0.6, -0.8), (10.4, 15.6, -26.57, 12.4, 6.2, 3.8, 0, -0.7, 0.8),

@@ -261,7 +261,7 @@ final class HallFormations
     /** Hall size class for the lighting budgets: 0 large, 1 massive, 2 mega. */
     private static int sizeClass(Site s)
     {
-        if (s.space.type == CaveType.MEGA_CAVERN) return 2;
+        if (s.space.type.size == CaveType.Size.MEGA) return 2;
         return Math.max(s.chamber.rx(), s.chamber.rz()) >= 32 ? 1 : 0;
     }
 

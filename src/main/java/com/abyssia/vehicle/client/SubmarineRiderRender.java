@@ -25,9 +25,9 @@ public final class SubmarineRiderRender
         Player player = event.getEntity();
         if (!(player.getVehicle() instanceof Submarine sub)) return;
         float pt = event.getPartialTick();
-        float pitch = Mth.lerp(pt, sub.xRotO, sub.getXRot());
+        float pitch = SubmarineSteering.pitch(sub, pt);
         if (Math.abs(pitch) < 0.01f) return;
-        float yaw = 180.0f - Mth.rotLerp(pt, sub.yRotO, sub.getYRot());
+        float yaw = 180.0f - SubmarineSteering.yaw(sub, pt);
         var pose = event.getPoseStack();
         pose.pushPose();
         pose.translate(0.0, Submarine.SEAT_ANCHOR, 0.0);
@@ -43,7 +43,7 @@ public final class SubmarineRiderRender
         Player player = event.getEntity();
         if (!(player.getVehicle() instanceof Submarine sub)) return;
         float pt = event.getPartialTick();
-        if (Math.abs(Mth.lerp(pt, sub.xRotO, sub.getXRot())) < 0.01f) return;
+        if (Math.abs(SubmarineSteering.pitch(sub, pt)) < 0.01f) return;
         event.getPoseStack().popPose();
     }
 }

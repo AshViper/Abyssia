@@ -1,6 +1,7 @@
 package com.abyssia.vehicle.client;
 
 import com.abyssia.Abyssia;
+import com.abyssia.client.gui.UiTheme;
 import com.abyssia.vehicle.Submarine;
 import com.abyssia.vehicle.SubmarineUpgradeMenu;
 import com.abyssia.vehicle.SubmarineUpgrades;
@@ -17,13 +18,13 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * SUB03 "Submarine Systems" screen on the vanilla chest background (generic_54: header, a text strip, one slot row
- * with only the 4 upgrade frames, the player inventory). Energy / hull come from the synced entity. Empty slots tell
+ * SUB03 "Submarine Systems" screen on the deep-sea themed background (textures/gui/submarine_upgrade.png: title bar,
+ * a text strip, one slot row with the upgrade frames, the player inventory). Energy / hull come from the synced entity. Empty slots tell
  * what they take; the battery slot warns when taking it out would lose charge.
  */
 public class SubmarineUpgradeScreen extends AbstractContainerScreen<SubmarineUpgradeMenu>
 {
-    private static final ResourceLocation CHEST = ResourceLocation.withDefaultNamespace("textures/gui/container/generic_54.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "textures/gui/submarine_upgrade.png");
     private static final String[] SLOT_KEYS = {"hull", "battery", "thruster", "utility", "depth"};
 
     public SubmarineUpgradeScreen(SubmarineUpgradeMenu menu, Inventory inventory, Component title)
@@ -59,25 +60,19 @@ public class SubmarineUpgradeScreen extends AbstractContainerScreen<SubmarineUpg
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY)
     {
-        int x = leftPos, y = topPos;
-        g.blit(CHEST, x, y, 0, 0, imageWidth, 17);                 // header
-        g.blit(CHEST, x, y + 17, 0, 5, imageWidth, 12);            // text strip (plain header rows)
-        g.blit(CHEST, x, y + 29, 0, 5, imageWidth, 12);            // slot row backdrop
-        g.blit(CHEST, x, y + 41, 0, 5, imageWidth, 6);
-        for (int i = 0; i < SubmarineUpgrades.SLOTS; i++)
-            g.blit(CHEST, x + SubmarineUpgradeMenu.SLOT_X - 1 + i * 18, y + SubmarineUpgradeMenu.SLOT_Y - 1, 7, 17, 18, 18);
-        g.blit(CHEST, x, y + 47, 0, 126, imageWidth, 96);          // player inventory
+        g.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 176, 143);
     }
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY)
     {
-        super.renderLabels(g, mouseX, mouseY);
+        g.drawString(font, title, titleLabelX, titleLabelY, UiTheme.TEXT, false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, UiTheme.TEXT, false);
         Submarine sub = menu.submarine();
         if (sub == null) return;
         NumberFormat nf = NumberFormat.getIntegerInstance(Locale.US);
         Component info = Component.translatable("container." + Abyssia.MODID + ".submarine.upgrades.status",
                 nf.format(sub.getEnergy()), nf.format(sub.maxEnergy()), sub.hullPercent());
-        g.drawString(font, info, 8, 18, 0x404040, false);
+        g.drawString(font, info, 8, 18, UiTheme.TEXT_PALE, false);
     }
 }

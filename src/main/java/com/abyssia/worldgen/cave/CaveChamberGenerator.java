@@ -181,7 +181,7 @@ final class CaveChamberGenerator
     /** Cave types whose main chamber becomes a hall (radius 16+; landmarks keep their own designs). */
     static boolean hallType(CaveType type)
     {
-        return type == CaveType.LARGE_ABYSSAL_CAVE || type == CaveType.MASSIVE_CAVERN || type == CaveType.MEGA_CAVERN;
+        return type == CaveType.LARGE_ABYSSAL_CAVE || type == CaveType.MASSIVE_CAVERN || type.size == CaveType.Size.MEGA;
     }
 
     /** Vault apex above the reference level for a hall of radius r: 26 at r 16, 44 at 32, 70 at 64, 115 at 128. */

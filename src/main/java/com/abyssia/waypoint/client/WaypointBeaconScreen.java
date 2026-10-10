@@ -1,5 +1,7 @@
 package com.abyssia.waypoint.client;
 
+import com.abyssia.client.gui.UiTheme;
+
 import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.registry.ModIndustry;
 import com.abyssia.waypoint.WaypointColors;
@@ -27,7 +29,7 @@ public class WaypointBeaconScreen extends Screen
     private static final int SWATCH_STEP = 20;
     private static final int SWATCH_X = 9;
     private static final int SWATCH_Y = 70;
-    private static final int TEXT = 0x404040;
+    private static final int TEXT = UiTheme.TEXT;
 
     private final BlockPos pos;
     private final String initialName;
@@ -112,10 +114,10 @@ public class WaypointBeaconScreen extends Screen
     {
         super.renderBackground(g, mx, my, partialTick);
         // vanilla-style panel: black outline, white top-left highlight, dark bottom-right shadow
-        g.fill(left, top, left + W, top + H, 0xFF000000);
-        g.fill(left + 1, top + 1, left + W - 1, top + H - 1, 0xFFFFFFFF);
-        g.fill(left + 2, top + 2, left + W - 1, top + H - 1, 0xFF555555);
-        g.fill(left + 2, top + 2, left + W - 2, top + H - 2, 0xFFC6C6C6);
+        g.fill(left, top, left + W, top + H, UiTheme.BORDER_DARK);
+        g.fill(left + 1, top + 1, left + W - 1, top + H - 1, UiTheme.BORDER_LIGHT);
+        g.fill(left + 2, top + 2, left + W - 1, top + H - 1, UiTheme.BORDER);
+        g.fill(left + 2, top + 2, left + W - 2, top + H - 2, UiTheme.PANEL_SOLID);
 
         g.pose().pushPose();
         g.pose().translate(left + 8, top + 8, 0);
@@ -132,12 +134,12 @@ public class WaypointBeaconScreen extends Screen
         {
             int x = left + SWATCH_X + (i % 8) * SWATCH_STEP;
             int y = top + SWATCH_Y + (i / 8) * SWATCH_STEP;
-            int frame = i == color ? 0xFFFFFFFF : i == hovered ? 0xFFA0A0A0 : 0xFF373737;
+            int frame = i == color ? UiTheme.TEXT : i == hovered ? UiTheme.BORDER_LIGHT : UiTheme.BORDER_DARK;
             g.fill(x - 1, y - 1, x + SWATCH + 1, y + SWATCH + 1, frame);
             // selected: 3px white frame (1 outside + 2 inside) with a black ring before the colour
             if (i == color)
             {
-                g.fill(x, y, x + SWATCH, y + SWATCH, 0xFFFFFFFF);
+                g.fill(x, y, x + SWATCH, y + SWATCH, UiTheme.TEXT);
                 g.fill(x + 2, y + 2, x + SWATCH - 2, y + SWATCH - 2, 0xFF000000);
             }
             int inset = i == color ? 3 : 0;

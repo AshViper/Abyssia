@@ -102,6 +102,9 @@ public final class CaveCommand
                                                                 .executes(ctx -> render(ctx, () -> CaveDebugRender.section(ctx.getSource().getLevel(), origin(ctx),
                                                                         StringArgumentType.getString(ctx, "axis").equals("x"), IntegerArgumentType.getInteger(ctx, "radius"),
                                                                         IntegerArgumentType.getInteger(ctx, "y0"), IntegerArgumentType.getInteger(ctx, "y1")))))))))
+                        .then(Commands.literal("cavities")
+                                .then(Commands.argument("radius", IntegerArgumentType.integer(64, 2000))
+                                        .executes(ctx -> cavities(ctx, IntegerArgumentType.getInteger(ctx, "radius")))))
                         .then(Commands.literal("census")
                                 .then(Commands.argument("radius", IntegerArgumentType.integer(1, 128))
                                         .then(Commands.argument("y0", IntegerArgumentType.integer(DeepLayer.MIN_Y, -64))
@@ -150,6 +153,46 @@ public final class CaveCommand
                     + " (" + s.shapes.size() + " shapes): " + s.summary + entrances(s)), false);
         }
         return systems.size();
+    }
+
+    /** Most cavities listed by one {@code caves cavities} call (one line each; RCON cuts long replies). */
+    private static final int CAVITY_LINES = 60;
+
+    /** AB06: every abyss cavity of every crust window within the radius, from the plans (the layout is built, no chunk is generated). */
+    private static int cavities(CommandContext<CommandSourceStack> ctx, int radius)
+    {
+        CaveNetwork network = network(ctx);
+        if (network == null) return 0;
+        BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
+        List<String> lines = new ArrayList<>();
+        for (CaveNetwork net : network.windows())
+        {
+            for (AbyssCavity.Site site : AbyssCavity.near(net, pos.getX(), pos.getZ(), radius))
+            {
+                CaveSystem system = net.system(site.cellX(), site.cellZ());
+                ResourceKey<Biome> biome = net.biomeAt(Mth.floor(site.x()), Mth.floor(site.y() + site.height() * 0.5), Mth.floor(site.z()));
+                String route = "no route";
+                String[] parts = system.summary.split(" > ");
+                for (int i = 0; i < parts.length; i++)
+                {
+                    if (parts[i].equals("descent route") || parts[i].startsWith("vertical link"))
+                    {
+                        route = parts[i] + (parts[i].equals("descent route") && i + 1 < parts.length ? " > " + parts[i + 1] : "");
+                        break;
+                    }
+                }
+                lines.add("[" + net.label() + "] " + Mth.floor(site.x()) + " " + Mth.floor(site.y()) + " " + Mth.floor(site.z()) + " r" + Mth.floor(site.radius())
+                        + " h" + Mth.floor(site.height()) + " " + (biome != null ? biome.location().getPath() : "?") + "/" + site.environment().getPath() + ": " + route);
+            }
+        }
+        ctx.getSource().sendSuccess(() -> Component.literal(lines.size() + " abyss cavit" + (lines.size() == 1 ? "y" : "ies") + " within " + radius + " blocks"
+                + (lines.size() > CAVITY_LINES ? " (first " + CAVITY_LINES + " shown)" : "")), false);
+        for (int i = 0; i < Math.min(lines.size(), CAVITY_LINES); i++)
+        {
+            String line = lines.get(i);
+            ctx.getSource().sendSuccess(() -> Component.literal(line), false);
+        }
+        return lines.size();
     }
 
     /** "[C] biome abyssia:abyss_toxic, environment abyssia:toxic: " for a system: its window (or shallow), the biome at its hub and its main chamber's environment. */
@@ -277,7 +320,7 @@ public final class CaveCommand
         BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
         int cell = network.cellSize();
         // Mega caverns exist only in the crust windows: skip the long shallow search.
-        int shallowRings = type == CaveType.MEGA_CAVERN ? -1 : LOCATE_RADIUS_CELLS;
+        int shallowRings = type != null && type.size == CaveType.Size.MEGA ? -1 : LOCATE_RADIUS_CELLS;
         if (type == CaveType.SEA_ARCH || type == CaveType.SMALL_SEA_CAVE || type == CaveType.ERODED_CAVE)
         {
             if (locateMinor(ctx, network, pos, type, target)) return 1;
@@ -601,7 +644,7 @@ public final class CaveCommand
             if (rest.equals(size) || rest.endsWith("_" + size))
             {
                 CaveType type = size.equals("large") ? CaveType.LARGE_ABYSSAL_CAVE : size.equals("massive") ? CaveType.MASSIVE_CAVERN : CaveType.MEGA_CAVERN;
-                if (p.type() != type) return false;
+                if (size.equals("mega") ? p.type().size != CaveType.Size.MEGA : p.type() != type) return false;
                 rest = rest.equals(size) ? "" : rest.substring(0, rest.length() - size.length() - 1);
                 break;
             }

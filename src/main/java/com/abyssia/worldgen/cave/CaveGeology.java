@@ -70,7 +70,7 @@ final class CaveGeology
                     else if (floor && s < 1.6 && !env.floor.isEmpty())
                     {
                         state = heatedFloor(ctx, x, y, z);
-                        if (state == null && space.cavern != null) state = patchFloor(space.cavern.patchAt(x + 0.5, z + 0.5), noises.mottle(x, y, z, 8));
+                        if (state == null && space.cavern != null) state = patchFloor(ctx.patchAt(space.cavern, x - ctx.x0, z - ctx.z0), noises.mottle(x, y, z, 8));
                         if (state == null) state = env.floor.pick(noises.mottle(x, y, z, 2));
                     }
                     else if (ceiling && s < 1.2 && !env.ceiling.isEmpty())
@@ -167,7 +167,9 @@ final class CaveGeology
     private static BlockState stratum(CaveChunk ctx, CaveSpace space, int lx, int y, int lz)
     {
         int x = ctx.x0 + lx, z = ctx.z0 + lz;
-        int depth = ctx.seabed[lz * 16 + lx] - y + (int) Math.round(ctx.noises.strata(x, y, z));
+        // AB06: inside a window the strata count from its top; only the descent route above it counts from the real seabed.
+        int top = ctx.network.isWindow() && y <= ctx.network.maxY() ? ctx.network.maxY() : ctx.seabed[lz * 16 + lx];
+        int depth = top - y + (int) Math.round(ctx.noises.strata(x, y, z));
         BlockState state = space.profile.stratum(Math.max(0, depth));
         return state != null ? state : wallRock(ctx, space, x, y, z);
     }
