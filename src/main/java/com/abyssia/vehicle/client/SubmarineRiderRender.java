@@ -3,7 +3,6 @@ package com.abyssia.vehicle.client;
 import com.abyssia.Abyssia;
 import com.abyssia.vehicle.Submarine;
 import com.mojang.math.Axis;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -28,8 +27,8 @@ public final class SubmarineRiderRender
         LivingEntity rider = event.getEntity();
         if (!(rider.getVehicle() instanceof Submarine sub)) return;
         float t = event.getPartialTick();
-        float pitch = Mth.lerp(t, sub.xRotO, sub.getXRot());
-        float yaw = 180.0f - Mth.rotLerp(t, sub.yRotO, sub.getYRot());
+        float pitch = SubmarineSteering.pitch(sub, t);
+        float yaw = 180.0f - SubmarineSteering.yaw(sub, t);
         var pose = event.getPoseStack();
         pose.pushPose();
         pose.translate(0.0, Submarine.SEAT_ANCHOR, 0.0);

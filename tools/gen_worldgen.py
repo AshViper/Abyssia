@@ -146,7 +146,7 @@ DEEP_GRAD = grad(dy(-128), dy(256), 2.0, -4.0)
 MACRO_SCALE = 2.5    # ocean basins, shelves, mountain chains and trench lines, x the vanilla-sized original
 CLIMATE_SCALE = 2.0  # ocean world temperature belts
 REGION_SCALE = 9.0   # trench_region only (terrain)
-BIOME_REGION_SCALE = 0.9 # deep biome provinces: habitat, volcanic / crystal, water-mass, relic. 2026-10-08 (user: biomes at most ~20 chunks in radius): was 10.5 (patches ~1500 blocks across), 0.4 for a few hours (too small). Measured with tools/biome_patches.py on /abyssia map 4000 16 (8000 blocks square): equal-area patch radius, area-weighted median 5.5 chunks, p99 16, max 17 (two cut by the map edge up to ~19)
+BIOME_REGION_SCALE = 1.2 # deep biome provinces: habitat, volcanic / crystal, water-mass, relic. 2026-10-10 PRG02 (user: biomes a bit bigger): 0.9 -> 1.2; 2026-10-08 (user: biomes at most ~20 chunks in radius): was 10.5 (patches ~1500 blocks across), 0.4 for a few hours (too small). Measured with tools/biome_patches.py on /abyssia map 4000 16 (8000 blocks square): equal-area patch radius, area-weighted median 5.5 chunks, p99 16, max 17 (two cut by the map edge up to ~19)
 DEPTH_BIAS = 0.1     # how strongly the macro seabed depth picks the depth-zone biome (continentalness = DEPTH_BIAS x macro offset + fuzz); lower = zones less tied to the terrain depth (0.4 before 2026-10-08: the shelf biome deep_sea formed 40+ chunk patches)
 ZONE_FUZZ = 1.6      # wobble of the deep depth-zone borders (biome only, not terrain); 0.3 before 2026-10-08, raised so zones break into small patches
 
@@ -689,19 +689,19 @@ RARE_MIN_DEPTH = {"platinum": 5300, "tellurium": 5300, "molybdenum": 3500, "vana
 VEIN_PLACEMENT = {"small": [count(2)], "medium": [rarity(2)], "large": [rarity(5)], "huge": [rarity(14)]}
 VEINS = {
     # biome: [(mineral, size), ...]  -- each biome favours its own minerals and vein sizes
-    "deep_sea": [("iron", "small"), ("manganese", "small"), ("copper", "small")],
-    "abyssal_ocean": [("manganese", "small"), ("manganese", "medium"), ("iron", "medium"), ("nickel", "small")],
-    "abyssal_forest": [("iron", "small"), ("copper", "small")],
-    "deep_forest": [("iron", "small"), ("manganese", "small")],
+    "deep_sea": [("manganese", "small")],
+    "abyssal_ocean": [("manganese", "small"), ("manganese", "medium"), ("nickel", "small")],
+    "deep_forest": [("manganese", "small")],
     "abyssal_trench": [("cobalt", "medium"), ("cobalt", "large"), ("manganese", "medium"), ("nickel", "medium")],
     "hadal_zone": [("cobalt", "huge"), ("nickel", "large"), ("nickel", "huge"), ("manganese", "large"), ("abyssal_crystal", "medium")],
     "volcanic_deep": [("sulfur", "large"), ("sulfur", "huge"), ("cobalt", "large"), ("nickel", "large")],
-    "thermal_vents": [("sulfur", "large"), ("copper", "large"), ("thermal_crystal", "large")],
+    "thermal_vents": [("sulfur", "large"), ("thermal_crystal", "large")],
     "deep_crystal_fields": [("abyssal_crystal", "medium"), ("abyssal_crystal", "large"), ("thermal_crystal", "medium")],
-    "sunken_ruins": [("iron", "small"), ("copper", "medium")],
     "bone_graveyard": [("manganese", "small"), ("nickel", "medium")],
+    "sunken_ruins": [],
+    "glow_gardens": [],
+    "abyssal_forest": [],
     "brine_lakes": [("sulfur", "medium"), ("thermal_crystal", "small")],
-    "glow_gardens": [("iron", "small"), ("copper", "small")],
     "frost_abyss": [("cobalt", "medium"), ("abyssal_crystal", "small")],
 }
 
@@ -733,7 +733,7 @@ for _metal, (_ore, _host, _n, _biomes) in RARE_VEINS.items():
 # in mineral host rock (tools/gen_deep_assets.py VANILLA_MINERALS; they drop the vanilla items),
 # each in the deep biomes that suit it.
 VANILLA_VEINS = {
-    # mineral: (size, rarity 1/n chunks, biomes: informational only, the veins form in every deep biome)
+    
     "diamond": ("small", 3, ["abyssal_trench", "hadal_zone", "deep_crystal_fields", "frost_abyss"]),
     "emerald": ("small", 4, ["deep_crystal_fields", "deep_forest", "abyssal_forest", "glow_gardens"]),
     "lapis": ("medium", 3, ["abyssal_ocean", "deep_crystal_fields", "frost_abyss", "sunken_ruins", "brine_lakes"]),
@@ -744,6 +744,25 @@ VANILLA_VEINS = {
 for _ore in VANILLA_VEINS:
     for _b in VEINS:   # every deep biome
         VEINS[_b].append((_ore, "vanilla"))
+
+# PRG02 (2026-10-10, user): vanilla minerals regardless of biome
+for _b in VEINS:
+    for _m, _s in (("iron", "small"), ("iron", "medium"), ("copper", "small"), ("copper", "medium")):
+        VEINS[_b].append((_m, _s))
+
+# PRG01 (2026-10-09, user request): small veins of the metals the entry diving gear (safe down to Y -100) needs to reach
+# the alloy furnace, the deep gear and the excavator research. The deep seabed lies at Y -160..-260 (measured), so they
+# sit in the deep layer's rock ceiling instead (deep_sea_rock, underside Y -88..-72): crust-mode veins centred on the
+# first ceiling block above the water, half exposed on the underside, mineable from Y -89..-99.
+CEILING_RARITY = 6   # 1 vein per n chunks, per metal
+CEILING_VEINS = {  # metal: ore  (host unused in crust mode)
+    "nickel": "deep_nickel_ore", "cobalt": "cobalt_ore", "vanadium": "vanadium_ore",
+    "manganese": "manganese_ore", "titanium": "titanium_ore",
+    "iron": "abyssal_iron_ore", "copper": "deep_copper_ore",
+}
+for _metal in CEILING_VEINS:
+    for _b in VEINS:   # every deep biome
+        VEINS[_b].append((_metal, "ceiling"))
 
 
 def vein_floor(min_depth, *extra):
@@ -769,6 +788,12 @@ def veins():
         feature(f"vein_{name}_vanilla", {"type": A("ore_vein"), "config": {"ore": state(f"abyssal_{name}_ore"), "host": state("mineral_host_rock"),
                                                                            "size": size}},
                 on_floor(rarity(n)))
+    for metal, ore in CEILING_VEINS.items():
+        feature(f"vein_{metal}_ceiling", {"type": A("ore_vein"), "config": {"ore": state(ore), "host": state("deep_sea_rock"), "size": "small", "crust": True}},
+                [rarity(CEILING_RARITY), {"type": "minecraft:in_square"},
+                 {"type": "minecraft:height_range", "height": {"type": "minecraft:uniform", "min_inclusive": {"absolute": CEILING_BOTTOM_Y - 12}, "max_inclusive": {"absolute": CEILING_BOTTOM_Y - 2}}},
+                 {"type": "minecraft:environment_scan", "direction_of_search": "up", "max_steps": 32, "allowed_search_condition": IN_WATER, "target_condition": {"type": "minecraft:solid"}},
+                 {"type": "minecraft:biome"}])
 
 
 def spires():
@@ -1594,7 +1619,8 @@ def write_data(path, obj):
 
 # Global orders per generation step: every biome lists a subset in this order, so feature order stays consistent.
 LANDFORM_ORDER = ["seabed_structures", "rock_spire", "abyssal_spire", "trench_spire", "thermal_spire", "crystal_spire"]
-VEIN_ORDER = [f"vein_{m}_{s}" for m in MINERALS for s in ("small", "medium", "large", "huge")] + [f"vein_{m}_rare" for m in RARE_VEINS] +     [f"vein_{m}_vanilla" for m in VANILLA_VEINS]
+VEIN_ORDER = [f"vein_{m}_{s}" for m in MINERALS for s in ("small", "medium", "large", "huge")] + [f"vein_{m}_rare" for m in RARE_VEINS] +     [f"vein_{m}_vanilla" for m in VANILLA_VEINS] + \
+    [f"vein_{m}_ceiling" for m in CEILING_VEINS]
 # AB02: the crust's ore veins come from the optional module tools/crust_ores.py (VEIN_FEATURE_ORDER, biome_features(biome_id)).
 try:
     import crust_ores as CRUST_ORES

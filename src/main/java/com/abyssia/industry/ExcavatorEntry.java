@@ -138,9 +138,9 @@ public final class ExcavatorEntry implements BuildEntry
         if (tier == ExcavatorTier.MK2)
             return List.of(mod("iron_plate", 4), mod("iron_gear", 2), mod("copper_wire", 4), mod("machine_frame", 2),
                     mod("iron_rod", 2), mod("manganese_ingot", 1), mod("nickel_ingot", 2));
-        // BAL01: Mk1 must be buildable before any deposit metal exists (manganese is excavator-only), so a diamond bit
-        return List.of(mod("iron_plate", 2), mod("iron_gear", 1), mod("copper_wire", 2), mod("machine_frame", 1),
-                mod("iron_rod", 2), new ItemStack(Items.DIAMOND, 2));
+        // PRG01: Mk1 from vanilla items + the simple iron/copper parts (an iron pickaxe as the bit), buildable on the first dives
+        return List.of(mod("iron_plate", 2), mod("iron_gear", 1), mod("copper_wire", 2), mod("iron_rod", 2),
+                new ItemStack(Items.IRON_PICKAXE), new ItemStack(Items.REDSTONE, 4), new ItemStack(Items.PISTON));
     }
 
     private static ItemStack mod(String name, int count)

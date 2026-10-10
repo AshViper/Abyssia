@@ -20,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class SubmarineUpgradeMenu extends AbstractContainerMenu
 {
-    public static final int SLOT_X = 44, SLOT_Y = 28, INV_Y = 59, HOTBAR_Y = 117;
-    public static final int WIDTH = 176, HEIGHT = 141;
+    public static final int SLOT_X = 44, SLOT_Y = 30, INV_Y = 61, HOTBAR_Y = 119;
+    public static final int WIDTH = 176, HEIGHT = 143;
 
     private final Container container;
     @Nullable

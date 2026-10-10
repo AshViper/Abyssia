@@ -2,8 +2,6 @@ package com.abyssia.item;
 
 import com.abyssia.registry.ModItems;
 import com.abyssia.registry.ModTags;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -11,10 +9,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ArmorItem;
@@ -30,9 +24,7 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -40,7 +32,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
@@ -65,8 +56,6 @@ public final class MaterialTools
     private static final ArmorMaterial PRESSURE = new Material("abyssia:pressure_alloy", new int[]{350, 420, 520, 462},
             new int[]{3, 6, 7, 4}, 3.0F, 0.1F, 15, () -> ModItems.PRESSURE_SHELL.get());
 
-    private static final UUID SUIT_SPEED = UUID.fromString("0f4f1c8e-6a52-4c0b-9d0e-2b7a31c5e7a1");
-    private static final UUID SET_SPEED = UUID.fromString("7c1d2e44-3b9a-4f6e-8a15-5d9c0b2f6e83");
 
     public static RegistryObject<Item> CRUSHING_HAMMER, COBALT_PICKAXE, COBALT_SHOVEL, MANGANESE_AXE, MANGANESE_SWORD,
             MOLYBDENUM_PICKAXE, TUNGSTEN_PICKAXE, TUNGSTEN_AXE, CRYSTAL_PICKAXE, ABYSSAL_DRILL, ABYSSAL_CUTTER,
@@ -88,13 +77,13 @@ public final class MaterialTools
         CRYSTAL_PICKAXE = add(items, tab, "crystal_pickaxe", () -> new PickaxeItem(CRYSTAL, 1, -2.8F, props(Rarity.RARE)));
         ABYSSAL_DRILL = add(items, tab, "abyssal_drill", () -> new PickaxeItem(DRILL, 1, -3.0F, props(Rarity.EPIC)));
         ABYSSAL_CUTTER = add(items, tab, "abyssal_cutter", () -> new SwordItem(CUTTER, 2, -1.8F, props(Rarity.EPIC)));
-        DIVE_TANK = add(items, tab, "dive_tank", () -> new ArmorItem(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON)));
+        DIVE_TANK = add(items, tab, "dive_tank", () -> new DivingArmorItem(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON)));
         DIVING_SUIT_LEGGINGS = add(items, tab, "diving_suit_leggings", () -> new SuitLeggings(DIVING, ArmorItem.Type.LEGGINGS, props(Rarity.UNCOMMON)));
         // Smithing upgrade of deep_diver_helmet: same breathing / night vision; tag abyssia:pressure_proof marks it for
         // the future hadal pressure damage.
         PRESSURE_DIVER_HELMET = add(items, tab, "pressure_diver_helmet", () -> new ModTools.DiverHelmet(PRESSURE, ArmorItem.Type.HELMET, props(Rarity.EPIC)));
         // Pressure gear (tier 3, PressureGear): smithing upgrades of the deep pieces, same behaviour as their bases.
-        PRESSURE_DIVE_TANK = add(items, tab, "pressure_dive_tank", () -> new ArmorItem(PRESSURE, ArmorItem.Type.CHESTPLATE, props(Rarity.EPIC)));
+        PRESSURE_DIVE_TANK = add(items, tab, "pressure_dive_tank", () -> new DivingArmorItem(PRESSURE, ArmorItem.Type.CHESTPLATE, props(Rarity.EPIC)));
         PRESSURE_SUIT_LEGGINGS = add(items, tab, "pressure_suit_leggings", () -> new SuitLeggings(PRESSURE, ArmorItem.Type.LEGGINGS, props(Rarity.EPIC)));
         PRESSURE_FLIPPERS = add(items, tab, "pressure_flippers", () -> new ModTools.Flippers(PRESSURE, ArmorItem.Type.BOOTS, props(Rarity.EPIC)));
         MinecraftForge.EVENT_BUS.register(MaterialTools.class);
@@ -157,42 +146,10 @@ public final class MaterialTools
             event.setAmount(event.getAmount() * 0.5F);
     }
 
-    /** Diving set (any diver helmet + tank + suit leggings + abyssal flippers): +10% swim speed while worn. */
-    @SubscribeEvent
-    public static void playerTick(TickEvent.PlayerTickEvent event)
-    {
-        if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
-        Player player = event.player;
-        AttributeInstance swim = player.getAttribute(ForgeMod.SWIM_SPEED.get());
-        if (swim == null) return;
-        ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
-        boolean full = (head.is(ModTools.DIVER_HELMET.get()) || head.is(PRESSURE_DIVER_HELMET.get()))
-                && (player.getItemBySlot(EquipmentSlot.CHEST).is(DIVE_TANK.get()) || player.getItemBySlot(EquipmentSlot.CHEST).is(PRESSURE_DIVE_TANK.get()))
-                && (player.getItemBySlot(EquipmentSlot.LEGS).is(DIVING_SUIT_LEGGINGS.get()) || player.getItemBySlot(EquipmentSlot.LEGS).is(PRESSURE_SUIT_LEGGINGS.get()))
-                && (player.getItemBySlot(EquipmentSlot.FEET).is(ModTools.FLIPPERS.get()) || player.getItemBySlot(EquipmentSlot.FEET).is(PRESSURE_FLIPPERS.get()));
-        boolean has = swim.getModifier(SET_SPEED) != null;
-        if (full && !has)
-            swim.addTransientModifier(new AttributeModifier(SET_SPEED, "Abyssia diving set swim speed", 0.10, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        else if (!full && has)
-            swim.removeModifier(SET_SPEED);
-    }
-
-    /** suit_swim: +5% swim speed (the armor's own defense/toughness modifiers are kept). */
+    /** Suit leggings; the swim bonus comes from the legs + feet pair (DivingSwimGear). */
     private static final class SuitLeggings extends ArmorItem
     {
         SuitLeggings(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
-
-        @Override
-        @SuppressWarnings("deprecation")
-        public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot)
-        {
-            Multimap<Attribute, AttributeModifier> base = super.getDefaultAttributeModifiers(slot);
-            if (slot != EquipmentSlot.LEGS) return base;
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> b = ImmutableMultimap.builder();
-            b.putAll(base);
-            b.put(ForgeMod.SWIM_SPEED.get(), new AttributeModifier(SUIT_SPEED, "Diving suit swim speed", 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
-            return b.build();
-        }
     }
 
     /** Per-piece armor values indexed by EquipmentSlot.getIndex() (boots, legs, chest, head), as in ModTools. */

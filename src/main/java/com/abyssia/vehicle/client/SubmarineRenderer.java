@@ -35,9 +35,9 @@ public class SubmarineRenderer extends EntityRenderer<Submarine>
     public void render(Submarine sub, float yaw, float partialTick, PoseStack pose, MultiBufferSource buffers, int light)
     {
         pose.pushPose();
-        pose.mulPose(Axis.YP.rotationDegrees(180.0f - yaw));
+        pose.mulPose(Axis.YP.rotationDegrees(180.0f - SubmarineSteering.yaw(sub, partialTick)));
         // SUB05: pitch about the hull mid-height (xRot + = nose down, the nose is -Z), glass / lamps share the pose
-        float pitch = Mth.lerp(partialTick, sub.xRotO, sub.getXRot());
+        float pitch = SubmarineSteering.pitch(sub, partialTick);
         pose.translate(0.0, Submarine.PIVOT_Y, 0.0);
         pose.mulPose(Axis.XP.rotationDegrees(-pitch));
         pose.translate(0.0, -Submarine.PIVOT_Y, 0.0);

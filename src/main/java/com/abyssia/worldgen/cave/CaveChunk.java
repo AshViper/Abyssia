@@ -1,6 +1,7 @@
 package com.abyssia.worldgen.cave;
 
 import com.abyssia.worldgen.DeepLayer;
+import com.abyssia.worldgen.DepthBand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.ChunkPos;
@@ -174,7 +175,8 @@ public final class CaveChunk
             }
         }
         // A crust window has no seabed: strata count depth below the window's top, and no column is scanned.
-        if (network.isWindow()) Arrays.fill(ctx.seabed, network.maxY());
+        // AB06: the topmost window's descent routes climb through the deep layer, so there the strata count from the real seabed.
+        if (network.isWindow() && !ctx.reachesSea()) Arrays.fill(ctx.seabed, network.maxY());
         else
         {
             for (int lz = 0; lz < 16; lz++)
@@ -633,11 +635,17 @@ public final class CaveChunk
         return minBuildY;
     }
 
+    /** AB06: whether this chunk holds a part of the topmost window's descent route that rises into the deep layer (to its seabed opening). */
+    private boolean reachesSea()
+    {
+        return network.band() == DepthBand.B && yMax >= DeepLayer.ABYSS_TOP_Y;
+    }
+
     /** Refresh the ocean floor heightmap after entrances were cut through the seabed and formations raised on it. */
     void finish()
     {
-        // A crust window never touches the sea floor or anything standing on it.
-        if (network.isWindow()) return;
+        // A crust window never touches the sea floor or anything standing on it, except where its descent route opens onto it.
+        if (network.isWindow() && !reachesSea()) return;
         Heightmap.primeHeightmaps(chunk, EnumSet.of(Heightmap.Types.OCEAN_FLOOR_WG));
     }
 
@@ -671,7 +679,28 @@ public final class CaveChunk
     {
         if (!inChunk(lx, lz)) return false;
         BlockState state = get(lx, y, lz);
-        return !state.isAir() && state.getFluidState().isEmpty() && state.isFaceSturdy(chunk, at(lx, y, lz), face);
+        if (state.isAir() || !state.getFluidState().isEmpty()) return false;
+        if (state.hasOffsetFunction() || state.getBlock().hasDynamicShape()) return state.isFaceSturdy(chunk, at(lx, y, lz), face);
+        // Shape is position independent here: cache per (state, face). 0 = unknown, 1 = no, 2 = yes.
+        byte[] known = sturdyCache.get(state);
+        if (known == null) sturdyCache.put(state, known = new byte[6]);
+        int f = face.ordinal();
+        if (known[f] == 0) known[f] = (byte) (state.isFaceSturdy(chunk, at(lx, y, lz), face) ? 2 : 1);
+        return known[f] == 2;
+    }
+
+    private final Map<BlockState, byte[]> sturdyCache = new IdentityHashMap<>();
+    private final Map<Cavern, CavernPatch[]> patchCache = new IdentityHashMap<>();
+
+    /** Cavern.patchAt for the centre of the chunk column (lx, lz), cached per chunk (a cavern's patch only depends on the column). */
+    CavernPatch patchAt(Cavern cavern, int lx, int lz)
+    {
+        CavernPatch[] cols = patchCache.get(cavern);
+        if (cols == null) patchCache.put(cavern, cols = new CavernPatch[256]);
+        int i = lz << 4 | lx;
+        CavernPatch p = cols[i];
+        if (p == null) cols[i] = p = cavern.patchAt(x0 + lx + 0.5, z0 + lz + 0.5);
+        return p;
     }
 
     /** Open cave water (or gas) with nothing placed in it yet. */

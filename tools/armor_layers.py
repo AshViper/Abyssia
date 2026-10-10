@@ -32,6 +32,9 @@ LOCK = os.path.join(ROOT, "texture_locks", "assets", "textures", "models", "armo
 GRADLE = os.path.join(os.path.expanduser("~"), ".gradle", "caches")
 VANILLA = "assets/minecraft/textures/models/armor/{}_layer_{}.png"
 
+# layer_1 of these materials is the UV texture of the 3D models (tools/diving_suit_models.py); only layer_2 is written here
+DIVING_SUIT_3D = ("entry_diving", "abyssal_alloy", "diving_alloy", "pressure_alloy")
+
 # --------------------------------------------------------------------------- faces (x, y, w, h) on the 64x32 sheet
 FACES = {
     "hf": (8, 8, 8, 8), "hr": (0, 8, 8, 8), "hl": (16, 8, 8, 8), "hb": (24, 8, 8, 8), "ht": (8, 0, 8, 8),
@@ -388,6 +391,9 @@ def main():
             img = build(MATERIALS[m][f"layer_{layer}"], layer)
             images[m][layer] = img
             name = f"{m}_layer_{layer}.png"
+            if layer == 1 and m in DIVING_SUIT_3D:
+                print(f"{name}: skipped (3D diving-suit texture, written by tools/diving_suit_models.py)")
+                continue
             opaque = sum(1 for p in pixels(img) if p[3] > 0)
             print(f"{name}: {opaque} opaque px" + (" (dry-run)" if a.dry_run else ""))
             if not a.dry_run:

@@ -1,6 +1,7 @@
 package com.abyssia.vehicle.client;
 
 import com.abyssia.Abyssia;
+import com.abyssia.client.gui.UiTheme;
 import com.abyssia.vehicle.Submarine;
 import com.abyssia.vehicle.SubmarineUpgradeMenu;
 import com.abyssia.vehicle.SubmarineUpgrades;
@@ -24,7 +25,7 @@ import java.util.Locale;
  */
 public class SubmarineUpgradeScreen extends AbstractContainerScreen<SubmarineUpgradeMenu>
 {
-    private static final ResourceLocation CHEST = ResourceLocation.withDefaultNamespace("textures/gui/container/generic_54.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Abyssia.MODID, "textures/gui/submarine_upgrade.png");
     private static final String C = "container." + Abyssia.MODID + ".submarine.upgrades";
 
     public SubmarineUpgradeScreen(SubmarineUpgradeMenu menu, Inventory inventory, Component title)
@@ -71,24 +72,18 @@ public class SubmarineUpgradeScreen extends AbstractContainerScreen<SubmarineUpg
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY)
     {
-        int x = leftPos, y = topPos;
-        int middle = SubmarineUpgradeMenu.SLOT_Y;   // header (17) .. bottom part: status line + slot row (frames end at SLOT_Y + 17)
-        g.blit(CHEST, x, y, 0, 0, imageWidth, 17);
-        // plain panel between the header and the inventory: the 1 px row above the chest slots, stretched
-        g.blit(CHEST, x, y + 17, imageWidth, middle, 0, 16, imageWidth, 1, 256, 256);
-        for (int i = 0; i < SubmarineUpgrades.SLOTS; i++)
-            g.blit(CHEST, x + SubmarineUpgradeMenu.SLOT_X - 1 + i * 18, y + SubmarineUpgradeMenu.SLOT_Y - 1, 7, 17, 18, 18);
-        g.blit(CHEST, x, y + 17 + middle, 0, 125, imageWidth, 96);
+        g.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 176, 143);
     }
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY)
     {
-        super.renderLabels(g, mouseX, mouseY);
+        g.drawString(font, title, titleLabelX, titleLabelY, UiTheme.TEXT, false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, UiTheme.TEXT, false);
         Submarine sub = menu.submarine();
         if (sub == null) return;
         NumberFormat nf = NumberFormat.getIntegerInstance(Locale.US);
         Component status = Component.translatable(C + ".status", nf.format(sub.getEnergy()), nf.format(sub.maxEnergy()), sub.hullPercent());
-        g.drawString(font, status, (imageWidth - font.width(status)) / 2, 18, 0x404040, false);
+        g.drawString(font, status, (imageWidth - font.width(status)) / 2, 18, UiTheme.TEXT_PALE, false);
     }
 }

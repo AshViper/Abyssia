@@ -6,9 +6,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -19,12 +16,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraftforge.common.MinecraftForge;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import java.util.List;
-import java.util.UUID;
 
 /** Abyssal alloy tools and equipment. */
 public final class ModTools {
@@ -41,7 +34,6 @@ public final class ModTools {
     };
     private static final ArmorMaterial ARMOR = new AlloyArmor();
     public static RegistryObject<Item> PICKAXE, AXE, SHOVEL, HOE, SWORD, DIVER_HELMET, FLIPPERS;
-    private static final UUID FLIPPER_SPEED = UUID.fromString("5a263d78-60c7-4a32-aeeb-44c859a4682c");
     private ModTools() {}
 
     public static void register(DeferredRegister<Item> items, List<RegistryObject<? extends Item>> tab) {
@@ -77,6 +69,8 @@ public final class ModTools {
     // Package-private: MaterialTools' pressure_diver_helmet keeps the same night vision (air time: DivingBreathing).
     static final class DiverHelmet extends ArmorItem {
         DiverHelmet(ArmorMaterial material, Type type, Properties props) { super(material, type, props); }
+        @Override public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer)
+        { com.abyssia.client.armor.DivingSuitClient.init(consumer); }
         // IForgeItem#onArmorTick is deprecated for removal in this Forge: hook the
         // non-deprecated onInventoryTick instead and only act while actually worn.
         @Override public void onInventoryTick(ItemStack stack, net.minecraft.world.level.Level level, Player player, int slot, int selected) {
@@ -92,16 +86,8 @@ public final class ModTools {
         Flippers(ArmorMaterial material, Type type, Properties props) {
             super(material, type, props);
         }
-        @Override public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-            // Keep the armor's own modifiers (defense, toughness): dropping them
-            // left the flippers with no protection at all.
-            Multimap<Attribute, AttributeModifier> base = super.getDefaultAttributeModifiers(slot);
-            if (slot != EquipmentSlot.FEET) return base;
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> b = ImmutableMultimap.builder();
-            b.putAll(base);
-            b.put(ForgeMod.SWIM_SPEED.get(), new AttributeModifier(FLIPPER_SPEED, "Abyssal flipper swim speed", 0.35, Operation.MULTIPLY_TOTAL));
-            return b.build();
-        }
+        @Override public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer)
+        { com.abyssia.client.armor.DivingSuitClient.init(consumer); }
     }
 
     private static final class AlloyArmor implements ArmorMaterial {

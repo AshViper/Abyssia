@@ -39,7 +39,7 @@ import java.util.List;
  * </pre>
  * Rated depth (metres, DepthZone): 300 without a DEPTH upgrade, Mk1 600, Mk2 1000, Mk3 2000 (Config
  * SUBMARINE_DEPTH_*). Below it the hull takes crush damage once a second (Submarine.crush).
- * Speed order (fixed): base (Config max_speed / 0.22 / 0.18) -> thruster replaces (0.56 / 0.30 / 0.23) -> x hull 0.92
+ * Speed order (fixed): base (Config max_speed / 0.38 / 0.36) -> thruster replaces (0.56 / 0.51 / 0.48) -> x hull 0.92
  * -> (vertical only) x battery 0.95. Thrust FE is flat per moving tick: 8 (Config thrust_fe_per_tick) or 12 with the thruster.
  */
 public final class SubmarineUpgrades

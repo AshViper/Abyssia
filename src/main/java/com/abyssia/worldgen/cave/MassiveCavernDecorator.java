@@ -124,7 +124,7 @@ final class MassiveCavernDecorator
                     if (forest.density() <= 0 || cavern.template.forestPlants.isEmpty()) continue;
                     Cavern.Cluster clump = cavern.kelpCluster(cx, cz);
                     if (clump == null) continue;
-                    CavernPatch patch = cavern.patchAt(cx, cz);
+                    CavernPatch patch = ctx.patchAt(cavern, lx, lz);
                     double patchFactor = switch (patch)
                     {
                         case PLANT -> 1.0;
@@ -211,7 +211,7 @@ final class MassiveCavernDecorator
                     double cx = x + 0.5, cz = z + 0.5;
                     // From the roof, and from the undersides of shelves, bridges and hanging rocks.
                     if (cavern.relativeHeight(cx, y, cz) < 0.55 && ctx.fillFlag(lx, y + 1, lz) == 0) continue;
-                    CavernPatch patch = cavern.patchAt(cx, cz);
+                    CavernPatch patch = ctx.patchAt(cavern, lx, lz);
                     double patchFactor = patch == CavernPatch.PLANT ? 1.0 : patch == CavernPatch.OPEN ? 0.35 : patch == CavernPatch.WATER ? 0.7 : 0.4;
                     Cavern.Cluster clump = cavern.kelpCluster(cx, cz), open = cavern.rootCluster(cx, cz);
                     double chance = hanging.density() * (clump != null ? 0.55 * (1 - clump.q() * clump.q()) * patchFactor : 0)
@@ -365,7 +365,7 @@ final class MassiveCavernDecorator
                     }
                     if (!ctx.sturdy(lx, y + 1, lz, Direction.DOWN) || cavern.relativeHeight(cx, y, cz) < 0.8) continue;
                     // Points of light across the roof, thicker over crystal and plant ground.
-                    CavernPatch patch = cavern.patchAt(cx, cz);
+                    CavernPatch patch = ctx.patchAt(cavern, lx, lz);
                     double chance = cavern.template.ceilingGlow * (patch == CavernPatch.CRYSTAL ? 2.0 : patch == CavernPatch.PLANT ? 1.3 : 1.0)
                             * (0.3 + 1.4 * noises.patch(x, y, z, 61.7));
                     if (roll < chance) CavePlacer.moss(ctx, lx, y, lz, luminous);

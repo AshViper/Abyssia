@@ -86,6 +86,9 @@ public final class CaveNetwork
     /** Window only: the window above (null for the topmost). Set once by the root's constructor. */
     @Nullable
     private CaveNetwork above;
+    /** Window only: the shallow network (its seabed is where the descent routes of AB06 end); null for the shallow network. */
+    @Nullable
+    private final CaveNetwork root;
     private final Map<ResourceKey<Biome>, CaveProfile> profiles;
     private final Map<ResourceLocation, CaveEnvironment> environments;
     private final Map<ResourceLocation, CavernTemplate> cavernTemplates;
@@ -93,6 +96,8 @@ public final class CaveNetwork
     private final ConcurrentHashMap<Long, FutureTask<CaveSystem>> systems = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, FutureTask<CaveSystem>> minors = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, Optional<CaveNetworkGenerator.Plan>> plans = new ConcurrentHashMap<>();
+    /** AB06: the abyss cavity of each super cell (window only; cheap, kept apart from the plans so planning never recurses). */
+    private final ConcurrentHashMap<Long, Optional<AbyssCavity.Site>> cavities = new ConcurrentHashMap<>();
     /** Layout costs for the debug stats: plans, system builds, minor builds (count and nanoseconds). */
     static final java.util.concurrent.atomic.AtomicLongArray COST = new java.util.concurrent.atomic.AtomicLongArray(6);
     /** The same for each window (6 slots per window, in {@link DepthBand} order; windows have no minor caves). */
@@ -117,6 +122,7 @@ public final class CaveNetwork
         this.cellSize = Config.CAVE_SYSTEM_SPACING.get();
         this.reach = cellSize * 2;
         this.band = null;
+        this.root = null;
         this.profiles = profiles;
         this.environments = environments;
         this.cavernTemplates = cavernTemplates;
@@ -161,6 +167,7 @@ public final class CaveNetwork
         this.cellSize = Config.BAND_SPACING[band.ordinal()].get();
         this.reach = Math.max(cellSize * 2, WINDOW_REACH);
         this.band = band;
+        this.root = root;
         this.windows = new CaveNetwork[0];
         this.profiles = root.profiles;
         this.environments = root.environments;
@@ -179,7 +186,7 @@ public final class CaveNetwork
 
     private double typeScale(CaveType t)
     {
-        if (!allows(t)) return 0;
+        if (!allows(t) || t == CaveType.ABYSS_CAVITY) return 0;  // AB06 cavities come from their own grid, not the profile lottery
         return switch (t.size)
         {
             case LARGE -> Config.LARGE_CAVE_WEIGHT.get();
@@ -195,7 +202,7 @@ public final class CaveNetwork
      */
     boolean allows(CaveType type)
     {
-        if (band == null) return type != CaveType.MEGA_CAVERN;
+        if (band == null) return type != CaveType.MEGA_CAVERN && type != CaveType.ABYSS_CAVITY;
         return type != CaveType.SEA_TUNNEL && type != CaveType.SEA_ARCH && type != CaveType.VERTICAL_SHAFT;
     }
 
@@ -320,7 +327,25 @@ public final class CaveNetwork
     /** Highest Y a shape of this network may reach: a window's vertical links run into the window above, up to its top. */
     public int carveTopY()
     {
-        return above != null ? above.maxY : maxY;
+        if (above != null) return above.maxY;
+        // AB06: the topmost window's descent routes climb through the deep layer up to its seabed.
+        return band == DepthBand.B && root != null ? root.maxY : maxY;
+    }
+
+    /** Window only: the shallow network, whose seabed the topmost window's descent routes open into. */
+    @Nullable
+    CaveNetwork root()
+    {
+        return root;
+    }
+
+    /** The abyss cavity of a super cell of this window ({@link AbyssCavity}), or null. */
+    @Nullable
+    AbyssCavity.Site cavity(int superX, int superZ)
+    {
+        if (band == null) return null;
+        if (cavities.size() > CACHE_LIMIT) cavities.clear();
+        return cavities.computeIfAbsent(key(superX, superZ), k -> Optional.ofNullable(AbyssCavity.compute(this, superX, superZ))).orElse(null);
     }
 
     /** Highest seabed an entrance may open into (or an arch rise to): a margin under the deep layer's rock ceiling. */

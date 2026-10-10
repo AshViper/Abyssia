@@ -47,6 +47,8 @@ public final class ModItems
     public static final RegistryObject<Item> CRUST_POWDER = item("crust_powder");
     public static final RegistryObject<Item> THERMAL_CRYSTAL_SHARD = item("thermal_crystal_shard");
     public static final RegistryObject<Item> ABYSSAL_CRYSTAL_SHARD = item("abyssal_crystal_shard");
+    public static final RegistryObject<Item> DEEP_CRYSTAL_SHARD = item("deep_crystal_shard");
+    public static final RegistryObject<Item> PRESSURE_CRYSTAL_SHARD = item("pressure_crystal_shard");
 
     // Rare metals (tools/gen_deep_assets.py RARE_METALS): tooltip names the source (item.abyssia.<id>.source)
     public static final RegistryObject<Item> RAW_PLATINUM = sourcedItem("raw_platinum");
@@ -285,6 +287,7 @@ public final class ModItems
         ModTools.register(ITEMS, TAB_ITEMS);
         MaterialTools.register(ITEMS, TAB_ITEMS);
         com.abyssia.item.DivingBreathing.register();
+        com.abyssia.item.DivingSwimGear.register();
         com.abyssia.item.electric.ElectricTools.register(ITEMS, TAB_ITEMS);
         com.abyssia.item.scanner.LidarScannerItem.register(ITEMS, TAB_ITEMS);
         com.abyssia.item.EntryDivingGear.register(ITEMS, TAB_ITEMS);

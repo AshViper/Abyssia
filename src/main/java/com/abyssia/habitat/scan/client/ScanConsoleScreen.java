@@ -1,5 +1,7 @@
 package com.abyssia.habitat.scan.client;
 
+import com.abyssia.client.gui.UiTheme;
+
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.scan.ScanConsoleBlockEntity;
 import com.abyssia.habitat.scan.ScanConsoleMenu;
@@ -58,11 +60,11 @@ public class ScanConsoleScreen extends AbstractContainerScreen<ScanConsoleMenu>
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY)
     {
         int x = leftPos, y = topPos;
-        g.fill(x, y, x + imageWidth, y + imageHeight, 0xE0081418);
-        g.renderOutline(x, y, imageWidth, imageHeight, 0xFF2A8A9A);
-        g.fill(x + 6, y + MAP_Y, x + 6 + LIST_W, y + MAP_Y + MAP_H, 0xC0040A0C);
-        g.fill(x + MAP_X, y + MAP_Y, x + MAP_X + MAP_W, y + MAP_Y + MAP_H, 0xC0020608);
-        g.renderOutline(x + MAP_X, y + MAP_Y, MAP_W, MAP_H, 0xFF1C5A66);
+        g.fill(x, y, x + imageWidth, y + imageHeight, UiTheme.PANEL);
+        g.renderOutline(x, y, imageWidth, imageHeight, UiTheme.BORDER);
+        g.fill(x + 6, y + MAP_Y, x + 6 + LIST_W, y + MAP_Y + MAP_H, UiTheme.PANEL_INSET);
+        g.fill(x + MAP_X, y + MAP_Y, x + MAP_X + MAP_W, y + MAP_Y + MAP_H, UiTheme.PANEL_INSET);
+        g.renderOutline(x + MAP_X, y + MAP_Y, MAP_W, MAP_H, UiTheme.BORDER);
     }
 
     @Override
@@ -111,7 +113,7 @@ public class ScanConsoleScreen extends AbstractContainerScreen<ScanConsoleMenu>
             int ry = y + row * ROW;
             boolean selected = i == 0 ? be.target() == null : data.palette.get(i - 1).equals(be.target());
             boolean hover = mouseX >= x - 2 && mouseX < x + LIST_W - 2 && mouseY >= ry - 1 && mouseY < ry + ROW - 1;
-            if (selected || hover) g.fill(x - 2, ry - 1, x + LIST_W - 2, ry + ROW - 1, selected ? 0xC0205060 : 0x80183038);
+            if (selected || hover) g.fill(x - 2, ry - 1, x + LIST_W - 2, ry + ROW - 1, selected ? UiTheme.SELECTED : UiTheme.HOVER);
             Component name;
             int count;
             if (i == 0)
@@ -169,15 +171,15 @@ public class ScanConsoleScreen extends AbstractContainerScreen<ScanConsoleMenu>
         // FE gauge
         int gx = leftPos + MAP_X + MAP_W - 100, gy = topPos + imageHeight - 22, gw = 100;
         int energy = menu.energy();
-        g.fill(gx, gy, gx + gw, gy + 6, 0xFF101C20);
-        g.fill(gx, gy, gx + (int) ((long) gw * energy / ScanConsoleBlockEntity.CAPACITY), gy + 6, 0xFF30D0E8);
-        g.renderOutline(gx - 1, gy - 1, gw + 2, 8, 0xFF2A8A9A);
+        g.fill(gx, gy, gx + gw, gy + 6, UiTheme.GAUGE_BACK);
+        g.fill(gx, gy, gx + (int) ((long) gw * energy / ScanConsoleBlockEntity.CAPACITY), gy + 6, UiTheme.GAUGE_FILL);
+        g.renderOutline(gx - 1, gy - 1, gw + 2, 8, UiTheme.BORDER);
         String fe = energy + " / " + ScanConsoleBlockEntity.CAPACITY + " FE";
         g.drawString(font, fe, gx + gw - font.width(fe), gy + 9, 0x9FC8D0, false);
         if (menu.scanning())
         {
             int px = leftPos + MAP_X, py = topPos + MAP_Y + MAP_H - 3;
-            g.fill(px + 1, py, px + 1 + (MAP_W - 2) * menu.progress() / 1000, py + 2, 0xFF60F0FF);
+            g.fill(px + 1, py, px + 1 + (MAP_W - 2) * menu.progress() / 1000, py + 2, UiTheme.GAUGE_TOP);
         }
     }
 

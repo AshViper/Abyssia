@@ -77,8 +77,12 @@ public class Submarine extends Entity
 
     /** break threshold without the Pressure Hull ({@link #maxDamage()} with upgrades) */
     public static final float MAX_DAMAGE = 40.0f;
-    /** base values without upgrades ({@link SubmarineUpgrades} replaces / multiplies them); acceleration (blocks / tick^2), reverse / sideways / vertical top speeds, water drag per tick without input */
-    public static final double ACCEL = 0.04, BACK_SPEED = 0.22, SIDE_SPEED = 0.22, VERTICAL_SPEED = 0.18, DRAG = 0.9;
+    /** base values without upgrades ({@link SubmarineUpgrades} replaces / multiplies them); acceleration (blocks / tick^2), sideways / vertical top speeds, water drag per tick without input (SUB07 Seamoth ratios: forward 12.7 / sideways 11.5 / vertical 11 / reverse 5 m/s, longer glide) */
+    public static final double ACCEL = 0.025, SIDE_SPEED = 0.38, VERTICAL_SPEED = 0.36, DRAG = 0.94;
+    /** SUB07: reverse top speed = sideways x this (5 / 11.5) */
+    public static final double REVERSE_RATIO = 5.0 / 11.5;
+    /** SUB07: a climb faster than this (blocks / tick) breaches the surface and falls back like the Seamoth */
+    public static final double BREACH_SPEED = 0.15;
     /** up-thrust (and neutral buoyancy) only from this submerged fraction of the hull: no jitter at the surface */
     public static final double LIFT_SUBMERGED = 0.6;
     /** seat: 8.5 px ahead of the centre (bbmodel z -11 px; the baked mesh is shifted +2.5 px), rider feet so the hips are at y 12 px */
@@ -92,8 +96,8 @@ public class Submarine extends Entity
     /** SUB04: yaw turn per tick while pulled into / released from a dock */
     public static final float DOCK_TURN = 6.0f;
     public static final float REPAIR_PER_TICK = 0.05f;
-    /** SUB05: the hull pitches with the pilot's view, clamped to +-PITCH_MAX deg (xRot, + = nose down); docked / unmanned it eases to 0 at PITCH_EASE deg per tick */
-    public static final float PITCH_MAX = 45.0f, PITCH_EASE = 6.0f;
+    /** SUB05: the hull pitches with the pilot's view, clamped to +-PITCH_MAX deg (SUB07: 80) (xRot, + = nose down); docked / unmanned it eases to 0 at PITCH_EASE deg per tick */
+    public static final float PITCH_MAX = 80.0f, PITCH_EASE = 6.0f;
     /** SUB05: pitch / seat pivot = hull mid-height (blocks above the origin); the renderer and positionRider rotate about (0, PIVOT_Y, 0) */
     public static final double PIVOT_Y = HULL_HEIGHT / 2.0;
     /** SUB05b: height above the rider's feet of the point that turns rigidly with the hull pitch = the rider's eye (the model tilt pivot, see SubmarineRiderRender) */
@@ -102,7 +106,7 @@ public class Submarine extends Entity
     /** Pilot input on the client (set by the client setup; the server never asks). */
     public interface Pilot
     {
-        /** {forward (+1 W / -1 S), strafe (+1 A / -1 D), undock (-1 while Ctrl is held; Space does nothing since SUB05)} */
+        /** {forward (+1 W / -1 S), strafe (+1 A / -1 D), vertical (+1 Space = hull up / -1 Ctrl = hull down; -1 also releases the dock)} */
         int[] input();
 
         void requestUndock(Submarine sub);
@@ -192,6 +196,17 @@ public class Submarine extends Entity
     public boolean canDock()
     {
         return isAlive() && getDock().isEmpty() && dockCooldown <= 0 && (getControllingPassenger() == null || movingUp);
+    }
+
+    /**
+     * Top speeds {forward, sideways, vertical}, the acceleration and (SUB07) the reverse top speed (base, the thruster
+     * replaces, x hull, vertical x battery) - from {@link SubmarineUpgrades}.
+     */
+    public double[] speeds()
+    {
+        int mask = upgradeMask();
+        double side = SubmarineUpgrades.sideSpeed(mask);
+        return new double[]{SubmarineUpgrades.forwardSpeed(mask), side, SubmarineUpgrades.verticalSpeed(mask), SubmarineUpgrades.accel(mask), side * REVERSE_RATIO};
     }
 
     // ---------------------------------------------------------------- tick
@@ -309,11 +324,7 @@ public class Submarine extends Entity
         lerpSteps = Math.max(1, steps);
     }
 
-    /**
-     * Controlling side (SUB05): W / S thrust along the hull's nose (yaw + pitch), A / D strafe horizontally, no vertical
-     * keys. Velocity lives in the hull frame (nose, left, hull-up); the vertical component is capped at the upgrade's
-     * vertical speed by scaling the whole vector (direction kept), and has no upward part below LIFT_SUBMERGED.
-     */
+    /** SUB05 controlling side: W/S thrust along the nose, A/D sideways, Space/Ctrl along the hull's up axis (tilts with the pitch), water drag, gravity out of the water. SUB07: each axis is capped on its own (vector addition, a diagonal is faster); a fast climb at the surface breaches and falls back. */
     private void drive()
     {
         double wet = submergedFraction();
@@ -322,41 +333,47 @@ public class Submarine extends Entity
         int[] in = getControllingPassenger() != null && level().isClientSide && getEnergy() > 0 ? pilot.input() : NO_INPUT;
         if (wet > 0.0)
         {
-            int mask = upgradeMask();
-            double accel = SubmarineUpgrades.accel(mask), side = SubmarineUpgrades.sideSpeed(mask), up = SubmarineUpgrades.verticalSpeed(mask);
+            double[] sp = speeds();
             Vec3 n = noseVector();
             Vec3 l = new Vec3(Mth.cos(yaw), 0.0, Mth.sin(yaw));
-            Vec3 h = n.cross(l);
-            double f = axis(v.dot(n), in[0], accel, SubmarineUpgrades.forwardSpeed(mask), side);
-            double s = axis(v.dot(l), in[1], accel, side, side);
-            double u = v.dot(h) * DRAG;
-            v = n.scale(f).add(l.scale(s)).add(h.scale(u));
-            if (Math.abs(v.y) > up) v = v.scale(up / Math.abs(v.y));
-            // floating high at the surface: no upward part, settle gently until LIFT_SUBMERGED is under water (neutral below that)
+            Vec3 h = n.cross(l);   // hull up: straight up at pitch 0, leans toward the nose when the nose points down
+            // nose / left / up are orthonormal, so the velocity splits into them with nothing left over
+            // along the nose at most the forward / reverse speed; the axes are independent (SUB07)
+            double f = axis(v.dot(n), in[0], sp[0], sp[4], sp[3]);
+            double s = axis(v.dot(l), in[1], sp[1], sp[1], sp[3]);
+            // up / down (Space / Ctrl): along the hull's up axis, drag when no key is held
+            double g = axis(v.dot(h), in[2], sp[2], sp[2], sp[3]);
+            double x = n.x * f + l.x * s + h.x * g, y = n.y * f + h.y * g, z = n.z * f + l.z * s + h.z * g;
+            // floating high at the surface: no rising until LIFT_SUBMERGED is under water, settle gently (neutral below that)
             if (wet < LIFT_SUBMERGED)
             {
-                // the upward part is dropped, the horizontal speed stays within the forward cap (no speed gained from the clip)
-                double hz = Math.hypot(v.x, v.z), cap = SubmarineUpgrades.forwardSpeed(mask);
-                double k = v.y > 0.0 && hz > cap ? cap / hz : 1.0;
-                v = new Vec3(v.x * k, Math.min(v.y, 0.0) - 0.004, v.z * k);
+                // SUB07 a fast climb breaches and falls back like the Seamoth; slow climbs still settle without jitter
+                if (v.y > BREACH_SPEED) y = v.y * 0.98 - 0.04 * (1.0 - wet / LIFT_SUBMERGED) - 0.004;
+                else y = Math.min(y, 0.0) - 0.004;
+                // the dropped upward part must not turn into extra speed: horizontal speed stays within the forward max
+                double hz = Math.sqrt(x * x + z * z);
+                if (hz > sp[0])
+                {
+                    x *= sp[0] / hz;
+                    z *= sp[0] / hz;
+                }
             }
-            setDeltaMovement(v);
+            setDeltaMovement(x, y, z);
             return;
         }
         // out of the water: no thrust, gravity, stops on the ground
-        double fx = -Mth.sin(yaw), fz = Mth.cos(yaw), lx = fz, lz = -fx;
-        double f = v.x * fx + v.z * fz, s = v.x * lx + v.z * lz, u = v.y;
         double grip = onGround() ? 0.5 : 0.98;
-        f *= grip;
-        s *= grip;
-        u = (u - 0.04) * 0.98;
-        setDeltaMovement(fx * f + lx * s, u, fz * f + lz * s);
+        setDeltaMovement(v.x * grip, (v.y - 0.04) * 0.98, v.z * grip);
     }
 
-    private static double axis(double v, int input, double accel, double maxPos, double maxNeg)
+    private static double axis(double v, int input, double maxPos, double maxNeg, double accel)
     {
         if (input == 0) return v * DRAG;
-        return Mth.clamp(v + accel * input, -maxNeg, maxPos);
+        // SUB07 soft cap: already faster than the max (e.g. after the hull turned) glides down instead of snapping
+        double nv = v + accel * input;
+        if (nv > maxPos) return Math.max(maxPos, v * DRAG);
+        if (nv < -maxNeg) return Math.min(-maxNeg, v * DRAG);
+        return nv;
     }
 
     /** Fraction (0..1) of the hull height in water, sampled down the centre line. */

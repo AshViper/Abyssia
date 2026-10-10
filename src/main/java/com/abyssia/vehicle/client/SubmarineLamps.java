@@ -40,9 +40,9 @@ public final class SubmarineLamps
     {
         Vec3 position = sub.getPosition(partialTick);
         // the renderer's pose: yaw, then the SUB05 pitch about the hull mid-height (xRot + = nose down)
-        float pitch = Mth.lerp(partialTick, sub.xRotO, sub.getXRot());
+        float pitch = SubmarineSteering.pitch(sub, partialTick);
         Matrix4f pose = new Matrix4f()
-                .rotateY((180.0f - sub.getViewYRot(partialTick)) * Mth.DEG_TO_RAD)
+                .rotateY((180.0f - SubmarineSteering.yaw(sub, partialTick)) * Mth.DEG_TO_RAD)
                 .translate(0.0f, (float) Submarine.PIVOT_Y, 0.0f)
                 .rotateX(-pitch * Mth.DEG_TO_RAD)
                 .translate(0.0f, (float) -Submarine.PIVOT_Y, 0.0f);

@@ -152,6 +152,15 @@ public final class ClientConfig
 
     static {
         BUILDER.pop();
+        BUILDER.comment("Submarine piloting").push("submarine");
+    }
+
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_STEERING_SMOOTHING = BUILDER
+            .comment("Seconds the submarine takes to swing to the mouse (Seamoth-like turning lag); 0 = instant")
+            .defineInRange("steering_smoothing", 0.2, 0.0, 1.0);
+
+    static {
+        BUILDER.pop();
     }
 
     static final ForgeConfigSpec SPEC = BUILDER.build();

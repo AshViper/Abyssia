@@ -38,6 +38,8 @@ public final class PlayerScanState
 {
     public static final int GRACE_TICKS = 6, SEND_INTERVAL = 4;
     /** MK0 scanner distance; MK1 / MK2 (technologies scanner_mk1 / scanner_mk2) reach 24 / 32 blocks */
+    /** far block rays stay inside the loaded area (Level.clip would load chunks synchronously) */
+    public static final double LONG_RANGE_CAP = 112.0;
     public static final double MK0_RANGE = 16.0, MK1_RANGE = 24.0, MK2_RANGE = 32.0;
     /** scan time multipliers of MK1 / MK2; a scan never takes less than {@link #MIN_SCAN_TICKS} */
     public static final double MK1_TIME = 0.8, MK2_TIME = 0.65;
@@ -78,14 +80,20 @@ public final class PlayerScanState
         PlayerScanState s = STATES.computeIfAbsent(player.getUUID(), id -> new PlayerScanState());
         ServerLevel level = player.serverLevel();
         double scanRange = scannerRange(player);
-        HitResult hit = raycast(player, level, scanRange);
+        HitResult hit = raycast(player, level, scanRange, Math.max(scanRange, Math.min(longestTargetRange() * scanRange / MK0_RANGE, LONG_RANGE_CAP)));
         var target = hit == null ? null : ScanTargetRegistry.find(player, hit).orElse(null);
         boolean tooFar = false;
         if (target != null)
         {
             // the target's own range is its MK0 limit; better scanners scale it (16 -> 24 -> 32)
             double reach = target.range() * scanRange / MK0_RANGE;
-            if (player.getEyePosition().distanceTo(hit.getLocation()) > reach + 0.5) { target = null; tooFar = true; }
+            double dist = player.getEyePosition().distanceTo(hit.getLocation());
+            if (dist > reach + 0.5)
+            {
+                target = null;
+                // beyond the plain scanner distance only long-range targets are looked for: anything else counts as a miss (as before)
+                tooFar = dist <= scanRange + 0.5;
+            }
         }
 
         if (target != null)
@@ -166,18 +174,27 @@ public final class PlayerScanState
     }
 
     /** First scan target along the look vector: block (outline) or entity, whichever is nearer, within the scanner distance. */
-    private static HitResult raycast(ServerPlayer player, ServerLevel level, double range)
+    private static HitResult raycast(ServerPlayer player, ServerLevel level, double range, double blockRange)
     {
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getLookAngle();
         Vec3 end = eye.add(look.scale(range));
-        BlockHitResult block = level.clip(new ClipContext(eye, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-        double maxSq = block.getType() == HitResult.Type.MISS ? range * range : eye.distanceToSqr(block.getLocation());
+        // the block clip may reach further (long-range targets such as wrecks); entities stay within the scanner distance
+        BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(blockRange)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        double maxSq = block.getType() == HitResult.Type.MISS ? range * range : Math.min(range * range, eye.distanceToSqr(block.getLocation()));
         EntityHitResult entity = ProjectileUtil.getEntityHitResult(player, eye, end,
                 player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0),
                 e -> !e.isSpectator() && e.isPickable(), maxSq);
         if (entity != null) return entity;
         return block.getType() == HitResult.Type.MISS ? null : block;
+    }
+
+    /** Largest MK0 range among the registered scan targets. */
+    private static double longestTargetRange()
+    {
+        double max = MK0_RANGE;
+        for (var t : ScanTargetRegistry.all()) max = Math.max(max, t.range());
+        return max;
     }
 
     @SubscribeEvent
