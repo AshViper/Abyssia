@@ -25,6 +25,7 @@ public final class ModWorldgen
     public static final DeferredRegister<MapCodec<? extends BiomeSource>> BIOME_SOURCES = DeferredRegister.create(Registries.BIOME_SOURCE, Abyssia.MODID);
 
     public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<OceanChunkGenerator>> OCEAN_NOISE = CHUNK_GENERATORS.register("ocean_noise", () -> OceanChunkGenerator.CODEC);
+    public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<net.minecraft.world.level.biome.MultiNoiseBiomeSource>> PLAIN_MULTI_NOISE = BIOME_SOURCES.register("multi_noise", () -> LayeredBiomeSource.PLAIN_MULTI_NOISE);
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<LayeredBiomeSource>> LAYERED = BIOME_SOURCES.register("layered", () -> LayeredBiomeSource.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<RiftDensityFunction>> RIFT = DENSITY_FUNCTIONS.register("rift", RiftDensityFunction.CODEC::codec);
 
