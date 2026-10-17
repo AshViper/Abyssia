@@ -1,11 +1,16 @@
 package com.abyssia.worldgen;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Decoder;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
@@ -33,9 +38,41 @@ public class LayeredBiomeSource extends BiomeSource
                     : DataResult.error(() -> "abyssia:layered needs a minecraft:multi_noise biome source, got " + source),
             source -> source);
 
+    /**
+     * Decodes {@code {"preset": ...}} itself: other mods (Lithostitched) wrap the vanilla codec to call
+     * {@code Holder.value()} at parse time, which throws "unbound value" while the world presets load.
+     * The holder stays lazy here; any other form (and all encoding) goes through the vanilla codec.
+     */
+    private static final Decoder<MultiNoiseBiomeSource> PRESET_ONLY = RegistryFileCodec
+            .create(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST, MultiNoiseBiomeSourceParameterList.DIRECT_CODEC, false)
+            .fieldOf("preset").map(MultiNoiseBiomeSource::createFromPreset).decoder();
+
+    /** The explicit {@code {"biomes": [...]}} form, decoded here for the same reason. */
+    private static final Decoder<MultiNoiseBiomeSource> BIOMES_ONLY = Climate.ParameterList.codec(Biome.CODEC.fieldOf("biome"))
+            .fieldOf("biomes").map(MultiNoiseBiomeSource::createFromList).decoder();
+
+    /**
+     * {@code abyssia:multi_noise}: the plain biomes-list multi-noise source for the ocean presets, with the same lazy
+     * decoding. Its instances are vanilla {@link MultiNoiseBiomeSource}s, so they are saved as {@code minecraft:multi_noise}.
+     */
+    public static final Codec<MultiNoiseBiomeSource> PLAIN_MULTI_NOISE = Climate.ParameterList.codec(Biome.CODEC.fieldOf("biome"))
+            .fieldOf("biomes").flatXmap(
+                    list -> DataResult.success(MultiNoiseBiomeSource.createFromList(list)),
+                    source -> DataResult.<Climate.ParameterList<Holder<Biome>>>error(() -> "abyssia:multi_noise is read-only; it is saved as minecraft:multi_noise")).codec();
+
+    private static final Codec<MultiNoiseBiomeSource> BIOME_SOURCE = Codec.of(MULTI_NOISE, new Decoder<>()
+    {
+        @Override
+        public <T> DataResult<com.mojang.datafixers.util.Pair<MultiNoiseBiomeSource, T>> decode(DynamicOps<T> ops, T input)
+        {
+            DataResult<com.mojang.datafixers.util.Pair<MultiNoiseBiomeSource, T>> preset = PRESET_ONLY.decode(ops, input);
+            return preset.result().isPresent() ? preset : BIOMES_ONLY.decode(ops, input);
+        }
+    });
+
     public static final Codec<LayeredBiomeSource> CODEC = RecordCodecBuilder.create(i -> i.group(
-            MULTI_NOISE.fieldOf("upper").forGetter(s -> s.upper),
-            MULTI_NOISE.fieldOf("lower").forGetter(s -> s.lower),
+            BIOME_SOURCE.fieldOf("upper").forGetter(s -> s.upper),
+            BIOME_SOURCE.fieldOf("lower").forGetter(s -> s.lower),
             Biome.CODEC.fieldOf("fissure_biome").forGetter(s -> s.fissureBiome),
             Codec.FLOAT.fieldOf("fissure_max_depth").forGetter(s -> s.fissureMaxDepth)
     ).apply(i, i.stable(LayeredBiomeSource::new)));

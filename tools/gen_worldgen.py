@@ -2049,6 +2049,8 @@ def biome_sources():
     assert {e["biome"] for e in ocean if e["biome"].startswith("minecraft:")} == {mc(b) for b in OCEAN_WORLD_VANILLA}
     preset = read("world_preset/ocean_world")
     preset["dimensions"]["minecraft:overworld"]["generator"]["biome_source"]["biomes"] = ocean + deep
+    # abyssia:multi_noise decodes the list itself: Lithostitched's codec wrapper throws "unbound value" on the vanilla type.
+    preset["dimensions"]["minecraft:overworld"]["generator"]["biome_source"]["type"] = A("multi_noise")
     write("world_preset/ocean_world", preset)
     return deep
 
