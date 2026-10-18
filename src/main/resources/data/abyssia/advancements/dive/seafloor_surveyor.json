@@ -1,0 +1,307 @@
+{
+  "parent": "abyssia:dive/twilight_zone",
+  "display": {
+    "icon": {
+      "item": "abyssia:deep_sea_map"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.seafloor_surveyor.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.seafloor_surveyor.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "deep_sea": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:deep_sea"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "abyssal_ocean": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:abyssal_ocean"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "abyssal_forest": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:abyssal_forest"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "deep_forest": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:deep_forest"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "abyssal_trench": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:abyssal_trench"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "hadal_zone": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:hadal_zone"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "volcanic_deep": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:volcanic_deep"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "thermal_vents": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:thermal_vents"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "deep_crystal_fields": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:deep_crystal_fields"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "sunken_ruins": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:sunken_ruins"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "bone_graveyard": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:bone_graveyard"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "brine_lakes": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:brine_lakes"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "glow_gardens": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:glow_gardens"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "frost_abyss": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:frost_abyss"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "deep_fissure": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "biome": "abyssia:deep_fissure"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "deep_sea"
+    ],
+    [
+      "abyssal_ocean"
+    ],
+    [
+      "abyssal_forest"
+    ],
+    [
+      "deep_forest"
+    ],
+    [
+      "abyssal_trench"
+    ],
+    [
+      "hadal_zone"
+    ],
+    [
+      "volcanic_deep"
+    ],
+    [
+      "thermal_vents"
+    ],
+    [
+      "deep_crystal_fields"
+    ],
+    [
+      "sunken_ruins"
+    ],
+    [
+      "bone_graveyard"
+    ],
+    [
+      "brine_lakes"
+    ],
+    [
+      "glow_gardens"
+    ],
+    [
+      "frost_abyss"
+    ],
+    [
+      "deep_fissure"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  }
+}

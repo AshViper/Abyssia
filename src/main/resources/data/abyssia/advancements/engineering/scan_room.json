@@ -1,0 +1,27 @@
+{
+  "parent": "abyssia:engineering/first_module",
+  "display": {
+    "icon": {
+      "item": "abyssia:lidar_scanner"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.scan_room.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.scan_room.description"
+    }
+  },
+  "criteria": {
+    "build_scan_room": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "scan_room"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_scan_room"
+    ]
+  ]
+}

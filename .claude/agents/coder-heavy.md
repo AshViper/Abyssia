@@ -1,6 +1,6 @@
 ---
 name: coder-heavy
-description: エスカレーション専用（Opus）。同じエラーが2回出て Fable（advisor）に相談し、その助言で Sonnet が直しても直らない・同じ原因で再発するバグ、原因不明で複数システムにまたがる競合・状態管理の調査/修正だけに使う。通常の実装には使わない（coder-standard を使う）。1問題につき最大1回。
+description: エスカレーション専用（Opus）。同じエラーが2回出て advisor（Opus）に相談し、その助言で Sonnet が直しても直らない・同じ原因で再発するバグ、原因不明で複数システムにまたがる競合・状態管理の調査/修正だけに使う。通常の実装には使わない（coder-standard を使う）。1問題につき最大1回。
 model: claude-opus-5-5
 effort: high
 tools: Read, Edit, Write, Grep, Glob, Bash

@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "item": "minecraft:cod"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.deepest_fish.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.deepest_fish.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "scan_fauna_mariana_snailfish": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_mariana_snailfish"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_mariana_snailfish"
+    ]
+  ]
+}

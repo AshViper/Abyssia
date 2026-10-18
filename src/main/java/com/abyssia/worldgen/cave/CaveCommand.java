@@ -112,10 +112,17 @@ public final class CaveCommand
                         .then(Commands.literal("verify")
                                 .then(Commands.argument("samples", IntegerArgumentType.integer(1, 5000))
                                         .executes(ctx -> verify(ctx, IntegerArgumentType.getInteger(ctx, "samples")))))
-                        .then(Commands.literal("stats").executes(ctx -> {
-                            ctx.getSource().sendSuccess(() -> Component.literal(CaveGenerator.stats()), false);
-                            return 1;
-                        })))
+                        .then(Commands.literal("stats")
+                                .executes(ctx -> {
+                                    ctx.getSource().sendSuccess(() -> Component.literal(CaveGenerator.stats()), false);
+                                    ctx.getSource().sendSuccess(() -> Component.literal("caches: " + CaveGenerator.cacheStats()), false);
+                                    return 1;
+                                })
+                                .then(Commands.literal("reset").executes(ctx -> {
+                                    CaveGenerator.resetStats();
+                                    ctx.getSource().sendSuccess(() -> Component.literal("cave stats reset"), false);
+                                    return 1;
+                                }))))
                 .then(Commands.literal("shafts")
                         .then(Commands.argument("radius", IntegerArgumentType.integer(64, 1600))
                                 .executes(ctx -> shafts(ctx, IntegerArgumentType.getInteger(ctx, "radius")))))
@@ -186,6 +193,16 @@ public final class CaveCommand
         }
         ctx.getSource().sendSuccess(() -> Component.literal(lines.size() + " abyss cavit" + (lines.size() == 1 ? "y" : "ies") + " within " + radius + " blocks"
                 + (lines.size() > CAVITY_LINES ? " (first " + CAVITY_LINES + " shown)" : "")), false);
+        StringBuilder share = new StringBuilder("footprint (sum pi r^2, overlap ignored) of the circle:");
+        double circle = Math.PI * radius * (double) radius;
+        for (CaveNetwork net : network.windows())
+        {
+            double sum = 0;
+            List<AbyssCavity.Site> sites = AbyssCavity.near(net, pos.getX(), pos.getZ(), radius);
+            for (AbyssCavity.Site site : sites) sum += Math.PI * site.radius() * site.radius();
+            share.append(String.format(java.util.Locale.ROOT, " [%s] n=%d %.0f blocks2 %.1f%%;", net.label(), sites.size(), sum, radius > 0 ? sum / circle * 100 : 0));
+        }
+        ctx.getSource().sendSuccess(() -> Component.literal(share.toString()), false);
         for (int i = 0; i < Math.min(lines.size(), CAVITY_LINES); i++)
         {
             String line = lines.get(i);

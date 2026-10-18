@@ -17,6 +17,7 @@ tools: Read, Grep, Glob
 4. null 参照、型の不整合、登録漏れ（registry、lang、loot、model、tag）
 5. 並行処理と性能（tick ごとの重い処理、ワールド生成スレッドからの参照）
 6. 既存の設計や決定との矛盾、tools/ の生成物を手で編集していないか
+7. 完了前の確認（2026-10-10 に advisor から移管）: 完了報告と検証結果で、実機・ビルドで確かめていない項目を成功扱いにしていないか。未検証の項目は `unverified` に挙げる
 
 必要なファイルだけを読む。推測で FAIL にしない。根拠のある問題だけを挙げる。
 
@@ -25,6 +26,7 @@ tools: Read, Grep, Glob
 {
   "result": "PASS",
   "problems": [{"file": "path:line", "issue": "…", "severity": "high|medium|low"}],
+  "unverified": ["…"],
   "fix": ["…"]
 }
 ```

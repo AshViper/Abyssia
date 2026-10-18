@@ -21,6 +21,9 @@ final class CaveVegetationGenerator
 {
     private static final Direction[] HORIZONTAL = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
 
+    /** Share of an abyss cavity's open blocks the undergrowth pass looks at (its odds are scaled up to match). */
+    private static final double ABYSS_SAMPLE = 0.4;
+
     private CaveVegetationGenerator() {}
 
     /** Giant plants of cavern forests: the canopy claims its ground before the undergrowth. */
@@ -35,6 +38,7 @@ final class CaveVegetationGenerator
             {
                 for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
                 {
+                    if (ctx.interiorOpen(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || !space.isCavern()) continue;
@@ -45,8 +49,11 @@ final class CaveVegetationGenerator
                     if (giant <= 0 || env.giantPlants.isEmpty() || !ctx.sturdy(lx, y - 1, lz, Direction.UP)) continue;
                     int x = ctx.x0 + lx, z = ctx.z0 + lz;
                     boolean forest = space.landmark == CaveLandmark.GIANT_KELP_CAVERN || space.landmark == CaveLandmark.DEEP_CAVE_FOREST;
+                    double roll = noises.hash(x, y, z, 31);
+                    // Cheap cut: the zone multiplier never exceeds 3.2, so a roll above the 3.21 bound fails below too (same result).
+                    if (roll >= giant * 3.21 * vegetation * (forest ? 2.5 : 1.0)) continue;
                     double chance = giant * noises.vegetationZone(x, y, z) * vegetation * (forest ? 2.5 : 1.0);
-                    if (noises.hash(x, y, z, 31) >= chance) continue;
+                    if (roll >= chance) continue;
                     int free = CaveDecorationGenerator.free(ctx, lx, y, lz, Direction.UP, 255);
                     if (free < 4) continue;
                     CaveEnvironment.PlantEntry entry = env.giantPlants.pick(noises.species(x + 97, y, z));
@@ -79,19 +86,31 @@ final class CaveVegetationGenerator
             {
                 for (int lx = 0; lx < 16; lx++)
                 {
+                    if (ctx.interiorOpen(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null) continue;
                     CaveEnvironment env = space.environment;
                     CaveEnvironment.Flora flora = env.flora;
                     if (flora.density() <= 0 && flora.moss() <= 0) continue;
+                    int x = ctx.x0 + lx, z = ctx.z0 + lz;
+                    // Abyss cavities are huge: look at 40% of their blocks (before the costly support/noise work) and scale the odds up to keep the density.
+                    double thin = 1.0;
+                    if (space.type == CaveType.ABYSS_CAVITY)
+                    {
+                        if (noises.hash(x, y, z, 29) >= ABYSS_SAMPLE) continue;
+                        thin = 1.0 / ABYSS_SAMPLE;
+                    }
+                    // Cheap cut before the support scan: both rolls fail even at their upper-bound odds (same result as below).
+                    if (space.cavern == null && flora.moss() * vegetation * thin < 1.0 && noises.hash(x, y, z, 23) >= flora.moss() * vegetation * thin
+                            && noises.hash(x, y, z, 21) >= flora.density() * vegetation * 0.6 * space.vegetationBoost * thin * noises.vegetationZone(x, y, z))
+                        continue;
                     Direction support = support(ctx, lx, y, lz);
                     if (support == null) continue;
-                    int x = ctx.x0 + lx, z = ctx.z0 + lz;
                     double zone = noises.vegetationZone(x, y, z);
                     double patch = noises.patch(x, y, z, 0);
                     double orientation = support == Direction.DOWN ? 0.6 : support == Direction.UP ? 0.4 : 0.25;
-                    double chance = flora.density() * zone * vegetation * (0.08 + 0.92 * patch) * orientation * space.vegetationBoost;
+                    double chance = flora.density() * zone * vegetation * (0.08 + 0.92 * patch) * orientation * space.vegetationBoost * thin;
                     // In a cavern: by ecology patch, entrance-to-deep gradient and height.
                     if (space.cavern != null) chance *= space.cavern.vegetationFactor(x + 0.5, y + 0.5, z + 0.5);
                     if (noises.hash(x, y, z, 21) < chance)
@@ -109,7 +128,7 @@ final class CaveVegetationGenerator
                         if (placed) continue;
                     }
                     // Moss films on bare rock, in their own patches.
-                    if (flora.moss() > 0 && noises.hash(x, y, z, 23) < flora.moss() * vegetation * noises.patch(x, y, z, 44.4))
+                    if (flora.moss() > 0 && noises.hash(x, y, z, 23) < flora.moss() * vegetation * thin * noises.patch(x, y, z, 44.4))
                     {
                         CavePlacer.moss(ctx, lx, y, lz, moss);
                     }

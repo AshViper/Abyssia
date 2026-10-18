@@ -1,0 +1,32 @@
+{
+  "parent": "abyssia:life/prospector",
+  "display": {
+    "icon": {
+      "item": "abyssia:iridium_ingot"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.geologist.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.geologist.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "scan_mineral_deposit_complete": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "group": "mineral_deposit_",
+        "complete": true
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_mineral_deposit_complete"
+    ]
+  ],
+  "rewards": {
+    "experience": 200
+  }
+}

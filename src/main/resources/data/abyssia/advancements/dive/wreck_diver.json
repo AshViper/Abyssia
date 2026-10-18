@@ -1,0 +1,27 @@
+{
+  "parent": "abyssia:dive/twilight_zone",
+  "display": {
+    "icon": {
+      "item": "minecraft:chest"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.wreck_diver.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.wreck_diver.description"
+    }
+  },
+  "criteria": {
+    "scan_wreck_core": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/wreck_core"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_wreck_core"
+    ]
+  ]
+}

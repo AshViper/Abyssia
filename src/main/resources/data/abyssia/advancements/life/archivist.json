@@ -1,0 +1,33 @@
+{
+  "parent": "abyssia:life/data_hoarder",
+  "display": {
+    "icon": {
+      "item": "minecraft:bookshelf"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.archivist.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.archivist.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "scan_count100": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "count": {
+          "min": 100
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_count100"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

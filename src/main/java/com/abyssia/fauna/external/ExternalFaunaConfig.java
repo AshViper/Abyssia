@@ -35,7 +35,7 @@ public final class ExternalFaunaConfig
             .define("debug_log", false);
     public static final ForgeConfigSpec.IntValue MIN_SCORE = BUILDER
             .comment("Score an entity needs to count as a sea animal (see OceanMobClassifier; cod scores 100, drowned -20)")
-            .defineInRange("min_score", 50, -100, 300);
+            .defineInRange("min_score", 35, -100, 300);
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> WHITELIST = BUILDER
             .comment("Entities added even when not detected (\"mod:entity\", \"mod:*\" or \"#namespace:entity_tag\")")
             .defineListAllowEmpty("whitelist", List.of(), ExternalFaunaConfig::isString);
@@ -63,10 +63,10 @@ public final class ExternalFaunaConfig
             .defineInRange("weight_multiplier", 1.0, 0.0, 10.0);
     public static final ForgeConfigSpec.DoubleValue MAX_SHARE = BUILDER
             .comment("At most this share of the spawn weight at any spot goes to external animals (the rest to Abyssia's fauna)")
-            .defineInRange("max_share", 0.35, 0.0, 0.9);
+            .defineInRange("max_share", 0.5, 0.0, 0.9);
     public static final ForgeConfigSpec.IntValue MAX_PER_BIOME = BUILDER
             .comment("At most this many external species per biome (the highest-scoring ones)")
-            .defineInRange("max_external_mobs_per_biome", 20, 0, 500);
+            .defineInRange("max_external_mobs_per_biome", 64, 0, 500);
     public static final ForgeConfigSpec.IntValue MAX_PER_PLAYER = BUILDER
             .comment("At most this many external animals (spawned by this system) within 128 blocks of a player")
             .defineInRange("max_per_player", 16, 0, 500);

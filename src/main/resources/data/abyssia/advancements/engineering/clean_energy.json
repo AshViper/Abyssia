@@ -1,0 +1,49 @@
+{
+  "parent": "abyssia:engineering/power_on",
+  "display": {
+    "icon": {
+      "item": "minecraft:lightning_rod"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.clean_energy.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.clean_energy.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "build_current_turbine": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "current_turbine"
+      }
+    },
+    "build_geothermal_generator": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "geothermal_generator"
+      }
+    },
+    "hydrothermal_generator": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "abyssia:hydrothermal_generator"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_current_turbine"
+    ],
+    [
+      "build_geothermal_generator",
+      "hydrothermal_generator"
+    ]
+  ]
+}

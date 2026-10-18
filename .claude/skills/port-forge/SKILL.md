@@ -8,7 +8,7 @@ Port one feature at a time, with absolute paths, from the files the feature chan
 
 1. **Data** (recipes, loot, tags, models): `python tools/mc_format.py --to-forge F:/Java/Abyssia --dry-run` in the NeoForge tree, then without `--dry-run`. `errors` = hand port; `unconverted_diffs` (worldgen, dimension types) = hand port. Never edit generated data by hand: change the generator and rerun.
 2. **Java**: copy the changed files, then apply the table below. Do not read whole files: Grep the NeoForge-only names.
-3. **Build** in the Forge tree (`./gradlew compileJava`), then the client smoke test in a scratch copy. Skip the test only for pure data changes.
+3. **Build** in the Forge tree (`./gradlew compileJava`), then the client smoke test directly in the main tree's `run/` (no scratch copy, user 2026-10-15). Skip the test only for pure data changes.
 4. Commit each branch separately with only that feature's files (NeoForge `NeoForge1.21.1`; Forge `main`).
 
 | NeoForge 1.21.1 | Forge 1.20.1 |

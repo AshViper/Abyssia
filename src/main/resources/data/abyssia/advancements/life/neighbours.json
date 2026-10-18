@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:life/first_scan",
+  "display": {
+    "icon": {
+      "item": "abyssia:anglerfish_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.neighbours.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.neighbours.description"
+    }
+  },
+  "criteria": {
+    "scan_fauna_count10": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "group": "fauna_",
+        "count": {
+          "min": 10
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_count10"
+    ]
+  ]
+}

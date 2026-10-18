@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:life/first_scan",
+  "display": {
+    "icon": {
+      "item": "minecraft:redstone_torch"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.eureka.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.eureka.description"
+    }
+  },
+  "criteria": {
+    "research_count1": {
+      "trigger": "abyssia:research",
+      "conditions": {
+        "count": {
+          "min": 1
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "research_count1"
+    ]
+  ]
+}

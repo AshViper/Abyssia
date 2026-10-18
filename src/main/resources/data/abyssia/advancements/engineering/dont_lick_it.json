@@ -1,0 +1,34 @@
+{
+  "parent": "abyssia:engineering/deep_metallurgy",
+  "display": {
+    "icon": {
+      "item": "abyssia:uranium_ingot"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.dont_lick_it.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.dont_lick_it.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "uranium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "abyssia:uranium_ingot"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "uranium_ingot"
+    ]
+  ]
+}

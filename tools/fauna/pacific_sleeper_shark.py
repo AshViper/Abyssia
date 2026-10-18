@@ -37,8 +37,8 @@ INFO = dict(
         "bite": (2, "Sleeper shark bites", "オンデンザメが噛みつく"),
     },
     # surface-2205 m (Arctic shallows ignored); tagged sharks mostly 200-600 m; slow, just above the slope floor
-    spawn=dict(weight=3, group=(1, 1), depth_m=(100, 200, 600, 2205), placement="near_floor",
-               cave_factor=0.2, open_factor=1.0, max_light=8, clearance=3, cap=(8, 128)),
+    spawn=dict(weight=2, group=(1, 1), depth_m=(100, 200, 600, 2205), placement="open_water",
+               cave_factor=1.0, open_factor=1.0, max_light=6, clearance=6, cap=(6, 128)),
     java=dict(kind="shark", size_m=3.7, health=50, attack=6, armor=3,
               traits=dict(steering=(8, 2, 0.0025), cruise_height=3, mouth_forward=1.2),
               render=dict(eyeshine=(0.5, ["right_eye", "left_eye"]))),

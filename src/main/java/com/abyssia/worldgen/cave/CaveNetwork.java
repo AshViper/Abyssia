@@ -99,6 +99,34 @@ public final class CaveNetwork
     /** AB06: the abyss cavity of each super cell (window only; cheap, kept apart from the plans so planning never recurses). */
     private final ConcurrentHashMap<Long, Optional<AbyssCavity.Site>> cavities = new ConcurrentHashMap<>();
     /** Layout costs for the debug stats: plans, system builds, minor builds (count and nanoseconds). */
+    /** Cache statistics: [window ? 1 : 0][cache][HIT, MISS (a build ran), CLEAR (times emptied), EVICTED (entries dropped), MISS_AFTER_CLEAR (builds after the first clear: rebuild upper bound)]. */
+    static final int PLAN = 0, SYSTEM = 1, MINOR = 2, CAVITY = 3, HIT = 0, MISS = 1, CLEAR = 2, EVICTED = 3, MISS_AFTER_CLEAR = 4;
+    static final String[] CACHE_NAMES = {"plans", "systems", "minors", "cavities"};
+    static final java.util.concurrent.atomic.AtomicLongArray CACHE_STATS = new java.util.concurrent.atomic.AtomicLongArray(2 * 4 * 5);
+    private final boolean[] cleared = new boolean[4];
+
+    private int statIndex(int cache, int field)
+    {
+        return ((band == null ? 0 : 1) * 4 + cache) * 5 + field;
+    }
+
+    private void stat(int cache, int field)
+    {
+        CACHE_STATS.incrementAndGet(statIndex(cache, field));
+    }
+
+    private void cleared(int cache, int evicted)
+    {
+        cleared[cache] = true;
+        stat(cache, CLEAR);
+        CACHE_STATS.addAndGet(statIndex(cache, EVICTED), evicted);
+    }
+
+    static void resetCacheStats()
+    {
+        for (int i = 0; i < CACHE_STATS.length(); i++) CACHE_STATS.set(i, 0);
+    }
+
     static final java.util.concurrent.atomic.AtomicLongArray COST = new java.util.concurrent.atomic.AtomicLongArray(6);
     /** The same for each window (6 slots per window, in {@link DepthBand} order; windows have no minor caves). */
     static final java.util.concurrent.atomic.AtomicLongArray WINDOW_COST = new java.util.concurrent.atomic.AtomicLongArray(6 * DepthBand.values().length);
@@ -344,8 +372,18 @@ public final class CaveNetwork
     AbyssCavity.Site cavity(int superX, int superZ)
     {
         if (band == null) return null;
-        if (cavities.size() > CACHE_LIMIT) cavities.clear();
-        return cavities.computeIfAbsent(key(superX, superZ), k -> Optional.ofNullable(AbyssCavity.compute(this, superX, superZ))).orElse(null);
+        if (cavities.size() > CACHE_LIMIT)
+        {
+            cleared(CAVITY, cavities.size());
+            cavities.clear();
+        }
+        long ck = key(superX, superZ);
+        if (cavities.containsKey(ck)) stat(CAVITY, HIT);
+        return cavities.computeIfAbsent(ck, k -> {
+            stat(CAVITY, MISS);
+            if (cleared[CAVITY]) stat(CAVITY, MISS_AFTER_CLEAR);
+            return Optional.ofNullable(AbyssCavity.compute(this, superX, superZ));
+        }).orElse(null);
     }
 
     /** Highest seabed an entrance may open into (or an arch rise to): a margin under the deep layer's rock ceiling. */
@@ -498,8 +536,16 @@ public final class CaveNetwork
     @Nullable
     CaveNetworkGenerator.Plan plan(int cellX, int cellZ)
     {
-        if (plans.size() > CACHE_LIMIT * 4) plans.clear();
-        return plans.computeIfAbsent(key(cellX, cellZ), k -> {
+        if (plans.size() > CACHE_LIMIT * 4)
+        {
+            cleared(PLAN, plans.size());
+            plans.clear();
+        }
+        long pk = key(cellX, cellZ);
+        if (plans.containsKey(pk)) stat(PLAN, HIT);
+        return plans.computeIfAbsent(pk, k -> {
+            stat(PLAN, MISS);
+            if (cleared[PLAN]) stat(PLAN, MISS_AFTER_CLEAR);
             long t = System.nanoTime();
             Optional<CaveNetworkGenerator.Plan> plan = Optional.ofNullable(CaveNetworkGenerator.plan(this, cellX, cellZ));
             cost(0, System.nanoTime() - t);
@@ -509,7 +555,7 @@ public final class CaveNetwork
 
     public CaveSystem system(int cellX, int cellZ)
     {
-        return cached(systems, band == null ? CACHE_LIMIT : WINDOW_CACHE_LIMIT, cellX, cellZ, () -> {
+        return cached(SYSTEM, systems, band == null ? CACHE_LIMIT : WINDOW_CACHE_LIMIT, cellX, cellZ, () -> {
             long t = System.nanoTime();
             CaveSystem built = CaveNetworkGenerator.build(this, cellX, cellZ);
             cost(1, System.nanoTime() - t);
@@ -520,7 +566,7 @@ public final class CaveNetwork
     public CaveSystem minor(int cellX, int cellZ)
     {
         if (band != null) return CaveNetworkGenerator.noMinor(this, cellX, cellZ);
-        return cached(minors, CACHE_LIMIT, cellX, cellZ, () -> {
+        return cached(MINOR, minors, CACHE_LIMIT, cellX, cellZ, () -> {
             long t = System.nanoTime();
             CaveSystem built = CaveNetworkGenerator.buildMinor(this, cellX, cellZ);
             cost(2, System.nanoTime() - t);
@@ -532,9 +578,13 @@ public final class CaveNetwork
      * Each layout is built once: the first thread asking builds it, threads asking meanwhile wait for that result
      * instead of building a duplicate. Building happens outside the map's locks (it reads other caches).
      */
-    private static CaveSystem cached(ConcurrentHashMap<Long, FutureTask<CaveSystem>> cache, int limit, int cellX, int cellZ, Callable<CaveSystem> build)
+    private CaveSystem cached(int kind, ConcurrentHashMap<Long, FutureTask<CaveSystem>> cache, int limit, int cellX, int cellZ, Callable<CaveSystem> build)
     {
-        if (cache.size() > limit) cache.clear();
+        if (cache.size() > limit)
+        {
+            cleared(kind, cache.size());
+            cache.clear();
+        }
         long k = key(cellX, cellZ);
         FutureTask<CaveSystem> task = cache.get(k);
         if (task == null)
@@ -544,9 +594,13 @@ public final class CaveNetwork
             if (task == null)
             {
                 task = created;
+                stat(kind, MISS);
+                if (cleared[kind]) stat(kind, MISS_AFTER_CLEAR);
                 created.run();
             }
+            else stat(kind, HIT);
         }
+        else stat(kind, HIT);
         try
         {
             return task.get();

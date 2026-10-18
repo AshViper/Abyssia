@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "item": "abyssia:giant_squid_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.kraken.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.kraken.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "scan_fauna_giant_squid": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_giant_squid"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_giant_squid"
+    ]
+  ]
+}

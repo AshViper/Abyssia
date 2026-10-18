@@ -1,0 +1,32 @@
+{
+  "parent": "abyssia:life/taste_of_the_deep",
+  "display": {
+    "icon": {
+      "item": "abyssia:cooked_blobfish"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.sorry_blobby.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.sorry_blobby.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "cooked_blobfish": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": [
+            "abyssia:cooked_blobfish"
+          ]
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "cooked_blobfish"
+    ]
+  ]
+}

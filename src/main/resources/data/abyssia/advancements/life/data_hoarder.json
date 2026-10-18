@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:life/first_scan",
+  "display": {
+    "icon": {
+      "item": "minecraft:writable_book"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.data_hoarder.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.data_hoarder.description"
+    }
+  },
+  "criteria": {
+    "scan_count50": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "count": {
+          "min": 50
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_count50"
+    ]
+  ]
+}

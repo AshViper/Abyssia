@@ -37,8 +37,8 @@ import java.util.Optional;
 /**
  * Loads data/&lt;namespace&gt;/scan_targets/*.json (reloaded with /reload):
  * <pre>{"id":"abyssia:scan_target/wreck_core","category":"wreck","name_key":"...","scan_seconds":6,"range":16,
- *  "match":{"block":"abyssia:wreck_core","radius":6},"fragment_key":"position"}</pre>
- * {@code match} has exactly one of block / block_tag / entity / deposit_mineral / structure (block also takes an optional "radius" 0..8: any such block in that cube around the hit matches). {@code id} defaults to
+ *  "match":{"block":"abyssia:wreck_core"},"fragment_key":"position"}</pre>
+ * {@code match} has exactly one of block / block_tag / entity / deposit_mineral / structure. {@code id} defaults to
  * {@code <namespace>:scan_target/<file path>}. Bad or duplicate files are logged and skipped.
  */
 @Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -95,17 +95,12 @@ public final class ScanTargetRegistry extends SimpleJsonResourceReloadListener
         ScanTarget.Match match = null;
         for (String key : m.keySet())
         {
-            if (key.equals("radius")) continue;
             ScanTarget.MatchType type = ScanTarget.MatchType.byJson(key);
             if (type == null) throw new IllegalArgumentException("unknown match rule '" + key + "'");
             if (match != null) throw new IllegalArgumentException("match needs exactly one rule");
             match = new ScanTarget.Match(type, idOf(GsonHelper.getAsString(m, key)));
         }
         if (match == null) throw new IllegalArgumentException("match needs exactly one rule");
-        int radius = GsonHelper.getAsInt(m, "radius", 0);
-        if (radius < 0 || radius > 8) throw new IllegalArgumentException("match radius must be 0..8");
-        if (radius > 0 && match.type() != ScanTarget.MatchType.BLOCK) throw new IllegalArgumentException("match radius only applies to block");
-        match = new ScanTarget.Match(match.type(), match.value(), radius);
         switch (match.type())
         {
             case BLOCK, DEPOSIT_MINERAL ->
@@ -149,7 +144,7 @@ public final class ScanTargetRegistry extends SimpleJsonResourceReloadListener
         return targets.containsKey(id);
     }
 
-    /** The target the hit result rests on (first match by id order), or empty. Server side. */
+    /** The target the hit result rests on, or empty: block / block tag of the hit block first, then deposit and structure regions (each by id order). Server side. */
     public static Optional<ScanTarget> find(ServerPlayer player, HitResult hit)
     {
         List<ScanTarget> list = ordered;
@@ -166,6 +161,13 @@ public final class ScanTargetRegistry extends SimpleJsonResourceReloadListener
         BlockPos pos = bh.getBlockPos();
         BlockState state = level.getBlockState(pos);
         ResourceLocation block = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        // the block itself first: a region rule (deposit bounds, structure) must not hide e.g. a wreck core lying inside a deposit
+        for (ScanTarget t : list)
+        {
+            ResourceLocation v = t.match().value();
+            if (t.match().type() == ScanTarget.MatchType.BLOCK && v.equals(block)) return Optional.of(t);
+            if (t.match().type() == ScanTarget.MatchType.BLOCK_TAG && state.is(TagKey.create(Registries.BLOCK, v))) return Optional.of(t);
+        }
         OreDeposit deposit = null;
         boolean depositLooked = false;
         for (ScanTarget t : list)
@@ -173,15 +175,6 @@ public final class ScanTargetRegistry extends SimpleJsonResourceReloadListener
             ResourceLocation v = t.match().value();
             switch (t.match().type())
             {
-                case BLOCK ->
-                {
-                    if (v.equals(block)) return Optional.of(t);
-                    if (t.match().radius() > 0 && blockNear(level, pos, v, t.match().radius()) != null) return Optional.of(t);
-                }
-                case BLOCK_TAG ->
-                {
-                    if (state.is(TagKey.create(Registries.BLOCK, v))) return Optional.of(t);
-                }
                 case DEPOSIT_MINERAL ->
                 {
                     if (!depositLooked)
@@ -201,26 +194,10 @@ public final class ScanTargetRegistry extends SimpleJsonResourceReloadListener
         return Optional.empty();
     }
 
-    /** The first block {@code id} within the cube of {@code radius} around pos, or null. */
-    private static BlockPos blockNear(ServerLevel level, BlockPos pos, ResourceLocation id, int radius)
-    {
-        BlockPos.MutableBlockPos mp = new BlockPos.MutableBlockPos();
-        for (int dx = -radius; dx <= radius; dx++)
-            for (int dy = -radius; dy <= radius; dy++)
-                for (int dz = -radius; dz <= radius; dz++)
-                {
-                    mp.set(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
-                    if (BuiltInRegistries.BLOCK.getKey(level.getBlockState(mp).getBlock()).equals(id)) return mp.immutable();
-                }
-        return null;
-    }
-
     /** The deposit whose region contains the hit point (the lidar scanner's own rule), or null. */
     private static OreDeposit depositAt(ServerLevel level, BlockHitResult hit)
     {
-        return OreDepositManager.findNearby(level, hit.getBlockPos(), 2).stream()
-                .filter(d -> d.bounds().inflate(1.0).contains(hit.getLocation()))
-                .min(Comparator.comparingDouble(d -> d.center().distSqr(hit.getBlockPos()))).orElse(null);
+        return OreDepositManager.regionAt(level, hit.getBlockPos(), hit.getLocation());
     }
 
     private static boolean inStructure(ServerLevel level, BlockPos pos, ResourceLocation id)
@@ -256,17 +233,6 @@ public final class ScanTargetRegistry extends SimpleJsonResourceReloadListener
         {
             OreDeposit d = depositAt(player.serverLevel(), bh);
             if (d != null) return d.depositId().toString();
-        }
-        if (target.fragmentKey() == ScanTarget.FragmentKey.POSITION && target.match().type() == ScanTarget.MatchType.BLOCK
-                && target.match().radius() > 0 && hit instanceof BlockHitResult bh)
-        {
-            BlockPos hp = bh.getBlockPos();
-            ResourceLocation id = target.match().value();
-            if (!BuiltInRegistries.BLOCK.getKey(player.serverLevel().getBlockState(hp).getBlock()).equals(id))
-            {
-                BlockPos core = blockNear(player.serverLevel(), hp, id, target.match().radius());
-                if (core != null) return Long.toString(core.asLong());
-            }
         }
         return discoveryKey(target, hit);
     }

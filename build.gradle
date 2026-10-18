@@ -86,6 +86,8 @@ minecraft {
         }
 
         client {
+            property 'abyssia.autoshot', '1'
+            args '--quickPlaySingleplayer', 'hl'
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
         }
@@ -165,6 +167,12 @@ dependencies {
     if (gradle.startParameter.taskNames.any { it.toLowerCase().contains('runclient') }) {
         runtimeOnly fg.deobf("blank:embeddium:0.3.31+mc1.20.1")
         runtimeOnly fg.deobf("blank:oculus-mc1.20.1:1.8.0")
+    }
+
+    // Alex's Caves compatibility check: `-PalexCaves` runs Abyssia together with Alex's Caves + Citadel (jars in ./libs).
+    if (project.hasProperty('alexCaves')) {
+        runtimeOnly fg.deobf("blank:alexscaves:2.0.2")
+        runtimeOnly fg.deobf("blank:citadel:2.6.3-1.20.1")
     }
 
     // For more info:

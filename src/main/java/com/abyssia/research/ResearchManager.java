@@ -134,6 +134,8 @@ public final class ResearchManager
         List<ResourceLocation> newly = evaluate(data);
         data.save(player);
         if (added || !newly.isEmpty()) sendDelta(player, data, target, newly);
+        com.abyssia.advancement.AbyssiaCriteria.scan(player);
+        if (!newly.isEmpty()) com.abyssia.advancement.AbyssiaCriteria.research(player);
         ScanOutcome outcome = !added ? ScanOutcome.KNOWN : wasScanned ? ScanOutcome.FRAGMENT : ScanOutcome.NEW;
         return new ScanResult(outcome, data.count(target), neededFor(target), List.copyOf(newly));
     }
@@ -149,6 +151,7 @@ public final class ResearchManager
         newly.addAll(evaluate(data));
         data.save(player);
         sendDelta(player, data, null, newly);
+        com.abyssia.advancement.AbyssiaCriteria.research(player);
         return true;
     }
 
@@ -262,7 +265,12 @@ public final class ResearchManager
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        if (event.getEntity() instanceof ServerPlayer player) refresh(player);
+        if (event.getEntity() instanceof ServerPlayer player)
+        {
+            refresh(player);
+            com.abyssia.advancement.AbyssiaCriteria.scan(player);
+            com.abyssia.advancement.AbyssiaCriteria.research(player);
+        }
     }
 
     @SubscribeEvent

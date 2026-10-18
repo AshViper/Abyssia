@@ -100,6 +100,7 @@ public class CreatureCaptureCanisterItem extends Item
         target.discard();
         player.setItemInHand(event.getHand(), ItemUtils.createFilledResult(held, player, full, false));
         player.displayClientMessage(Component.translatable(MSG + "captured", target.getType().getDescription()), true);
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp) com.abyssia.advancement.AbyssiaCriteria.capture(sp, id);
     }
 
     /** Filled canister on a block that is not an aquarium (the block handles that): set the creature free. */

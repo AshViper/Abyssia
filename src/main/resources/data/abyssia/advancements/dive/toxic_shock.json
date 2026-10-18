@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:dive/lightless",
+  "display": {
+    "icon": {
+      "item": "minecraft:fermented_spider_eye"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.toxic_shock.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.toxic_shock.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "event_hazard_damage_toxic": {
+      "trigger": "abyssia:event",
+      "conditions": {
+        "event": "hazard_damage",
+        "key": "toxic"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "event_hazard_damage_toxic"
+    ]
+  ]
+}

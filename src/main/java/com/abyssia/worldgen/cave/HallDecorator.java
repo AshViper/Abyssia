@@ -153,6 +153,7 @@ final class HallDecorator
             {
                 for (int lx = 0; lx < 16; lx++)
                 {
+                    if (ctx.interiorOpen(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || space.hall == null) continue;

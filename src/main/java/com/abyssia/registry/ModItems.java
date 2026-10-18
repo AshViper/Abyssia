@@ -3,6 +3,9 @@ package com.abyssia.registry;
 import com.abyssia.Abyssia;
 import com.abyssia.item.MaterialItem;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,7 +28,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -34,7 +36,6 @@ public final class ModItems
 {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Abyssia.MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Abyssia.MODID);
-    private static final List<RegistryObject<? extends Item>> TAB_ITEMS = new ArrayList<>();
 
     // Deep-sea metals and minerals
     public static final RegistryObject<Item> RAW_MANGANESE = item("raw_manganese");
@@ -263,52 +264,78 @@ public final class ModItems
 
     // OL01 cultivated oil kelp: the sac is smelted into bio_oil; the seed plants the (item-less) oil_kelp block
     public static final RegistryObject<Item> OIL_SAC = item("oil_sac");
-    public static final RegistryObject<Item> OIL_KELP_SEED = tabItem("oil_kelp_seed", () -> new net.minecraft.world.item.ItemNameBlockItem(ModBlocks.OIL_KELP.get(), new Item.Properties()));
+    public static final RegistryObject<Item> OIL_KELP_SEED = tabItem("oil_kelp_seed", AbyssiaTab.NATURE, () -> new net.minecraft.world.item.ItemNameBlockItem(ModBlocks.OIL_KELP.get(), new Item.Properties()));
 
     // MP01 deep sea map / abyss chart (filled maps are vanilla filled_map stacks)
-    public static final RegistryObject<Item> DEEP_SEA_MAP = tabItem("deep_sea_map", () -> new com.abyssia.map.DeepSeaMapItem(new Item.Properties().stacksTo(16)));
-    public static final RegistryObject<Item> ABYSS_CHART = tabItem("abyss_chart", () -> new com.abyssia.map.AbyssChartItem(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> DEEP_SEA_MAP = tabItem("deep_sea_map", AbyssiaTab.EQUIPMENT, () -> new com.abyssia.map.DeepSeaMapItem(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ABYSS_CHART = tabItem("abyss_chart", AbyssiaTab.EQUIPMENT, () -> new com.abyssia.map.AbyssChartItem(new Item.Properties().stacksTo(16)));
 
-    public static final RegistryObject<CreativeModeTab> TAB = TABS.register("abyssia", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.abyssia"))
-            .icon(() -> ModBlocks.ABYSSAL_BLOOM.get().asItem().getDefaultInstance())
-            .displayItems((params, output) ->
-            {
-                TAB_ITEMS.forEach(item -> output.accept(item.get()));
-                com.abyssia.item.electric.ElectricTools.addFullVariants(output);
-            })
-            .build());
+    public static final RegistryObject<CreativeModeTab> NATURE_TAB = tab(AbyssiaTab.NATURE, null,
+            () -> ModBlocks.ABYSSAL_BLOOM.get().asItem().getDefaultInstance());
+    public static final RegistryObject<CreativeModeTab> BUILDING_TAB = tab(AbyssiaTab.BUILDING, AbyssiaTab.NATURE,
+            () -> ModBuildingBlocks.ANCIENT_PLANKS.get().asItem().getDefaultInstance());
+    public static final RegistryObject<CreativeModeTab> MATERIALS_TAB = tab(AbyssiaTab.MATERIALS, AbyssiaTab.BUILDING,
+            () -> ABYSSAL_ALLOY_INGOT.get().getDefaultInstance());
+    public static final RegistryObject<CreativeModeTab> FOOD_TAB = tab(AbyssiaTab.FOOD, AbyssiaTab.MATERIALS,
+            () -> COOKED_ABYSSAL_FISH.get().getDefaultInstance());
+    public static final RegistryObject<CreativeModeTab> EQUIPMENT_TAB = tab(AbyssiaTab.EQUIPMENT, AbyssiaTab.FOOD,
+            () -> com.abyssia.item.electric.ElectricTools.DRILL.get().getDefaultInstance());
+    public static final RegistryObject<CreativeModeTab> MACHINES_TAB = tab(AbyssiaTab.MACHINES, AbyssiaTab.EQUIPMENT,
+            () -> com.abyssia.vehicle.VehicleContent.SUBMARINE_ITEM.get().getDefaultInstance());
 
     private ModItems() {}
 
     public static void register(IEventBus modBus)
     {
         ITEMS.register(modBus);
-        ModTools.register(ITEMS, TAB_ITEMS);
-        MaterialTools.register(ITEMS, TAB_ITEMS);
+        ModTools.register(ITEMS, AbyssiaTab.EQUIPMENT.items());
+        MaterialTools.register(ITEMS, AbyssiaTab.EQUIPMENT.items());
         com.abyssia.item.DivingBreathing.register();
         com.abyssia.item.DivingSwimGear.register();
-        com.abyssia.item.electric.ElectricTools.register(ITEMS, TAB_ITEMS);
-        com.abyssia.item.scanner.LidarScannerItem.register(ITEMS, TAB_ITEMS);
-        com.abyssia.item.EntryDivingGear.register(ITEMS, TAB_ITEMS);
-        ModIndustry.registerItems(ITEMS, TAB_ITEMS);
-        ModHabitat.registerItems(ITEMS, TAB_ITEMS);
-        ModFurniture.registerItems(ITEMS, TAB_ITEMS);
-        com.abyssia.vehicle.VehicleContent.registerItems(ITEMS, TAB_ITEMS);
+        com.abyssia.item.electric.ElectricTools.register(ITEMS, AbyssiaTab.EQUIPMENT.items());
+        com.abyssia.item.scanner.LidarScannerItem.register(ITEMS, AbyssiaTab.EQUIPMENT.items());
+        com.abyssia.item.light.HandLampItem.register(ITEMS, AbyssiaTab.EQUIPMENT.items());
+        com.abyssia.item.EntryDivingGear.register(ITEMS, AbyssiaTab.EQUIPMENT.items());
+        ModIndustry.registerItems(ITEMS);
+        ModHabitat.registerItems(ITEMS, AbyssiaTab.MACHINES.items());
+        ModFurniture.registerItems(ITEMS, AbyssiaTab.MACHINES.items());
+        com.abyssia.vehicle.VehicleContent.registerItems(ITEMS, AbyssiaTab.MACHINES.items());
         TABS.register(modBus);
+    }
+
+    public static ResourceKey<CreativeModeTab> tabKey(AbyssiaTab tab)
+    {
+        return ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(Abyssia.MODID, tab.id));
+    }
+
+    private static RegistryObject<CreativeModeTab> tab(AbyssiaTab tab, AbyssiaTab previous, Supplier<ItemStack> icon)
+    {
+        return TABS.register(tab.id, () ->
+        {
+            CreativeModeTab.Builder builder = CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup.abyssia." + tab.id))
+                    .icon(icon)
+                    .displayItems((params, output) ->
+                    {
+                        tab.items().forEach(item -> output.accept(item.get()));
+                        if (tab == AbyssiaTab.EQUIPMENT) com.abyssia.item.electric.ElectricTools.addFullVariants(output);
+                    });
+            if (previous != null) builder.withTabsBefore(tabKey(previous));
+            return builder.build();
+        });
     }
 
     private static RegistryObject<Item> item(String name)
     {
         RegistryObject<Item> item = ITEMS.register(name, () -> new Item(new Item.Properties()));
-        TAB_ITEMS.add(item);
+        AbyssiaTab.MATERIALS.items().add(item);
         return item;
     }
 
     private static RegistryObject<Item> item(String name, Rarity rarity)
     {
         RegistryObject<Item> item = ITEMS.register(name, () -> new Item(new Item.Properties().rarity(rarity)));
-        TAB_ITEMS.add(item);
+        AbyssiaTab.MATERIALS.items().add(item);
         return item;
     }
 
@@ -334,7 +361,7 @@ public final class ModItems
                 food.effect(() -> new MobEffectInstance(e.effect().get(), e.ticks(), e.amplifier()), e.chance());
             return new Item(new Item.Properties().rarity(rarity).food(food.build()));
         });
-        TAB_ITEMS.add(item);
+        AbyssiaTab.FOOD.items().add(item);
         return item;
     }
 
@@ -349,40 +376,45 @@ public final class ModItems
             Item.Properties props = new Item.Properties().rarity(rarity).food(food.build());
             return bowl ? new BowlFoodItem(props.stacksTo(1)) : new Item(props);
         });
-        TAB_ITEMS.add(item);
+        AbyssiaTab.FOOD.items().add(item);
         return item;
     }
 
     private static RegistryObject<Item> sourcedItem(String name)
     {
         RegistryObject<Item> item = ITEMS.register(name, () -> new MaterialItem(new Item.Properties(), 0, true));
-        TAB_ITEMS.add(item);
+        AbyssiaTab.MATERIALS.items().add(item);
         return item;
     }
 
     static RegistryObject<Item> spawnEgg(String name, RegistryObject<? extends EntityType<? extends Mob>> type, int background, int highlight)
     {
         RegistryObject<Item> item = ITEMS.register(name, () -> new ForgeSpawnEggItem(type, background, highlight, new Item.Properties()));
-        TAB_ITEMS.add(item);
+        AbyssiaTab.NATURE.items().add(item);
         return item;
     }
 
-    /** Items registered elsewhere (ModPlants) that belong in the Abyssia tab. */
+    /** Items registered elsewhere (ModPlants) that belong in the Materials tab. */
     static <T extends Item> RegistryObject<T> tabItem(String name, Supplier<T> factory)
     {
+        return tabItem(name, AbyssiaTab.MATERIALS, factory);
+    }
+
+    static <T extends Item> RegistryObject<T> tabItem(String name, AbyssiaTab tab, Supplier<T> factory)
+    {
         RegistryObject<T> item = ITEMS.register(name, factory);
-        TAB_ITEMS.add(item);
+        tab.items().add(item);
         return item;
     }
 
-    static void blockItem(String name, RegistryObject<? extends Block> block)
+    static void blockItem(String name, RegistryObject<? extends Block> block, AbyssiaTab tab)
     {
-        TAB_ITEMS.add(ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties())));
+        tab.items().add(ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties())));
     }
 
     /** Doors: the item places both halves. */
-    static void doubleHighBlockItem(String name, RegistryObject<? extends Block> block)
+    static void doubleHighBlockItem(String name, RegistryObject<? extends Block> block, AbyssiaTab tab)
     {
-        TAB_ITEMS.add(ITEMS.register(name, () -> new DoubleHighBlockItem(block.get(), new Item.Properties())));
+        tab.items().add(ITEMS.register(name, () -> new DoubleHighBlockItem(block.get(), new Item.Properties())));
     }
 }

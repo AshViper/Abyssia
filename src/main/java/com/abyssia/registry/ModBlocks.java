@@ -153,7 +153,7 @@ public final class ModBlocks
     public static final RegistryObject<Block> GLOWTIP_GRASS = plant("glowtip_grass", MapColor.COLOR_LIGHT_BLUE, 2, SporeEmitter.GLOW_DUST);
     public static final RegistryObject<Block> SEA_FERN = plant("sea_fern", MapColor.PLANT, 0, SporeEmitter.SPORES);
     public static final RegistryObject<Block> ABYSSAL_MOSS = carpet("abyssal_moss", MapColor.PLANT, false, 0);
-    public static final RegistryObject<Block> SEAFLOOR_PEBBLES = carpet("seafloor_pebbles", MapColor.STONE, false, 0);
+    public static final RegistryObject<Block> SEAFLOOR_PEBBLES = carpetNoItem("seafloor_pebbles", MapColor.STONE, false, 0);
 
     // ---------- Plants: medium layer ----------
     public static final RegistryObject<Block> TUBE_PLANT = stacking("tube_plant", MapColor.COLOR_PINK, 8, false, SporeEmitter.SPORES, 0);
@@ -235,8 +235,8 @@ public final class ModBlocks
             .noCollission().strength(0.2f).sound(SoundType.GLOW_LICHEN).pushReaction(PushReaction.DESTROY)));
 
     // ---------- Caves: loose debris from collapses ----------
-    public static final RegistryObject<Block> CAVE_RUBBLE = carpet("cave_rubble", MapColor.STONE, true, 0);
-    public static final RegistryObject<Block> CRYSTAL_SHARDS = carpet("crystal_shards", MapColor.COLOR_CYAN, true, 0);
+    public static final RegistryObject<Block> CAVE_RUBBLE = carpetNoItem("cave_rubble", MapColor.STONE, true, 0);
+    public static final RegistryObject<Block> CRYSTAL_SHARDS = carpetNoItem("crystal_shards", MapColor.COLOR_CYAN, true, 0);
     public static final RegistryObject<Block> FALLEN_KELP = carpet("fallen_kelp", MapColor.COLOR_GREEN, true, 0);
 
     // ---------- Caverns: giant plants, lakes, ceiling light and coloured crystal ----------
@@ -338,6 +338,12 @@ public final class ModBlocks
         return block(name, () -> new StackingPlantBlock(plantProps(color, light), width, anySubstrate, spores));
     }
 
+    /** Decorative scatter carpet without a block item (worldgen only; not in tabs/JEI, drops nothing). */
+    private static RegistryObject<Block> carpetNoItem(String name, MapColor color, boolean anySubstrate, int light)
+    {
+        return BLOCKS.register(name, () -> new SeafloorCarpetBlock(plantProps(color, light), anySubstrate));
+    }
+
     private static RegistryObject<Block> carpet(String name, MapColor color, boolean anySubstrate, int light)
     {
         return block(name, () -> new SeafloorCarpetBlock(plantProps(color, light), anySubstrate));
@@ -369,8 +375,13 @@ public final class ModBlocks
 
     static <T extends Block> RegistryObject<T> block(String name, Supplier<T> factory)
     {
+        return block(name, factory, AbyssiaTab.NATURE);
+    }
+
+    static <T extends Block> RegistryObject<T> block(String name, Supplier<T> factory, AbyssiaTab tab)
+    {
         RegistryObject<T> block = BLOCKS.register(name, factory);
-        ModItems.blockItem(name, block);
+        ModItems.blockItem(name, block, tab);
         return block;
     }
 }

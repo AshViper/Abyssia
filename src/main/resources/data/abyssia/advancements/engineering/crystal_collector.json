@@ -1,0 +1,79 @@
+{
+  "parent": "abyssia:engineering/root",
+  "display": {
+    "icon": {
+      "item": "abyssia:abyssal_crystal_shard"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.crystal_collector.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.crystal_collector.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "deep_crystal_shard": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "abyssia:deep_crystal_shard"
+            ]
+          }
+        ]
+      }
+    },
+    "pressure_crystal_shard": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "abyssia:pressure_crystal_shard"
+            ]
+          }
+        ]
+      }
+    },
+    "thermal_crystal_shard": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "abyssia:thermal_crystal_shard"
+            ]
+          }
+        ]
+      }
+    },
+    "abyssal_crystal_shard": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "abyssia:abyssal_crystal_shard"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "deep_crystal_shard"
+    ],
+    [
+      "pressure_crystal_shard"
+    ],
+    [
+      "thermal_crystal_shard"
+    ],
+    [
+      "abyssal_crystal_shard"
+    ]
+  ]
+}

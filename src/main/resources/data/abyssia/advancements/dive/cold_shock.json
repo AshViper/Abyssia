@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:dive/lightless",
+  "display": {
+    "icon": {
+      "item": "minecraft:blue_ice"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.cold_shock.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.cold_shock.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "cold_shock": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "abyssia:cold_shock": {}
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "cold_shock"
+    ]
+  ]
+}

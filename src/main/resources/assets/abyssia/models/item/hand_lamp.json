@@ -1,0 +1,406 @@
+{
+  "textures": {
+    "particle": "abyssia:item/hand_lamp_body",
+    "lens": "abyssia:item/hand_lamp_lens",
+    "reflector": "abyssia:item/hand_lamp_reflector",
+    "body": "abyssia:item/hand_lamp_body",
+    "accent": "abyssia:item/hand_lamp_accent",
+    "switch": "abyssia:item/hand_lamp_switch",
+    "grip": "abyssia:item/hand_lamp_grip"
+  },
+  "elements": [
+    {
+      "name": "lens",
+      "from": [
+        5,
+        5,
+        0.5
+      ],
+      "to": [
+        11,
+        11,
+        1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lens"
+        },
+        "east": {
+          "texture": "#lens"
+        },
+        "south": {
+          "texture": "#lens"
+        },
+        "west": {
+          "texture": "#lens"
+        },
+        "up": {
+          "texture": "#lens"
+        },
+        "down": {
+          "texture": "#lens"
+        }
+      }
+    },
+    {
+      "name": "head",
+      "from": [
+        3.5,
+        3.5,
+        1
+      ],
+      "to": [
+        12.5,
+        12.5,
+        3.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#reflector"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "neck",
+      "from": [
+        5,
+        5,
+        3.5
+      ],
+      "to": [
+        11,
+        11,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "band",
+      "from": [
+        5.75,
+        5.75,
+        5
+      ],
+      "to": [
+        10.25,
+        10.25,
+        5.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#accent"
+        },
+        "east": {
+          "texture": "#accent"
+        },
+        "south": {
+          "texture": "#accent"
+        },
+        "west": {
+          "texture": "#accent"
+        },
+        "up": {
+          "texture": "#accent"
+        },
+        "down": {
+          "texture": "#accent"
+        }
+      }
+    },
+    {
+      "name": "tube",
+      "from": [
+        6,
+        6,
+        5.75
+      ],
+      "to": [
+        10,
+        10,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "name": "switch",
+      "from": [
+        7,
+        10,
+        6.5
+      ],
+      "to": [
+        9,
+        10.75,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#switch"
+        },
+        "east": {
+          "texture": "#switch"
+        },
+        "south": {
+          "texture": "#switch"
+        },
+        "west": {
+          "texture": "#switch"
+        },
+        "up": {
+          "texture": "#switch"
+        },
+        "down": {
+          "texture": "#switch"
+        }
+      }
+    },
+    {
+      "name": "grip",
+      "from": [
+        5.5,
+        5.5,
+        9
+      ],
+      "to": [
+        10.5,
+        10.5,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#grip"
+        },
+        "east": {
+          "texture": "#grip"
+        },
+        "south": {
+          "texture": "#grip"
+        },
+        "west": {
+          "texture": "#grip"
+        },
+        "up": {
+          "texture": "#grip"
+        },
+        "down": {
+          "texture": "#grip"
+        }
+      }
+    },
+    {
+      "name": "tail_cap",
+      "from": [
+        6,
+        6,
+        14
+      ],
+      "to": [
+        10,
+        10,
+        15.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        1.5,
+        -2.5
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        1.5,
+        -2.5
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        10,
+        -25,
+        0
+      ],
+      "translation": [
+        -1,
+        1,
+        -3
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        10,
+        25,
+        0
+      ],
+      "translation": [
+        1,
+        1,
+        -3
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "abyssia:on": 1
+      },
+      "model": "abyssia:item/hand_lamp_on"
+    }
+  ]
+}

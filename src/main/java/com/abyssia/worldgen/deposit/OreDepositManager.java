@@ -7,7 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -148,6 +150,20 @@ public final class OreDepositManager
      * Finds deposits within a horizontal radius of a position.
      * Searches a vertical column from bedrock to ceiling.
      */
+    /**
+     * The deposit whose region (inflated by 1) contains {@code at}, the hit point on block {@code pos}, or null. Regions of
+     * neighbouring deposits overlap, so a deposit of the block actually hit wins over another mineral's closer centre.
+     */
+    public static OreDeposit regionAt(ServerLevel level, BlockPos pos, Vec3 at)
+    {
+        ResourceLocation block = BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
+        return findNearby(level, pos, 2).stream()
+                .filter(d -> d.bounds().inflate(1.0).contains(at))
+                .min(Comparator.comparingInt((OreDeposit d) -> d.mineralId().equals(block) ? 0 : 1)
+                        .thenComparingDouble(d -> d.center().distSqr(pos)))
+                .orElse(null);
+    }
+
     public static List<OreDeposit> findNearby(ServerLevel level, BlockPos center, int horizontalRadius)
     {
         AABB searchArea = new AABB(

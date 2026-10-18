@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:dive/twilight_zone",
+  "display": {
+    "icon": {
+      "item": "abyssia:abyssal_rock"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.into_the_deep.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.into_the_deep.description"
+    }
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": -64.0
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

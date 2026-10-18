@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "item": "minecraft:pink_dye"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.ugly_cute.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.ugly_cute.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "scan_fauna_blobfish": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_blobfish"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_blobfish"
+    ]
+  ]
+}

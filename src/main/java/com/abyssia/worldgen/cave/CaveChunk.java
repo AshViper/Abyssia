@@ -5,6 +5,7 @@ import com.abyssia.worldgen.DepthBand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -308,13 +309,56 @@ public final class CaveChunk
         return inField(lx, y, lz) ? fill[index(lx, y, lz)] : 0;
     }
 
+    // The wall-shape noise is low frequency (0.045 / 0.07 per block), so it is sampled on a world-anchored 4-block lattice
+    // (identical in every chunk, so borders agree) and interpolated trilinearly.
+    private static final int GRID = 4, GNX = 7;
+    private float[] shapeGrid;
+    private int gx0, gy0, gz0, gny;
+
+    private float shapeSmooth(int x, int y, int z)
+    {
+        if (shapeGrid == null)
+        {
+            gx0 = Math.floorDiv(x0 - PAD, GRID);
+            gz0 = Math.floorDiv(z0 - PAD, GRID);
+            gy0 = Math.floorDiv(yMin, GRID);
+            gny = Math.floorDiv(yMax, GRID) + 2 - gy0;
+            shapeGrid = new float[GNX * GNX * gny];
+            Arrays.fill(shapeGrid, Float.NaN);
+        }
+        int ix = Math.floorDiv(x, GRID), iy = Math.floorDiv(y, GRID), iz = Math.floorDiv(z, GRID);
+        double tx = (x + 0.5) / GRID - ix, ty = (y + 0.5) / GRID - iy, tz = (z + 0.5) / GRID - iz;
+        double r = 0;
+        for (int dy = 0; dy < 2; dy++)
+        {
+            double wy = dy == 0 ? 1 - ty : ty;
+            for (int dz = 0; dz < 2; dz++)
+            {
+                double wz = wy * (dz == 0 ? 1 - tz : tz);
+                for (int dx = 0; dx < 2; dx++)
+                {
+                    int gx = ix + dx - gx0, gy = iy + dy - gy0, gz = iz + dz - gz0;
+                    int gi = (gy * GNX + gz) * GNX + gx;
+                    float v = shapeGrid[gi];
+                    if (Float.isNaN(v))
+                    {
+                        v = (float) noises.shape((gx + gx0) * (double) GRID, (gy + gy0) * (double) GRID, (gz + gz0) * (double) GRID);
+                        shapeGrid[gi] = v;
+                    }
+                    r += wz * (dx == 0 ? 1 - tx : tx) * v;
+                }
+            }
+        }
+        return (float) r;
+    }
+
     /** Wall displacement of this space at this block, from cached raw noise. */
     private double displacement(CaveSpace space, int idx, int x, int y, int z, int col)
     {
         float sn = shapeNoise[idx];
         if (Float.isNaN(sn))
         {
-            sn = (float) noises.shape(x + 0.5, y + 0.5, z + 0.5);
+            sn = shapeSmooth(x, y, z);
             shapeNoise[idx] = sn;
         }
         double d = space.shapeAmp * sn;
@@ -660,7 +704,36 @@ public final class CaveChunk
     void set(int lx, int y, int lz, BlockState state)
     {
         if (y < minBuildY || y >= minBuildY + sections.length * 16) return;
-        sections[(y - minBuildY) >> 4].setBlockState(lx, y & 15, lz, state, false);
+        int s = (y - minBuildY) >> 4;
+        if (uniformCache[s] == 1 && !state.isAir() && state.getFluidState().isEmpty()) uniformCache[s] = 0;
+        sections[s].setBlockState(lx, y & 15, lz, state, false);
+    }
+
+    /** Per section: 0 = not yet known, 1 = only air / fluid blocks (nothing sturdy), 2 = holds some solid block. Reset by set(). */
+    private final byte[] uniformCache = new byte[64];
+
+    /** Whether the whole section holding height y has no solid block (only air and fluid states), as of now. */
+    boolean sectionOpenOnly(int y)
+    {
+        if (y < minBuildY || y >= minBuildY + sections.length * 16) return false;
+        int s = (y - minBuildY) >> 4;
+        byte u = uniformCache[s];
+        if (u == 0)
+        {
+            u = (byte) (sections[s].maybeHas(st -> !st.isAir() && st.getFluidState().isEmpty()) ? 2 : 1);
+            uniformCache[s] = u;
+        }
+        return u == 1;
+    }
+
+    /**
+     * Block deep inside a section that holds no solid block: none of its six neighbours is sturdy, so any pass that only acts
+     * next to a sturdy face can skip it. Section edges (ly 0/15) and chunk-edge columns are never "interior".
+     */
+    boolean interiorOpen(int lx, int y, int lz)
+    {
+        int ly = y & 15;
+        return lx > 0 && lx < 15 && lz > 0 && lz < 15 && ly > 0 && ly < 15 && sectionOpenOnly(y);
     }
 
     boolean inChunk(int lx, int lz)
@@ -679,17 +752,47 @@ public final class CaveChunk
     {
         if (!inChunk(lx, lz)) return false;
         BlockState state = get(lx, y, lz);
-        if (state.isAir() || !state.getFluidState().isEmpty()) return false;
-        if (state.hasOffsetFunction() || state.getBlock().hasDynamicShape()) return state.isFaceSturdy(chunk, at(lx, y, lz), face);
-        // Shape is position independent here: cache per (state, face). 0 = unknown, 1 = no, 2 = yes.
-        byte[] known = sturdyCache.get(state);
-        if (known == null) sturdyCache.put(state, known = new byte[6]);
+        // Per state: [0..5] per face 0 = unknown, 1 = no, 2 = yes; [6] 0 = not classified, 1 = never sturdy (air/fluid),
+        // 2 = position independent, 3 = position dependent (offset/dynamic shape, asked every time).
+        byte[] known;
+        if (state == lastSturdyState0) known = lastSturdyKnown0;
+        else if (state == lastSturdyState1)
+        {
+            known = lastSturdyKnown1;
+            lastSturdyState1 = lastSturdyState0;
+            lastSturdyKnown1 = lastSturdyKnown0;
+            lastSturdyState0 = state;
+            lastSturdyKnown0 = known;
+        }
+        else
+        {
+            int id = Block.BLOCK_STATE_REGISTRY.getId(state);
+            if (id >= sturdyById.length) sturdyById = java.util.Arrays.copyOf(sturdyById, Math.max(id + 1, sturdyById.length * 2));
+            known = sturdyById[id];
+            if (known == null)
+            {
+                sturdyById[id] = known = new byte[7];
+                if (state.isAir() || !state.getFluidState().isEmpty()) known[6] = 1;
+                else if (state.hasOffsetFunction() || state.getBlock().hasDynamicShape()) known[6] = 3;
+                else known[6] = 2;
+            }
+            lastSturdyState1 = lastSturdyState0;
+            lastSturdyKnown1 = lastSturdyKnown0;
+            lastSturdyState0 = state;
+            lastSturdyKnown0 = known;
+        }
+        if (known[6] == 1) return false;
+        if (known[6] == 3) return state.isFaceSturdy(chunk, at(lx, y, lz), face);
         int f = face.ordinal();
         if (known[f] == 0) known[f] = (byte) (state.isFaceSturdy(chunk, at(lx, y, lz), face) ? 2 : 1);
         return known[f] == 2;
     }
 
-    private final Map<BlockState, byte[]> sturdyCache = new IdentityHashMap<>();
+    /** The sturdy classification per block state, indexed by its registry id (a flat array: this runs for every decoration probe). */
+    private byte[][] sturdyById = new byte[4096][];
+    /** The two most recently classified states (scans stay on one state for long runs; skips the registry id lookup). */
+    private BlockState lastSturdyState0, lastSturdyState1;
+    private byte[] lastSturdyKnown0, lastSturdyKnown1;
     private final Map<Cavern, CavernPatch[]> patchCache = new IdentityHashMap<>();
 
     /** Cavern.patchAt for the centre of the chunk column (lx, lz), cached per chunk (a cavern's patch only depends on the column). */

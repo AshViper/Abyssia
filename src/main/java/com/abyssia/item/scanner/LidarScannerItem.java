@@ -42,7 +42,8 @@ import java.util.function.Consumer;
  * LS01 lidar scanner: hold right-click while looking at an ore deposit (OreDepositManager): the deposit under the crosshair is
  * reported (mineral, scale class, ore left, bearing and distance); the deposits around are NOT listed (user, 2026-10-09).
  * AB05: while held, the server scans the target under the crosshair (PlayerScanState, scan_targets data, MK0 distance 16) and
- * finishes it through ResearchManager.scan; the HUD is fed by ScanProgressPayload. Without a target the deposit under the crosshair (if any) is reported after SCAN_TICKS.
+ * finishes it through ResearchManager.scan; the HUD is fed by ScanProgressPayload. Only what is under the crosshair can be scanned: with neither a target nor a deposit there the use stops after
+ * PlayerScanState.NO_TARGET_TICKS (action-bar message, no report, no cooldown); a deposit under the crosshair is reported after SCAN_TICKS.
  */
 public class LidarScannerItem extends Item
 {
@@ -63,6 +64,7 @@ public class LidarScannerItem extends Item
         ItemStack stack = player.getItemInHand(hand);
         if (player.getCooldowns().isOnCooldown(this)) return InteractionResultHolder.fail(stack);
         player.startUsingItem(hand);
+        if (player instanceof ServerPlayer sp) PlayerScanState.begin(sp);
         return InteractionResultHolder.consume(stack);
     }
 
@@ -81,15 +83,25 @@ public class LidarScannerItem extends Item
         }
         else if (entity instanceof ServerPlayer player)
         {
-            if (elapsed % 12 == 0)
+            PlayerScanState.Tick result = PlayerScanState.tick(player);
+            if (result == PlayerScanState.Tick.NO_TARGET || result == PlayerScanState.Tick.LOST)
+            {
+                // nothing under the crosshair: no report, no cooldown, no completion sound
+                if (result == PlayerScanState.Tick.NO_TARGET)
+                    player.displayClientMessage(Component.translatable(MSG + "no_target").withStyle(ChatFormatting.GRAY), true);
+                player.stopUsingItem();
+                return;
+            }
+            if (elapsed % 12 == 0 && PlayerScanState.isScanning(player))
                 level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CONDUIT_AMBIENT_SHORT,
                         SoundSource.PLAYERS, 0.5F, 1.0F + 0.6F * (elapsed % SCAN_TICKS) / SCAN_TICKS);
-            if (PlayerScanState.tick(player) != PlayerScanState.Tick.RUNNING)
+            if (result != PlayerScanState.Tick.RUNNING)
             {
-                // scan complete (ResearchManager.scan ran) or nothing scannable for SCAN_TICKS: deposit report, cooldown, stop
+                // scan complete (ResearchManager.scan ran) or the deposit under the crosshair after SCAN_TICKS: deposit report, cooldown, stop
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CONDUIT_ACTIVATE,
                         SoundSource.PLAYERS, 0.7F, 1.6F);
-                reportDeposits(player, (ServerLevel) level);
+                // the deposit report only follows a deposit scan or the deposit idle report; wreck cores, fauna and plants are shown by the HUD alone
+                if (result == PlayerScanState.Tick.IDLE_DONE || PlayerScanState.lastScanWasDeposit(player)) reportDeposits(player, (ServerLevel) level);
                 player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
                 player.stopUsingItem();
             }
@@ -163,10 +175,7 @@ public class LidarScannerItem extends Item
         Vec3 end = eye.add(player.getLookAngle().scale(RADIUS));
         BlockHitResult hit = level.clip(new ClipContext(eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         if (hit.getType() == HitResult.Type.MISS) return null;
-        Vec3 at = hit.getLocation();
-        return OreDepositManager.findNearby(level, hit.getBlockPos(), 2).stream()
-                .filter(d -> d.bounds().inflate(1.0).contains(at))
-                .min(Comparator.comparingDouble(d -> d.center().distSqr(hit.getBlockPos()))).orElse(null);
+        return OreDepositManager.regionAt(level, hit.getBlockPos(), hit.getLocation());
     }
 
     /** One report line: mineral, scale class, ore left, bearing, distance, height difference. */

@@ -57,6 +57,7 @@ public final class HabitatLifeSupport
         {
             air = 0;
             player.hurt(player.damageSources().drown(), 2.0F);
+            if (player instanceof net.minecraft.server.level.ServerPlayer bsp) com.abyssia.advancement.AbyssiaCriteria.event(bsp, "habitat_blackout", null);
         }
         STALE.put(player.getUUID(), air);
         player.setAirSupply(air);

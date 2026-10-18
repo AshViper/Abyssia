@@ -92,7 +92,7 @@ public class Config
     public static final ForgeConfigSpec.BooleanValue VEGETATION_ENABLED = BUILDER.define("enabled", true);
     public static final ForgeConfigSpec.DoubleValue VEGETATION_DENSITY = BUILDER
             .comment("Multiplier for how many plant patches generate")
-            .defineInRange("density_multiplier", 1.0, 0.0, 4.0);
+            .defineInRange("density_multiplier", 0.9, 0.0, 4.0);
     public static final ForgeConfigSpec.DoubleValue GIANT_PLANT_CHANCE = BUILDER
             .comment("How often giant kelp, giant tubes and other canopy plants appear (0.1 = default amount)")
             .defineInRange("giant_plant_chance", 0.1, 0.0, 1.0);
@@ -154,7 +154,7 @@ public class Config
             .define("underground_lakes", true);
     public static final ForgeConfigSpec.DoubleValue CAVE_VEGETATION = BUILDER
             .comment("Multiplier for cave plant density (floors, walls, ceilings and cave forests)")
-            .defineInRange("vegetation_multiplier", 1.0, 0.0, 4.0);
+            .defineInRange("vegetation_multiplier", 0.9, 0.0, 4.0);
     public static final ForgeConfigSpec.DoubleValue CAVE_GLOW = BUILDER
             .comment("Multiplier for the share of luminous cave plants")
             .defineInRange("glowing_plant_multiplier", 1.0, 0.0, 4.0);
@@ -560,24 +560,24 @@ public class Config
     public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER_ACCEL = BUILDER
             .comment("Maneuver Thruster: acceleration in blocks per tick^2 (without it 0.025)")
             .defineInRange("thruster_accel", 0.032, 0.001, 1.0);
-    public static final ForgeConfigSpec.IntValue SUBMARINE_DEPTH_BASE = BUILDER
-            .comment("Rated depth in metres of a submarine without a Depth Hull upgrade")
-            .defineInRange("depth_base", 300, 10, 20_000);
-    public static final ForgeConfigSpec.IntValue SUBMARINE_DEPTH_MK1 = BUILDER
-            .comment("Depth Hull Mk1: rated depth in metres")
-            .defineInRange("depth_mk1", 600, 10, 20_000);
-    public static final ForgeConfigSpec.IntValue SUBMARINE_DEPTH_MK2 = BUILDER
-            .comment("Depth Hull Mk2: rated depth in metres")
-            .defineInRange("depth_mk2", 1000, 10, 20_000);
-    public static final ForgeConfigSpec.IntValue SUBMARINE_DEPTH_MK3 = BUILDER
-            .comment("Depth Hull Mk3: rated depth in metres")
-            .defineInRange("depth_mk3", 2000, 10, 20_000);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_RATED_Y_BASE = BUILDER
+            .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine without a Depth Hull takes crush damage")
+            .defineInRange("rated_y_base", -300, -4096, 4096);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_RATED_Y_MK1 = BUILDER
+            .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine with Depth Hull Mk1 takes crush damage")
+            .defineInRange("rated_y_mk1", -500, -4096, 4096);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_RATED_Y_MK2 = BUILDER
+            .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine with Depth Hull Mk2 takes crush damage")
+            .defineInRange("rated_y_mk2", -800, -4096, 4096);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_RATED_Y_MK3 = BUILDER
+            .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine with Depth Hull Mk3 takes crush damage")
+            .defineInRange("rated_y_mk3", -1000, -4096, 4096);
     public static final ForgeConfigSpec.DoubleValue SUBMARINE_CRUSH_DAMAGE = BUILDER
-            .comment("Hull damage per second below the rated depth (break threshold is 40, or 70 with the Pressure Hull)")
+            .comment("Hull damage per second below the crush depth (break threshold is 40, or 70 with the Pressure Hull)")
             .defineInRange("crush_damage", 4.0, 0.0, 1000.0);
     public static final ForgeConfigSpec.IntValue SUBMARINE_CRUSH_STEP = BUILDER
-            .comment("Extra crush damage per second for every this many metres below the rated depth")
-            .defineInRange("crush_step_metres", 200, 10, 20_000);
+            .comment("Extra crush damage per second for every this many blocks below the crush depth")
+            .defineInRange("crush_step_blocks", 200, 10, 20_000);
     public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR_FE = BUILDER
             .comment("Deep-Sea Sonar: FE per tick while someone is aboard")
             .defineInRange("sonar_fe_per_tick", 4, 0, 10_000);

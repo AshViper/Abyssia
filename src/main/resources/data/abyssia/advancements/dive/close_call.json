@@ -1,0 +1,38 @@
+{
+  "parent": "abyssia:dive/lightless",
+  "display": {
+    "icon": {
+      "item": "minecraft:golden_apple"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.close_call.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.close_call.description"
+    },
+    "frame": "challenge",
+    "hidden": true
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": -376.0
+        },
+        "submerged": true,
+        "health": {
+          "max": 2.0
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  }
+}

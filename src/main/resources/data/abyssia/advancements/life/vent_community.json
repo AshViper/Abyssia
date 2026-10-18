@@ -1,0 +1,64 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "item": "abyssia:yunohana_crab_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.vent_community.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.vent_community.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "scan_fauna_scaly_foot_snail": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_scaly_foot_snail"
+      }
+    },
+    "scan_fauna_yunohana_crab": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_yunohana_crab"
+      }
+    },
+    "scan_fauna_satsuma_tubeworm": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_satsuma_tubeworm"
+      }
+    },
+    "scan_fauna_vent_eelpout": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_vent_eelpout"
+      }
+    },
+    "scan_fauna_ohara_shrimp": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_ohara_shrimp"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_scaly_foot_snail"
+    ],
+    [
+      "scan_fauna_yunohana_crab"
+    ],
+    [
+      "scan_fauna_satsuma_tubeworm"
+    ],
+    [
+      "scan_fauna_vent_eelpout"
+    ],
+    [
+      "scan_fauna_ohara_shrimp"
+    ]
+  ]
+}

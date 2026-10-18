@@ -71,6 +71,11 @@ public final class ModIndustry
     /** W01 (inbox/specs/W01-waypoint-beacon.md): HUD waypoint, work light model with a tinted lamp */
     public static final RegistryObject<Block> WAYPOINT_BEACON = block("waypoint_beacon", () -> new WaypointBeaconBlock(small().lightLevel(s -> 15)));
 
+    /** block items that go to the Building tab; the other block items (beacon, cables, machines) go to Machines */
+    private static final List<RegistryObject<? extends Block>> BUILDING_BLOCKS = List.of(INDUSTRIAL_PANEL, INDUSTRIAL_PANEL_STAIRS,
+            INDUSTRIAL_PANEL_SLAB, INDUSTRIAL_PANEL_WALL, METAL_GRATING, METAL_GRATING_SLAB, INDUSTRIAL_BEAM, INDUSTRIAL_PIPE,
+            INDUSTRIAL_VALVE, WORK_LIGHT, WARNING_LIGHT);
+
     // ---------- energy ----------
     public static final RegistryObject<Block> ENERGY_CABLE = block("energy_cable", () -> new EnergyCableBlock(small().strength(1.0f, 6.0f), 128, 6, 10));
     public static final RegistryObject<Block> REINFORCED_ENERGY_CABLE = block("reinforced_energy_cable",
@@ -132,12 +137,13 @@ public final class ModIndustry
         MENUS.register(modBus);
     }
 
-    /** Block items and the industrial items in the Abyssia tab (called from ModItems.register like ModTools). */
-    public static void registerItems(DeferredRegister<Item> items, List<RegistryObject<? extends Item>> tab)
+    /** Block items and the industrial items in the Abyssia tabs (called from ModItems.register like ModTools). */
+    public static void registerItems(DeferredRegister<Item> items)
     {
         for (RegistryObject<? extends Block> block : ITEM_BLOCKS)
-            tab.add(items.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties())));
-        tab.add(items.register(ACIDIC_LEACHING_REAGENT.getId().getPath(), () -> new Item(new Item.Properties())));
+            (BUILDING_BLOCKS.contains(block) ? AbyssiaTab.BUILDING : AbyssiaTab.MACHINES).items()
+                    .add(items.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties())));
+        AbyssiaTab.MATERIALS.items().add(items.register(ACIDIC_LEACHING_REAGENT.getId().getPath(), () -> new Item(new Item.Properties())));
     }
 
     private static <T extends Block> RegistryObject<T> block(String name, Supplier<T> factory)

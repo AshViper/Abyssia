@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:interpolated",
+  "argument": {
+    "type": "minecraft:range_choice",
+    "input": {
+      "type": "minecraft:y_clamped_gradient",
+      "from_y": -1008,
+      "to_y": 320,
+      "from_value": -1008,
+      "to_value": 320
+    },
+    "min_inclusive": -1009,
+    "max_exclusive": -378,
+    "when_in_range": "abyssia:planet/abyss_density",
+    "when_out_of_range": {
+      "type": "minecraft:range_choice",
+      "input": {
+        "type": "minecraft:y_clamped_gradient",
+        "from_y": -1008,
+        "to_y": 320,
+        "from_value": -1008,
+        "to_value": 320
+      },
+      "min_inclusive": -1009,
+      "max_exclusive": -66,
+      "when_in_range": "abyssia:planet/deep_density",
+      "when_out_of_range": "abyssia:planet/ocean_density"
+    }
+  }
+}

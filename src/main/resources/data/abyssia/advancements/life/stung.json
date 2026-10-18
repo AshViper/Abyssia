@@ -1,0 +1,43 @@
+{
+  "parent": "abyssia:life/root",
+  "display": {
+    "icon": {
+      "item": "minecraft:slime_ball"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.stung.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.stung.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "atolla_jelly": {
+      "trigger": "minecraft:entity_hurt_player",
+      "conditions": {
+        "damage": {
+          "source_entity": {
+            "type": "abyssia:atolla_jelly"
+          }
+        }
+      }
+    },
+    "helmet_jelly": {
+      "trigger": "minecraft:entity_hurt_player",
+      "conditions": {
+        "damage": {
+          "source_entity": {
+            "type": "abyssia:helmet_jelly"
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "atolla_jelly",
+      "helmet_jelly"
+    ]
+  ]
+}

@@ -18,12 +18,12 @@
 | **Opus 5.5**（`claude-opus-5-5`）・effort **high** | **計画と最後のレビュー** | `decision`（計画・判断）、`verify`（完了前レビュー） |
 | **Sonnet 5.5**（`claude-sonnet-5-5`）・effort **medium** | **ファイル編集とテスト**（コーディング全般・修正） | `coder-light`、`coder-standard` |
 | **Haiku 5.5**（エイリアス `haiku`）・effort **low** | **コードを探して読む・資料を引く**（Vault 抜粋・要約・Memory 更新・仕様書の清書）。**コードは書かせない** | `scout`（探索・読解）、`memo`（記録） |
-| **Fable 5.1**（`/advisor fable`） | **必要な時だけ相談**。呼ぶのは次の 3 場面だけ: ①計画を決める前 ②同じエラーが 2 回出た時 ③完了と言う前 | `advisor`（読み取り専用、助言だけ） |
+| **Opus 5.5**（相談役、2026-10-15 に Fable から変更） | **必要な時だけ相談**。呼ぶのは次の 2 場面だけ: ①計画を決める前 ②同じエラーが 2 回出た時（完了前のレビューは Opus `verify` が担当、2026-10-10 ユーザー指示） | `advisor`（読み取り専用、助言だけ） |
 
 - **Opus に「このファイルある？」を確かめさせない。** 存在確認・検索・抜粋読み・資料引きは Haiku（`scout`）に出し、Opus・Sonnet には要点だけ渡す。
-- **必要性の判断**: 単純な作業（明確なバグ修正・typo・設定・既存パターンの実装）は計画・相談を省いて Sonnet で直接実装。計画（Opus）・Fable 相談・レビュー・Memory 更新は、必要な条件を満たすときだけ。
-- 流れ: 要求 → Haiku が関連コード・資料を引く → Opus が計画（大きい作業は ①Fable に相談してから確定）→ Sonnet が編集・ビルド・テスト（**実際の結果で検証**、AI の推測で成功と判断しない）→ 同じエラーが 2 回出たら ②Fable に相談し、その助言で Sonnet が修正 → それでも直らない難所だけ `coder-heavy`（Opus、1 問題 1 回）→ Opus がレビュー → ③Fable に確認してから完了報告 → 必要なときだけ Haiku が Obsidian に要約。
-- Fable・Opus の助言で直ったら、原因と再発防止を Vault に残す（再び上のモデルを呼ばないため）。
+- **必要性の判断**: 単純な作業（明確なバグ修正・typo・設定・既存パターンの実装）は計画・相談を省いて Sonnet で直接実装。計画（Opus）・Opus 相談・レビュー・Memory 更新は、必要な条件を満たすときだけ。
+- 流れ: 要求 → Haiku が関連コード・資料を引く → Opus が計画（大きい作業は ①`advisor`（Opus）に相談してから確定）→ Sonnet が編集・ビルド・テスト（**実際の結果で検証**、AI の推測で成功と判断しない）→ 同じエラーが 2 回出たら ②`advisor`（Opus）に相談し、その助言で Sonnet が修正 → それでも直らない難所だけ `coder-heavy`（Opus、1 問題 1 回）→ Opus（`verify`）がレビュー（未検証項目の確認を含む）してから完了報告 → 必要なときだけ Haiku が Obsidian に要約。
+- Opus の助言で直ったら、原因と再発防止を Vault に残す（再び上のモデルを呼ばないため）。
 
 ## 3. サブエージェント: 最大 6、通信なし
 
@@ -43,11 +43,11 @@
 - **最小変更。** 無関係なリファクタ・命名変更をしない。原因候補 → 最小の検証 → 修正の順で、闇雲に変えない。同じ修正を繰り返さない。
 - 確認が要るのは、破壊的変更・大量削除・公開環境・課金・セキュリティ影響・方針が複数で選択が必要・意図が不明なとき。それ以外は自律的に進める。
 - 繰り返す手順は skill / CLI に寄せる（`mem`、`port-forge`、`tools/memory.py`、`tools/mc_format.py`）。ツールは Claude 専用にせず、ユーザーも使える CLI（JSON 可、副作用を明示、可能なら dry-run）にする。
-- **ワールド生成・バランスの変更は、仕様書の完了条件を 1 項目ずつ実機で確認する**（2026-10-09 ユーザー指示）。実機 = scratch サーバー（`/abyssia map`・`caves census|locate|stats`・`execute if block|biome`・チャンク生成時間）と、見た目・環境効果はクライアント（AutoShot 等）。複数シードと両ワールド型（normal / ocean_world）、Forge と NeoForge の両方で行い、結果は数値で報告する。確認していない項目・確認できない項目（プレイヤー不在でのギミック等）は「未検証」と書き、実装済み・成功と報告しない。重いデバッグコマンドはサーバーを 60 秒止めるので小さい範囲で回す。
+- **ワールド生成・バランスの変更は、仕様書の完了条件を 1 項目ずつ実機で確認する**（2026-10-09 ユーザー指示）。実機 = 本体の run/ で起動したテストサーバー（`/abyssia map`・`caves census|locate|stats`・`execute if block|biome`・チャンク生成時間）と、見た目・環境効果はクライアント（AutoShot 等）。複数シードと両ワールド型（normal / ocean_world）、Forge と NeoForge の両方で行い、結果は数値で報告する。確認していない項目・確認できない項目（プレイヤー不在でのギミック等）は「未検証」と書き、実装済み・成功と報告しない。重いデバッグコマンドはサーバーを 60 秒止めるので小さい範囲で回す。
 
 ## 6. このプロジェクト（Abyssia）
 
-- **ベースは NeoForge 1.21.1**（branch `NeoForge1.21.1`、worktree `F:\Java\Abyssia-NeoForge`）。ここで実装・テストし、**Forge 1.20.1（`main`、`F:\Java\Abyssia`）へ移植**して、両方に入って完了（skill `port-forge`）。パッケージ・クラス名・modid は変えない。データは `python tools/mc_format.py --to-forge F:/Java/Abyssia`（1.21→1.20）。
+- **ベースは NeoForge 1.21.1**（branch `NeoForge1.21.1`、worktree `F:\Java\Abyssia-NeoForge`）。ここで実装・テストし、**Forge 1.20.1（`main`、`F:\Java\Abyssia`）へ移植**して、両方に入って完了（skill `port-forge`）。**NeoForge 側の実機テストが問題なく通ったら、確認を取らずそのまま Forge への移植作業に進む**（2026-10-15 ユーザー指示）。テストが落ちた・未検証項目が残る場合は移植せず報告する。パッケージ・クラス名・modid は変えない。データは `python tools/mc_format.py --to-forge F:/Java/Abyssia`（1.21→1.20）。
 - `tools/` の生成ツールの出力は**手編集しない**（生成元を直して再実行）。`tools/texture_locks` のテクスチャは再生成で消さない。
-- gradle・実機テストはメインが実行（サブエージェントはしない）。dev client の実行中は gradle を回さない。実機確認は `F:\Java\Abyssia-scratch-*` のコピーで行い、本体の `run/` に触れない。
+- **実機確認は Sonnet が行う**（2026-10-15 ユーザー指示。Opus・Haiku にはさせない。Opus は結果の数値をレビューするだけ）。gradle もメイン（Sonnet）が実行し、サブエージェントには回さない。dev client の実行中は gradle を回さない。実機確認は scratch コピーを作らず、**本体（`F:\Java\Abyssia`、NeoForge は `F:\Java\Abyssia-NeoForge`）の `run/` で直接行う**（2026-10-15 ユーザー指示。従来の `Abyssia-scratch-*` 方式を廃止）。
 - ユーザーへの返答は**日本語**。**プラン（設計・仕様の立案）と最後のレビューは Opus**（§2、2026-10-09 ユーザー指示。同日の「ChatGPT がプラン」を置き換え）。Opus は現行コードとの矛盾・実現性を確認して Sonnet の実装に回す（矛盾や方針の選択があれば根拠を添えてユーザーに確認）。Haiku（`memo`）は仕様書の清書・Vault 記録だけ。ChatGPT（Claude in Chrome 経由）はテクスチャ画像の生成だけを行う。agentflow の運用は Vault `modules/agentflow.md`（`memory.py show agentflow <見出し>`）。完了時は Obsidian にメモし、commit/push は依頼どおり。

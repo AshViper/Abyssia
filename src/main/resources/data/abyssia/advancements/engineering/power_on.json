@@ -1,0 +1,65 @@
+{
+  "parent": "abyssia:engineering/first_module",
+  "display": {
+    "icon": {
+      "item": "minecraft:redstone"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.power_on.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.power_on.description"
+    }
+  },
+  "criteria": {
+    "build_biofuel_generator": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "biofuel_generator"
+      }
+    },
+    "build_geothermal_generator": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "geothermal_generator"
+      }
+    },
+    "build_current_turbine": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "current_turbine"
+      }
+    },
+    "hydrothermal_generator": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "abyssia:hydrothermal_generator"
+          }
+        ]
+      }
+    },
+    "auxiliary_generator": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "abyssia:auxiliary_generator"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_biofuel_generator",
+      "build_geothermal_generator",
+      "build_current_turbine",
+      "hydrothermal_generator",
+      "auxiliary_generator"
+    ]
+  ]
+}

@@ -2,7 +2,6 @@ package com.abyssia.vehicle;
 
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
-import com.abyssia.fauna.DepthZone;
 import com.abyssia.worldgen.DeepLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -484,32 +483,34 @@ public class Submarine extends Entity
         }
     }
 
-    /** metres below the surface at the hull (DepthZone), and the rated depth of the installed Depth Hull */
-    public int depthMetres() { return (int) Math.max(0.0, DepthZone.metres(level(), getY())); }
-
-    public int ratedDepth() { return SubmarineUpgrades.ratedDepth(upgradeMask()); }
+    /** SUB08 crush depth by Y: the Y below which the installed Depth Hull takes crush damage */
+    public int ratedY() { return SubmarineUpgrades.ratedY(upgradeMask()); }
 
     /** SUB06: below the rated depth the hull takes crush damage once a second; a creative pilot is exempt (as in PressureGear) */
     private void crush(@Nullable LivingEntity rider)
     {
         if (tickCount % 20 != 0 || isRemoved() || getDock().isPresent()) return;
         if (rider instanceof Player player && (player.isCreative() || player.isSpectator())) return;
-        int depth = depthMetres(), rated = ratedDepth();
-        if (depth <= rated) return;
-        float damage = Config.SUBMARINE_CRUSH_DAMAGE.get().floatValue() + (depth - rated) / Config.SUBMARINE_CRUSH_STEP.get();
+        int y = Mth.floor(getY()), rated = ratedY();
+        if (y >= rated) return;
+        float damage = Config.SUBMARINE_CRUSH_DAMAGE.get().floatValue() + (rated - y) / Config.SUBMARINE_CRUSH_STEP.get();
         setDamage(getDamage() + damage);
         markHurt();
         level().playSound(null, this, SoundEvents.ANVIL_LAND, SoundSource.NEUTRAL, 0.5f, 0.6f);
-        if (getDamage() > maxDamage()) breakApart();
+        if (getDamage() > maxDamage())
+        {
+            if (rider instanceof net.minecraft.server.level.ServerPlayer sp) com.abyssia.advancement.AbyssiaCriteria.event(sp, "submarine_crushed", null);
+            breakApart();
+        }
     }
 
     private Component hud()
     {
         int energy = Math.round(100.0f * getEnergy() / Math.max(1, maxEnergy()));
         MutableComponent line = Component.translatable("message." + Abyssia.MODID + ".submarine.hud", energy, hullPercent());
-        int depth = depthMetres(), rated = ratedDepth();
-        line.append(Component.translatable("message." + Abyssia.MODID + ".submarine.depth", depth, rated)
-                .withStyle(depth > rated ? ChatFormatting.RED : ChatFormatting.WHITE));
+        int y = Mth.floor(getY()), rated = ratedY();
+        line.append(Component.translatable("message." + Abyssia.MODID + ".submarine.depth", y, rated)
+                .withStyle(y < rated ? ChatFormatting.RED : ChatFormatting.WHITE));
         if (getDock().isPresent()) line.append(Component.translatable("message." + Abyssia.MODID + ".submarine.docked"));
         if (sonarLine != null) line.append(sonarLine);
         return line;

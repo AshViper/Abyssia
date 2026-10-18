@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:dive/first_dive",
+  "display": {
+    "icon": {
+      "item": "minecraft:heart_of_the_sea"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.current_blessing.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.current_blessing.description"
+    }
+  },
+  "criteria": {
+    "abyssal_current": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "abyssia:abyssal_current": {}
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "abyssal_current"
+    ]
+  ]
+}

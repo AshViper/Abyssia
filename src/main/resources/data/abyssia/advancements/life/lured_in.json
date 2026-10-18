@@ -1,0 +1,32 @@
+{
+  "parent": "abyssia:life/root",
+  "display": {
+    "icon": {
+      "item": "minecraft:lantern"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.lured_in.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.lured_in.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "anglerfish": {
+      "trigger": "minecraft:entity_hurt_player",
+      "conditions": {
+        "damage": {
+          "source_entity": {
+            "type": "abyssia:anglerfish"
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "anglerfish"
+    ]
+  ]
+}

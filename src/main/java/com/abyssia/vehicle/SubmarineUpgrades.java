@@ -37,8 +37,8 @@ import java.util.List;
  *              message.abyssia.submarine.upgrade_hull_damaged, message.abyssia.submarine.sonar.* (see vehicle_assets.py)
  * Config:      [submarine.upgrades] in abyssia-common.toml (Config.SUBMARINE_HULL_* ... SUBMARINE_SONAR_*)
  * </pre>
- * Rated depth (metres, DepthZone): 300 without a DEPTH upgrade, Mk1 600, Mk2 1000, Mk3 2000 (Config
- * SUBMARINE_DEPTH_*). Below it the hull takes crush damage once a second (Submarine.crush).
+ * SUB08 crush depth as a Y coordinate: -300 without a DEPTH upgrade, Mk1 -500, Mk2 -800, Mk3 -1000 (Config
+ * SUBMARINE_RATED_Y_*). Below it the hull takes crush damage once a second (Submarine.crush).
  * Speed order (fixed): base (Config max_speed / 0.38 / 0.36) -> thruster replaces (0.56 / 0.51 / 0.48) -> x hull 0.92
  * -> (vertical only) x battery 0.95. Thrust FE is flat per moving tick: 8 (Config thrust_fe_per_tick) or 12 with the thruster.
  */
@@ -162,15 +162,15 @@ public final class SubmarineUpgrades
         return (mask >> DEPTH_SHIFT) & DEPTH_TIERS;
     }
 
-    /** rated depth in metres: crush damage starts below it */
-    public static int ratedDepth(int mask)
+    /** SUB08: crush depth as a Y coordinate: crush damage starts below it */
+    public static int ratedY(int mask)
     {
         return switch (depthTier(mask))
         {
-            case 1 -> Config.SUBMARINE_DEPTH_MK1.get();
-            case 2 -> Config.SUBMARINE_DEPTH_MK2.get();
-            case 3 -> Config.SUBMARINE_DEPTH_MK3.get();
-            default -> Config.SUBMARINE_DEPTH_BASE.get();
+            case 1 -> Config.SUBMARINE_RATED_Y_MK1.get();
+            case 2 -> Config.SUBMARINE_RATED_Y_MK2.get();
+            case 3 -> Config.SUBMARINE_RATED_Y_MK3.get();
+            default -> Config.SUBMARINE_RATED_Y_BASE.get();
         };
     }
 

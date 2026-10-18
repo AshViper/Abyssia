@@ -1,0 +1,43 @@
+{
+  "parent": "abyssia:engineering/breadcrumbs",
+  "display": {
+    "icon": {
+      "item": "abyssia:waypoint_beacon"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.lantern_in_the_dark.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.lantern_in_the_dark.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "waypoint_beacon": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "abyssia:waypoint_beacon"
+          },
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "position": {
+                "y": {
+                  "max": -860.0
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "waypoint_beacon"
+    ]
+  ]
+}

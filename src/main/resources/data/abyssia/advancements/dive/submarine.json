@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:dive/first_dive",
+  "display": {
+    "icon": {
+      "item": "abyssia:submarine"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.submarine.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.submarine.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "in_submarine": true
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "item": "abyssia:frilled_shark_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.living_fossils.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.living_fossils.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "scan_fauna_frilled_shark": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_frilled_shark"
+      }
+    },
+    "scan_fauna_goblin_shark": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_goblin_shark"
+      }
+    },
+    "scan_fauna_chimaera": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_chimaera"
+      }
+    },
+    "scan_fauna_sea_lily": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_sea_lily"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_frilled_shark"
+    ],
+    [
+      "scan_fauna_goblin_shark"
+    ],
+    [
+      "scan_fauna_chimaera"
+    ],
+    [
+      "scan_fauna_sea_lily"
+    ]
+  ]
+}

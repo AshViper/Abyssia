@@ -1,0 +1,33 @@
+{
+  "parent": "abyssia:dive/hadal",
+  "display": {
+    "icon": {
+      "item": "abyssia:abyssal_crystal_shard"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.rock_bottom.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.rock_bottom.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": -980.0
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

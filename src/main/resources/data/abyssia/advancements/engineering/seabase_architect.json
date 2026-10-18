@@ -1,0 +1,76 @@
+{
+  "parent": "abyssia:engineering/first_module",
+  "display": {
+    "icon": {
+      "item": "minecraft:glass_pane"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.seabase_architect.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.seabase_architect.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "build_foundation": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "foundation"
+      }
+    },
+    "build_room": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "room"
+      }
+    },
+    "build_corridor": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "corridor"
+      }
+    },
+    "build_entrance": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "entrance"
+      }
+    },
+    "build_moon_pool": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "moon_pool"
+      }
+    },
+    "build_scan_room": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "scan_room"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_foundation"
+    ],
+    [
+      "build_room"
+    ],
+    [
+      "build_corridor"
+    ],
+    [
+      "build_entrance"
+    ],
+    [
+      "build_moon_pool"
+    ],
+    [
+      "build_scan_room"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

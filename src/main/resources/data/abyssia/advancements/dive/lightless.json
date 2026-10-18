@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:dive/into_the_deep",
+  "display": {
+    "icon": {
+      "item": "abyssia:abyssal_cave_rock"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.lightless.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.lightless.description"
+    }
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": -300.0
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

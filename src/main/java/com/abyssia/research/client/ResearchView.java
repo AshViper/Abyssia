@@ -3,6 +3,8 @@ package com.abyssia.research.client;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
+
 import java.util.List;
 
 /**
@@ -16,10 +18,12 @@ public final class ResearchView
     public record Req(ResourceLocation target, int count) {}
 
     public record Tech(ResourceLocation id, Component title, String tier, String depthBand, List<Req> requirements,
-                       List<ResourceLocation> prerequisites, List<String> unlocks) {}
+                       List<ResourceLocation> prerequisites, List<String> unlocks,
+                       @Nullable ResourceLocation icon) {}
 
     /** category is the ScanTarget category string; nameKey / descKey are lang keys (descKey may be empty) */
-    public record Target(ResourceLocation id, String category, String nameKey, String descKey) {}
+    public record Target(ResourceLocation id, String category, String nameKey, String descKey,
+                          @Nullable ResourceLocation icon) {}
 
     public interface Source
     {

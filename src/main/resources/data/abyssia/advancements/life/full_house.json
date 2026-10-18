@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:life/home_aquarium",
+  "display": {
+    "icon": {
+      "item": "abyssia:creature_capture_canister"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.full_house.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.full_house.description"
+    }
+  },
+  "criteria": {
+    "aquarium": {
+      "trigger": "abyssia:aquarium",
+      "conditions": {
+        "count": {
+          "min": 8
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "aquarium"
+    ]
+  ]
+}

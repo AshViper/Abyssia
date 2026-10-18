@@ -1,6 +1,7 @@
 package com.abyssia.guide;
 
 import com.abyssia.Abyssia;
+import com.abyssia.registry.AbyssiaTab;
 import com.abyssia.registry.ModItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -28,6 +29,6 @@ public final class GuideBookRegistry
 
     private static void onTabContents(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTabKey().equals(ModItems.TAB.getKey())) event.accept(ABYSS_GUIDE_BOOK.get());
+        if (event.getTabKey().equals(ModItems.tabKey(AbyssiaTab.EQUIPMENT))) event.accept(ABYSS_GUIDE_BOOK.get());
     }
 }

@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:dive/lightless",
+  "display": {
+    "icon": {
+      "item": "abyssia:deep_crystal_shard"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.the_abyss.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.the_abyss.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": -376.0
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

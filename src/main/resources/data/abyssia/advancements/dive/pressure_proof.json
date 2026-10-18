@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:dive/deep_diver",
+  "display": {
+    "icon": {
+      "item": "abyssia:pressure_diver_helmet"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.pressure_proof.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.pressure_proof.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "suit_tier": {
+          "min": 3
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

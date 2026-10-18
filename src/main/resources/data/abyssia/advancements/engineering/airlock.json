@@ -1,0 +1,27 @@
+{
+  "parent": "abyssia:engineering/first_module",
+  "display": {
+    "icon": {
+      "item": "minecraft:iron_trapdoor"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.airlock.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.airlock.description"
+    }
+  },
+  "criteria": {
+    "build_entrance": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "entrance"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_entrance"
+    ]
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "parent": "abyssia:life/lured_in",
+  "display": {
+    "icon": {
+      "item": "minecraft:iron_sword"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.lights_out.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.lights_out.description"
+    }
+  },
+  "criteria": {
+    "anglerfish": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:anglerfish"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "anglerfish"
+    ]
+  ]
+}
