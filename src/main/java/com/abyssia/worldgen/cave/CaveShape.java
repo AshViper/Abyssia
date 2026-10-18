@@ -52,6 +52,15 @@ public abstract class CaveShape
     /** Approximate signed distance to the surface, in blocks. */
     public abstract double distance(double x, double y, double z);
 
+    /**
+     * PERF02: true only when the distance is provably greater than {@code threshold} at every point within {@code h} of the
+     * given centre (a whole cell can then be skipped). Conservative: false whenever unsure.
+     */
+    public boolean farFrom(double x, double y, double z, double h, double threshold)
+    {
+        return false;
+    }
+
     /** Extra reach of the bounding box beyond the shape: noise, plus the wall layer painted around carved space. */
     protected double margin()
     {
@@ -77,7 +86,7 @@ public abstract class CaveShape
     /** A tapered capsule (radius {@code ra} at a, {@code rb} at b); {@code vertical} squashes it top to bottom. */
     public static final class Capsule extends CaveShape
     {
-        private final double ax, ay, az, bx, by, bz, ra, rb, invVertical, invLength2;
+        private final double ax, ay, az, bx, by, bz, ra, rb, invVertical, invLength2, lipschitz;
 
         public Capsule(CaveSpace space, Kind kind, @Nullable BlockState block, @Nullable BlockState host, boolean noisy,
                        double ax, double ay, double az, double bx, double by, double bz, double ra, double rb, double vertical)
@@ -95,9 +104,18 @@ public abstract class CaveShape
             double lx = bx - ax, ly = by - ay, lz = bz - az;
             double l2 = lx * lx + ly * ly + lz * lz;
             this.invLength2 = l2 < 1e-9 ? 0 : 1.0 / l2;
+            // Lipschitz bound of the distance: the squashed offset from the clamped axis point moves at most max(1, 1/vertical)
+            // per block, and the taper radius changes by |rb - ra| per axis length (t moves at most 1/length per block).
+            this.lipschitz = Math.max(1.0, this.invVertical) + Math.abs(rb - ra) * Math.sqrt(this.invLength2);
             double r = Math.max(ra, rb);
             double rv = r * Math.max(1.0, vertical);
             bounds(Math.min(ax, bx) - r, Math.min(ay, by) - rv, Math.min(az, bz) - r, Math.max(ax, bx) + r, Math.max(ay, by) + rv, Math.max(az, bz) + r);
+        }
+
+        @Override
+        public boolean farFrom(double x, double y, double z, double h, double threshold)
+        {
+            return distance(x, y, z) - lipschitz * h > threshold + 1e-3;
         }
 
         @Override
@@ -137,6 +155,18 @@ public abstract class CaveShape
             this.floorY = floorY;
             this.minRadius = Math.min(rx, Math.min(ry, rz));
             bounds(cx - rx, Double.isNaN(floorY) ? cy - ry : Math.max(cy - ry, floorY - 1), cz - rz, cx + rx, cy + ry, cz + rz);
+        }
+
+        /**
+         * Outside the ellipsoid, d = rho (1 - 1/q) >= minRadius (q - 1) (rho >= minRadius q), and q moves at most 1/minRadius
+         * per block; the floor cut only raises the distance.
+         */
+        @Override
+        public boolean farFrom(double x, double y, double z, double h, double threshold)
+        {
+            double dx = x - cx, dy = y - cy, dz = z - cz;
+            double q = Math.sqrt(dx * dx / (rx * rx) + dy * dy / (ry * ry) + dz * dz / (rz * rz));
+            return q - h / minRadius > 1 && minRadius * (q - 1) - h > threshold + 1e-3;
         }
 
         @Override

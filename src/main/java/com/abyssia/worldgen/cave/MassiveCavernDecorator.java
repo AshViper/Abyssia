@@ -12,7 +12,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The massive cavern decoration pass: runs only in chunks that touch a planned cavern, after the shared cave
@@ -101,6 +103,9 @@ final class MassiveCavernDecorator
         {
             for (int lx = 0; lx < 16; lx++)
             {
+                // The kelp clump depends on the column only (PERF02).
+                Cavern clumpFor = null;
+                Cavern.Cluster clumpOf = null;
                 for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
                 {
                     if (!ctx.candidate(lx, y, lz)) continue;
@@ -123,7 +128,14 @@ final class MassiveCavernDecorator
                     }
                     CavernTemplate.Forest forest = cavern.template.forest;
                     if (forest.density() <= 0 || cavern.template.forestPlants.isEmpty()) continue;
-                    Cavern.Cluster clump = cavern.kelpCluster(cx, cz);
+                    // chance <= density * 0.85 * 1.15 (patch factor <= 1, 1 - q^2 <= 1): reject early, before the clump and patch lookups.
+                    if (noises.hash(x, y, z, 511) >= forest.density() * 0.85 * 1.15 * 1.0000001) continue;
+                    if (cavern != clumpFor)
+                    {
+                        clumpFor = cavern;
+                        clumpOf = cavern.kelpCluster(cx, cz);
+                    }
+                    Cavern.Cluster clump = clumpOf;
                     if (clump == null) continue;
                     CavernPatch patch = ctx.patchAt(cavern, lx, lz);
                     double patchFactor = switch (patch)
@@ -201,6 +213,10 @@ final class MassiveCavernDecorator
         {
             for (int lx = 0; lx < 16; lx++)
             {
+                // The clumps and garden depend on the column only (PERF02).
+                Cavern clumpFor = null;
+                Cavern.Cluster clumpOf = null, openOf = null;
+                boolean gardenOf = false;
                 for (int y = ctx.yMax - 1; y > ctx.yMin; y--)
                 {
                     if (!ctx.candidate(lx, y, lz)) continue;
@@ -213,12 +229,21 @@ final class MassiveCavernDecorator
                     double cx = x + 0.5, cz = z + 0.5;
                     // From the roof, and from the undersides of shelves, bridges and hanging rocks.
                     if (cavern.relativeHeight(cx, y, cz) < 0.55 && ctx.fillFlag(lx, y + 1, lz) == 0) continue;
+                    // chance <= density * (0.55 + 0.3 * 1.2) + 0.2: reject early, before the patch, clump and garden lookups.
+                    if (noises.hash(x, y, z, 521) >= (hanging.density() * (0.55 + 0.36) + 0.2) * 1.0000001) continue;
                     CavernPatch patch = ctx.patchAt(cavern, lx, lz);
                     double patchFactor = patch == CavernPatch.PLANT ? 1.0 : patch == CavernPatch.OPEN ? 0.35 : patch == CavernPatch.WATER ? 0.7 : 0.4;
-                    Cavern.Cluster clump = cavern.kelpCluster(cx, cz), open = cavern.rootCluster(cx, cz);
+                    if (cavern != clumpFor)
+                    {
+                        clumpFor = cavern;
+                        clumpOf = cavern.kelpCluster(cx, cz);
+                        openOf = cavern.rootCluster(cx, cz);
+                        gardenOf = cavern.gardenAt(cx, cz) != null;
+                    }
+                    Cavern.Cluster clump = clumpOf, open = openOf;
                     double chance = hanging.density() * (clump != null ? 0.55 * (1 - clump.q() * clump.q()) * patchFactor : 0)
                             + hanging.density() * (open != null ? 0.3 * (1 - open.q() * open.q()) * (patch == CavernPatch.OPEN ? 1.2 : 0.6) : 0)
-                            + (cavern.gardenAt(cx, cz) != null ? 0.2 : 0);
+                            + (gardenOf ? 0.2 : 0);
                     if (noises.hash(x, y, z, 521) >= chance) continue;
                     int free = CaveDecorationGenerator.free(ctx, lx, y, lz, Direction.DOWN, 255);
                     int length = noises.hash(x, y, z, 522) < hanging.reachFloor() ? free : Math.max(2, Mth.floor(free * Mth.lerp(noises.hash(x, y, z, 523), 0.12, 0.6)));
@@ -235,81 +260,98 @@ final class MassiveCavernDecorator
     {
         CaveNoises noises = ctx.noises;
         BlockState floating = ModBlocks.FLOATING_BLOOM.get().defaultBlockState();
+        // Floating plants sit one block under a lake's surface and need no sturdy floor: those levels are scanned in full. Every
+        // other block that grows anything stands on a solid block, so there only the candidate blocks are walked (PERF02).
+        Set<Integer> lakeLevels = new HashSet<>();
+        for (Cavern c : caverns)
+        {
+            for (Cavern.Lake l : c.lakes()) lakeLevels.add(l.surfaceY() - 1);
+        }
         for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
         {
-            for (int lz = 0; lz < 16; lz++)
+            if (lakeLevels.contains(y))
             {
-                for (int lx = 0; lx < 16; lx++)
+                for (int lz = 0; lz < 16; lz++)
                 {
-                    if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
-                    Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
-                    if (cavern == null) continue;
-                    int x = ctx.x0 + lx, z = ctx.z0 + lz;
-                    double cx = x + 0.5, cz = z + 0.5;
-                    Cavern.Lake lake = cavern.lakeAt(cx, cz, 1.7);
-                    if (lake != null && y == lake.surfaceY() - 1 && lake.normalized(cx, cz) < 0.95)
-                    {
-                        // Floating plants just under the surface.
-                        if (noises.hash(x, y, z, 531) < 0.02) ctx.set(lx, y, lz, floating);
-                        continue;
-                    }
-                    if (!ctx.sturdy(lx, y - 1, lz, Direction.UP)) continue;
-                    double roll = noises.hash(x, y, z, 532), pick = noises.hash(x, y, z, 533), height = noises.hash(x, y, z, 534);
-                    if (lake != null)
-                    {
-                        double n = lake.normalized(cx, cz);
-                        if (n < 1 && y < lake.surfaceY())
-                        {
-                            if (roll < 0.1 + 0.35 * n) plant(ctx, lx, y, lz, pick < 0.45 ? ModBlocks.CAVE_GRASS.get() : pick < 0.75 ? ModBlocks.CAVE_FERN.get() : ModBlocks.CAVE_MOSS.get(), height, 1, 3);
-                        }
-                        else if (n >= 1 && y >= lake.surfaceY() - 1 && y <= lake.surfaceY() + 5 && roll < 0.6 * (1 - (n - 1) / 0.7))
-                        {
-                            // The shore: dense.
-                            Block species = pick < 0.2 ? ModBlocks.CAVE_KELP.get() : pick < 0.5 ? ModBlocks.CAVE_GRASS.get() : pick < 0.7 ? ModBlocks.CAVE_FERN.get() : pick < 0.85 ? ModBlocks.CAVE_TUBE_PLANT.get() : ModBlocks.CAVE_MOSS.get();
-                            plant(ctx, lx, y, lz, species, height, species == ModBlocks.CAVE_KELP.get() ? 4 : 1, species == ModBlocks.CAVE_KELP.get() ? 10 : 4);
-                        }
-                        continue;
-                    }
-                    Cavern.Garden garden = cavern.gardenAt(cx, cz);
-                    if (garden == null) continue;
-                    double d = Math.sqrt(Mth.square(cx - garden.x()) + Mth.square(cz - garden.z())) / garden.radius();
-                    double tall = garden.tall() ? 1.5 : 1.0;
-                    if (!garden.grove())
-                    {
-                        if (d < 0.2) continue;
-                        if (d < 0.65)
-                        {
-                            if (roll >= 0.7) continue;
-                            Block species = pick < 0.04 ? ModBlocks.CAVE_BLOOM.get() : pick < 0.18 ? ModBlocks.CAVE_CRYSTAL_PLANT.get() : pick < 0.45 ? ModBlocks.CAVE_GRASS.get() : pick < 0.7 ? ModBlocks.CAVE_FERN.get()
-                                    : pick < 0.9 ? ModBlocks.CAVE_TUBE_PLANT.get() : ModBlocks.GLOWTIP_GRASS.get();
-                            plant(ctx, lx, y, lz, species, height, 1, 4);
-                        }
-                        else if (roll < 0.22)
-                        {
-                            if (pick < 0.6) column(ctx, lx, y, lz, ModBlocks.GIANT_CAVE_KELP.get().defaultBlockState(),
-                                    Math.min(Mth.floor((10 + height * 14) * tall), CaveDecorationGenerator.free(ctx, lx, y, lz, Direction.UP, 255) - 2), null);
-                            else plant(ctx, lx, y, lz, ModBlocks.CAVE_KELP.get(), height, 6, 14);
-                        }
-                    }
-                    else if (roll < 0.45)
-                    {
-                        if (pick < 0.25)
-                        {
-                            int h = Math.min(Mth.floor((12 + height * 18) * tall), CaveDecorationGenerator.free(ctx, lx, y, lz, Direction.UP, 255) - 2);
-                            if (h >= 3) column(ctx, lx, y, lz, ModBlocks.GIANT_CAVE_KELP.get().defaultBlockState(), h, cavern.kelpCluster(cx, cz));
-                        }
-                        else if (pick < 0.45) plant(ctx, lx, y, lz, ModBlocks.CAVE_FERN.get(), height, 1, 1);
-                        else if (pick < 0.7) plant(ctx, lx, y, lz, ModBlocks.CAVE_GRASS.get(), height, 1, 3);
-                        else if (pick < 0.82) plant(ctx, lx, y, lz, height < 0.5 ? ModBlocks.CAVE_CRYSTAL_PLANT.get() : ModBlocks.GLOWTIP_GRASS.get(), height, 1, 1);
-                        else if (pick < 0.9)
-                        {
-                            BlockState cluster = cavern.crystalCluster(height);
-                            if (cluster != null) CavePlacer.cluster(ctx, lx, y, lz, cluster, Direction.DOWN);
-                        }
-                        else plant(ctx, lx, y, lz, ModBlocks.CAVE_TUBE_PLANT.get(), height, 2, 5);
-                    }
+                    for (int lx = 0; lx < 16; lx++) shoreAt(ctx, caverns, noises, floating, lx, y, lz);
                 }
+                continue;
             }
+            for (int ci = ctx.nextCandidate(ctx.candidateIndex(y), y + 1); ci >= 0; ci = ctx.nextCandidate(ci + 1, y + 1))
+            {
+                shoreAt(ctx, caverns, noises, floating, ci & 15, y, ci >> 4 & 15);
+            }
+        }
+    }
+
+    private static void shoreAt(CaveChunk ctx, List<Cavern> caverns, CaveNoises noises, BlockState floating, int lx, int y, int lz)
+    {
+        if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) return;
+        Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
+        if (cavern == null) return;
+        int x = ctx.x0 + lx, z = ctx.z0 + lz;
+        double cx = x + 0.5, cz = z + 0.5;
+        Cavern.Lake lake = cavern.lakeAt(cx, cz, 1.7);
+        if (lake != null && y == lake.surfaceY() - 1 && lake.normalized(cx, cz) < 0.95)
+        {
+            // Floating plants just under the surface.
+            if (noises.hash(x, y, z, 531) < 0.02) ctx.set(lx, y, lz, floating);
+            return;
+        }
+        if (!ctx.sturdy(lx, y - 1, lz, Direction.UP)) return;
+        double roll = noises.hash(x, y, z, 532), pick = noises.hash(x, y, z, 533), height = noises.hash(x, y, z, 534);
+        if (lake != null)
+        {
+            double n = lake.normalized(cx, cz);
+            if (n < 1 && y < lake.surfaceY())
+            {
+                if (roll < 0.1 + 0.35 * n) plant(ctx, lx, y, lz, pick < 0.45 ? ModBlocks.CAVE_GRASS.get() : pick < 0.75 ? ModBlocks.CAVE_FERN.get() : ModBlocks.CAVE_MOSS.get(), height, 1, 3);
+            }
+            else if (n >= 1 && y >= lake.surfaceY() - 1 && y <= lake.surfaceY() + 5 && roll < 0.6 * (1 - (n - 1) / 0.7))
+            {
+                // The shore: dense.
+                Block species = pick < 0.2 ? ModBlocks.CAVE_KELP.get() : pick < 0.5 ? ModBlocks.CAVE_GRASS.get() : pick < 0.7 ? ModBlocks.CAVE_FERN.get() : pick < 0.85 ? ModBlocks.CAVE_TUBE_PLANT.get() : ModBlocks.CAVE_MOSS.get();
+                plant(ctx, lx, y, lz, species, height, species == ModBlocks.CAVE_KELP.get() ? 4 : 1, species == ModBlocks.CAVE_KELP.get() ? 10 : 4);
+            }
+            return;
+        }
+        Cavern.Garden garden = cavern.gardenAt(cx, cz);
+        if (garden == null) return;
+        double d = Math.sqrt(Mth.square(cx - garden.x()) + Mth.square(cz - garden.z())) / garden.radius();
+        double tall = garden.tall() ? 1.5 : 1.0;
+        if (!garden.grove())
+        {
+            if (d < 0.2) return;
+            if (d < 0.65)
+            {
+                if (roll >= 0.7) return;
+                Block species = pick < 0.04 ? ModBlocks.CAVE_BLOOM.get() : pick < 0.18 ? ModBlocks.CAVE_CRYSTAL_PLANT.get() : pick < 0.45 ? ModBlocks.CAVE_GRASS.get() : pick < 0.7 ? ModBlocks.CAVE_FERN.get()
+                        : pick < 0.9 ? ModBlocks.CAVE_TUBE_PLANT.get() : ModBlocks.GLOWTIP_GRASS.get();
+                plant(ctx, lx, y, lz, species, height, 1, 4);
+            }
+            else if (roll < 0.22)
+            {
+                if (pick < 0.6) column(ctx, lx, y, lz, ModBlocks.GIANT_CAVE_KELP.get().defaultBlockState(),
+                        Math.min(Mth.floor((10 + height * 14) * tall), CaveDecorationGenerator.free(ctx, lx, y, lz, Direction.UP, 255) - 2), null);
+                else plant(ctx, lx, y, lz, ModBlocks.CAVE_KELP.get(), height, 6, 14);
+            }
+        }
+        else if (roll < 0.45)
+        {
+            if (pick < 0.25)
+            {
+                int h = Math.min(Mth.floor((12 + height * 18) * tall), CaveDecorationGenerator.free(ctx, lx, y, lz, Direction.UP, 255) - 2);
+                if (h >= 3) column(ctx, lx, y, lz, ModBlocks.GIANT_CAVE_KELP.get().defaultBlockState(), h, cavern.kelpCluster(cx, cz));
+            }
+            else if (pick < 0.45) plant(ctx, lx, y, lz, ModBlocks.CAVE_FERN.get(), height, 1, 1);
+            else if (pick < 0.7) plant(ctx, lx, y, lz, ModBlocks.CAVE_GRASS.get(), height, 1, 3);
+            else if (pick < 0.82) plant(ctx, lx, y, lz, height < 0.5 ? ModBlocks.CAVE_CRYSTAL_PLANT.get() : ModBlocks.GLOWTIP_GRASS.get(), height, 1, 1);
+            else if (pick < 0.9)
+            {
+                BlockState cluster = cavern.crystalCluster(height);
+                if (cluster != null) CavePlacer.cluster(ctx, lx, y, lz, cluster, Direction.DOWN);
+            }
+            else plant(ctx, lx, y, lz, ModBlocks.CAVE_TUBE_PLANT.get(), height, 2, 5);
         }
     }
 

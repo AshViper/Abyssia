@@ -18,6 +18,7 @@ import net.minecraft.world.level.chunk.CarvingMask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -352,6 +353,10 @@ public final class CaveChunk
         return (float) r;
     }
 
+    private final Map<Cavern, double[]> reliefColumns = new IdentityHashMap<>();
+    private Cavern reliefCavern;
+    private double[] reliefCols;
+
     /** Wall displacement of this space at this block, from cached raw noise. */
     private double displacement(CaveSpace space, int idx, int x, int y, int z, int col)
     {
@@ -374,8 +379,61 @@ public final class CaveChunk
             d += detail * dn;
         }
         if (space.shelfAmp > 0) d += space.shelfAmp * CaveNoises.shelf(y + 0.5, shelfPhase[col], space.shelfPeriod);
-        if (space.cavern != null) d += space.cavern.wallRelief(x + 0.5, y + 0.5, z + 0.5);
+        if (space.cavern != null)
+        {
+            // The x,z-only terms of the wall relief are cached per column and cavern (PERF02).
+            if (space.cavern != reliefCavern)
+            {
+                reliefCavern = space.cavern;
+                reliefCols = reliefColumns.computeIfAbsent(reliefCavern, c ->
+                {
+                    double[] cols = new double[SIZE * SIZE * 3];
+                    Arrays.fill(cols, Double.NaN);
+                    return cols;
+                });
+            }
+            d += space.cavern.wallRelief(x + 0.5, y + 0.5, z + 0.5, reliefCols, col);
+        }
         return d;
+    }
+
+    // PERF02: world-aligned 4x4x4 cells whose every block is provably beyond a threshold of a shape are skipped whole.
+    // CELL_H is a safe bound (2 * sqrt(3) = 3.46) on the distance from a cell's centre to any of its block centres.
+    private static final int CELL = 4;
+    private static final double CELL_H = 3.47;
+    private int cellX0, cellY0, cellZ0, cellNx, cellNz;
+
+    /** Per cell of the loop range: whether {@code shape.distance > threshold} everywhere in it; null when no cell qualifies. */
+    @Nullable
+    private boolean[] farCells(CaveShape shape, int ax, int bx, int ay, int by, int az, int bz, double threshold)
+    {
+        if (ax > bx || ay > by || az > bz) return null;
+        cellX0 = ax >> 2;
+        cellY0 = ay >> 2;
+        cellZ0 = az >> 2;
+        cellNx = (bx >> 2) - cellX0 + 1;
+        cellNz = (bz >> 2) - cellZ0 + 1;
+        int ny = (by >> 2) - cellY0 + 1;
+        boolean[] far = new boolean[cellNx * ny * cellNz];
+        boolean any = false;
+        for (int cy = 0; cy < ny; cy++)
+        {
+            for (int cz = 0; cz < cellNz; cz++)
+            {
+                for (int cx = 0; cx < cellNx; cx++)
+                {
+                    boolean f = shape.farFrom((cellX0 + cx) * CELL + CELL / 2.0, (cellY0 + cy) * CELL + CELL / 2.0, (cellZ0 + cz) * CELL + CELL / 2.0, CELL_H, threshold);
+                    far[(cy * cellNz + cz) * cellNx + cx] = f;
+                    any |= f;
+                }
+            }
+        }
+        return any ? far : null;
+    }
+
+    private int cellIndex(int x, int y, int z)
+    {
+        return (((y >> 2) - cellY0) * cellNz + ((z >> 2) - cellZ0)) * cellNx + (x >> 2) - cellX0;
     }
 
     /** Evaluates every carve shape over its part of this chunk (plus rim): the union keeps the smallest value. */
@@ -387,6 +445,7 @@ public final class CaveChunk
             CaveSpace space = shape.space;
             double reach = shape.noisy ? space.maxDisplacement() : 0;
             boolean lake = space.hasLake();
+            double pull = space.maxPull();
             if (shape instanceof CaveShape.Hall hall)
             {
                 computeHall(hall, si, reach);
@@ -395,6 +454,7 @@ public final class CaveChunk
             int ax = Math.max(shape.minX, x0 - PAD), bx = Math.min(shape.maxX, x0 + 15 + PAD);
             int az = Math.max(shape.minZ, z0 - PAD), bz = Math.min(shape.maxZ, z0 + 15 + PAD);
             int ay = Math.max(shape.minY, yMin), by = Math.min(shape.maxY, yMax);
+            boolean[] far = farCells(shape, ax, bx, ay, by, az, bz, WALL_DEPTH + 0.5 + reach);
             for (int y = ay; y <= by; y++)
             {
                 for (int z = az; z <= bz; z++)
@@ -402,9 +462,16 @@ public final class CaveChunk
                     int row = (z - z0 + PAD) * SIZE;
                     for (int x = ax; x <= bx; x++)
                     {
+                        if (far != null && far[cellIndex(x, y, z)])
+                        {
+                            x |= CELL - 1;
+                            continue;
+                        }
                         double d = shape.distance(x + 0.5, y + 0.5, z + 0.5);
                         if (d - reach > WALL_DEPTH + 0.5) continue;
                         int idx = index(x - x0, y, z - z0);
+                        // Already covered at least as deeply, whatever the noise adds (it pulls by at most pull): nothing to store.
+                        if (shape.noisy && field[idx] <= d - pull && (!lake || dome[idx] <= d - pull) && d + reach > -0.5) continue;
                         // Deep inside, noise cannot change the answer: skip sampling it.
                         double s = shape.noisy && d + reach > -0.5 ? d + displacement(space, idx, x, y, z, row + x - x0 + PAD) : d;
                         if (s < field[idx])
@@ -570,12 +637,18 @@ public final class CaveChunk
             int az = Math.max(shape.minZ, z0), bz = Math.min(shape.maxZ, z0 + 15);
             int ay = Math.max(shape.minY, Math.max(yMin, network.minY() + 5)), by = Math.min(shape.maxY, yMax);
             byte flag = shape.tip == Direction.DOWN ? TIP_DOWN : shape.tip == Direction.UP ? TIP_UP : shape.shelf ? SHELF : FILLED;
+            boolean[] far = farCells(shape, ax, bx, ay, by, az, bz, reach);
             for (int y = ay; y <= by; y++)
             {
                 for (int z = az; z <= bz; z++)
                 {
                     for (int x = ax; x <= bx; x++)
                     {
+                        if (far != null && far[cellIndex(x, y, z)])
+                        {
+                            x |= CELL - 1;
+                            continue;
+                        }
                         double d = shape.distance(x + 0.5, y + 0.5, z + 0.5);
                         if (d - reach >= 0) continue;
                         int idx = index(x - x0, y, z - z0);
