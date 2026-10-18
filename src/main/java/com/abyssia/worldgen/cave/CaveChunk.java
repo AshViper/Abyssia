@@ -713,8 +713,19 @@ public final class CaveChunk
             int i = (y - solidY0) << 8 | lz << 4 | lx;
             long bit = 1L << i;
             int w = i >> 6;
+            boolean wasSolid = (solid[w] & bit) != 0;
             if (solidState) solid[w] |= bit;
             else solid[w] &= ~bit;
+            if (cand != null && wasSolid != solidState)
+            {
+                // Its neighbours may have gained or lost their only solid neighbour.
+                updateCandidate(lx, y - 1, lz);
+                updateCandidate(lx, y + 1, lz);
+                updateCandidate(lx - 1, y, lz);
+                updateCandidate(lx + 1, y, lz);
+                updateCandidate(lx, y, lz - 1);
+                updateCandidate(lx, y, lz + 1);
+            }
             if (state.is(Blocks.WATER)) waterBits[w] |= bit;
             else waterBits[w] &= ~bit;
             if (state.isAir()) airBits[w] |= bit;
@@ -757,6 +768,85 @@ public final class CaveChunk
         if (solid == null) buildSolid();
         return solidAt(lx, y - 1, lz) || solidAt(lx, y + 1, lz) || solidAt(lx - 1, y, lz) || solidAt(lx + 1, y, lz)
                 || solidAt(lx, y, lz - 1) || solidAt(lx, y, lz + 1);
+    }
+
+    /**
+     * Candidate blocks of the decoration passes, yMin..yMax in the bitsets' layout: carved here and next to a solid block
+     * (passes that grow against a sturdy face need both). Built once, on first use (after the carve, fill and cut steps,
+     * the last to change the field), and kept by set(); the passes walk its set bits instead of every block.
+     */
+    private long[] cand;
+
+    private void buildCandidates()
+    {
+        if (solid == null) buildSolid();
+        long[] bits = new long[solid.length];
+        for (int y = yMin; y <= yMax; y++)
+        {
+            int base = (y - solidY0) << 8;
+            for (int lz = 0; lz < 16; lz++)
+            {
+                for (int lx = 0; lx < 16; lx++)
+                {
+                    if (!carvedHere(lx, y, lz) || !nearSolid(lx, y, lz)) continue;
+                    int i = base | lz << 4 | lx;
+                    bits[i >> 6] |= 1L << i;
+                }
+            }
+        }
+        cand = bits;
+    }
+
+    private void updateCandidate(int lx, int y, int lz)
+    {
+        if (y < yMin || y > yMax || !inChunk(lx, lz)) return;
+        int i = (y - solidY0) << 8 | lz << 4 | lx;
+        if (carvedHere(lx, y, lz) && nearSolid(lx, y, lz)) cand[i >> 6] |= 1L << i;
+        else cand[i >> 6] &= ~(1L << i);
+    }
+
+    /** Whether (lx, y, lz) is carved here and has a solid neighbour, as of now (exactly carvedHere && nearSolid). */
+    boolean candidate(int lx, int y, int lz)
+    {
+        if (cand == null) buildCandidates();
+        if (y < yMin || y > yMax || !inChunk(lx, lz)) return carvedHere(lx, y, lz) && nearSolid(lx, y, lz);
+        int i = (y - solidY0) << 8 | lz << 4 | lx;
+        return (cand[i >> 6] & 1L << i) != 0;
+    }
+
+    /** Bit index of the first block at height y (for walking candidates in y, z, x order with {@link #nextCandidate}). */
+    int candidateIndex(int y)
+    {
+        if (cand == null) buildCandidates();
+        return (y - solidY0) << 8;
+    }
+
+    /**
+     * The next candidate at or after bit index {@code from}, below height {@code yEnd}, or -1. It reads the bits as they are
+     * now, so blocks a pass changes behind or ahead of it are seen exactly as a full scan in the same order would see them.
+     */
+    int nextCandidate(int from, int yEnd)
+    {
+        int end = Math.min((yEnd - solidY0) << 8, cand.length << 6);
+        if (from >= end) return -1;
+        int w = from >> 6;
+        long word = cand[w] & -1L << from;
+        while (true)
+        {
+            if (word != 0)
+            {
+                int i = w << 6 | Long.numberOfTrailingZeros(word);
+                return i < end ? i : -1;
+            }
+            if (++w << 6 >= end) return -1;
+            word = cand[w];
+        }
+    }
+
+    /** Height of a candidate bit index. */
+    int candidateY(int index)
+    {
+        return solidY0 + (index >> 8);
     }
 
     private void buildSolid()

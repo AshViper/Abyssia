@@ -130,8 +130,7 @@ final class CaveDecorationGenerator
             {
                 for (int y = ctx.yMax - 1; y > ctx.yMin; y--)
                 {
-                    if (ctx.interiorOpen(lx, y, lz)) continue;
-                    if (!ctx.nearSolid(lx, y, lz)) continue;
+                    if (!ctx.candidate(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.open(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || space.environment.speleothem == null) continue;

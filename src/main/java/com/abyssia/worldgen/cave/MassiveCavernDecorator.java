@@ -103,8 +103,7 @@ final class MassiveCavernDecorator
             {
                 for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
                 {
-                    if (ctx.interiorOpen(lx, y, lz)) continue;
-                    if (!ctx.nearSolid(lx, y, lz)) continue;
+                    if (!ctx.candidate(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz) || !ctx.sturdy(lx, y - 1, lz, Direction.UP)) continue;
                     Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
                     if (cavern == null) continue;
@@ -204,8 +203,7 @@ final class MassiveCavernDecorator
             {
                 for (int y = ctx.yMax - 1; y > ctx.yMin; y--)
                 {
-                    if (ctx.interiorOpen(lx, y, lz)) continue;
-                    if (!ctx.nearSolid(lx, y, lz)) continue;
+                    if (!ctx.candidate(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz) || !ctx.sturdy(lx, y + 1, lz, Direction.DOWN)) continue;
                     Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
                     if (cavern == null) continue;
@@ -331,52 +329,46 @@ final class MassiveCavernDecorator
     {
         CaveNoises noises = ctx.noises;
         CaveMossBlock luminous = (CaveMossBlock) ModBlocks.LUMINOUS_MOSS.get();
-        for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
+        // Only blocks that are carved and touch a solid block can grow anything here: walk those (same order as a full y, z, x scan).
+        for (int ci = ctx.nextCandidate(ctx.candidateIndex(ctx.yMin + 1), ctx.yMax); ci >= 0; ci = ctx.nextCandidate(ci + 1, ctx.yMax))
         {
-            for (int lz = 0; lz < 16; lz++)
+            int y = ctx.candidateY(ci), lz = ci >> 4 & 15, lx = ci & 15;
+            if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
+            Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
+            if (cavern == null) continue;
+            int x = ctx.x0 + lx, z = ctx.z0 + lz;
+            double cx = x + 0.5, cz = z + 0.5;
+            double roll = noises.hash(x, y, z, 541);
+            if (ctx.fillFlag(lx, y - 1, lz) == CaveChunk.SHELF && ctx.sturdy(lx, y - 1, lz, Direction.UP))
             {
-                for (int lx = 0; lx < 16; lx++)
+                // Shelf tops: sediment settles, plants take hold, loose rock, an ore seam, a crystal.
+                if (roll >= 0.5) continue;
+                double pick = noises.hash(x, y, z, 542);
+                CaveEnvironment env = cavern.space.environment;
+                if (pick < 0.3)
                 {
-                    if (ctx.interiorOpen(lx, y, lz)) continue;
-                    if (!ctx.nearSolid(lx, y, lz)) continue;
-                    if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
-                    Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
-                    if (cavern == null) continue;
-                    int x = ctx.x0 + lx, z = ctx.z0 + lz;
-                    double cx = x + 0.5, cz = z + 0.5;
-                    double roll = noises.hash(x, y, z, 541);
-                    if (ctx.fillFlag(lx, y - 1, lz) == CaveChunk.SHELF && ctx.sturdy(lx, y - 1, lz, Direction.UP))
-                    {
-                        // Shelf tops: sediment settles, plants take hold, loose rock, an ore seam, a crystal.
-                        if (roll >= 0.5) continue;
-                        double pick = noises.hash(x, y, z, 542);
-                        CaveEnvironment env = cavern.space.environment;
-                        if (pick < 0.3)
-                        {
-                            BlockState sediment = env.floor.pick(noises.hash(x, y, z, 543));
-                            if (sediment != null) ctx.set(lx, y - 1, lz, sediment);
-                        }
-                        else if (pick < 0.6 && !env.floorPlants.isEmpty())
-                        {
-                            CavePlacer.plant(ctx, lx, y, lz, env.floorPlants.pick(noises.species(x, y, z)), Direction.DOWN, noises.hash(x, y, z, 544), 6);
-                        }
-                        else if (pick < 0.7) plant(ctx, lx, y, lz, pick < 0.65 ? ModBlocks.CAVE_RUBBLE.get() : ModBlocks.SEAFLOOR_PEBBLES.get(), 0, 1, 1);
-                        else if (pick < 0.8 && !cavern.space.profile.ores.isEmpty()) ctx.set(lx, y - 1, lz, cavern.space.profile.ores.pick(noises.hash(x, y, z, 545)));
-                        else if (pick < 0.9)
-                        {
-                            BlockState cluster = cavern.crystalCluster(noises.hash(x, y, z, 546));
-                            if (cluster != null) CavePlacer.cluster(ctx, lx, y, lz, cluster, Direction.DOWN);
-                        }
-                        continue;
-                    }
-                    if (!ctx.sturdy(lx, y + 1, lz, Direction.DOWN) || cavern.relativeHeight(cx, y, cz) < 0.8) continue;
-                    // Points of light across the roof, thicker over crystal and plant ground.
-                    CavernPatch patch = ctx.patchAt(cavern, lx, lz);
-                    double chance = cavern.template.ceilingGlow * (patch == CavernPatch.CRYSTAL ? 2.0 : patch == CavernPatch.PLANT ? 1.3 : 1.0)
-                            * (0.3 + 1.4 * noises.patch(x, y, z, 61.7));
-                    if (roll < chance) CavePlacer.moss(ctx, lx, y, lz, luminous);
+                    BlockState sediment = env.floor.pick(noises.hash(x, y, z, 543));
+                    if (sediment != null) ctx.set(lx, y - 1, lz, sediment);
                 }
+                else if (pick < 0.6 && !env.floorPlants.isEmpty())
+                {
+                    CavePlacer.plant(ctx, lx, y, lz, env.floorPlants.pick(noises.species(x, y, z)), Direction.DOWN, noises.hash(x, y, z, 544), 6);
+                }
+                else if (pick < 0.7) plant(ctx, lx, y, lz, pick < 0.65 ? ModBlocks.CAVE_RUBBLE.get() : ModBlocks.SEAFLOOR_PEBBLES.get(), 0, 1, 1);
+                else if (pick < 0.8 && !cavern.space.profile.ores.isEmpty()) ctx.set(lx, y - 1, lz, cavern.space.profile.ores.pick(noises.hash(x, y, z, 545)));
+                else if (pick < 0.9)
+                {
+                    BlockState cluster = cavern.crystalCluster(noises.hash(x, y, z, 546));
+                    if (cluster != null) CavePlacer.cluster(ctx, lx, y, lz, cluster, Direction.DOWN);
+                }
+                continue;
             }
+            if (!ctx.sturdy(lx, y + 1, lz, Direction.DOWN) || cavern.relativeHeight(cx, y, cz) < 0.8) continue;
+            // Points of light across the roof, thicker over crystal and plant ground.
+            CavernPatch patch = ctx.patchAt(cavern, lx, lz);
+            double chance = cavern.template.ceilingGlow * (patch == CavernPatch.CRYSTAL ? 2.0 : patch == CavernPatch.PLANT ? 1.3 : 1.0)
+                    * (0.3 + 1.4 * noises.patch(x, y, z, 61.7));
+            if (roll < chance) CavePlacer.moss(ctx, lx, y, lz, luminous);
         }
     }
 }
