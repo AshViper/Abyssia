@@ -1958,6 +1958,14 @@ def biomes():
     reef["carvers"] = {}
     reef["effects"].update({"water_color": 0x2E8FD6, "water_fog_color": 0x0A4D8C})
     write("biome/twilight_reef", reef)
+    # Shallows (ocean planet): the shallow sea over the cold / temperate shelf, where the world spawns. Lukewarm-ocean
+    # features minus land ones, no drowned, in clear turquoise water; not in any vanilla biome tag.
+    shallows = vanilla("biome/lukewarm_ocean")
+    shallows["features"] = [[f for f in step if f not in land and f != "minecraft:lake_lava_surface"] for step in shallows["features"]]
+    shallows["carvers"] = {}
+    shallows["effects"].update({"water_color": 0x3FC6D8, "water_fog_color": 0x0E5A73})
+    shallows["spawners"]["monster"] = []
+    write("biome/shallows", shallows)
     write("biome/abyssal_rift", rift_biome())
     write("biome/deep_fissure", fissure_biome(land))
     write("biome/continental_slope", slope_biome(land))
@@ -1975,7 +1983,7 @@ def biomes():
 def check_feature_layers():
     """The ocean world's biomes and the deep layer's biomes share one biome source, so one feature order: they must
     share no placed feature (vanilla ones included), and every deep feature must find the deep floor itself."""
-    ocean_biomes = {"twilight_reef", "abyssal_rift", "deep_fissure", "continental_slope"}
+    ocean_biomes = {"twilight_reef", "shallows", "abyssal_rift", "deep_fissure", "continental_slope"}
     ocean = {f for b in ocean_biomes for step in read("biome/" + b)["features"] for f in step}
     for b in OCEAN_WORLD_VANILLA:
         ocean |= {f for step in vanilla("biome/" + b)["features"] for f in step}
@@ -2119,11 +2127,14 @@ def biome_sources():
     # Ocean world: Twilight Reef takes the warm, mid-depth band (seabed ~0..25) between shallow warm seas and the deep.
     T = {"frozen": (-2, -0.45), "cold": (-0.45, -0.15), "n": (-0.15, 0.2), "luke": (0.2, 0.55), "warm": (0.55, 2)}
     S, M, D = (0.4, 2), (0, 0.4), (-2, 0)
+    SH = 0.045
     mc = lambda n: "minecraft:" + n
     ocean = [
         params(mc("frozen_ocean"), T["frozen"], continentalness=(0, 2)), params(mc("deep_frozen_ocean"), T["frozen"], continentalness=D),
-        params(mc("cold_ocean"), T["cold"], continentalness=(0, 2)), params(mc("deep_cold_ocean"), T["cold"], continentalness=D),
-        params(mc("ocean"), T["n"], continentalness=(0, 2)), params(mc("deep_ocean"), T["n"], continentalness=D),
+        params(mc("cold_ocean"), T["cold"], continentalness=(0, SH)), params(mc("deep_cold_ocean"), T["cold"], continentalness=D),
+        params(mc("ocean"), T["n"], continentalness=(0, SH)), params(mc("deep_ocean"), T["n"], continentalness=D),
+        # Shallows: cold + temperate belts above seabed ~Y30 (M 0.045); the world spawns here (noise_settings).
+        params(A("shallows"), (T["cold"][0], T["n"][1]), continentalness=(SH, 2)),
         params(mc("lukewarm_ocean"), T["luke"], continentalness=S), params(mc("deep_lukewarm_ocean"), T["luke"], continentalness=D),
         params(mc("warm_ocean"), T["warm"], continentalness=S), params(mc("deep_lukewarm_ocean"), T["warm"], continentalness=D),
         params(A("twilight_reef"), (0.2, 2), continentalness=M),
@@ -2204,10 +2215,12 @@ def noise_settings(planet=False):
 
     rules = copy.deepcopy(ocean_surface_rules(ocean["surface_rule"]))["sequence"]
 
-    def patch_rule(rule):  # the warm-biome sand rule also covers the reef
+    def patch_rule(rule):  # the warm-biome sand rule also covers the reef and the shallows
         if isinstance(rule, dict):
             if rule.get("type") == "minecraft:biome" and "minecraft:warm_ocean" in rule["biome_is"] and A("twilight_reef") not in rule["biome_is"]:
                 rule["biome_is"].append(A("twilight_reef"))
+            if rule.get("type") == "minecraft:biome" and "minecraft:warm_ocean" in rule["biome_is"] and A("shallows") not in rule["biome_is"]:
+                rule["biome_is"].append(A("shallows"))
             for v in rule.values():
                 patch_rule(v)
         elif isinstance(rule, list):
@@ -2245,6 +2258,10 @@ def noise_settings(planet=False):
     # Ocean world rules from the bedrock band up, the deep layer's below it.
     ocean["surface_rule"] = seq(cond(y_above(TOP_Y), seq(*rules)), cond(y_below(TOP_Y), deep_surface_rule()))
     if planet:
+        # Spawn well inside the shallows (seabed ~Y44-55, macro M 0.07..0.095; 0.055.. put seed 12345 at Y26 on the edge),
+        # not over the 50 m deep seabed.
+        ocean["spawn_target"] = [{"temperature": [-0.45, 0.2], "humidity": [-1, 1], "continentalness": [0.07, 0.095],
+                                  "erosion": [-1, 1], "depth": 0, "weirdness": [-1, 1], "offset": 0}]
         write("noise_settings/planet", ocean)
         return
     write("noise_settings/ocean", ocean)
