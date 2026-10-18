@@ -33,6 +33,12 @@ def write(rel, obj):
         f.write("\n")
 
 
+def remove_stale(rel):
+    path = os.path.join(WG, rel + ".json")
+    if os.path.exists(path):
+        os.remove(path)
+
+
 def read(rel):
     with open(os.path.join(WG, rel + ".json"), encoding="utf-8") as f:
         return json.load(f)
@@ -238,7 +244,7 @@ FISSURE = dict(
     slit_gate=200.0,               # density per unit of strength below slit_strength (closes it within ~0.02)
 )
 
-# ---------------------------------------------------------------- ocean planet (abyssia:ocean_planet, noise settings abyssia:planet)
+# ---------------------------------------------------------------- ocean planet (the abyssia:ocean_world type, noise settings abyssia:planet)
 # The ocean world's layout with mostly shallow seas and a continental slope into the deep layer. M = planet/seabed_macro =
 # the ocean world's base + `bias` (it picks the ocean biomes, like seabed_macro does there; the deep layer keeps following
 # the unbiased seabed_macro). For M >= `m0` everything is as in the ocean world (hidden deep layer under the shelf, ceiling,
@@ -2132,15 +2138,15 @@ def biome_sources():
     preset["dimensions"]["minecraft:overworld"]["generator"]["biome_source"]["biomes"] = ocean + deep
     # abyssia:multi_noise decodes the list itself: Lithostitched's codec wrapper throws "unbound value" on the vanilla type.
     preset["dimensions"]["minecraft:overworld"]["generator"]["biome_source"]["type"] = A("multi_noise")
-    write("world_preset/ocean_world", preset)
-    # Ocean planet: the same entries (the ocean ones follow planet/seabed_macro) plus the continental slope, whose
-    # humidity (noise_settings: planet/slope_humidity) is above 1 only on the slope, where the entries above (-1..1) are 0.2 off.
-    planet = copy.deepcopy(preset)
-    generator = planet["dimensions"]["minecraft:overworld"]["generator"]
+    # The one ocean world type (the former ocean planet, merged 2026-10-18): the entries above (the ocean ones follow
+    # planet/seabed_macro) plus the continental slope, whose humidity (noise_settings: planet/slope_humidity) is above 1
+    # only on the slope, where the entries above (-1..1) are 0.2 off.
+    generator = preset["dimensions"]["minecraft:overworld"]["generator"]
     generator["settings"] = A("planet")
     generator["biome_source"]["biomes"] = ocean + [params(A("continental_slope"), (-2, 2), humidity=(1.0, 2.0), continentalness=(-2, 2),
                                                            weirdness=(-2, 2), erosion=(-2, 2))] + deep
-    write("world_preset/ocean_planet", planet)
+    write("world_preset/ocean_world", preset)
+    remove_stale("world_preset/ocean_planet")
     return deep
 
 
@@ -2173,7 +2179,7 @@ def ocean_surface_rules(rule):
 
 def noise_settings(planet=False):
     """The ocean world's noise settings (abyssia:ocean), or the ocean planet's (abyssia:planet, from the ocean world's)."""
-    ocean = read("noise_settings/ocean")
+    ocean = read("noise_settings/planet" if planet else "noise_settings/ocean")
     N = (lambda n: A("planet/" + n)) if planet else A  # the router fields that differ on the planet
     ocean["noise"]["min_y"] = MIN_Y
     ocean["noise"]["height"] = WORLD_TOP - MIN_Y
@@ -2242,10 +2248,6 @@ def noise_settings(planet=False):
         write("noise_settings/planet", ocean)
         return
     write("noise_settings/ocean", ocean)
-    # The deep ocean dimension's own settings are gone (merged above).
-    stale = os.path.join(WG, "noise_settings", "deep_ocean.json")
-    if os.path.exists(stale):
-        os.remove(stale)
 
 
 def inline_nodes(fn, type_):
@@ -2363,8 +2365,11 @@ def main():
         write("placed_feature/" + name, {"feature": A(cf), "placement": placement})
     biomes()
     deep = biome_sources()
-    noise_settings()
+    # Only the planet's settings are used (the ocean world type, merged 2026-10-18); abyssia:ocean and the deep ocean
+    # dimension's settings are gone.
     noise_settings(planet=True)
+    remove_stale("noise_settings/ocean")
+    remove_stale("noise_settings/deep_ocean")
     vanilla_world(deep)
     caves()
     profiled = {b for biomes, _, _ in seabed_structures.PROFILES.values() for b in biomes}

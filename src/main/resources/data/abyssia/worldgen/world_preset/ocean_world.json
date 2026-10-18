@@ -4,7 +4,7 @@
       "type": "abyssia:ocean_world",
       "generator": {
         "type": "abyssia:ocean_noise",
-        "settings": "abyssia:ocean",
+        "settings": "abyssia:planet",
         "biome_source": {
           "type": "abyssia:multi_noise",
           "biomes": [
@@ -354,6 +354,33 @@
                 "weirdness": [
                   1.0,
                   2.0
+                ],
+                "depth": -2,
+                "offset": 0
+              }
+            },
+            {
+              "biome": "abyssia:continental_slope",
+              "parameters": {
+                "temperature": [
+                  -2,
+                  2
+                ],
+                "humidity": [
+                  1.0,
+                  2.0
+                ],
+                "continentalness": [
+                  -2,
+                  2
+                ],
+                "erosion": [
+                  -2,
+                  2
+                ],
+                "weirdness": [
+                  -2,
+                  2
                 ],
                 "depth": -2,
                 "offset": 0
