@@ -39,6 +39,7 @@ final class CaveVegetationGenerator
                 for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
                 {
                     if (ctx.interiorOpen(lx, y, lz)) continue;
+                    if (!ctx.nearSolid(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || !space.isCavern()) continue;
@@ -87,6 +88,7 @@ final class CaveVegetationGenerator
                 for (int lx = 0; lx < 16; lx++)
                 {
                     if (ctx.interiorOpen(lx, y, lz)) continue;
+                    if (!ctx.nearSolid(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null) continue;
@@ -112,7 +114,7 @@ final class CaveVegetationGenerator
                     double orientation = support == Direction.DOWN ? 0.6 : support == Direction.UP ? 0.4 : 0.25;
                     double chance = flora.density() * zone * vegetation * (0.08 + 0.92 * patch) * orientation * space.vegetationBoost * thin;
                     // In a cavern: by ecology patch, entrance-to-deep gradient and height.
-                    if (space.cavern != null) chance *= space.cavern.vegetationFactor(x + 0.5, y + 0.5, z + 0.5);
+                    if (space.cavern != null) chance *= space.cavern.vegetationFactor(ctx.patchAt(space.cavern, lx, lz), x + 0.5, y + 0.5, z + 0.5);
                     if (noises.hash(x, y, z, 21) < chance)
                     {
                         Palette<CaveEnvironment.PlantEntry> normal = support == Direction.DOWN ? env.floorPlants : support == Direction.UP ? env.ceilingPlants : env.wallPlants;

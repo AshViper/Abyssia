@@ -705,8 +705,92 @@ public final class CaveChunk
     {
         if (y < minBuildY || y >= minBuildY + sections.length * 16) return;
         int s = (y - minBuildY) >> 4;
-        if (uniformCache[s] == 1 && !state.isAir() && state.getFluidState().isEmpty()) uniformCache[s] = 0;
+        boolean solidState = !state.isAir() && state.getFluidState().isEmpty();
+        if (uniformCache[s] == 1 && solidState) uniformCache[s] = 0;
         sections[s].setBlockState(lx, y & 15, lz, state, false);
+        if (solid != null && y >= solidY0 && y <= solidY1 && inChunk(lx, lz))
+        {
+            int i = (y - solidY0) << 8 | lz << 4 | lx;
+            long bit = 1L << i;
+            int w = i >> 6;
+            if (solidState) solid[w] |= bit;
+            else solid[w] &= ~bit;
+            if (state.is(Blocks.WATER)) waterBits[w] |= bit;
+            else waterBits[w] &= ~bit;
+            if (state.isAir()) airBits[w] |= bit;
+            else airBits[w] &= ~bit;
+        }
+    }
+
+    /** Per block of the chunk from yMin - 1 to yMax + 1: not air and no fluid (a superset of every sturdy face). Built on first use, kept by set(). */
+    private long[] solid;
+    /** Same range: water (any level) and air, for {@link #water} and {@link #open}. */
+    private long[] waterBits, airBits;
+    private int solidY0, solidY1;
+
+    /** Bit index in the block bitsets, or -1 outside them (then the chunk is read). */
+    private int bitIndex(int lx, int y, int lz)
+    {
+        if (solid == null) buildSolid();
+        if (y < solidY0 || y > solidY1 || !inChunk(lx, lz)) return -1;
+        return (y - solidY0) << 8 | lz << 4 | lx;
+    }
+
+    private boolean solidAt(int lx, int y, int lz)
+    {
+        if (!inChunk(lx, lz)) return false;
+        if (y < solidY0 || y > solidY1)
+        {
+            BlockState state = get(lx, y, lz);
+            return !state.isAir() && state.getFluidState().isEmpty();
+        }
+        int i = (y - solidY0) << 8 | lz << 4 | lx;
+        return (solid[i >> 6] & 1L << i) != 0;
+    }
+
+    /**
+     * Whether any of the six neighbours (inside the chunk) is solid. A block without one has no sturdy face next to it,
+     * so passes that only grow something against a sturdy face (floor, roof or wall) can skip it before any other test.
+     */
+    boolean nearSolid(int lx, int y, int lz)
+    {
+        if (solid == null) buildSolid();
+        return solidAt(lx, y - 1, lz) || solidAt(lx, y + 1, lz) || solidAt(lx - 1, y, lz) || solidAt(lx + 1, y, lz)
+                || solidAt(lx, y, lz - 1) || solidAt(lx, y, lz + 1);
+    }
+
+    private void buildSolid()
+    {
+        solidY0 = yMin - 1;
+        solidY1 = yMax + 1;
+        int words = ((solidY1 - solidY0 + 1) << 8) + 63 >> 6;
+        long[] bits = new long[words], water = new long[words], air = new long[words];
+        for (int y = solidY0; y <= solidY1; y++)
+        {
+            int base = (y - solidY0) << 8;
+            if (y < minBuildY || y >= minBuildY + sections.length * 16)
+            {
+                // get() reads air out there.
+                for (int i = base; i < base + 256; i++) air[i >> 6] |= 1L << i;
+                continue;
+            }
+            LevelChunkSection section = sections[(y - minBuildY) >> 4];
+            for (int lz = 0; lz < 16; lz++)
+            {
+                for (int lx = 0; lx < 16; lx++)
+                {
+                    BlockState state = section.getBlockState(lx, y & 15, lz);
+                    int i = base | lz << 4 | lx;
+                    long bit = 1L << i;
+                    if (state.isAir()) air[i >> 6] |= bit;
+                    else if (state.is(Blocks.WATER)) water[i >> 6] |= bit;
+                    else if (state.getFluidState().isEmpty()) bits[i >> 6] |= bit;
+                }
+            }
+        }
+        waterBits = water;
+        airBits = air;
+        solid = bits;
     }
 
     /** Per section: 0 = not yet known, 1 = only air / fluid blocks (nothing sturdy), 2 = holds some solid block. Reset by set(). */
@@ -809,12 +893,16 @@ public final class CaveChunk
     /** Open cave water (or gas) with nothing placed in it yet. */
     boolean open(int lx, int y, int lz)
     {
+        int i = bitIndex(lx, y, lz);
+        if (i >= 0) return ((waterBits[i >> 6] | airBits[i >> 6]) & 1L << i) != 0;
         BlockState state = get(lx, y, lz);
         return state.isAir() || state.is(Blocks.WATER);
     }
 
     boolean water(int lx, int y, int lz)
     {
+        int i = bitIndex(lx, y, lz);
+        if (i >= 0) return (waterBits[i >> 6] & 1L << i) != 0;
         return get(lx, y, lz).is(Blocks.WATER);
     }
 }

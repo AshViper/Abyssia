@@ -131,6 +131,7 @@ final class CaveDecorationGenerator
                 for (int y = ctx.yMax - 1; y > ctx.yMin; y--)
                 {
                     if (ctx.interiorOpen(lx, y, lz)) continue;
+                    if (!ctx.nearSolid(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.open(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || space.environment.speleothem == null) continue;
@@ -141,7 +142,7 @@ final class CaveDecorationGenerator
                     if (space.landmark == CaveLandmark.GIANT_STALACTITE_CHAMBER) density *= 2.5f;
                     if (space.hasLake() && y > space.waterLevel) density *= 1.8f;
                     int x = ctx.x0 + lx, z = ctx.z0 + lz;
-                    if (space.cavern != null) density *= (float) space.cavern.speleothemFactor(x + 0.5, z + 0.5);
+                    if (space.cavern != null) density *= (float) ctx.patchAt(space.cavern, lx, lz).speleothems;
                     // patch() is within 0..1, so chance never exceeds this bound: skip the noise when the hash already fails it.
                     double maxChance = density * (0.2 + 1.0 * 1.0);
                     double hashRoll = noises.hash(x, y, z, roof ? 71 : 74);

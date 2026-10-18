@@ -300,7 +300,10 @@ public final class Cavern
         for (int i = 0; i < patches.size(); i++)
         {
             Patch p = patches.get(i);
-            double score = Math.sqrt(Mth.square(px - p.x()) + Mth.square(pz - p.z())) / p.radius() + noises.field2(px * 0.07 + i * 13.0, pz * 0.07, 7) * 0.3;
+            // The border noise moves a score by at most 0.3 (|field2| <= 1): a patch that cannot beat the best skips it.
+            double dist = Math.sqrt(Mth.square(px - p.x()) + Mth.square(pz - p.z())) / p.radius();
+            if (dist - 0.3 >= bestScore) continue;
+            double score = dist + noises.field2(px * 0.07 + i * 13.0, pz * 0.07, 7) * 0.3;
             if (score < bestScore)
             {
                 bestScore = score;
@@ -317,7 +320,13 @@ public final class Cavern
      */
     public double vegetationFactor(double px, double py, double pz)
     {
-        double f = patchAt(px, pz).vegetation;
+        return vegetationFactor(patchAt(px, pz), px, py, pz);
+    }
+
+    /** {@link #vegetationFactor(double, double, double)} with the column's patch already known ({@link CaveChunk#patchAt}). */
+    public double vegetationFactor(CavernPatch patch, double px, double py, double pz)
+    {
+        double f = patch.vegetation;
         double g = depth(px, pz);
         f *= g < -0.35 ? 0.75 : g < 0.35 ? 1.25 : 1.0;
         Zone zone = zone(px, py, pz);
