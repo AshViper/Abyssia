@@ -987,6 +987,7 @@ BIOME_NAMES = {
     "frost_abyss": ("Frost Abyss", "氷晶の深淵"), "abyssal_rift": ("Abyssal Rift", "深淵の裂け目"),
     "deep_fissure": ("Deep Sea Fissure", "深海の割れ目"),
     "continental_slope": ("Continental Slope", "大陸斜面"),
+    "shallows": ("Shallows", "浅瀬"),
     "abyss_plain": ("Abyssal Plain", "深海平原"), "abyss_garden": ("Depths Garden", "最深部の花園"),
     "abyss_crystal": ("Crystal Cavern", "結晶空洞"),
     # AB02: depth-banded abyss biomes
