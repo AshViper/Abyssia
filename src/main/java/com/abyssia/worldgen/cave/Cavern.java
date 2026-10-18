@@ -392,16 +392,37 @@ public final class Cavern
      */
     public double wallRelief(double px, double py, double pz)
     {
+        return wallRelief(px, py, pz, new double[] {Double.NaN, Double.NaN, Double.NaN}, 0);
+    }
+
+    /**
+     * {@link #wallRelief(double, double, double)} with the terms that depend only on (x, z) cached per column in {@code cache}
+     * (footprint, bearing, notch noise at 3 doubles per column, NaN = not computed yet); same arithmetic, same result.
+     */
+    public double wallRelief(double px, double py, double pz, double[] cache, int col)
+    {
         if (relief <= 0) return 0;
-        double q = footprint(px, pz);
+        int c = col * 3;
+        double q = cache[c];
+        if (Double.isNaN(q))
+        {
+            q = footprint(px, pz);
+            cache[c] = q;
+        }
         if (q < 0.5) return 0;
         double t = (py - floor0) / Math.max(1, ceiling0 - floor0);
         if (t < 0.06 || t > 0.97) return 0;
         double wall = smooth((q - 0.5) / 0.3);
         double band = smooth(t / 0.15) * smooth((0.97 - t) / 0.15);
-        double a = Math.atan2(pz - z, px - x);
+        double a = cache[c + 1];
+        if (Double.isNaN(a))
+        {
+            a = Math.atan2(pz - z, px - x);
+            cache[c + 1] = a;
+            cache[c + 2] = noises.field2(a * 6.0, 0.5, 6) * 3.0;
+        }
         double flute = Math.sin(a * flutes + noises.field2(py * 0.04, a * 3.0, 5) * 2.0);
-        double notch = Math.sin((py + groovePhase + noises.field2(a * 6.0, 0.5, 6) * 3.0) * (Math.PI * 2 / 11));
+        double notch = Math.sin((py + groovePhase + cache[c + 2]) * (Math.PI * 2 / 11));
         double v = Mth.square(Math.max(0, (flute - 0.55) / 0.45)) + 0.8 * Mth.square(Math.max(0, (notch - 0.7) / 0.3));
         return -relief * v * wall * band;
     }

@@ -81,6 +81,15 @@ public final class CaveSpace
         return shapeAmp + detailAmp * (1 - smoothness) + shelfAmp + (cavern != null ? cavern.reliefAmplitude() : 0);
     }
 
+    /**
+     * PERF02: how far wall noise can pull a surface inwards at most (a positive number), with a safety margin: the simplex
+     * noises are taken as within +-1.25, a cavern's grooves reach 1.8 times their relief, and shelves only push outwards.
+     */
+    public double maxPull()
+    {
+        return 1.25 * (Math.abs(shapeAmp) + Math.abs(detailAmp * (1 - smoothness))) + (cavern != null ? 1.8000001 * cavern.reliefAmplitude() : 0);
+    }
+
     /** The hall's own space (not a formation or pocket of it). */
     public boolean isHall()
     {
