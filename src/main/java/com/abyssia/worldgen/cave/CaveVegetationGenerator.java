@@ -38,8 +38,7 @@ final class CaveVegetationGenerator
             {
                 for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
                 {
-                    if (ctx.interiorOpen(lx, y, lz)) continue;
-                    if (!ctx.nearSolid(lx, y, lz)) continue;
+                    if (!ctx.candidate(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || !space.isCavern()) continue;
@@ -81,60 +80,54 @@ final class CaveVegetationGenerator
         double vegetation = Config.CAVE_VEGETATION.get(), glowScale = Config.CAVE_GLOW.get();
         if (vegetation <= 0) return;
         CaveMossBlock moss = (CaveMossBlock) ModBlocks.CAVE_MOSS.get();
-        for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
+        // Only blocks that are carved and touch a solid block can grow anything here: walk those (same order as a full y, z, x scan).
+        for (int ci = ctx.nextCandidate(ctx.candidateIndex(ctx.yMin + 1), ctx.yMax); ci >= 0; ci = ctx.nextCandidate(ci + 1, ctx.yMax))
         {
-            for (int lz = 0; lz < 16; lz++)
+            int y = ctx.candidateY(ci), lz = ci >> 4 & 15, lx = ci & 15;
+            if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
+            CaveSpace space = ctx.space(lx, y, lz);
+            if (space == null) continue;
+            CaveEnvironment env = space.environment;
+            CaveEnvironment.Flora flora = env.flora;
+            if (flora.density() <= 0 && flora.moss() <= 0) continue;
+            int x = ctx.x0 + lx, z = ctx.z0 + lz;
+            // Abyss cavities are huge: look at 40% of their blocks (before the costly support/noise work) and scale the odds up to keep the density.
+            double thin = 1.0;
+            if (space.type == CaveType.ABYSS_CAVITY)
             {
-                for (int lx = 0; lx < 16; lx++)
-                {
-                    if (ctx.interiorOpen(lx, y, lz)) continue;
-                    if (!ctx.nearSolid(lx, y, lz)) continue;
-                    if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
-                    CaveSpace space = ctx.space(lx, y, lz);
-                    if (space == null) continue;
-                    CaveEnvironment env = space.environment;
-                    CaveEnvironment.Flora flora = env.flora;
-                    if (flora.density() <= 0 && flora.moss() <= 0) continue;
-                    int x = ctx.x0 + lx, z = ctx.z0 + lz;
-                    // Abyss cavities are huge: look at 40% of their blocks (before the costly support/noise work) and scale the odds up to keep the density.
-                    double thin = 1.0;
-                    if (space.type == CaveType.ABYSS_CAVITY)
-                    {
-                        if (noises.hash(x, y, z, 29) >= ABYSS_SAMPLE) continue;
-                        thin = 1.0 / ABYSS_SAMPLE;
-                    }
-                    // Cheap cut before the support scan: both rolls fail even at their upper-bound odds (same result as below).
-                    if (space.cavern == null && flora.moss() * vegetation * thin < 1.0 && noises.hash(x, y, z, 23) >= flora.moss() * vegetation * thin
-                            && noises.hash(x, y, z, 21) >= flora.density() * vegetation * 0.6 * space.vegetationBoost * thin * noises.vegetationZone(x, y, z))
-                        continue;
-                    Direction support = support(ctx, lx, y, lz);
-                    if (support == null) continue;
-                    double zone = noises.vegetationZone(x, y, z);
-                    double patch = noises.patch(x, y, z, 0);
-                    double orientation = support == Direction.DOWN ? 0.6 : support == Direction.UP ? 0.4 : 0.25;
-                    double chance = flora.density() * zone * vegetation * (0.08 + 0.92 * patch) * orientation * space.vegetationBoost * thin;
-                    // In a cavern: by ecology patch, entrance-to-deep gradient and height.
-                    if (space.cavern != null) chance *= space.cavern.vegetationFactor(ctx.patchAt(space.cavern, lx, lz), x + 0.5, y + 0.5, z + 0.5);
-                    if (noises.hash(x, y, z, 21) < chance)
-                    {
-                        Palette<CaveEnvironment.PlantEntry> normal = support == Direction.DOWN ? env.floorPlants : support == Direction.UP ? env.ceilingPlants : env.wallPlants;
-                        double tier = noises.hash(x, y, z, 22);
-                        double bright = flora.brightRatio() * glowScale * space.glowScale, glow = flora.glowRatio() * glowScale * space.glowScale;
-                        Palette<CaveEnvironment.PlantEntry> palette = tier < bright && !env.brightPlants.isEmpty() ? env.brightPlants
-                                : tier < bright + glow && !env.glowPlants.isEmpty() ? env.glowPlants : normal;
-                        double species = Mth.clamp(noises.species(x, y, z) + (noises.hash(x, y, z, 24) - 0.5) * 0.15, 0.0, 0.999);
-                        double height = noises.hash(x, y, z, 25);
-                        int cap = space.isCavern() ? 40 : 10;
-                        boolean placed = !palette.isEmpty() && CavePlacer.plant(ctx, lx, y, lz, palette.pick(species), support, height, cap);
-                        if (!placed && palette != normal && !normal.isEmpty()) placed = CavePlacer.plant(ctx, lx, y, lz, normal.pick(species), support, height, cap);
-                        if (placed) continue;
-                    }
-                    // Moss films on bare rock, in their own patches.
-                    if (flora.moss() > 0 && noises.hash(x, y, z, 23) < flora.moss() * vegetation * thin * noises.patch(x, y, z, 44.4))
-                    {
-                        CavePlacer.moss(ctx, lx, y, lz, moss);
-                    }
-                }
+                if (noises.hash(x, y, z, 29) >= ABYSS_SAMPLE) continue;
+                thin = 1.0 / ABYSS_SAMPLE;
+            }
+            // Cheap cut before the support scan: both rolls fail even at their upper-bound odds (same result as below).
+            if (space.cavern == null && flora.moss() * vegetation * thin < 1.0 && noises.hash(x, y, z, 23) >= flora.moss() * vegetation * thin
+                    && noises.hash(x, y, z, 21) >= flora.density() * vegetation * 0.6 * space.vegetationBoost * thin * noises.vegetationZone(x, y, z))
+                continue;
+            Direction support = support(ctx, lx, y, lz);
+            if (support == null) continue;
+            double zone = noises.vegetationZone(x, y, z);
+            double patch = noises.patch(x, y, z, 0);
+            double orientation = support == Direction.DOWN ? 0.6 : support == Direction.UP ? 0.4 : 0.25;
+            double chance = flora.density() * zone * vegetation * (0.08 + 0.92 * patch) * orientation * space.vegetationBoost * thin;
+            // In a cavern: by ecology patch, entrance-to-deep gradient and height.
+            if (space.cavern != null) chance *= space.cavern.vegetationFactor(ctx.patchAt(space.cavern, lx, lz), x + 0.5, y + 0.5, z + 0.5);
+            if (noises.hash(x, y, z, 21) < chance)
+            {
+                Palette<CaveEnvironment.PlantEntry> normal = support == Direction.DOWN ? env.floorPlants : support == Direction.UP ? env.ceilingPlants : env.wallPlants;
+                double tier = noises.hash(x, y, z, 22);
+                double bright = flora.brightRatio() * glowScale * space.glowScale, glow = flora.glowRatio() * glowScale * space.glowScale;
+                Palette<CaveEnvironment.PlantEntry> palette = tier < bright && !env.brightPlants.isEmpty() ? env.brightPlants
+                        : tier < bright + glow && !env.glowPlants.isEmpty() ? env.glowPlants : normal;
+                double species = Mth.clamp(noises.species(x, y, z) + (noises.hash(x, y, z, 24) - 0.5) * 0.15, 0.0, 0.999);
+                double height = noises.hash(x, y, z, 25);
+                int cap = space.isCavern() ? 40 : 10;
+                boolean placed = !palette.isEmpty() && CavePlacer.plant(ctx, lx, y, lz, palette.pick(species), support, height, cap);
+                if (!placed && palette != normal && !normal.isEmpty()) placed = CavePlacer.plant(ctx, lx, y, lz, normal.pick(species), support, height, cap);
+                if (placed) continue;
+            }
+            // Moss films on bare rock, in their own patches.
+            if (flora.moss() > 0 && noises.hash(x, y, z, 23) < flora.moss() * vegetation * thin * noises.patch(x, y, z, 44.4))
+            {
+                CavePlacer.moss(ctx, lx, y, lz, moss);
             }
         }
     }
