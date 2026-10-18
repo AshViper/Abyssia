@@ -1,0 +1,113 @@
+{
+  "parent": "abyssia:engineering/deep_metallurgy",
+  "display": {
+    "icon": {
+      "id": "abyssia:neodymium_ingot"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.rare_metals.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.rare_metals.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "neodymium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:neodymium_ingot"
+          }
+        ]
+      }
+    },
+    "yttrium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:yttrium_ingot"
+          }
+        ]
+      }
+    },
+    "tellurium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:tellurium_ingot"
+          }
+        ]
+      }
+    },
+    "iridium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:iridium_ingot"
+          }
+        ]
+      }
+    },
+    "platinum_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:platinum_ingot"
+          }
+        ]
+      }
+    },
+    "molybdenum_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:molybdenum_ingot"
+          }
+        ]
+      }
+    },
+    "vanadium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:vanadium_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "neodymium_ingot"
+    ],
+    [
+      "yttrium_ingot"
+    ],
+    [
+      "tellurium_ingot"
+    ],
+    [
+      "iridium_ingot"
+    ],
+    [
+      "platinum_ingot"
+    ],
+    [
+      "molybdenum_ingot"
+    ],
+    [
+      "vanadium_ingot"
+    ]
+  ],
+  "rewards": {
+    "experience": 150
+  }
+}

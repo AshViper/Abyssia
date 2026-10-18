@@ -1,0 +1,27 @@
+{
+  "parent": "abyssia:engineering/root",
+  "display": {
+    "icon": {
+      "id": "abyssia:drill_head"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.excavation.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.excavation.description"
+    }
+  },
+  "criteria": {
+    "build_abyssal_excavator": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "abyssal_excavator"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_abyssal_excavator"
+    ]
+  ]
+}

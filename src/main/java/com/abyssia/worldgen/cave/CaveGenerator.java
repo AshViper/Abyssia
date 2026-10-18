@@ -42,7 +42,10 @@ public final class CaveGenerator
     private static final AtomicLong MAX_NANOS = new AtomicLong();
     private static final AtomicLong TERRAIN_NANOS = new AtomicLong();
     private static final String[] PHASES = {"field", "carve", "geology+formations+ores", "decoration", "vegetation"};
-    private static final AtomicLong[] PHASE_NANOS = {new AtomicLong(), new AtomicLong(), new AtomicLong(), new AtomicLong(), new AtomicLong()};
+    /** Phase time of the shallow network ([0]) and, separately, of all crust windows together ([1]); each divided by its own chunk count. */
+    private static final AtomicLong[][] PHASE_NANOS = {
+            {new AtomicLong(), new AtomicLong(), new AtomicLong(), new AtomicLong(), new AtomicLong()},
+            {new AtomicLong(), new AtomicLong(), new AtomicLong(), new AtomicLong(), new AtomicLong()}};
     /** Per crust window: chunks with caves of that window and the time their pipeline took. */
     private static final AtomicLong[] WINDOW_CHUNKS = {new AtomicLong(), new AtomicLong(), new AtomicLong(), new AtomicLong()};
     private static final AtomicLong[] WINDOW_NANOS = {new AtomicLong(), new AtomicLong(), new AtomicLong(), new AtomicLong()};
@@ -83,14 +86,14 @@ public final class CaveGenerator
         {
             long t = System.nanoTime();
             ctx.computeField();
-            t = phase(0, t);
+            t = phase(shallow, 0, t);
             ctx.carve();
-            t = phase(1, t);
+            t = phase(shallow, 1, t);
             CaveGeology.paint(ctx);
             ctx.placeFills();
             ctx.placeOres();
             ctx.placeCuts();
-            t = phase(2, t);
+            t = phase(shallow, 2, t);
             // Massive cavern decoration applies only where a planned cavern reaches this chunk.
             List<Cavern> caverns = MassiveCavernDecorator.caverns(ctx);
             List<Cavern> halls = HallDecorator.halls(caverns);
@@ -106,7 +109,7 @@ public final class CaveGenerator
             CaveDecorationGenerator.speleothems(ctx);
             CaveDecorationGenerator.collapses(ctx);
             CaveDecorationGenerator.sites(ctx);
-            t = phase(3, t);
+            t = phase(shallow, 3, t);
             if (!caverns.isEmpty())
             {
                 MassiveCavernDecorator.giants(ctx, caverns);
@@ -119,17 +122,17 @@ public final class CaveGenerator
             if (!halls.isEmpty()) HallDecorator.life(ctx);
             CaveVegetationGenerator.grow(ctx);
             if (!caverns.isEmpty()) MassiveCavernDecorator.surfaces(ctx, caverns);
-            t = phase(4, t);
+            t = phase(shallow, 4, t);
             ctx.finish();
             if (shallow) CAVE_CHUNKS.incrementAndGet();
         }
         return ctx != null;
     }
 
-    private static long phase(int index, long start)
+    private static long phase(boolean shallow, int index, long start)
     {
         long now = System.nanoTime();
-        PHASE_NANOS[index].addAndGet(now - start);
+        PHASE_NANOS[shallow ? 0 : 1][index].addAndGet(now - start);
         return now;
     }
 
@@ -138,15 +141,19 @@ public final class CaveGenerator
         long n = CHUNKS.incrementAndGet();
         NANOS.addAndGet(nanos);
         MAX_NANOS.accumulateAndGet(nanos, Math::max);
-        if (Config.CAVE_DEBUG_TIMING.get() && n % 256 == 0) LOGGER.info("[Abyssia caves] {}", stats());
+        if (Config.CAVE_DEBUG_TIMING.get() && n % 256 == 0) LOGGER.info("[Abyssia caves] {} || caches: {}", stats(), cacheStats());
     }
 
     /** Generation cost so far: chunks processed, how many held caves, average and worst time per chunk. */
     public static String stats()
     {
         long n = Math.max(1, CHUNKS.get()), caves = Math.max(1, CAVE_CHUNKS.get());
+        long windowChunks = 0;
+        for (AtomicLong w : WINDOW_CHUNKS) windowChunks += w.get();
         StringBuilder phases = new StringBuilder();
-        for (int i = 0; i < PHASES.length; i++) phases.append(i == 0 ? "" : ", ").append(PHASES[i]).append(String.format(" %.2f", PHASE_NANOS[i].get() / 1e6 / caves));
+        for (int i = 0; i < PHASES.length; i++) phases.append(i == 0 ? "" : ", ").append(PHASES[i]).append(String.format(" %.2f", PHASE_NANOS[0][i].get() / 1e6 / caves));
+        phases.append(" | per window chunk (all windows, ").append(windowChunks).append(" chunks): ");
+        for (int i = 0; i < PHASES.length; i++) phases.append(i == 0 ? "" : ", ").append(PHASES[i]).append(String.format(" %.2f", PHASE_NANOS[1][i].get() / 1e6 / Math.max(1, windowChunks)));
         var cost = CaveNetwork.COST;
         return String.format("%d chunks (%d with caves), avg %.2f ms, max %.2f ms per chunk; per cave chunk: %s ms; terrain caves %.2f ms per chunk (%s); "
                         + "layouts: %d plans %.2f ms, %d systems %.2f ms, %d minor %.2f ms each; crust windows: %s",
@@ -171,15 +178,35 @@ public final class CaveGenerator
         return out.toString();
     }
 
+    /** Per cache (plans / systems / minors / cavities), shallow network and crust windows apart: hits, builds, clears, entries dropped, builds after the first clear. */
+    public static String cacheStats()
+    {
+        var st = CaveNetwork.CACHE_STATS;
+        StringBuilder out = new StringBuilder();
+        for (int w = 0; w < 2; w++)
+        {
+            out.append(w == 0 ? "shallow: " : " | windows: ");
+            for (int c = 0; c < 4; c++)
+            {
+                int b = (w * 4 + c) * 5;
+                long hit = st.get(b), miss = st.get(b + 1);
+                out.append(c == 0 ? "" : "; ").append(CaveNetwork.CACHE_NAMES[c]).append(String.format(" hit %d (%.1f%%) built %d clears %d dropped %d rebuilt<=%d",
+                        hit, 100.0 * hit / Math.max(1, hit + miss), miss, st.get(b + 2), st.get(b + 3), st.get(b + 4)));
+            }
+        }
+        return out.toString();
+    }
+
     public static void resetStats()
     {
+        CaveNetwork.resetCacheStats();
         CHUNKS.set(0);
         CAVE_CHUNKS.set(0);
         NANOS.set(0);
         MAX_NANOS.set(0);
         TERRAIN_NANOS.set(0);
         TerrainCaveDecorator.resetStats();
-        for (AtomicLong phase : PHASE_NANOS) phase.set(0);
+        for (AtomicLong[] row : PHASE_NANOS) for (AtomicLong phase : row) phase.set(0);
         for (AtomicLong n : WINDOW_CHUNKS) n.set(0);
         for (AtomicLong n : WINDOW_NANOS) n.set(0);
     }

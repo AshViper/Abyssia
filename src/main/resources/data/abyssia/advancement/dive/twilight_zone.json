@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:dive/first_dive",
+  "display": {
+    "icon": {
+      "id": "minecraft:glow_ink_sac"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.twilight_zone.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.twilight_zone.description"
+    }
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": 0.0
+        },
+        "submerged": true
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

@@ -75,6 +75,7 @@ final class CaveDecorationGenerator
             {
                 for (int lx = 0; lx < 16; lx++)
                 {
+                    if (ctx.interiorOpen(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.open(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || (space.environment.crystals.isEmpty() && space.cavern == null)) continue;
@@ -103,9 +104,10 @@ final class CaveDecorationGenerator
     /** A random sturdy neighbour (ceiling, floor or wall) of an open block, preferring ceilings and floors. */
     private static Direction support(CaveChunk ctx, int lx, int y, int lz, double roll)
     {
-        if (ctx.sturdy(lx, y + 1, lz, Direction.DOWN) && roll < 0.5) return Direction.UP;
+        boolean roof = ctx.sturdy(lx, y + 1, lz, Direction.DOWN);
+        if (roof && roll < 0.5) return Direction.UP;
         if (ctx.sturdy(lx, y - 1, lz, Direction.UP)) return Direction.DOWN;
-        if (ctx.sturdy(lx, y + 1, lz, Direction.DOWN)) return Direction.UP;
+        if (roof) return Direction.UP;
         int start = (int) (roll * 4) & 3;
         for (int i = 0; i < 4; i++)
         {
@@ -128,6 +130,7 @@ final class CaveDecorationGenerator
             {
                 for (int y = ctx.yMax - 1; y > ctx.yMin; y--)
                 {
+                    if (ctx.interiorOpen(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.open(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || space.environment.speleothem == null) continue;
@@ -139,12 +142,16 @@ final class CaveDecorationGenerator
                     if (space.hasLake() && y > space.waterLevel) density *= 1.8f;
                     int x = ctx.x0 + lx, z = ctx.z0 + lz;
                     if (space.cavern != null) density *= (float) space.cavern.speleothemFactor(x + 0.5, z + 0.5);
+                    // patch() is within 0..1, so chance never exceeds this bound: skip the noise when the hash already fails it.
+                    double maxChance = density * (0.2 + 1.0 * 1.0);
+                    double hashRoll = noises.hash(x, y, z, roof ? 71 : 74);
+                    if (hashRoll >= (roof ? maxChance : maxChance * 0.7)) continue;
                     double chance = density * (0.2 + 1.0 * noises.patch(x, y, z, 3.3));
                     BlockState material = space.environment.speleothem;
                     int maxLength = space.maxSpeleothemLength();
                     if (roof)
                     {
-                        if (noises.hash(x, y, z, 71) >= chance) continue;
+                        if (hashRoll >= chance) continue;
                         int free = free(ctx, lx, y, lz, Direction.DOWN, maxLength * 2 + 2);
                         boolean floorBelow = ctx.sturdy(lx, y - free, lz, Direction.UP);
                         double roll = noises.hash(x, y, z, 72);
@@ -163,7 +170,7 @@ final class CaveDecorationGenerator
                     }
                     else
                     {
-                        if (noises.hash(x, y, z, 74) >= chance * 0.7) continue;
+                        if (hashRoll >= chance * 0.7) continue;
                         int free = free(ctx, lx, y, lz, Direction.UP, maxLength + 1);
                         double roll = noises.hash(x, y, z, 75);
                         int length = Math.min(1 + Mth.floor(roll * roll * maxLength * 0.8), free - 1);

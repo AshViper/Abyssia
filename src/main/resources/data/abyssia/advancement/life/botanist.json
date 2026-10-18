@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:life/first_scan",
+  "display": {
+    "icon": {
+      "id": "minecraft:kelp"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.botanist.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.botanist.description"
+    }
+  },
+  "criteria": {
+    "scan_plant_count15": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "group": "plant_",
+        "count": {
+          "min": 15
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_plant_count15"
+    ]
+  ]
+}

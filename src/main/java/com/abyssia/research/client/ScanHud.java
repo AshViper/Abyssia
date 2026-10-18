@@ -84,6 +84,14 @@ public final class ScanHud
         UNLOCKS.clear();
     }
 
+    /** for ScanEffectRenderer: a scan is running (fresh SCANNING update) */
+    public static boolean isScanning() { return scanning(); }
+    public static float progress() { return progress; }
+    public static byte resultState() { return state; }
+    public static int clock() { return clock; }
+    /** client ticks since the last non-SCANNING result arrived */
+    public static int sinceResult() { return clock - resultStart; }
+
     private static boolean scanning()
     {
         return state == ScanProgressPayload.SCANNING && clock - lastUpdate <= SCANNING_TIMEOUT;

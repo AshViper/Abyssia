@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:engineering/excavation",
+  "display": {
+    "icon": {
+      "id": "abyssia:electric_abyssal_drill"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.heavy_industry.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.heavy_industry.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "build_abyssal_excavator_mk2": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "abyssal_excavator_mk2"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_abyssal_excavator_mk2"
+    ]
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "abyssia:engineering/root",
+  "display": {
+    "icon": {
+      "id": "abyssia:waypoint_beacon"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.breadcrumbs.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.breadcrumbs.description"
+    }
+  },
+  "criteria": {
+    "waypoint_beacon": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "abyssia:waypoint_beacon"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "waypoint_beacon"
+    ]
+  ]
+}

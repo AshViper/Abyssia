@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:life/eureka",
+  "display": {
+    "icon": {
+      "id": "minecraft:book"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.researcher.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.researcher.description"
+    }
+  },
+  "criteria": {
+    "research_count10": {
+      "trigger": "abyssia:research",
+      "conditions": {
+        "count": {
+          "min": 10
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "research_count10"
+    ]
+  ]
+}

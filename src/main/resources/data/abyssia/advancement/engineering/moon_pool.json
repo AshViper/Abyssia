@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:engineering/first_module",
+  "display": {
+    "icon": {
+      "id": "minecraft:water_bucket"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.moon_pool.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.moon_pool.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "build_moon_pool": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "moon_pool"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_moon_pool"
+    ]
+  ]
+}

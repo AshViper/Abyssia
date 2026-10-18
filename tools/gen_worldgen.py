@@ -244,6 +244,29 @@ FISSURE = dict(
     slit_gate=200.0,               # density per unit of strength below slit_strength (closes it within ~0.02)
 )
 
+# ---------------------------------------------------------------- ocean planet (abyssia:ocean_planet, noise settings abyssia:planet)
+# The ocean world's layout with mostly shallow seas and a continental slope into the deep layer. M = planet/seabed_macro =
+# the ocean world's base + `bias` (it picks the ocean biomes, like seabed_macro does there; the deep layer keeps following
+# the unbiased seabed_macro). For M >= `m0` everything is as in the ocean world (hidden deep layer under the shelf, ceiling,
+# rifts, fissures), on a seabed profile that is `shelf_y` at m0 and rises over `rise` blocks to the shallows at M = `shallow_hi`.
+# For M < m0 the seabed has no Y -50 floor: it falls as a smoothstep from `shelf_y` at m0 to `bottom_y` at `m1` (ocean layer
+# offset = Y / 64; deep layer offset = max((Y - SHIFT) / 64, deep seabed), so the slope continues into the deep layer and
+# the deep floor takes over below it), the deep layer's rock ceiling is off and the basin is open water down to the deep
+# floor. OCEAN_GRAD and DEEP_GRAD have the same slope, so the density is continuous across LAYER_SPLIT with no fill term.
+PLANET = dict(
+    bias=0.0,                      # added to base (measured 2026-10-10: base is ~N(0, 0.15), so +0.25 made 55% shallows, 29% islands and ~1% slope)
+    m0=-0.14, m1=-0.38,            # slope from M = m0 (shelf edge, ~16% of the sea lies below it) to m1 (slope foot; -0.26 gave p90 gradients of 63 deg, -0.38 is gentler and the deep floor takes over where the slope meets it)
+    shelf_y=13,                    # seabed Y at m0 (a ~50 m sea, Y 8..20 around it)
+    rise=42, rise_lo=0.0, shallow_hi=0.1,  # profile: +42 blocks as M goes rise_lo -> shallow_hi (50 m seas at Y 13 for m0 < M < 0, shallows at Y ~55)
+    mountain_scale=0.5, mountain_lo=0.05, mountain_hi=0.12,  # islands: ridge chains x scale, only where M is high
+    bottom_y=-352,                 # slope foot Y at m1: under the deep floors (~-300) and over the deep layer's bottom (-368)
+    relief_fade=0.1,               # mountains, trenches, canyons and detail fade in over this M above m0 (no cliff at the slope's top)
+    trench_scale=0.4,              # trenches x this: the ocean world's trench network would turn the shallows deep
+    gate_fissure=0.05,             # fissures fade in over this M above m0 (no cracks on the slope)
+    slope_humidity=1.2,            # router humidity on the slope (biome continental_slope above 1.0); 0 elsewhere, the ocean entries' -1..1
+    slope_edge=0.02,               # M over which the slope humidity fades out above m0
+)
+
 
 def terrain():
     # Separate noises so each landform has its own scale and seed.
@@ -344,11 +367,14 @@ def terrain():
     # The vanilla world's deep layer has no rifts: the same seabed without the rift limit.
     write("density_function/overworld/deep_seabed_raw_nr", flat(add(A("deep_macro_offset"), landforms)))
 
-    def knee_clamp(raw):
+    def knee_expr(raw):
         # Soft knee under the ceiling: half slope above knee_y, clamped at SEABED_MAX_Y (old deep Y, like the offsets).
         knee = y(d["knee_y"])
         soft = add(dmin(raw, knee), mul(d["knee_slope"], dmax(add(raw, -knee), 0)))
-        return flat(clamp(soft, -1.9, y(SEABED_MAX_Y - SHIFT)))
+        return clamp(soft, -1.9, y(SEABED_MAX_Y - SHIFT))
+
+    def knee_clamp(raw):
+        return flat(knee_expr(raw))
     write("density_function/deep_seabed_offset", knee_clamp(A("deep_seabed_raw")))
     write("density_function/overworld/deep_seabed_offset_nr", knee_clamp(A("overworld/deep_seabed_raw_nr")))
 
@@ -402,10 +428,10 @@ def terrain():
     write("density_function/overworld/abyss_density", abyss_density(A("overworld/abyss_rift")))
     write("density_function/abyss_initial_density", ABYSS_SOLID)  # solid all the way: the deep seabed search stays monotone
 
-    def deep_density(seabed_offset, openings, rift_fn):
+    def deep_density(seabed_offset, openings, rift_fn, ceil=None):
         # Deep layer: terrain and caves, under the ceiling (max: caves never cut into it), opened by the shafts; the
         # hadal shafts to the abyss open its low floors downward.
-        density = dmin(dmax(dmin(add(DEEP_GRAD, seabed_offset), A("deep_caves")), ceiling), dmax(openings, deep_gate))
+        density = dmin(dmax(dmin(add(DEEP_GRAD, seabed_offset), A("deep_caves")), ceiling if ceil is None else ceil), dmax(openings, deep_gate))
         return dmin(density, shaft_in_deep(rift_fn))
 
     # Density is sampled at 4x8 cell corners and interpolated (smooth per block, cheap). One interpolation over the
@@ -421,6 +447,48 @@ def terrain():
     vanilla_world_fields()
     write("density_function/overworld/deep_density_nr", deep_density(A("overworld/deep_seabed_offset_nr"), fissure_slit(A("overworld/fissure_strength")),
                                                                        A("overworld/abyss_rift")))
+
+    # ---- the ocean planet (PLANET): the same functions under planet/, M-switched at the continental slope
+    pl, M = PLANET, A("planet/seabed_macro")
+    P = lambda n: A("planet/" + n)
+    below = lambda when_below, otherwise: {"type": "minecraft:range_choice", "input": M, "min_inclusive": -10.0, "max_exclusive": pl["m0"],
+                                           "when_in_range": when_below, "when_out_of_range": otherwise}  # M < m0: the slope
+    write("density_function/planet/seabed_macro", flat(add(A("base"), pl["bias"])))
+    write("density_function/planet/fissure_strength", flat(mul(A("fissure_strength"), ramp(M, pl["m0"], pl["m0"] + pl["gate_fissure"]))))
+    write("density_function/planet/fissure", flat(mul(P("fissure_strength"), A("fissure_band"))))
+    cut = mul(-fi["depth"], clamp(mul(fi["steep"], P("fissure")), 0.0, 1.0))
+    peaks = mul(pl["mountain_scale"], mul(ramp(M, pl["mountain_lo"], pl["mountain_hi"]), A("mountains")))
+    relief = add(add(add(peaks, mul(pl["trench_scale"], A("trenches"))), A("canyons")), A("detail"))
+    profile = add(pl["shelf_y"] / 64.0, mul(pl["rise"] / 64.0, ramp(M, pl["rise_lo"], pl["shallow_hi"])))
+    raw = add(add(profile, mul(ramp(M, pl["m0"], pl["m0"] + pl["relief_fade"]), relief)), cut)
+    soft = add(dmax(raw, knee), mul(f["slope"], dmin(add(raw, -knee), 0)))
+    # Slope: smoothstep from shelf_y at m0 to bottom_y at m1, as ocean offset (Y / 64) and as deep layer offset ((Y - SHIFT) / 64).
+    foot = ramp(mul(-1, M), -pl["m0"], -pl["m1"])
+    drop = (pl["bottom_y"] - pl["shelf_y"]) / 64.0
+    slope_ocean = add(pl["shelf_y"] / 64.0, mul(drop, foot))
+    slope_deep = add((pl["shelf_y"] - SHIFT) / 64.0, mul(drop, foot))
+    write("density_function/planet/seabed_offset", flat(below(slope_ocean, clamp(soft, floor, 1.9))))
+    # Rift placement reads the seabed at the axis: never low enough on the slope (the clamp is gone there).
+    write("density_function/planet/rift_seabed", flat(below(9.0, P("seabed_offset"))))
+    write("density_function/planet/rift", flat({"type": A("rift"), "noise": A("rift"), "seabed": P("rift_seabed"), "cell_size": r["cell"],
+                                                "chance": r["chance"], "min_radius": r["radius"][0], "max_radius": r["radius"][1],
+                                                "max_seabed": r["max_seabed"]}))
+    rift_limit_p = add(y(d["rift_floor_y"]), dmax(0, add(mul(-1, P("rift")), -0.5)))
+    write("density_function/planet/deep_seabed_raw", flat(dmin(add(A("deep_macro_offset"), landforms), rift_limit_p)))
+    # Slope: the slope surface or the deep floor, whichever is higher, with no SEABED_MAX_Y clamp (the lower bound stays).
+    write("density_function/planet/deep_seabed_offset",
+          flat(below(clamp(dmax(slope_deep, P("deep_seabed_raw")), -1.9, 9.0), knee_expr(P("deep_seabed_raw")))))
+    write("density_function/planet/abyss_rift", abyss_rift(P("deep_seabed_offset")))
+    write("density_function/planet/abyss_density", abyss_density(P("abyss_rift")))
+    openings_p = dmin(mul(-r["carve"], P("rift")), fissure_slit(P("fissure_strength")))
+    funnel_p = mul(grad(-64, -56, 0.0, 1.0), mul(y(r["funnel"]), sq(clamp(mul(2.0, add(P("rift"), 0.5)), 0.0, 1.0))))
+    write("density_function/planet/ocean_density", dmin(add(dmin(add(OCEAN_GRAD, P("seabed_offset")), A("ocean_caves")), mul(-1, funnel_p)),
+                                                        openings_p))
+    # No rock ceiling on the slope: the basin is open water from the deep floor to the surface.
+    write("density_function/planet/deep_density", deep_density(P("deep_seabed_offset"), openings_p, P("abyss_rift"), below(-1.0, ceiling)))
+    write("density_function/planet/final_density", interp(layered(P("deep_density"), P("ocean_density"), P("abyss_density"))))
+    # Router humidity: slope_humidity on the slope, fading to 0 within slope_edge above m0 (biome continental_slope above 1).
+    write("density_function/planet/slope_humidity", flat(mul(pl["slope_humidity"], add(1.0, mul(-1, ramp(M, pl["m0"], pl["m0"] + pl["slope_edge"]))))))
 
 
 def fissure_slit(strength):
@@ -1692,18 +1760,18 @@ DEEP_BIOMES = {
 # The abyss layer's biomes (AB02, see biome_sources): water colour and fog colour. The abyss is a solid crust, so there is no
 # seabed vegetation (the AbyssFloorPlacement class stays for hadal shaft floors); ore veins come from tools/crust_ores.py.
 ABYSS_BIOMES = {
-    "abyss_plain": (0x05050F, 0x000002),
-    "abyss_garden": (0x0B2A3A, 0x01080C),
-    "abyss_crystal": (0x1A2A5A, 0x040818),
-    "abyss_toxic": (0x2F4A12, 0x141C04),         # sickly green
-    "abyss_toxic_vents": (0x4A5A14, 0x1C2206),   # sickly yellow-green
-    "abyss_volcanic": (0x4A1408, 0x240602),      # deep red
-    "abyss_magma": (0x6A2205, 0x3A0E00),         # orange-red
-    "abyss_geothermal": (0x6A4A12, 0x2E1E06),    # amber
-    "abyss_frozen": (0x7AA8C8, 0x1C3448),        # pale blue
-    "abyss_cryo": (0xA8D0E0, 0x2A4E60),          # white-blue
-    "abyss_anomaly": (0x2A0A4A, 0x08001A),       # violet-black
-    "abyss_ruins": (0x2A5A5A, 0x0A1C1C),         # dull teal
+    "abyss_plain": (0x2A3A52, 0x141C2C),
+    "abyss_garden": (0x1E6A78, 0x10404A),
+    "abyss_crystal": (0x4A70C8, 0x2A2C78),
+    "abyss_toxic": (0x5A8A20, 0x2C4A10),         # sickly green
+    "abyss_toxic_vents": (0x8AA02A, 0x505E16),   # sickly yellow-green
+    "abyss_volcanic": (0xA03820, 0x501810),      # deep red
+    "abyss_magma": (0xE05010, 0x7A2410),         # orange-red
+    "abyss_geothermal": (0xC08A20, 0x5E4012),    # amber
+    "abyss_frozen": (0x9CC8E8, 0x305878),        # pale blue
+    "abyss_cryo": (0xC8E8F4, 0x4C7C98),          # white-blue
+    "abyss_anomaly": (0x7A30B0, 0x3A1058),       # violet-black
+    "abyss_ruins": (0x3A7A78, 0x1C4444),         # dull teal
 }
 # Hazard tags (read by com.abyssia.hazard as TagKey<Biome> abyssia:hazard/toxic|heat|cold)
 ABYSS_HAZARD_TAGS = {
@@ -1892,6 +1960,7 @@ def biomes():
     write("biome/twilight_reef", reef)
     write("biome/abyssal_rift", rift_biome())
     write("biome/deep_fissure", fissure_biome(land))
+    write("biome/continental_slope", slope_biome(land))
     check_feature_layers()
     # abyssia:deep_layer: every biome of the deep layer (for code that tells the layers apart by biome).
     tag = os.path.join(ROOT, "abyssia", "tags", "worldgen", "biome", "deep_layer.json")
@@ -1906,7 +1975,7 @@ def biomes():
 def check_feature_layers():
     """The ocean world's biomes and the deep layer's biomes share one biome source, so one feature order: they must
     share no placed feature (vanilla ones included), and every deep feature must find the deep floor itself."""
-    ocean_biomes = {"twilight_reef", "abyssal_rift", "deep_fissure"}
+    ocean_biomes = {"twilight_reef", "abyssal_rift", "deep_fissure", "continental_slope"}
     ocean = {f for b in ocean_biomes for step in read("biome/" + b)["features"] for f in step}
     for b in OCEAN_WORLD_VANILLA:
         ocean |= {f for step in vanilla("biome/" + b)["features"] for f in step}
@@ -1966,6 +2035,18 @@ def fissure_biome(land):
     fissure["effects"].update({"water_color": 0x14306B, "water_fog_color": 0x020817})
     fissure["spawners"]["monster"] = []  # no drowned in the crack
     return fissure
+
+
+def slope_biome(land):
+    # Continental Slope (ocean planet): the seabed's fall into the deep basins. A plain deep ocean (vanilla deep-ocean
+    # features minus land ones) in dark water; not in any vanilla biome tag, so ocean structures stay clear of it. Its
+    # surface rule skips the bedrock band (noise_settings), which the slope's rock would otherwise expose at Y -64..-60.
+    slope = vanilla("biome/deep_ocean")
+    slope["features"] = [[f for f in step if f not in land and f != "minecraft:lake_lava_surface"] for step in slope["features"]]
+    slope["carvers"] = {}
+    slope["effects"].update({"water_color": 0x1B3F8F, "water_fog_color": 0x041436})
+    slope["spawners"]["monster"] = []
+    return slope
 
 
 def rift_biome():
@@ -2058,6 +2139,14 @@ def biome_sources():
     # abyssia:multi_noise decodes the list itself: Lithostitched's codec wrapper throws "unbound value" on the vanilla type.
     preset["dimensions"]["minecraft:overworld"]["generator"]["biome_source"]["type"] = A("multi_noise")
     write("world_preset/ocean_world", preset)
+    # Ocean planet: the same entries (the ocean ones follow planet/seabed_macro) plus the continental slope, whose
+    # humidity (noise_settings: planet/slope_humidity) is above 1 only on the slope, where the entries above (-1..1) are 0.2 off.
+    planet = copy.deepcopy(preset)
+    generator = planet["dimensions"]["minecraft:overworld"]["generator"]
+    generator["settings"] = A("planet")
+    generator["biome_source"]["biomes"] = ocean + [params(A("continental_slope"), (-2, 2), humidity=(1.0, 2.0), continentalness=(-2, 2),
+                                                           weirdness=(-2, 2), erosion=(-2, 2))] + deep
+    write("world_preset/ocean_planet", planet)
     return deep
 
 
@@ -2088,8 +2177,10 @@ def ocean_surface_rules(rule):
     return rule
 
 
-def noise_settings():
+def noise_settings(planet=False):
+    """The ocean world's noise settings (abyssia:ocean), or the ocean planet's (abyssia:planet, from the ocean world's)."""
     ocean = read("noise_settings/ocean")
+    N = (lambda n: A("planet/" + n)) if planet else A  # the router fields that differ on the planet
     ocean["noise"]["min_y"] = MIN_Y
     ocean["noise"]["height"] = WORLD_TOP - MIN_Y
     ocean["default_block"] = {"Name": "minecraft:stone"}
@@ -2101,15 +2192,15 @@ def noise_settings():
     deep = DEEP_CLIMATE
     abyss = ABYSS_CLIMATE
     o["temperature"] = layered(deep["temperature"], snoise("minecraft:temperature", 0.25 / CLIMATE_SCALE), abyss["temperature"])
-    o["vegetation"] = layered(deep["vegetation"], 0.0, abyss["vegetation"])
-    o["continents"] = layered(deep["continents"], add(A("seabed_macro"), mul(0.02, snoise(A("biome_fuzz"), 1.0))), abyss["continents"])
-    o["erosion"] = layered(deep["erosion"], add(1.0 - RIFT["biome"], A("rift")), abyss["erosion"])
-    o["ridges"] = layered(deep["ridges"], add(1.0 - FISSURE["biome"], A("fissure")), abyss["ridges"])
+    o["vegetation"] = layered(deep["vegetation"], N("slope_humidity") if planet else 0.0, abyss["vegetation"])
+    o["continents"] = layered(deep["continents"], add(N("seabed_macro"), mul(0.02, snoise(A("biome_fuzz"), 1.0))), abyss["continents"])
+    o["erosion"] = layered(deep["erosion"], add(1.0 - RIFT["biome"], N("rift")), abyss["erosion"])
+    o["ridges"] = layered(deep["ridges"], add(1.0 - FISSURE["biome"], N("fissure")), abyss["ridges"])
     o["depth"] = layered(LAYER_DEPTH["router"], -LAYER_DEPTH["router"], LAYER_DEPTH["router"])
     # The deep side has no ceiling: CaveNetwork.seabed() binary-searches it, so it must fall monotonically with Y.
-    o["initial_density_without_jaggedness"] = layered(add(DEEP_GRAD, A("deep_seabed_offset")), add(OCEAN_GRAD, A("seabed_offset")),
+    o["initial_density_without_jaggedness"] = layered(add(DEEP_GRAD, N("deep_seabed_offset")), add(OCEAN_GRAD, N("seabed_offset")),
                                                       A("abyss_initial_density"))
-    o["final_density"] = A("final_density")
+    o["final_density"] = N("final_density")
 
     rules = copy.deepcopy(ocean_surface_rules(ocean["surface_rule"]))["sequence"]
 
@@ -2130,7 +2221,7 @@ def noise_settings():
         if c.get("type") == "minecraft:vertical_gradient" and c.get("random_name") in ("minecraft:bedrock_floor", A("bedrock_band")):
             return True
         while c:  # a chain of nested conditions with a rift / fissure biome test anywhere in it
-            if c.get("type") == "minecraft:biome" and set(c["biome_is"]) <= {A("abyssal_rift"), A("deep_fissure")}:
+            if c.get("type") == "minecraft:biome" and set(c["biome_is"]) <= {A("abyssal_rift"), A("deep_fissure"), A("continental_slope")}:
                 return True
             r = r.get("then_run", {})
             c = r.get("if_true") if r.get("type") == "minecraft:condition" else None
@@ -2140,7 +2231,9 @@ def noise_settings():
     # instead of loose gravel on the shaft walls (before the band rule).
     # Surface rules run for every stone block, and a biome test costs a biome lookup per block: Y tests go first.
     deepslate = block("minecraft:deepslate", axis="y")
-    shaft_rule = cond(y_below(FISSURE["shaft_below"]), cond(biome_is("abyssal_rift", "deep_fissure"), deepslate))
+    # The planet's continental slope skips the band too: its rock would show bedrock where the slope crosses Y -64..-60.
+    shaft_biomes = ("abyssal_rift", "deep_fissure", "continental_slope") if planet else ("abyssal_rift", "deep_fissure")
+    shaft_rule = cond(y_below(FISSURE["shaft_below"]), cond(biome_is(*shaft_biomes), deepslate))
     # Fissures: dark deepslate walls; the floor keeps the ocean floor rule's gravel (so this goes after it).
     floor_rule = next(i for i, r in enumerate(rules) if r.get("if_true", {}).get("type") == "minecraft:stone_depth")
     # Below the deepslate gradient (the next rule) the walls are that same deepslate anyway: test only above it.
@@ -2151,6 +2244,9 @@ def noise_settings():
     rules = [shaft_rule, BAND_BEDROCK] + rules[:floor_rule + 1] + [fissure_rule] + rules[floor_rule + 1:]
     # Ocean world rules from the bedrock band up, the deep layer's below it.
     ocean["surface_rule"] = seq(cond(y_above(TOP_Y), seq(*rules)), cond(y_below(TOP_Y), deep_surface_rule()))
+    if planet:
+        write("noise_settings/planet", ocean)
+        return
     write("noise_settings/ocean", ocean)
     # The deep ocean dimension's own settings are gone (merged above).
     stale = os.path.join(WG, "noise_settings", "deep_ocean.json")
@@ -2274,12 +2370,13 @@ def main():
     biomes()
     deep = biome_sources()
     noise_settings()
+    noise_settings(planet=True)
     vanilla_world(deep)
     caves()
     profiled = {b for biomes, _, _ in seabed_structures.PROFILES.values() for b in biomes}
     # Structure heights are written in deep-ocean Y; tops stay 4 blocks under the ceiling (SeabedStructures.TOP_MARGIN).
     counts = seabed_structures.write(CAVE_DIR, set(DEEP_BIOMES) - (NO_STRUCTURE_PROFILE - profiled), dy, CEILING_BOTTOM_Y - 4)
-    print(f"{len(CONFIGURED)} configured features, {len(PLACED)} placed features, {len(DEEP_BIOMES) + len(ABYSS_BIOMES) + 3} biomes, "
+    print(f"{len(CONFIGURED)} configured features, {len(PLACED)} placed features, {len(DEEP_BIOMES) + len(ABYSS_BIOMES) + 4} biomes, "
           f"{len(CAVE_ENVIRONMENTS)} cave environments, {len(CAVE_PROFILES)} cave profiles, {len(CAVERN_TEMPLATES)} cavern templates, "
           f"{counts[0]} seabed structures, {counts[1]} structure profiles")
 

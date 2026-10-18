@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:dive/submarine",
+  "display": {
+    "icon": {
+      "id": "abyssia:submarine_upgrade_pressure_hull"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.hull_breach.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.hull_breach.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "event_submarine_crushed": {
+      "trigger": "abyssia:event",
+      "conditions": {
+        "event": "submarine_crushed"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "event_submarine_crushed"
+    ]
+  ]
+}

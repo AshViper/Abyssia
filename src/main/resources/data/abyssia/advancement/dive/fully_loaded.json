@@ -1,0 +1,31 @@
+{
+  "parent": "abyssia:dive/submarine",
+  "display": {
+    "icon": {
+      "id": "abyssia:submarine_upgrade_sonar_scanner"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.fully_loaded.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.fully_loaded.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "in_submarine": true,
+        "submarine_upgrades": {
+          "min": 5
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

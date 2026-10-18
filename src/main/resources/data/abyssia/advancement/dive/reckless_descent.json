@@ -1,0 +1,35 @@
+{
+  "parent": "abyssia:dive/the_abyss",
+  "display": {
+    "icon": {
+      "id": "minecraft:skeleton_skull"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.reckless_descent.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.reckless_descent.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": -376.0
+        },
+        "submerged": true,
+        "in_submarine": false,
+        "suit_tier": {
+          "max": 2
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

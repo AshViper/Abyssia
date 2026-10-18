@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:dive/lightless",
+  "display": {
+    "icon": {
+      "id": "abyssia:thermal_crystal_shard"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.hot_water.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.hot_water.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "event_hazard_damage_heat": {
+      "trigger": "abyssia:event",
+      "conditions": {
+        "event": "hazard_damage",
+        "key": "heat"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "event_hazard_damage_heat"
+    ]
+  ]
+}

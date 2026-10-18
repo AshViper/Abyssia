@@ -2,6 +2,7 @@ package com.abyssia.habitat.aquarium;
 
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.build.BuildRegistry;
+import com.abyssia.registry.AbyssiaTab;
 import com.abyssia.registry.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -63,7 +64,7 @@ public final class AquariumContent
 
     private static void onTabContents(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTabKey().equals(ModItems.TAB.getKey())) event.accept(CANISTER.get());
+        if (event.getTabKey().equals(ModItems.tabKey(AbyssiaTab.EQUIPMENT))) event.accept(CANISTER.get());
     }
 
     private static BlockBehaviour.Properties props()

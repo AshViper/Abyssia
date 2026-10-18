@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:life/home_aquarium",
+  "display": {
+    "icon": {
+      "id": "minecraft:tropical_fish_bucket"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.public_aquarium.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.public_aquarium.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "aquarium": {
+      "trigger": "abyssia:aquarium",
+      "conditions": {
+        "species_count": {
+          "min": 4
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "aquarium"
+    ]
+  ]
+}

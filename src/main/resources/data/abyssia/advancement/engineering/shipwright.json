@@ -1,0 +1,31 @@
+{
+  "parent": "abyssia:engineering/root",
+  "display": {
+    "icon": {
+      "id": "abyssia:submarine"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.shipwright.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.shipwright.description"
+    }
+  },
+  "criteria": {
+    "submarine": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:submarine"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "submarine"
+    ]
+  ]
+}

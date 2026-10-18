@@ -82,7 +82,8 @@ public final class PressureGear
         double y = player.getY();
         if (y >= safe) return;
         float damage = Math.min(3, 1 + (int) ((safe - y) / STEP_BLOCKS));
-        player.hurt(player.damageSources().generic(), damage);
+        boolean hurt = player.hurt(player.damageSources().generic(), damage);
+        if (hurt && player instanceof net.minecraft.server.level.ServerPlayer sp) com.abyssia.advancement.AbyssiaCriteria.event(sp, "pressure_damage", null);
         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 0));
         player.displayClientMessage(Component.translatable("message.abyssia.pressure_warning", (int) Math.floor(y), safe), true);
     }

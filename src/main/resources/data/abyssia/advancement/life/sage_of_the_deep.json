@@ -1,0 +1,31 @@
+{
+  "parent": "abyssia:life/chief_scientist",
+  "display": {
+    "icon": {
+      "id": "abyssia:abyss_guide_book"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.sage_of_the_deep.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.sage_of_the_deep.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "research_complete": {
+      "trigger": "abyssia:research",
+      "conditions": {
+        "complete": true
+      }
+    }
+  },
+  "requirements": [
+    [
+      "research_complete"
+    ]
+  ],
+  "rewards": {
+    "experience": 500
+  }
+}

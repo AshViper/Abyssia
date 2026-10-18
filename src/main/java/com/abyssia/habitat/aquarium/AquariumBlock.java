@@ -119,6 +119,9 @@ public class AquariumBlock extends BaseEntityBlock
             level.playSound(null, controller, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 1.0f, 1.0f);
             player.displayClientMessage(Component.translatable(MSG + "released", CreatureCaptureCanisterItem.speciesName(species),
                     be.creatures().size(), AquariumBlockEntity.CAPACITY), true);
+            if (player instanceof net.minecraft.server.level.ServerPlayer sp)
+                com.abyssia.advancement.AbyssiaCriteria.aquarium(sp, species, be.creatures().size(),
+                        (int) be.creatures().stream().map(AquariumBlockEntity.Creature::species).distinct().count());
             return InteractionResult.CONSUME;
         }
         if (held.is(AquariumContent.CANISTER.get()))

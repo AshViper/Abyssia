@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:life/researcher",
+  "display": {
+    "icon": {
+      "id": "minecraft:enchanted_book"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.chief_scientist.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.chief_scientist.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "research_count30": {
+      "trigger": "abyssia:research",
+      "conditions": {
+        "count": {
+          "min": 30
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "research_count30"
+    ]
+  ]
+}

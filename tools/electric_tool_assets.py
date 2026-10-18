@@ -59,9 +59,9 @@ def screw_model():
 
 
 SCANNER = "lidar_scanner"
-# C conductive_component, G glass, A abyssal_alloy_ingot, M machine_frame, H thermal_component
-_SCANNER_RECIPE = (["CGC", "AMA", " H "], {"C": "conductive_component", "G": "minecraft:glass", "A": "abyssal_alloy_ingot",
-                                          "M": "machine_frame", "H": "thermal_component"})
+# Early-game recipe (the scanner unlocks building): G glass_pane, W copper_wire, C copper_ingot, I iron_ingot
+_SCANNER_RECIPE = ([" G ", "WCW", "III"], {"G": "minecraft:glass_pane", "W": "copper_wire", "C": "minecraft:copper_ingot",
+                                          "I": "minecraft:iron_ingot"})
 
 
 def scanner_model():
@@ -95,6 +95,9 @@ def generate(write, im, data_dir):
         "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": pattern,
         "key": {k: {"item": f"{MOD}:{v}"} for k, v in key.items()},
         "result": {"item": f"{MOD}:{SCREW}", "count": 1}})
+    import hand_lamp_assets   # hand lamp 3D models (off/on) + textures, textures/item next to models/item
+    hand_lamp_assets.generate(write, im, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(im("x")))),
+                                                      "textures", "item"))
     write(im(SCANNER), scanner_model())
     pattern, key = _SCANNER_RECIPE
     write(os.path.join(data_dir, MOD, "recipes", SCANNER + ".json"), {

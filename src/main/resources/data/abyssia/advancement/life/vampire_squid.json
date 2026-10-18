@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "id": "minecraft:ink_sac"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.vampire_squid.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.vampire_squid.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "scan_fauna_vampire_squid": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_vampire_squid"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_vampire_squid"
+    ]
+  ]
+}

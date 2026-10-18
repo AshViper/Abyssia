@@ -199,7 +199,7 @@ public final class HazardZone
         player.addEffect(new MobEffectInstance(MobEffects.POISON, pulse + 40, intensity - 1, false, true));
         if (intensity >= 3)
             player.addEffect(new MobEffectInstance(MobEffects.WITHER, pulse + 40, 0, false, true));
-        hurt(player, player.damageSources().magic(), Config.HAZARD_TOXIC_DAMAGE_PER_LEVEL.get() * intensity * perSecond);
+        hurt(player, "toxic", player.damageSources().magic(), Config.HAZARD_TOXIC_DAMAGE_PER_LEVEL.get() * intensity * perSecond);
         return false;
     }
 
@@ -208,7 +208,7 @@ public final class HazardZone
         if (player.hasEffect(MobEffects.FIRE_RESISTANCE)) return true;
         double factor = 1.0 - 0.25 * worn(player, HEAT_PROOF);
         if (factor <= 0.0) return true;
-        hurt(player, player.damageSources().onFire(), Config.HAZARD_HEAT_DAMAGE_PER_LEVEL.get() * intensity * factor * perSecond);
+        hurt(player, "heat", player.damageSources().onFire(), Config.HAZARD_HEAT_DAMAGE_PER_LEVEL.get() * intensity * factor * perSecond);
         return false;
     }
 
@@ -228,14 +228,18 @@ public final class HazardZone
         st.streak = Math.min(MAX_COLD_STREAK, st.streak + 1);
         double cumulative = 1.0 + 0.25 * (st.streak - 1);
         player.addEffect(new MobEffectInstance(ModMobEffects.COLD_SHOCK, pulse + 40, intensity - 1, false, true));
-        hurt(player, player.damageSources().freeze(),
+        hurt(player, "cold", player.damageSources().freeze(),
                 Config.HAZARD_COLD_DAMAGE_PER_LEVEL.get() * intensity * factor * cumulative * perSecond);
         return false;
     }
 
-    private static void hurt(ServerPlayer player, DamageSource source, double amount)
+    private static void hurt(ServerPlayer player, String key, DamageSource source, double amount)
     {
-        if (amount > 0.0) player.hurt(source, (float) amount);
+        if (amount > 0.0)
+        {
+            if (player.hurt(source, (float) amount))
+                com.abyssia.advancement.AbyssiaCriteria.event(player, "hazard_damage", key);
+        }
     }
 
     private static void warn(ServerPlayer player, State st, Type type, boolean protectedNow, long now)

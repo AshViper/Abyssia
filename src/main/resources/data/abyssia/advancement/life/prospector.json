@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:life/first_scan",
+  "display": {
+    "icon": {
+      "id": "minecraft:raw_iron"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.prospector.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.prospector.description"
+    }
+  },
+  "criteria": {
+    "scan_mineral_deposit_count10": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "group": "mineral_deposit_",
+        "count": {
+          "min": 10
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_mineral_deposit_count10"
+    ]
+  ]
+}

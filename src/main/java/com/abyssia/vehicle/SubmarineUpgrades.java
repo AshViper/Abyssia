@@ -28,7 +28,7 @@ import java.util.List;
  * submarine_upgrade_depth_mk1..3); the entity saves {@code Upgrades} =
  * {Hull, Battery, Thruster, Utility, Depth} item id strings (empty slots omitted), the submarine item carries the same compound
  * in the abyssia:submarine_upgrades data component. Effects: {@link Submarine} (bit mask {@link #bit}; bits 5-6 = Depth Hull tier).
- * Rated depth (metres, DepthZone): 300 without a DEPTH upgrade, Mk1 600, Mk2 1000, Mk3 2000 (Config SUBMARINE_DEPTH_*);
+ * SUB08 crush depth as a Y coordinate: -300 without a DEPTH upgrade, Mk1 -500, Mk2 -800, Mk3 -1000 (Config SUBMARINE_RATED_Y_*);
  * below it the hull takes crush damage once a second (Submarine.crush).
  */
 public final class SubmarineUpgrades
@@ -152,15 +152,15 @@ public final class SubmarineUpgrades
         return (mask >> DEPTH_SHIFT) & DEPTH_TIERS;
     }
 
-    /** rated depth in metres: crush damage starts below it */
-    public static int ratedDepth(int mask)
+    /** SUB08: crush depth as a Y coordinate: crush damage starts below it */
+    public static int ratedY(int mask)
     {
         return switch (depthTier(mask))
         {
-            case 1 -> Config.SUBMARINE_DEPTH_MK1.get();
-            case 2 -> Config.SUBMARINE_DEPTH_MK2.get();
-            case 3 -> Config.SUBMARINE_DEPTH_MK3.get();
-            default -> Config.SUBMARINE_DEPTH_BASE.get();
+            case 1 -> Config.SUBMARINE_RATED_Y_MK1.get();
+            case 2 -> Config.SUBMARINE_RATED_Y_MK2.get();
+            case 3 -> Config.SUBMARINE_RATED_Y_MK3.get();
+            default -> Config.SUBMARINE_RATED_Y_BASE.get();
         };
     }
 

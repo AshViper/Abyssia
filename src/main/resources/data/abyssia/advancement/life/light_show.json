@@ -1,0 +1,54 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "id": "minecraft:glow_ink_sac"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.light_show.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.light_show.description"
+    }
+  },
+  "criteria": {
+    "scan_fauna_firefly_squid": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_firefly_squid"
+      }
+    },
+    "scan_fauna_lanternfish": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_lanternfish"
+      }
+    },
+    "scan_fauna_atolla_jelly": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_atolla_jelly"
+      }
+    },
+    "scan_fauna_stoplight_loosejaw": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "target": "abyssia:scan_target/fauna_stoplight_loosejaw"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_firefly_squid"
+    ],
+    [
+      "scan_fauna_lanternfish"
+    ],
+    [
+      "scan_fauna_atolla_jelly"
+    ],
+    [
+      "scan_fauna_stoplight_loosejaw"
+    ]
+  ]
+}

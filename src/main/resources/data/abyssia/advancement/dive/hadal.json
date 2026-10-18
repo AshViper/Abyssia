@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:dive/the_abyss",
+  "display": {
+    "icon": {
+      "id": "abyssia:pressure_crystal_shard"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.hadal.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.hadal.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": -860.0
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "parent": "abyssia:engineering/shipwright",
+  "display": {
+    "icon": {
+      "id": "abyssia:submarine"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.dry_dock.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.dry_dock.description"
+    }
+  },
+  "criteria": {
+    "build_submarine_dock": {
+      "trigger": "abyssia:build",
+      "conditions": {
+        "build": "submarine_dock"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "build_submarine_dock"
+    ]
+  ]
+}

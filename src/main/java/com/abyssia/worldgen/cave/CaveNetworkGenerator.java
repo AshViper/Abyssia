@@ -357,7 +357,27 @@ final class CaveNetworkGenerator
     {
         Chamber hub = hallHub(b, p);
         branches(b, p, hub, b.range(2, 3), 0);
-        if (b.net.band() == DepthBand.B) seabedRoute(b, p, hub);
+        if (b.net.band() == DepthBand.B)
+        {
+            seabedRoute(b, p, hub);
+            seabedShaft(b, p);
+        }
+    }
+
+    /** C: a wide straight shaft from the centre of the topmost cavity up to the deep seabed above it (the column's top), if the seabed there is open. */
+    private static void seabedShaft(CaveBuilder b, Plan p)
+    {
+        CaveNetwork root = b.net.root();
+        if (root == null) return;
+        int sy = root.seabed(p.x(), p.z());
+        if (sy > root.maxEntranceY() || sy < root.minY() + 12) return;
+        double r = b.range(12, 16), y0 = p.y() + AbyssCavity.LINK_LIFT;
+        CaveSpace shaft = b.space(CaveSpace.Role.SHAFT, CaveType.VERTICAL_SHAFT, null, p.environment(), p.x(), (y0 + sy) / 2, p.z(), r, CaveSpace.NO_WATER_LEVEL);
+        CaveTunnelGenerator.shaft(b, shaft, p.x(), p.z(), sy - 14, y0, r);
+        CaveSpace mouth = b.space(CaveSpace.Role.ENTRANCE, CaveType.MEDIUM_SEA_CAVE, null, p.environment(), p.x(), sy, p.z(), 16, CaveSpace.NO_WATER_LEVEL);
+        b.add(new CaveShape.Capsule(mouth, CaveShape.Kind.CARVE, null, null, true, p.x(), sy - 14, p.z(), p.x(), sy + 4, p.z(), r * 0.8, r * 1.2, 1.0));
+        b.sites.add(new CaveSystem.Site(CaveSystem.SiteKind.ENTRANCE, p.x(), sy, p.z(), 30, mouth));
+        b.route.add("central shaft@" + Mth.floor(p.x()) + " " + sy + " " + Mth.floor(p.z()));
     }
 
     /**
@@ -991,20 +1011,27 @@ final class CaveNetworkGenerator
         if (v == null) return;
         Plan q = v.q();
         boolean fromCavity = p.type() == CaveType.ABYSS_CAVITY, toCavity = q.type() == CaveType.ABYSS_CAVITY;
-        double radius = fromCavity ? 5.0 + v.rng().nextDouble() * 2.0 : 3.0 + v.rng().nextDouble() * 2.5;
+        // C: two stacked cavities (same centre) are joined by one wide shaft through both centres.
+        boolean stacked = fromCavity && toCavity && Math.hypot(q.x() - p.x(), q.z() - p.z()) < AbyssCavity.STACK_DISTANCE;
+        double radius = stacked ? 12.0 + v.rng().nextDouble() * 4.0 : fromCavity ? 5.0 + v.rng().nextDouble() * 2.0 : 3.0 + v.rng().nextDouble() * 2.5;
         // AB06: a cavity's shaft leaves (and enters) the hall half way out toward the other end, above the terraces, not at its centre.
         double bearing = Math.atan2(q.z() - p.z(), q.x() - p.x());
         double sx = p.x(), sz = p.z(), y0 = p.portY(), tx = q.x(), tz = q.z(), ty = q.portY();
         if (fromCavity)
         {
-            sx += Math.cos(bearing) * p.radius() * AbyssCavity.LINK_OFFSET;
-            sz += Math.sin(bearing) * p.radius() * AbyssCavity.LINK_OFFSET;
+            if (!stacked)
+            {
+                sx += Math.cos(bearing) * p.radius() * AbyssCavity.LINK_OFFSET;
+                sz += Math.sin(bearing) * p.radius() * AbyssCavity.LINK_OFFSET;
+            }
             y0 = p.y() + AbyssCavity.LINK_LIFT;
         }
         if (toCavity)
         {
+            if (stacked) { tx = sx; tz = sz; }
+            else {
             tx -= Math.cos(bearing) * q.radius() * AbyssCavity.LINK_OFFSET;
-            tz -= Math.sin(bearing) * q.radius() * AbyssCavity.LINK_OFFSET;
+            tz -= Math.sin(bearing) * q.radius() * AbyssCavity.LINK_OFFSET; }
             ty = q.y() + AbyssCavity.LINK_LIFT;
         }
         double yTop = Math.max(ty, b.net.maxY() + DepthBand.OVERLAP);

@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:engineering/power_on",
+  "display": {
+    "icon": {
+      "id": "minecraft:redstone_lamp"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.blackout.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.blackout.description"
+    },
+    "hidden": true
+  },
+  "criteria": {
+    "event_habitat_blackout": {
+      "trigger": "abyssia:event",
+      "conditions": {
+        "event": "habitat_blackout"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "event_habitat_blackout"
+    ]
+  ]
+}

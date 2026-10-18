@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:life/root",
+  "display": {
+    "icon": {
+      "id": "abyssia:lidar_scanner"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.first_scan.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.first_scan.description"
+    }
+  },
+  "criteria": {
+    "scan_count1": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "count": {
+          "min": 1
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_count1"
+    ]
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "abyssia:dive/twilight_zone",
+  "display": {
+    "icon": {
+      "id": "minecraft:kelp"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.free_diver.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.free_diver.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": 0.0
+        },
+        "submerged": true,
+        "in_submarine": false,
+        "suit_pieces": {
+          "max": 0
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ],
+  "rewards": {
+    "experience": 50
+  }
+}

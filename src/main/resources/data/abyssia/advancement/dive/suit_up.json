@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:dive/first_dive",
+  "display": {
+    "icon": {
+      "id": "abyssia:entry_diver_helmet"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.suit_up.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.suit_up.description"
+    }
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "suit_tier": {
+          "min": 1
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

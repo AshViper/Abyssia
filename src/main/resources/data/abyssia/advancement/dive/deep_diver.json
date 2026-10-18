@@ -1,0 +1,29 @@
+{
+  "parent": "abyssia:dive/suit_up",
+  "display": {
+    "icon": {
+      "id": "abyssia:deep_diver_helmet"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.deep_diver.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.deep_diver.description"
+    }
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "suit_tier": {
+          "min": 2
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "display": {
+    "icon": {
+      "id": "abyssia:habitat_constructor"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.root.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.root.description"
+    },
+    "background": "abyssia:textures/block/abyssal_rock_bricks.png",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "habitat_constructor": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:habitat_constructor"
+          }
+        ]
+      }
+    },
+    "abyssal_drill": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:abyssal_drill"
+          }
+        ]
+      }
+    },
+    "cobalt_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:cobalt_ingot"
+          }
+        ]
+      }
+    },
+    "nickel_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:nickel_ingot"
+          }
+        ]
+      }
+    },
+    "zinc_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:zinc_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "habitat_constructor",
+      "abyssal_drill",
+      "cobalt_ingot",
+      "nickel_ingot",
+      "zinc_ingot"
+    ]
+  ]
+}

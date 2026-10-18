@@ -1,0 +1,28 @@
+{
+  "parent": "abyssia:life/home_aquarium",
+  "display": {
+    "icon": {
+      "id": "minecraft:turtle_egg"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.new_life.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.new_life.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "event_aquarium_birth": {
+      "trigger": "abyssia:event",
+      "conditions": {
+        "event": "aquarium_birth"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "event_aquarium_birth"
+    ]
+  ]
+}

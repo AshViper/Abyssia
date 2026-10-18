@@ -1,0 +1,110 @@
+{
+  "parent": "abyssia:engineering/deep_metallurgy",
+  "display": {
+    "icon": {
+      "id": "abyssia:tungsten_alloy_ingot"
+    },
+    "title": {
+      "translate": "advancements.abyssia.engineering.alloy_smith.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.engineering.alloy_smith.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "abyssal_alloy_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:abyssal_alloy_ingot"
+          }
+        ]
+      }
+    },
+    "conductive_alloy_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:conductive_alloy_ingot"
+          }
+        ]
+      }
+    },
+    "corrosion_alloy_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:corrosion_alloy_ingot"
+          }
+        ]
+      }
+    },
+    "heat_resistant_alloy_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:heat_resistant_alloy_ingot"
+          }
+        ]
+      }
+    },
+    "high_strength_alloy_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:high_strength_alloy_ingot"
+          }
+        ]
+      }
+    },
+    "thermal_alloy_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:thermal_alloy_ingot"
+          }
+        ]
+      }
+    },
+    "tungsten_alloy_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:tungsten_alloy_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "abyssal_alloy_ingot"
+    ],
+    [
+      "conductive_alloy_ingot"
+    ],
+    [
+      "corrosion_alloy_ingot"
+    ],
+    [
+      "heat_resistant_alloy_ingot"
+    ],
+    [
+      "high_strength_alloy_ingot"
+    ],
+    [
+      "thermal_alloy_ingot"
+    ],
+    [
+      "tungsten_alloy_ingot"
+    ]
+  ]
+}

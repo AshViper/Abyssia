@@ -1,0 +1,24 @@
+{
+  "parent": "abyssia:life/root",
+  "display": {
+    "icon": {
+      "id": "abyssia:creature_capture_canister_filled"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.catch_and_keep.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.catch_and_keep.description"
+    }
+  },
+  "criteria": {
+    "capture": {
+      "trigger": "abyssia:capture"
+    }
+  },
+  "requirements": [
+    [
+      "capture"
+    ]
+  ]
+}

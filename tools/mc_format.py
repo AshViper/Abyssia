@@ -60,10 +60,10 @@ _TAG_RE = re.compile(r"((?:^|[\\/])data[\\/][^\\/]+[\\/]tags[\\/])(" + "|".join(
 
 
 def kind(path):
-    """'recipe', 'loot_table', 'tags', 'model' or None for a (1.21) data or asset path."""
+    """'recipe', 'loot_table', 'advancement', 'tags', 'model' or None for a (1.21) data or asset path."""
     parts = re.split(r"[\\/]", path)
     for i in range(len(parts) - 2):
-        if parts[i] == "data" and parts[i + 2] in ("recipe", "loot_table", "tags"):
+        if parts[i] == "data" and parts[i + 2] in ("recipe", "loot_table", "advancement", "tags"):
             return parts[i + 2]
         if parts[i] == "assets" and parts[i + 2] == "models":
             return "model"
@@ -422,6 +422,71 @@ def tag_down(obj):
     return obj
 
 
+ADV_VANILLA_TRIGGERS = {"minecraft:tick", "minecraft:location", "minecraft:inventory_changed", "minecraft:consume_item",
+                        "minecraft:placed_block", "minecraft:effects_changed", "minecraft:entity_hurt_player",
+                        "minecraft:player_killed_entity"}
+
+
+def _adv_set(d, key, plural, single):
+    """1.21 holder-set field (string, '#tag' or list) -> the 1.20 pair: plural list / single tag key."""
+    v = d.pop(key)
+    if isinstance(v, str):
+        v = [v]
+    if not isinstance(v, list) or not all(isinstance(x, str) for x in v):
+        raise ValueError(f"advancement: cannot convert {key}={v!r}")
+    tags = [x for x in v if x.startswith("#")]
+    if tags:
+        if len(v) != 1 or single in d:
+            raise ValueError(f"advancement: cannot convert {key}={v!r} (tag mixed with other entries)")
+        d[single] = tags[0][1:]
+    else:
+        d[plural] = v
+
+
+def _adv_node(o):
+    if isinstance(o, list):
+        for v in o:
+            _adv_node(v)
+        return
+    if not isinstance(o, dict):
+        return
+    if ("items" in o and isinstance(o["items"], (str, list)) and not (isinstance(o["items"], list) and o["items"]
+            and isinstance(o["items"][0], dict))):
+        _adv_set(o, "items", "items", "tag")        # item predicate
+    if "blocks" in o and isinstance(o["blocks"], (str, list)):
+        _adv_set(o, "blocks", "blocks", "tag")      # block predicate
+    if "components" in o or "predicates" in o:
+        raise ValueError("advancement: item components have no 1.20 form")
+    for src, dst in (("biomes", "biome"), ("structures", "structure")):     # location predicate
+        if src in o:
+            v = o.pop(src)
+            if isinstance(v, list) and len(v) == 1:
+                v = v[0]
+            if not isinstance(v, str) or v.startswith("#") or dst in o:
+                raise ValueError(f"advancement: location {src}={v!r} needs exactly one id")
+            o[dst] = v
+    for v in list(o.values()):
+        _adv_node(v)
+
+
+def advancement_down(obj):
+    """1.21 advancement -> 1.20.1: icon {"id"} -> {"item"}, item/block sets as lists (+ "tag"), location biomes/structures
+    -> biome/structure.  Vanilla triggers other than the ones the mod uses are refused (check their shape first)."""
+    obj = copy.deepcopy(obj)
+    disp = obj.get("display")
+    if disp is not None:
+        icon = disp.get("icon", {})
+        if "components" in icon or icon.get("count", 1) != 1 or "id" not in icon:
+            raise ValueError(f"advancement: unconvertible icon {icon!r}")
+        disp["icon"] = {"item": icon["id"]}
+    for name, c in obj.get("criteria", {}).items():
+        trig = c.get("trigger", "")
+        if not (trig in ADV_VANILLA_TRIGGERS or (not trig.startswith("minecraft:") and ":" in trig)):
+            raise ValueError(f"advancement: trigger {trig} not checked against 1.20.1")
+        _adv_node(c.get("conditions", {}))
+    return obj
+
+
 def model_down(obj):
     """An element's neoforge_data (per-element light, e.g. emissive glow layers) is forge_data in Forge 1.20.1."""
     if not any("neoforge_data" in e for e in obj.get("elements", ())):
@@ -440,6 +505,8 @@ def downgrade_json(path, obj):
         return recipe_down(obj)
     if k == "loot_table":
         return loot_table_down(obj)
+    if k == "advancement":
+        return advancement_down(obj)
     if k == "tags":
         return tag_down(obj)
     if k == "model":

@@ -34,8 +34,8 @@ INFO = dict(
         "bite": (2, "Sixgill shark bites", "カグラザメが噛みつく"),
     },
     # 0-2500 m, usually 180-1100 m, near the bottom by day
-    spawn=dict(weight=3, group=(1, 1), depth_m=(90, 180, 1100, 2500), placement="near_floor",
-               cave_factor=0.3, open_factor=1.0, max_light=8, clearance=3, cap=(8, 128)),
+    spawn=dict(weight=2, group=(1, 1), depth_m=(90, 180, 1100, 2500), placement="open_water",
+               cave_factor=1.0, open_factor=1.0, max_light=6, clearance=6, cap=(6, 128)),
     java=dict(kind="shark", size_m=4.0, health=50, attack=7, armor=2,
               traits=dict(steering=(10, 3, 0.003), cruise_height=3, mouth_forward=1.1),
               render=dict(eyeshine=(0.9, ["right_eye", "left_eye"]))),

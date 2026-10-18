@@ -69,30 +69,30 @@ public final class ModBuildingBlocks
 
     // ---------- Ancient deep-sea wood (the stem itself is ModBlocks.ANCIENT_STEM) ----------
     // Like the nether's stems it does not burn; it sounds like nether wood and reuses the crimson door / gate sounds.
-    public static final DeferredBlock<Block> STRIPPED_ANCIENT_STEM = ModBlocks.block("stripped_ancient_stem",
+    public static final DeferredBlock<Block> STRIPPED_ANCIENT_STEM = block("stripped_ancient_stem",
             () -> new RotatedPillarBlock(stem()));
-    public static final DeferredBlock<Block> STRIPPED_ANCIENT_WOOD = ModBlocks.block("stripped_ancient_wood",
+    public static final DeferredBlock<Block> STRIPPED_ANCIENT_WOOD = block("stripped_ancient_wood",
             () -> new RotatedPillarBlock(stem()));
-    public static final DeferredBlock<Block> ANCIENT_WOOD = ModBlocks.block("ancient_wood",
+    public static final DeferredBlock<Block> ANCIENT_WOOD = block("ancient_wood",
             () -> new StrippableLogBlock(stem(), STRIPPED_ANCIENT_WOOD));
-    public static final DeferredBlock<Block> ANCIENT_PLANKS = ModBlocks.block("ancient_planks",
+    public static final DeferredBlock<Block> ANCIENT_PLANKS = block("ancient_planks",
             () -> new Block(wood().strength(2.0f, 3.0f).sound(SoundType.NETHER_WOOD)));
-    public static final DeferredBlock<Block> ANCIENT_STAIRS = ModBlocks.block("ancient_stairs",
+    public static final DeferredBlock<Block> ANCIENT_STAIRS = block("ancient_stairs",
             () -> new StairBlock(ANCIENT_PLANKS.get().defaultBlockState(), copy(ANCIENT_PLANKS)));
-    public static final DeferredBlock<Block> ANCIENT_SLAB = ModBlocks.block("ancient_slab", () -> new SlabBlock(copy(ANCIENT_PLANKS)));
-    public static final DeferredBlock<Block> ANCIENT_FENCE = ModBlocks.block("ancient_fence",
+    public static final DeferredBlock<Block> ANCIENT_SLAB = block("ancient_slab", () -> new SlabBlock(copy(ANCIENT_PLANKS)));
+    public static final DeferredBlock<Block> ANCIENT_FENCE = block("ancient_fence",
             () -> new FenceBlock(copy(ANCIENT_PLANKS).forceSolidOn()));
-    public static final DeferredBlock<Block> ANCIENT_FENCE_GATE = ModBlocks.block("ancient_fence_gate",
+    public static final DeferredBlock<Block> ANCIENT_FENCE_GATE = block("ancient_fence_gate",
             () -> new FenceGateBlock(WoodType.CRIMSON, copy(ANCIENT_PLANKS).forceSolidOn()));
     public static final DeferredBlock<Block> ANCIENT_DOOR = door("ancient_door",
             () -> new DoorBlock(BlockSetType.CRIMSON, wood().strength(3.0f).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredBlock<Block> ANCIENT_TRAPDOOR = ModBlocks.block("ancient_trapdoor",
+    public static final DeferredBlock<Block> ANCIENT_TRAPDOOR = block("ancient_trapdoor",
             () -> new TrapDoorBlock(BlockSetType.CRIMSON,
                     wood().strength(3.0f).noOcclusion().isValidSpawn((state, level, pos, type) -> false)));
-    public static final DeferredBlock<Block> ANCIENT_PRESSURE_PLATE = ModBlocks.block("ancient_pressure_plate",
+    public static final DeferredBlock<Block> ANCIENT_PRESSURE_PLATE = block("ancient_pressure_plate",
             () -> new PressurePlateBlock(BlockSetType.CRIMSON, wood().forceSolidOn().noCollission()
                     .strength(0.5f).pushReaction(PushReaction.DESTROY)));
-    public static final DeferredBlock<Block> ANCIENT_BUTTON = ModBlocks.block("ancient_button",
+    public static final DeferredBlock<Block> ANCIENT_BUTTON = block("ancient_button",
             () -> new ButtonBlock(BlockSetType.CRIMSON, 30,
                     BlockBehaviour.Properties.of().noCollission().strength(0.5f).pushReaction(PushReaction.DESTROY)));
 
@@ -104,21 +104,21 @@ public final class ModBuildingBlocks
     private static StoneFamily family(String rock, DeferredBlock<Block> base)
     {
         Shapes shapes = shapes(rock, base);
-        DeferredBlock<Block> polished = ModBlocks.block("polished_" + rock, () -> new Block(copy(base)));
+        DeferredBlock<Block> polished = block("polished_" + rock, () -> new Block(copy(base)));
         Shapes polishedShapes = shapes("polished_" + rock, polished);
-        DeferredBlock<Block> bricks = ModBlocks.block(rock + "_bricks", () -> new Block(copy(base)));
+        DeferredBlock<Block> bricks = block(rock + "_bricks", () -> new Block(copy(base)));
         Shapes brickShapes = shapes(rock + "_brick", bricks);
-        DeferredBlock<Block> cracked = ModBlocks.block("cracked_" + rock + "_bricks", () -> new Block(copy(base)));
-        DeferredBlock<Block> chiseled = ModBlocks.block("chiseled_" + rock, () -> new Block(copy(base)));
+        DeferredBlock<Block> cracked = block("cracked_" + rock + "_bricks", () -> new Block(copy(base)));
+        DeferredBlock<Block> chiseled = block("chiseled_" + rock, () -> new Block(copy(base)));
         return new StoneFamily(shapes, polished, polishedShapes, bricks, brickShapes, cracked, chiseled);
     }
 
     private static Shapes shapes(String name, DeferredBlock<Block> base)
     {
         return new Shapes(
-                ModBlocks.block(name + "_stairs", () -> new StairBlock(base.get().defaultBlockState(), copy(base))),
-                ModBlocks.block(name + "_slab", () -> new SlabBlock(copy(base))),
-                ModBlocks.block(name + "_wall", () -> new WallBlock(copy(base).forceSolidOn())));
+                block(name + "_stairs", () -> new StairBlock(base.get().defaultBlockState(), copy(base))),
+                block(name + "_slab", () -> new SlabBlock(copy(base))),
+                block(name + "_wall", () -> new WallBlock(copy(base).forceSolidOn())));
     }
 
     private static BlockBehaviour.Properties copy(DeferredBlock<Block> block)
@@ -136,10 +136,15 @@ public final class ModBuildingBlocks
         return wood().strength(2.5f).sound(SoundType.STEM);
     }
 
+    private static <T extends Block> DeferredBlock<T> block(String name, Supplier<T> factory)
+    {
+        return ModBlocks.block(name, factory, AbyssiaTab.BUILDING);
+    }
+
     private static DeferredBlock<Block> door(String name, Supplier<Block> factory)
     {
         DeferredBlock<Block> block = ModBlocks.BLOCKS.register(name, factory);
-        ModItems.doubleHighBlockItem(name, block);
+        ModItems.doubleHighBlockItem(name, block, AbyssiaTab.BUILDING);
         return block;
     }
 }

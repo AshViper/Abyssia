@@ -986,6 +986,7 @@ BIOME_NAMES = {
     "brine_lakes": ("Brine Lakes", "塩水湖帯"), "glow_gardens": ("Glow Gardens", "発光花園"),
     "frost_abyss": ("Frost Abyss", "氷晶の深淵"), "abyssal_rift": ("Abyssal Rift", "深淵の裂け目"),
     "deep_fissure": ("Deep Sea Fissure", "深海の割れ目"),
+    "continental_slope": ("Continental Slope", "大陸斜面"),
     "abyss_plain": ("Abyssal Plain", "深海平原"), "abyss_garden": ("Depths Garden", "最深部の花園"),
     "abyss_crystal": ("Crystal Cavern", "結晶空洞"),
     # AB02: depth-banded abyss biomes
@@ -1103,7 +1104,8 @@ def main():
         _emit(make, tex(name))
         write(bs(name), {"variants": {"": {"model": ref(name)}}})
         write(bm(name), {"parent": "minecraft:block/carpet", "render_type": "minecraft:cutout", "textures": {"wool": ref(name)}})
-        write(im(name), {"parent": ref(name)})
+        if name not in cave_assets.NO_ITEM:
+            write(im(name), {"parent": ref(name)})
 
     bloom, bloom_glow = floating_bloom("floating_bloom")
     _save(bloom, tex("floating_bloom"))
@@ -1262,7 +1264,7 @@ def loot_tables():
                 {"type": "minecraft:item", "name": "abyssia:" + name, "conditions": silk()},
                 {"type": "minecraft:item", "name": item, "functions": funcs}]}]
             pool = {"rolls": 1, "bonus_rolls": 0, "entries": entries}
-        elif name in cave_assets.CAVERN_NO_DROP or name in industrial_assets.NO_DROP or name in DEPOSIT_ONLY:
+        elif name in cave_assets.CAVERN_NO_DROP or name in cave_assets.NO_ITEM or name in industrial_assets.NO_DROP or name in DEPOSIT_ONLY:
             write(lt(name), {"type": "minecraft:block", "pools": [], "random_sequence": "abyssia:blocks/" + name})
             continue
         elif name in COBBLED:
@@ -1469,7 +1471,6 @@ def lang():
         data.update({k: v[idx] for k, v in vehicle_assets.LANG.items()})
         for part in _lang_parts():  # BT01h: tools/lang_parts/*.json = {"key": [en, ja]}
             data.update({k: v[idx] for k, v in part.items()})
-        data["itemGroup.abyssia"] = "Abyssia"
         write(path, dict(sorted(data.items())))
 
 

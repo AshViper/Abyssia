@@ -4,6 +4,7 @@ import com.abyssia.Abyssia;
 import com.abyssia.item.scanner.LidarScannerItem;
 import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.research.ResearchManager;
+import com.abyssia.research.ScanTarget;
 import com.abyssia.research.ScanTargetRegistry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -36,7 +37,7 @@ import java.util.UUID;
 @EventBusSubscriber(modid = Abyssia.MODID)
 public final class PlayerScanState
 {
-    public static final int GRACE_TICKS = 6, SEND_INTERVAL = 4;
+    public static final int GRACE_TICKS = 6, SEND_INTERVAL = 4, NO_TARGET_TICKS = 4;
     /** MK0 scanner distance; MK1 / MK2 (technologies scanner_mk1 / scanner_mk2) reach 24 / 32 blocks */
     /** far block rays stay inside the loaded area (Level.clip would load chunks synchronously) */
     public static final double LONG_RANGE_CAP = 112.0;
@@ -48,13 +49,17 @@ public final class PlayerScanState
     private static final ResourceLocation SCANNER_MK2 = ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "technology/scanner_mk2");
 
     /** what the item should do after a tick */
-    public enum Tick { RUNNING, SCAN_DONE, IDLE_DONE }
+    /** NO_TARGET: nothing under the crosshair and no scan ran (no result); LOST: the locked target left the crosshair (quiet stop) */
+    public enum Tick { RUNNING, SCAN_DONE, IDLE_DONE, NO_TARGET, LOST }
 
     private static final Map<UUID, PlayerScanState> STATES = new HashMap<>();
 
     private ResourceLocation targetId;
     private long startTick;
-    private int duration, elapsed, grace, sinceSend, idleTicks;
+    private int duration, elapsed, grace, sinceSend, idleTicks, noTargetTicks;
+    private boolean scanned;
+    /** the last finished scan was a DEPOSIT_MINERAL target (only then does the item add the deposit report) */
+    private boolean lastDeposit;
 
     private PlayerScanState() {}
 
@@ -72,6 +77,29 @@ public final class PlayerScanState
         if (ResearchManager.isUnlocked(player, SCANNER_MK2)) return MK2_TIME;
         if (ResearchManager.isUnlocked(player, SCANNER_MK1)) return MK1_TIME;
         return 1.0;
+    }
+
+    /** Start of a use of the scanner: forgets the counters of the previous use. */
+    public static void begin(ServerPlayer player)
+    {
+        PlayerScanState s = STATES.computeIfAbsent(player.getUUID(), id -> new PlayerScanState());
+        s.idleTicks = 0;
+        s.noTargetTicks = 0;
+        s.scanned = false;
+    }
+
+    /** True when the scan that just finished (SCAN_DONE) was an ore deposit target. */
+    public static boolean lastScanWasDeposit(ServerPlayer player)
+    {
+        PlayerScanState s = STATES.get(player.getUUID());
+        return s != null && s.lastDeposit;
+    }
+
+    /** True while a target is locked or a deposit under the crosshair is being counted (scan sound only then). */
+    public static boolean isScanning(ServerPlayer player)
+    {
+        PlayerScanState s = STATES.get(player.getUUID());
+        return s != null && (s.targetId != null || s.idleTicks > 0);
     }
 
     /** One server tick of a held scanner. */
@@ -110,6 +138,8 @@ public final class PlayerScanState
             }
             s.grace = GRACE_TICKS;
             s.idleTicks = 0;
+            s.noTargetTicks = 0;
+            s.scanned = true;
             s.elapsed++;
             if (s.elapsed >= s.duration)
             {
@@ -127,6 +157,7 @@ public final class PlayerScanState
                 level.playSound(null, at.x, at.y, at.z, fresh ? SoundEvents.BEACON_POWER_SELECT : SoundEvents.CONDUIT_ACTIVATE,
                         SoundSource.PLAYERS, 0.8F, fresh ? 1.3F : 1.6F);
                 send(player, id, 1.0F, state);
+                s.lastDeposit = target.match().type() == ScanTarget.MatchType.DEPOSIT_MINERAL;
                 s.targetId = null;
                 return Tick.SCAN_DONE;
             }
@@ -143,11 +174,23 @@ public final class PlayerScanState
             if (tooFar || --s.grace < 0) abort(player);
             return Tick.RUNNING;
         }
-        // nothing scannable: after SCAN_TICKS of holding the scanner only lists deposits (old behaviour)
-        if (++s.idleTicks >= LidarScannerItem.SCAN_TICKS)
+        // no target: only an ore deposit under the crosshair is reported after SCAN_TICKS; with nothing under it the scanner stops
+        if (LidarScannerItem.lookedAt(player, level) != null)
         {
-            s.idleTicks = 0;
-            return Tick.IDLE_DONE;
+            s.noTargetTicks = 0;
+            s.scanned = true;
+            if (++s.idleTicks >= LidarScannerItem.SCAN_TICKS)
+            {
+                s.idleTicks = 0;
+                return Tick.IDLE_DONE;
+            }
+            return Tick.RUNNING;
+        }
+        s.idleTicks = 0;
+        if (++s.noTargetTicks >= NO_TARGET_TICKS)
+        {
+            s.noTargetTicks = 0;
+            return s.scanned ? Tick.LOST : Tick.NO_TARGET;
         }
         return Tick.RUNNING;
     }

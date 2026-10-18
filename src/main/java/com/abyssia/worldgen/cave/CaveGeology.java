@@ -43,6 +43,8 @@ final class CaveGeology
         CaveNoises noises = ctx.noises;
         for (int y = ctx.yMin; y <= ctx.yMax; y++)
         {
+            // Nothing in this section is solid, and only solid blocks are repainted (no set() runs while it is skipped).
+            if (ctx.sectionOpenOnly(y)) continue;
             for (int lz = 0; lz < 16; lz++)
             {
                 for (int lx = 0; lx < 16; lx++)

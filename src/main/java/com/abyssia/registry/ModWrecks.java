@@ -35,7 +35,7 @@ public final class ModWrecks
         ITEMS.register(modBus);
         modBus.addListener((BuildCreativeModeTabContentsEvent e) ->
         {
-            if (e.getTabKey().equals(ModItems.TAB.getKey())) e.accept(WRECK_CORE_ITEM);
+            if (e.getTabKey().equals(ModItems.tabKey(AbyssiaTab.NATURE))) e.accept(WRECK_CORE_ITEM);
         });
     }
 }

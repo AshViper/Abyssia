@@ -1,0 +1,34 @@
+{
+  "parent": "abyssia:dive/fully_loaded",
+  "display": {
+    "icon": {
+      "id": "abyssia:submarine_upgrade_depth_mk3"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.captain_of_the_abyss.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.captain_of_the_abyss.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "dive": {
+      "trigger": "abyssia:dive",
+      "conditions": {
+        "y": {
+          "max": -860.0
+        },
+        "in_submarine": true
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dive"
+    ]
+  ],
+  "rewards": {
+    "experience": 150
+  }
+}

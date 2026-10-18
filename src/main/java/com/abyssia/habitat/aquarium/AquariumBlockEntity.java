@@ -103,6 +103,10 @@ public class AquariumBlockEntity extends BlockEntity
             else
             {
                 creatures.add(new Creature(breeder, tBreed, false));
+                if (level instanceof net.minecraft.server.level.ServerLevel sl)
+                    for (net.minecraft.server.level.ServerPlayer sp : sl.players())
+                        if (sp.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) <= 256.0)
+                            com.abyssia.advancement.AbyssiaCriteria.event(sp, "aquarium_birth", null);
                 breedFrom.put(breeder, tBreed);
                 refreshBreeding(tBreed);
             }

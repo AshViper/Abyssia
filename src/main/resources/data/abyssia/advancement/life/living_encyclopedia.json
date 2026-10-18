@@ -1,0 +1,32 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "id": "abyssia:giant_squid_spawn_egg"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.living_encyclopedia.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.living_encyclopedia.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "scan_fauna_complete": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "group": "fauna_",
+        "complete": true
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_fauna_complete"
+    ]
+  ],
+  "rewards": {
+    "experience": 300
+  }
+}

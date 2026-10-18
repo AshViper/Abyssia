@@ -1,0 +1,33 @@
+{
+  "display": {
+    "icon": {
+      "id": "abyssia:lidar_scanner"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.root.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.root.description"
+    },
+    "background": "abyssia:textures/block/aquarium_sand.png",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "lidar_scanner": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:lidar_scanner"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "lidar_scanner"
+    ]
+  ]
+}

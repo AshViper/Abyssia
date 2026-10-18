@@ -587,7 +587,8 @@ def generate(write, bs, bm, im, tex, ref, cross_model, tube_column_model):
             write(bm(name), model)
         else:
             write(bm(name), {"parent": "minecraft:block/carpet", "render_type": "minecraft:cutout", "textures": {"wool": ref(name)}})
-        write(im(name), {"parent": ref(name)})
+        if name not in NO_ITEM:
+            write(im(name), {"parent": ref(name)})
 
     generate_cavern(write, bs, bm, im, tex, ref, cross_model)
 
@@ -607,6 +608,8 @@ CAVERN_AXE = ["ancient_stem", "ancient_root"]
 CAVERN_HOE = ["ancient_frond"]
 # Fluid surfaces drop nothing.
 CAVERN_NO_DROP = ["brine_surface"]
+# Decorative scatter blocks: no block item (not in tabs/JEI) and no drop; worldgen places them.
+NO_ITEM = {"seafloor_pebbles", "cave_rubble", "crystal_shards"}
 CAVERN_PLANT = {
     "crystal_kelp": P("#08303a", "#0d4a58", "#146a7a", "#1f8fa2", "#4fc6de"),
     "ancient_bark": P("#12242a", "#1a3338", "#234449", "#2f575c", "#406f74"),

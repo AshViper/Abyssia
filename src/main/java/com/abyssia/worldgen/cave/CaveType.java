@@ -26,8 +26,8 @@ public enum CaveType implements StringRepresentable
     UNDERGROUND_SEA("underground_sea", Size.MASSIVE, 40, 72, 0.3, 2.0, 0.3, 1, 2, "underground_sea"),
     /** AB02: halls 128-256 wide, only in the crust windows (never in the shallow network); built from wide flat halls, chimneys and rooms. */
     MEGA_CAVERN("mega_cavern", Size.MEGA, 64, 128, 0.62, 3.5, 0.0, 2, 4, null),
-    /** AB06: 280-340 wide water-filled cavity in the crust windows; placed by a coarse per-band grid, not by the profile lottery. */
-    ABYSS_CAVITY("abyss_cavity", Size.MEGA, 150, 165, 0.62, 3.5, 0.0, 2, 4, null);
+    /** AB06: 176-204 wide, about as tall, water-filled cavity in the crust windows; stacked over the four windows on one shared grid, not by the profile lottery. */
+    ABYSS_CAVITY("abyss_cavity", Size.MEGA, 160, 190, 0.62, 3.5, 0.0, 2, 4, null);
 
     public static final Codec<CaveType> CODEC = StringRepresentable.fromEnum(CaveType::values);
 

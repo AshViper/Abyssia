@@ -1,0 +1,27 @@
+{
+  "parent": "abyssia:dive/into_the_deep",
+  "display": {
+    "icon": {
+      "id": "abyssia:pressure_valve"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.feel_the_pressure.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.feel_the_pressure.description"
+    }
+  },
+  "criteria": {
+    "event_pressure_damage": {
+      "trigger": "abyssia:event",
+      "conditions": {
+        "event": "pressure_damage"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "event_pressure_damage"
+    ]
+  ]
+}

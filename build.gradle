@@ -118,6 +118,10 @@ dependencies {
         localRuntime "maven.modrinth:sodium:${sodium_version}"
         localRuntime "maven.modrinth:iris:${iris_version}"
     }
+    // Distant Horizons for checking LOD compatibility in the dev client (`-PwithDh`, client only, not shipped).
+    if (project.hasProperty('withDh') && gradle.startParameter.taskNames.any { it.toLowerCase().contains('runclient') }) {
+        localRuntime "maven.modrinth:distanthorizons:${dh_version}"
+    }
 }
 
 // Expands the declared properties in neoforge.mods.toml and pack.mcmeta.

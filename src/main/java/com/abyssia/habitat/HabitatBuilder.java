@@ -761,6 +761,7 @@ public final class HabitatBuilder
             for (BlockPos pos : water)
                 if (!level.getFluidState(pos).isSource()) level.setBlock(pos, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
             BuildEntry.Completion done = entry.complete(level, player, placement);
+            com.abyssia.advancement.AbyssiaCriteria.build(player instanceof net.minecraft.server.level.ServerPlayer sp ? sp : null, entry.id());
             if (entry.recordsUnit())
                 BuiltUnits.get(level).add(entry.id(), placement.origin(), placement.rot(), blockBox(placement.box()), paid, done.moduleId());
             BlockPos at = BlockPos.containing(centre);

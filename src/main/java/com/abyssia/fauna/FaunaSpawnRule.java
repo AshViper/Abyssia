@@ -21,7 +21,8 @@ import java.util.function.Predicate;
 
 /**
  * Where one species lives: a data file in data/&lt;namespace&gt;/fauna_spawns/ (written by tools/gen_fauna.py from
- * the research notes of each species). Depths are real metres ({@link DepthZone} maps them onto the world); the
+ * the research notes of each species). Depths are real metres ({@link DepthZone} maps them onto the world) and are
+ * informational only: spawning no longer depends on depth. The old weight rule (kept in {@link Depth#factor}): the
  * weight falls off linearly from the core range to 10 % at the recorded extremes.
  *
  * <pre>
@@ -29,7 +30,7 @@ import java.util.function.Predicate;
  * role          passive | neutral | predator | environmental (informational)
  * weight        relative spawn weight where its conditions hold
  * group         {min, max} animals per spawn
- * depth_m       {min, core_min, core_max, max} in metres
+ * depth_m       {min, core_min, core_max, max} in metres (info only; no longer affects spawn weight)
  * placement     open_water (clear of the seabed), near_floor (a few blocks above it) or seabed (standing on it)
  * cave_factor   weight multiplier under rock (caves, overhangs); 0 = never there
  * open_factor   weight multiplier under open water; 0 = caves only
@@ -170,7 +171,8 @@ public record FaunaSpawnRule(EntityType<?> entity, String role, double weight, R
     public double weight(SpawnSite site, BlockPos pos)
     {
         if (this.weight <= 0) return 0.0;
-        double w = this.weight * this.depth.factor(DepthZone.metres(site.level(), pos.getY()));
+        // depth no longer limits spawning (user decision 2026-10-10); depth_m is kept as data/info only
+        double w = this.weight;
         if (w <= 0 || site.level().getMaxLocalRawBrightness(pos) > this.maxLight) return 0.0;
         w *= site.covered(pos) ? this.caveFactor : this.openFactor;
         if (w <= 0 || !this.biomeMatches(site.level().getBiome(pos))) return 0.0;
