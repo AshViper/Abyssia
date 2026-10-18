@@ -15,6 +15,8 @@ import java.util.List;
 final class HallDecorator
 {
     private static final Direction[] HORIZONTAL = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
+    /** Upper bound of the hall life patch factor {@code 0.15 + 1.7 * patch} (patch is clamped to 0..1). */
+    private static final double PATCH_MAX = 0.15 + 1.7 * 1.0;
 
     private HallDecorator() {}
 
@@ -154,24 +156,40 @@ final class HallDecorator
                 for (int lx = 0; lx < 16; lx++)
                 {
                     if (ctx.interiorOpen(lx, y, lz)) continue;
+                    if (!ctx.nearSolid(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
                     CaveSpace space = ctx.space(lx, y, lz);
                     if (space == null || space.hall == null) continue;
                     CaveEnvironment env = space.environment;
                     CaveEnvironment.HallLife life = env.hall.life();
                     int x = ctx.x0 + lx, z = ctx.z0 + lz;
-                    double patch = 0.15 + 1.7 * noises.patch(x, y, z, 31.7);
+                    // The patch noise is costly and only scales the odds: each roll is first tested against its upper bound (patch <= 1).
+                    double patch = Double.NaN;
                     if (!env.hallFloorPlants.isEmpty() && ctx.sturdy(lx, y - 1, lz, Direction.UP))
                     {
-                        if (noises.hash(x, y, z, 601) < life.floorDensity() * patch
-                                && CavePlacer.plant(ctx, lx, y, lz, env.hallFloorPlants.pick(noises.species(x + 7, y, z)), Direction.DOWN, noises.hash(x, y, z, 602), 12)) continue;
+                        double roll = noises.hash(x, y, z, 601);
+                        if (roll < life.floorDensity() * PATCH_MAX)
+                        {
+                            patch = 0.15 + 1.7 * noises.patch(x, y, z, 31.7);
+                            if (roll < life.floorDensity() * patch
+                                    && CavePlacer.plant(ctx, lx, y, lz, env.hallFloorPlants.pick(noises.species(x + 7, y, z)), Direction.DOWN, noises.hash(x, y, z, 602), 12)) continue;
+                        }
                     }
                     else if (!env.hallCeilingPlants.isEmpty() && ctx.sturdy(lx, y + 1, lz, Direction.DOWN))
                     {
-                        if (noises.hash(x, y, z, 603) < life.ceilingDensity() * patch
-                                && CavePlacer.plant(ctx, lx, y, lz, env.hallCeilingPlants.pick(noises.species(x + 11, y, z)), Direction.UP, noises.hash(x, y, z, 604), 16)) continue;
+                        double roll = noises.hash(x, y, z, 603);
+                        if (roll < life.ceilingDensity() * PATCH_MAX)
+                        {
+                            patch = 0.15 + 1.7 * noises.patch(x, y, z, 31.7);
+                            if (roll < life.ceilingDensity() * patch
+                                    && CavePlacer.plant(ctx, lx, y, lz, env.hallCeilingPlants.pick(noises.species(x + 11, y, z)), Direction.UP, noises.hash(x, y, z, 604), 16)) continue;
+                        }
                     }
-                    if (env.hallWallPlants.isEmpty() || noises.hash(x, y, z, 605) >= life.wallDensity() * patch) continue;
+                    if (env.hallWallPlants.isEmpty()) continue;
+                    double wallRoll = noises.hash(x, y, z, 605);
+                    if (wallRoll >= life.wallDensity() * PATCH_MAX) continue;
+                    if (Double.isNaN(patch)) patch = 0.15 + 1.7 * noises.patch(x, y, z, 31.7);
+                    if (wallRoll >= life.wallDensity() * patch) continue;
                     int start = (int) (noises.hash(x, y, z, 606) * 4) & 3;
                     for (int i = 0; i < 4; i++)
                     {

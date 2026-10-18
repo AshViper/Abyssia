@@ -27,9 +27,11 @@ import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -327,12 +329,14 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
         }
         crustToRock(chunk, randomState);
         int[] tops = hideDeepWater(chunk);
+        LevelChunkSection[] crust = hideCrust(chunk);
         try
         {
             super.buildSurface(region, structureManager, randomState, chunk);
         }
         finally
         {
+            restoreCrust(chunk, crust);
             restoreDeepWater(chunk, tops);
         }
         deepStoneToRock(chunk, randomState);
@@ -375,6 +379,39 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * After {@link #crustToRock} no crust section holds the default block, so the surface rules never write there, yet
+     * vanilla's SurfaceSystem still reads every block of them (and its stone look-ahead runs through all of them). While
+     * the rules run, those sections are swapped for empty ones (same biomes), which read as air at once. One converted
+     * section is kept under the sections the rules work on, so their ceiling test (stone below, offset 0) sees the same
+     * rock under them. Returns the originals (null where nothing was swapped).
+     */
+    private static LevelChunkSection[] hideCrust(ChunkAccess chunk)
+    {
+        LevelChunkSection[] sections = chunk.getSections();
+        int minY = chunk.getMinBuildHeight(), top = DeepLayer.ABYSS_TOP_Y - 8;
+        int converted = 0;
+        while (converted < sections.length && minY + (converted << 4) + 15 < top) converted++;
+        LevelChunkSection[] originals = new LevelChunkSection[Math.max(0, converted - 1)];
+        for (int s = 0; s < originals.length; s++)
+        {
+            LevelChunkSection section = sections[s];
+            if (section.hasOnlyAir()) continue;
+            originals[s] = section;
+            sections[s] = new LevelChunkSection(new PalettedContainer<>(Block.BLOCK_STATE_REGISTRY, AIR, PalettedContainer.Strategy.SECTION_STATES), section.getBiomes());
+        }
+        return originals;
+    }
+
+    private static void restoreCrust(ChunkAccess chunk, LevelChunkSection[] originals)
+    {
+        LevelChunkSection[] sections = chunk.getSections();
+        for (int s = 0; s < originals.length; s++)
+        {
+            if (originals[s] != null) sections[s] = originals[s];
         }
     }
 

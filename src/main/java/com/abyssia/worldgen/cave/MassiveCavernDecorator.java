@@ -104,6 +104,7 @@ final class MassiveCavernDecorator
                 for (int y = ctx.yMin + 1; y < ctx.yMax; y++)
                 {
                     if (ctx.interiorOpen(lx, y, lz)) continue;
+                    if (!ctx.nearSolid(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz) || !ctx.sturdy(lx, y - 1, lz, Direction.UP)) continue;
                     Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
                     if (cavern == null) continue;
@@ -204,6 +205,7 @@ final class MassiveCavernDecorator
                 for (int y = ctx.yMax - 1; y > ctx.yMin; y--)
                 {
                     if (ctx.interiorOpen(lx, y, lz)) continue;
+                    if (!ctx.nearSolid(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz) || !ctx.sturdy(lx, y + 1, lz, Direction.DOWN)) continue;
                     Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
                     if (cavern == null) continue;
@@ -336,6 +338,7 @@ final class MassiveCavernDecorator
                 for (int lx = 0; lx < 16; lx++)
                 {
                     if (ctx.interiorOpen(lx, y, lz)) continue;
+                    if (!ctx.nearSolid(lx, y, lz)) continue;
                     if (!ctx.carvedHere(lx, y, lz) || !ctx.water(lx, y, lz)) continue;
                     Cavern cavern = cavernAt(ctx, caverns, lx, y, lz);
                     if (cavern == null) continue;

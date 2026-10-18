@@ -87,7 +87,7 @@ final class CaveGeology
                             state = env.accents.pick(noises.mottle(x, y, z, 4));
                         }
                         else if (!floor && !ceiling && space.cavern != null
-                                && Math.sin((y + noises.strata(x, y, z) * 2.0) * 0.35) > 1.02 - 0.06 * space.cavern.mineralFactor(x + 0.5, z + 0.5))
+                                && Math.sin((y + noises.strata(x, y, z) * 2.0) * 0.35) > 1.02 - 0.06 * ctx.patchAt(space.cavern, lx, lz).minerals)
                         {
                             // Mineral layers banding cavern walls, thicker and more frequent over mineral ground.
                             state = (noises.hash(x, y, z, 15) < 0.3 ? ModBlocks.CAVE_MINERAL_CRUST : ModBlocks.MINERAL_CAVE_ROCK).get().defaultBlockState();
@@ -106,7 +106,7 @@ final class CaveGeology
                     {
                         state = stratum(ctx, space, lx, y, lz);
                     }
-                    double ores = space.cavern != null ? space.cavern.mineralFactor(x + 0.5, z + 0.5) : 1.0;
+                    double ores = space.cavern != null ? ctx.patchAt(space.cavern, lx, lz).minerals : 1.0;
                     if (!floor && s < 1.2 && !space.profile.ores.isEmpty() && noises.patch(x, y, z, 91.1) > 0.82 && noises.hash(x, y, z, 13) < 0.45 * ores)
                     {
                         // Ore exposures: small outcrops to spot while exploring.
