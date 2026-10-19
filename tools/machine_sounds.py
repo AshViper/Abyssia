@@ -6,6 +6,8 @@ water / a hull. Mono 44.1 kHz Ogg Vorbis (mono so the game attenuates it with di
 
     python tools/machine_sounds.py        # writes assets/abyssia/sounds/machine/*.ogg and merges sounds.json
 
+If tools/sound_sources/machine/<id>.flac exists (made by ai_machine_sounds.py) it replaces the synthesized voice.
+
 gen_fauna.py rewrites sounds.json from scratch, so it merges entries() back in (keep both in sync by running either).
 """
 from __future__ import annotations
@@ -13,6 +15,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import subprocess
 import sys
 
 import numpy as np
@@ -141,6 +144,27 @@ def finish_loop(x, peak=0.7):
     return y * (peak / (np.abs(y).max() + 1e-9))
 
 
+SOURCES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sound_sources", "machine")
+
+
+def load_source(k):
+    """AI clip tools/sound_sources/machine/<k>.flac (LOOP + XFADE s) folded to a LOOP-length loop, or None."""
+    path = os.path.join(SOURCES, f"{k}.flac")
+    if not os.path.isfile(path):
+        return None
+    ff = os.environ.get("FFMPEG", "ffmpeg")
+    raw = subprocess.run([ff, "-v", "error", "-i", path, "-f", "s16le", "-ac", "1", "-ar", str(SR), "-"],
+                         check=True, capture_output=True).stdout
+    x = np.frombuffer(raw, dtype="<i2").astype(np.float64) / 32768.0
+    n, m = int(SR * LOOP), int(SR * XFADE)
+    if len(x) < n + m:
+        x = np.concatenate([x, np.zeros(n + m - len(x))])
+    out = x[:n].copy()
+    w = np.linspace(0, 1, m)
+    out[:m] = x[:m] * np.sqrt(w) + x[n:n + m] * np.sqrt(1 - w)
+    return out
+
+
 # ================================================================ output
 
 def entries():
@@ -158,8 +182,10 @@ def lang():
 def main():
     folder = os.path.join(ASSETS, "sounds", "machine")
     for k in SOUNDS:
-        write_ogg(finish_loop(VOICES[k](rng(f"machine/{k}"))), os.path.join(folder, f"{k}.ogg"))
-        print(f"  machine/{k}.ogg")
+        src = load_source(k)
+        x = src if src is not None else VOICES[k](rng(f"machine/{k}"))
+        write_ogg(finish_loop(x), os.path.join(folder, f"{k}.ogg"))
+        print(f"  machine/{k}.ogg ({'ai' if src is not None else 'synth'})")
     path = os.path.join(ASSETS, "sounds.json")
     with open(path, encoding="utf-8") as f:
         table = json.load(f)
