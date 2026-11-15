@@ -163,6 +163,23 @@ public final class ClientConfig
         BUILDER.pop();
     }
 
+    static
+    {
+        BUILDER.comment("BOSS01 giant bosses seen from far away").push("boss_lod");
+    }
+
+    public static final ModConfigSpec.BooleanValue LOD_ENABLED = BUILDER
+            .comment("Simplified boss models in the middle distance, and a fog-proof silhouette with glow points far out")
+            .define("lod_enabled", true);
+    public static final ModConfigSpec.IntValue LOD_DISTANCE = BUILDER
+            .comment("Draw the far silhouette of a boss up to this many blocks from you")
+            .defineInRange("lod_distance", 512, 160, 1024);
+
+    static
+    {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     /**

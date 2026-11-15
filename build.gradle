@@ -57,6 +57,14 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        // Dev-only: devtest/BossShot joins the local test server and stages the boss scenes (BOSS01).
+        bossShot {
+            client()
+            gameDirectory = project.file('run')
+            programArguments.addAll '--quickPlayMultiplayer', 'localhost:25631'
+            systemProperty 'abyssia.bossshot', (project.findProperty('bossShot') ?: '1')
+        }
+
         server {
             server()
             gameDirectory = project.file('run')
