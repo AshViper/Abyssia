@@ -84,6 +84,29 @@ public final class ModEntities
     public static final RegistryObject<EntityType<HelmetJelly>> HELMET_JELLY = animal("helmet_jelly", HelmetJelly::new, 0.6F, 0.75F, 8);
     public static final RegistryObject<EntityType<GiantPhantomJelly>> GIANT_PHANTOM_JELLY = animal("giant_phantom_jelly", GiantPhantomJelly::new, 2.8F, 1.5F, 12);
 
+    /** 200 block boss: 4.5 block head hitbox, tracked 16 chunks out, position every tick (see com.abyssia.entity.boss). */
+    public static final RegistryObject<EntityType<com.abyssia.entity.boss.AbyssSerpent>> ABYSS_SERPENT = ENTITIES.register("abyss_serpent",
+            () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssSerpent::new, MobCategory.MONSTER).sized(4.5F, 4.5F).fireImmune()
+                    .clientTrackingRange(16).updateInterval(1).build("abyss_serpent"));
+
+    public static final RegistryObject<EntityType<com.abyssia.entity.boss.TrenchWyrm>> TRENCH_WYRM = ENTITIES.register("trench_wyrm",
+            () -> EntityType.Builder.of(com.abyssia.entity.boss.TrenchWyrm::new, MobCategory.MONSTER).sized(5.5F, 5.5F).fireImmune()
+                    .clientTrackingRange(16).updateInterval(1).build("trench_wyrm"));
+    public static final RegistryObject<EntityType<com.abyssia.entity.boss.AbyssKraken>> ABYSS_KRAKEN = ENTITIES.register("abyss_kraken",
+            () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssKraken::new, MobCategory.MONSTER).sized(6.0F, 6.0F).fireImmune()
+                    .clientTrackingRange(16).updateInterval(1).build("abyss_kraken"));
+    public static final RegistryObject<EntityType<com.abyssia.entity.boss.AbyssMother>> ABYSS_MOTHER = ENTITIES.register("abyss_mother",
+            () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssMother::new, MobCategory.MONSTER).sized(8.0F, 8.0F).fireImmune()
+                    .clientTrackingRange(16).updateInterval(1).build("abyss_mother"));
+    /** Small brood jelly of the mother (MISC so it never counts against the monster cap). */
+    public static final RegistryObject<EntityType<com.abyssia.entity.boss.AbyssMotherSpawn>> ABYSS_MOTHER_SPAWN = ENTITIES.register("abyss_mother_spawn",
+            () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssMotherSpawn::new, MobCategory.MISC).sized(1.2F, 1.2F).fireImmune()
+                    .clientTrackingRange(8).build("abyss_mother_spawn"));
+    /** Falling rock of the wyrm's third phase: harmless to terrain. */
+    public static final RegistryObject<EntityType<com.abyssia.entity.boss.RockShard>> ROCK_SHARD = ENTITIES.register("rock_shard",
+            () -> EntityType.Builder.<com.abyssia.entity.boss.RockShard>of(com.abyssia.entity.boss.RockShard::new, MobCategory.MISC).sized(0.8F, 0.8F).fireImmune()
+                    .clientTrackingRange(10).updateInterval(2).build("rock_shard"));
+
     private ModEntities() {}
 
     private static <T extends Mob> RegistryObject<EntityType<T>> animal(String name, EntityType.EntityFactory<T> factory, float width, float height,
@@ -101,6 +124,11 @@ public final class ModEntities
     @SubscribeEvent
     public static void attributes(EntityAttributeCreationEvent event)
     {
+        event.put(ABYSS_SERPENT.get(), com.abyssia.entity.boss.AbyssSerpent.createAttributes().build());
+        event.put(TRENCH_WYRM.get(), com.abyssia.entity.boss.TrenchWyrm.createAttributes().build());
+        event.put(ABYSS_KRAKEN.get(), com.abyssia.entity.boss.AbyssKraken.createAttributes().build());
+        event.put(ABYSS_MOTHER.get(), com.abyssia.entity.boss.AbyssMother.createAttributes().build());
+        event.put(ABYSS_MOTHER_SPAWN.get(), com.abyssia.entity.boss.AbyssMotherSpawn.createAttributes().build());
         event.put(ANGLERFISH.get(), Anglerfish.createAttributes().build());
         event.put(GIANT_ISOPOD.get(), GiantIsopod.createAttributes().build());
         event.put(GULPER_EEL.get(), GulperEel.createAttributes().build());

@@ -86,8 +86,18 @@ minecraft {
         }
 
         client {
-            property 'abyssia.autoshot', '1'
-            args '--quickPlaySingleplayer', 'hl'
+            if (project.hasProperty('bossShot'))
+            {
+                // Dev-only: devtest/BossShot joins the local test server and stages the boss scenes (BOSS01).
+                // `gradlew runClient -PbossShot=1` (parent-based runs would also inherit autoshot and its quickPlay args).
+                property 'abyssia.bossshot', project.findProperty('bossShot') ?: '1'
+                args '--quickPlayMultiplayer', 'localhost:25641'
+            }
+            else
+            {
+                property 'abyssia.autoshot', '1'
+                args '--quickPlaySingleplayer', 'hl'
+            }
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
         }

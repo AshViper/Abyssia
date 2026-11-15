@@ -252,6 +252,7 @@ def lang():
         old = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
         keep = {k: v for k, v in old.items() if not k.startswith(("entity.abyssia.", "subtitles.abyssia.entity."))
                 and not (k.startswith("item.abyssia.") and k.endswith(".dropped_by"))}
+        keep["entity.abyssia.abyss_serpent"] = ("Abyssal Serpent", "深淵の大海蛇")[idx]  # BOSS01 boss, not a species
         for s in species():
             name = sid(s)
             keep["entity.abyssia." + name] = s.INFO["names"][idx]

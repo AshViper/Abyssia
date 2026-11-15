@@ -77,6 +77,7 @@ public final class DeepOceanClientEffects
         fogEnd = -1;
         cavernHaze = 0;
         hallHaze = 0;
+        com.abyssia.client.boss.BossFarClient.clear();
     }
 
     /** 0 at the surface, 1 at the old transition depth (Y -40). */
@@ -198,6 +199,9 @@ public final class DeepOceanClientEffects
         // distance instead, and keep vanilla's eyes-adjusting ramp (from 1/4 of the distance) right after diving in.
         float waterVision = Mth.clamp(player.getWaterVision(), 0.25f, 1f);
         float end = Math.min(Minecraft.getInstance().gameRenderer.getRenderDistance(), fogEnd * waterVision);
+        // BOSS01: during a boss fight the fog opens to twice its range (at least 96 blocks), still capped by the render distance
+        if (com.abyssia.client.boss.BossFarClient.inCombat())
+            end = Math.min(Minecraft.getInstance().gameRenderer.getRenderDistance(), Math.max(end * 2f, 96f));
         // In a cavern the fog starts a little way out: nearby rock and plants stay crisp, the middle distance hazes over.
         float share = fogStartShare(player.getEyeY());
         // EN01: Deep Sight moves the start of the fog out toward the clear surface-water share (I 35%, II 65% of the way).

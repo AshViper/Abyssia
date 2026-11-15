@@ -144,6 +144,12 @@ public final class ModEntityRenderers
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
     {
+        event.registerEntityRenderer(ModEntities.ABYSS_SERPENT.get(), com.abyssia.client.boss.AbyssSerpentRenderer::new);
+        event.registerEntityRenderer(ModEntities.TRENCH_WYRM.get(), com.abyssia.client.boss.TrenchWyrmRenderer::new);
+        event.registerEntityRenderer(ModEntities.ABYSS_KRAKEN.get(), com.abyssia.client.boss.AbyssKrakenRenderer::new);
+        event.registerEntityRenderer(ModEntities.ABYSS_MOTHER.get(), com.abyssia.client.boss.AbyssMotherRenderer::new);
+        event.registerEntityRenderer(ModEntities.ABYSS_MOTHER_SPAWN.get(), com.abyssia.client.boss.AbyssMotherRenderer.Spawn::new);
+        event.registerEntityRenderer(ModEntities.ROCK_SHARD.get(), ctx -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(ctx, 2.5F, true));
         // the esca: bacterial blue-green light that pulses, flickers in the threat display and goes dark when it flees
         event.registerEntityRenderer(ModEntities.ANGLERFISH.get(), FaunaRenderer.<Anglerfish>spec("anglerfish", ANGLERFISH,
                         root -> new FaunaModel<>(root, AnglerfishGeometry.ANGLERFISH, Map.of("idle", AnglerfishAnimations.IDLE,
