@@ -386,8 +386,8 @@ public final class HabitatPower
         int oxygen = module < 0 ? HabitatAir.MAX : HabitatAir.get(server).oxygen(module);
         player.displayClientMessage(Component.translatable(key, String.format("%,d", stored(server, base)), String.format("%,d", CAPACITY),
                 String.format("%,d", rt.lastInput), String.format("%,d", rt.lastOutput), String.format("%,d", rt.lastDrain),
-                String.valueOf(oxygen * 100 / HabitatAir.MAX))
-                .append(com.abyssia.habitat.upkeep.HabitatUpkeep.status(server, module)), true);
+                String.valueOf(oxygen * 100 / HabitatAir.MAX)), true);
+        com.abyssia.habitat.upkeep.HabitatUpkeep.sendStatusLine(server, player, module);
     }
 
     // ---------------------------------------------------------------- harness / tooling

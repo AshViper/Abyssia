@@ -205,6 +205,31 @@ public class HabitatUpkeep extends SavedData
         return out;
     }
 
+    private static final Map<java.util.UUID, Long> LAST_LINE = new HashMap<>();
+
+    /** Standalone chat line of the shell state (sneak + empty-hand click); throttled to once per 40 ticks per player. */
+    public static void sendStatusLine(ServerLevel level, net.minecraft.world.entity.player.Player player, int module)
+    {
+        if (!active() || module < 0) return;
+        HabitatBases.Module m = HabitatBases.get(level).module(module);
+        if (m == null || !wearable(m.box())) return;
+        long now = level.getGameTime();
+        Long last = LAST_LINE.get(player.getUUID());
+        if (last != null && now >= last && now - last < 40) return;
+        LAST_LINE.put(player.getUUID(), now);
+        HabitatUpkeep data = get(level);
+        int v = data.integrity(module);
+        String key = "message." + Abyssia.MODID + ".habitat.upkeep";
+        var out = Component.translatable(key + ".line", String.valueOf(v / 1000));
+        int lvl = leakLevel(v);
+        if (lvl > 0) out.append(Component.translatable(key + (lvl == 1 ? ".leak_small" : ".leak_large")));
+        if (data.isReinforced(module)) out.append(Component.translatable(key + ".reinforced"));
+        Quake q = data.quakes.get(HabitatBases.get(level).root(module));
+        if (q != null && q.impactAt >= 0)
+            out.append(Component.translatable(key + ".line_quake", String.valueOf(Math.max(0, (q.impactAt - level.getGameTime()) / 20))));
+        player.displayClientMessage(out, false);
+    }
+
     // ---------------------------------------------------------------- tick
 
     void tick(ServerLevel level)

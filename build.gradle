@@ -80,6 +80,14 @@ neoForge {
             systemProperty 'abyssia.prcguishot', '1'
         }
 
+        // Dev-only: devtest/ContentShot enters a singleplayer world and screenshots the latest content (log lines "CONTENTSHOT ...").
+        contentShot {
+            client()
+            gameDirectory = project.file('run')
+            programArguments.addAll '--quickPlaySingleplayer', 'PrcGuiShot'
+            systemProperty 'abyssia.contentshot', '1'
+        }
+
         server {
             server()
             gameDirectory = project.file('run')
