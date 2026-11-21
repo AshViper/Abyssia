@@ -199,8 +199,13 @@ public final class CaveCommand
         {
             double sum = 0;
             List<AbyssCavity.Site> sites = AbyssCavity.near(net, pos.getX(), pos.getZ(), radius);
-            for (AbyssCavity.Site site : sites) sum += Math.PI * site.radius() * site.radius();
-            share.append(String.format(java.util.Locale.ROOT, " [%s] n=%d %.0f blocks2 %.1f%%;", net.label(), sites.size(), sum, radius > 0 ? sum / circle * 100 : 0));
+            int ocean = 0;
+            for (AbyssCavity.Site site : sites)
+            {
+                sum += Math.PI * site.radius() * site.radius();
+                if (!net.land(site.x(), site.z())) ocean++;
+            }
+            share.append(String.format(java.util.Locale.ROOT, " [%s] n=%d (centre under ocean %d) %.0f blocks2 %.1f%%;", net.label(), sites.size(), ocean, sum, radius > 0 ? sum / circle * 100 : 0));
         }
         ctx.getSource().sendSuccess(() -> Component.literal(share.toString()), false);
         for (int i = 0; i < Math.min(lines.size(), CAVITY_LINES); i++)

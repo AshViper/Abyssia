@@ -17,6 +17,8 @@ LANG = {
     f"tooltip.{MOD}.electric_tool.energy": ("Energy %s%% (%s / %s FE)", "エネルギー %s%% (%s / %s FE)"),
     f"tooltip.{MOD}.electric_tool.charge": ("Charge with FE (no durability)", "FEで充電 (耐久なし)"),
     f"message.{MOD}.electric_tool.empty": ("Out of energy", "エネルギー切れ"),
+    # hand lamp (models: hand_lamp_assets.py; its name was only hand-written into the lang files, which lang() drops)
+    f"item.{MOD}.hand_lamp": ("Hand Lamp", "ハンドランプ"),
     # I04 propulsion screw
     f"item.{MOD}.propulsion_screw": ("Propulsion Screw", "推進スクリュー"),
     f"tooltip.{MOD}.propulsion_screw.use": ("Hold right-click under water to thrust forward", "水中で右クリック長押しで推進"),

@@ -141,7 +141,26 @@ final class CaveBuilder
         StringBuilder summary = new StringBuilder(type.getSerializedName());
         if (landmark != null) summary.append(" [").append(landmark.getSerializedName()).append(']');
         if (!route.isEmpty()) summary.append(": ").append(String.join(" > ", route));
+        if (net.isWindow()) dropUnderLand();
         return new CaveSystem(cellX, cellZ, minor, type, landmark, List.copyOf(shapes), List.copyOf(spaces), List.copyOf(sites), List.copyOf(vents),
                 summary.toString(), Mth.floor(x), Mth.floor(y), Mth.floor(z), net.band());
+    }
+
+    /**
+     * The crust under land stays solid rock: a crust window system drops every part (shape, site, vent) whose centre lies under
+     * land ({@link CaveNetwork#land}), so tunnels that run from the ocean side toward a coast end there. Only the output is
+     * filtered (the random stream was used up as before), so systems clear of land come out unchanged.
+     */
+    private void dropUnderLand()
+    {
+        // Judged per 8 x 8 column cell (at its middle), so the answer never depends on which part asked first.
+        java.util.Map<Long, Boolean> land = new java.util.HashMap<>();
+        java.util.function.BiPredicate<Double, Double> under = (x, z) -> {
+            int cx = Mth.floor(x) >> 3, cz = Mth.floor(z) >> 3;
+            return land.computeIfAbsent(((long) cx << 32) ^ (cz & 0xFFFFFFFFL), k -> net.land((cx << 3) + 4, (cz << 3) + 4));
+        };
+        shapes.removeIf(s -> under.test((s.minX + s.maxX) * 0.5, (s.minZ + s.maxZ) * 0.5));
+        sites.removeIf(s -> under.test(s.x(), s.z()));
+        vents.removeIf(v -> under.test((double) v.x(), (double) v.z()));
     }
 }

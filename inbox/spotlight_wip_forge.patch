@@ -1,0 +1,65 @@
+diff --git a/src/main/java/com/abyssia/client/light/SpotlightProjector.java b/src/main/java/com/abyssia/client/light/SpotlightProjector.java
+index 3fdf370f..570a2d78 100644
+--- a/src/main/java/com/abyssia/client/light/SpotlightProjector.java
++++ b/src/main/java/com/abyssia/client/light/SpotlightProjector.java
+@@ -27,6 +27,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
+ import net.minecraftforge.fml.common.Mod;
+ import org.jetbrains.annotations.Nullable;
+ import org.joml.Matrix4f;
++import org.joml.Quaternionf;
+ import org.joml.Vector3f;
+ import org.lwjgl.opengl.GL;
+ import org.lwjgl.opengl.GL11;
+@@ -91,6 +92,7 @@ public final class SpotlightProjector
+     private static float fogEnd = Float.MAX_VALUE;
+     private static int fogShape;
+ 
++    private static int DBG; private static int DBG2;
+     private SpotlightProjector() {}
+ 
+     public static void addSource(Spotlight.Source source)
+@@ -112,7 +114,7 @@ public final class SpotlightProjector
+     }
+ 
+     // before ShaderFogPass, which fogs the light over with a shader pack on
+-    @SubscribeEvent(priority = EventPriority.HIGH)
++    @SubscribeEvent(priority = EventPriority.LOW)
+     public static void onRenderLevelStage(RenderLevelStageEvent event)
+     {
+         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES)
+@@ -125,7 +127,9 @@ public final class SpotlightProjector
+         ClientLevel level = Minecraft.getInstance().level;
+         if (event.getStage() != stage() || level == null || lightShader == null || shadowShader == null || SOURCES.isEmpty()) return;
+         Camera camera = event.getCamera();
+-        Matrix4f modelView = new Matrix4f(event.getPoseStack().last().pose());
++        // after the level, with a shader pack, the event's pose stack holds the projection again, not the view
++        Matrix4f modelView = shaderPack ? new Matrix4f().rotation(camera.rotation().conjugate(new Quaternionf()))
++                : new Matrix4f(event.getPoseStack().last().pose());
+         Matrix4f projection = new Matrix4f(event.getProjectionMatrix());
+         // made here, not taken from the event: after the level, the renderer's frustum may be one Iris left behind
+         Frustum frustum = new Frustum(modelView, projection);
+@@ -134,6 +138,7 @@ public final class SpotlightProjector
+         List<List<BlockMeshes.Mesh>> meshes = new ArrayList<>();
+         for (Spotlight light : lights) meshes.add(meshes(level, light));
+         BlockMeshes.make(level);
++        if (DBG++ % 30 == 0) System.out.println("[SLDBG] lights=" + lights.size() + " meshes=" + meshes.stream().mapToInt(m -> (int) m.stream().filter(x -> x.buffer != null).count()).sum());
+         if (lights.isEmpty()) return;
+         if (shaderPack) syncRenderState();
+         float depthOffset = shaderPack ? SHADER_PACK_DEPTH_OFFSET_FACTOR : DEPTH_OFFSET_FACTOR;
+@@ -399,7 +404,7 @@ public final class SpotlightProjector
+         ForcedState.blend(true);
+         ForcedState.polygonOffset(depthOffset, DEPTH_OFFSET_UNITS);
+ 
+-        float brightness = INTENSITY * light.brightness();
++        float brightness = INTENSITY * light.brightness() * (ShaderCompat.shaderPackInUse() ? 40.0f : 1.0f);
+         int color = light.color();
+         shader.setSampler("Sampler0", Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS));
+         shader.setSampler("ShadowMap", shadowMap.getDepthTextureId());
+@@ -417,6 +422,7 @@ public final class SpotlightProjector
+         shader.safeGetUniform("LightFogStart").set(fogStart);
+         shader.safeGetUniform("LightFogEnd").set(fogEnd);
+         shader.safeGetUniform("LightFogShape").set(fogShape);
++        if (DBG2++ % 20 == 0) System.out.println("[SLDBG] fbo=" + GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING) + " main=" + Minecraft.getInstance().getMainRenderTarget().frameBufferId + " blend=" + GL11.glIsEnabled(GL11.GL_BLEND) + " depth=" + GL11.glIsEnabled(GL11.GL_DEPTH_TEST) + " err=" + GL11.glGetError() + " fog=" + fogStart + "," + fogEnd + "," + fogShape + " meshes=" + meshes.size() + " lightPos=" + origin + " mv0=" + modelView.m00());
+         drawMeshes(shader, meshes, cameraPosition);
+ 
+         RenderSystem.polygonOffset(0.0f, 0.0f);

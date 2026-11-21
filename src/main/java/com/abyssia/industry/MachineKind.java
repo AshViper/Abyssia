@@ -26,7 +26,8 @@ public enum MachineKind
     ENERGY_DEVICE("energy_device", 0, false, GuiLayout.ENERGY),
     //                       id                        inputs reagent outputs (main + rare) layout
     SELECTIVE_LEACHING_SEPARATOR("selective_leaching_separator", 1, true, 4, GuiLayout.LEACHING),
-    ABYSSAL_EXCAVATOR("abyssal_excavator", 0, false, 2, GuiLayout.EXCAVATOR); // ore + Mk2 by-product slot
+    ABYSSAL_EXCAVATOR("abyssal_excavator", 0, false, 2, GuiLayout.EXCAVATOR), // ore + Mk2 by-product slot
+    HYDROTHERMAL_PRECIPITATOR("hydrothermal_precipitator", 0, false, 9, GuiLayout.PRECIPITATOR); // PRC01: 3x3 output slots
 
     /** Energy buffer of every processing machine. */
     public static final int MACHINE_CAPACITY = 32_000;
@@ -120,6 +121,7 @@ public enum MachineKind
             case AUXILIARY_GENERATOR -> ModSounds.MACHINE_BIOFUEL.get();
             case ENERGY_DEVICE -> null;
             case ABYSSAL_EXCAVATOR -> ModSounds.MACHINE_CRUSHER.get(); // reuse crusher sound for excavator
+            case HYDROTHERMAL_PRECIPITATOR -> ModSounds.MACHINE_GEOTHERMAL.get();
         };
     }
 

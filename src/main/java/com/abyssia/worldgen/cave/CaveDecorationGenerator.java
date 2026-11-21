@@ -214,6 +214,7 @@ final class CaveDecorationGenerator
             boolean arch = site.kind() == CaveSystem.SiteKind.ARCH;
             int range = arch ? 22 : 12;
             BlockState kelp = ModBlocks.GIANT_CAVE_KELP.get().defaultBlockState();
+            double ratio = CavePlacer.vegRatio();
             forEachOpen(ctx, site, range, (lx, y, lz, d) -> {
                 int x = ctx.x0 + lx, z = ctx.z0 + lz;
                 double roll = ctx.noises.hash(x, y, z, 91);
@@ -223,7 +224,7 @@ final class CaveDecorationGenerator
                     // Vines and roots trailing from overhangs and the underside of arches.
                     if (roll < 0.55 && !env.ceilingPlants.isEmpty())
                     {
-                        CavePlacer.plant(ctx, lx, y, lz, env.ceilingPlants.pick(ctx.noises.species(x, y, z)), Direction.UP, ctx.noises.hash(x, y, z, 92), 8);
+                        CavePlacer.plantScaled(ctx, lx, y, lz, env.ceilingPlants.pick(ctx.noises.species(x, y, z)), Direction.UP, ctx.noises.hash(x, y, z, 92), 8, ratio);
                     }
                     return;
                 }
@@ -237,7 +238,7 @@ final class CaveDecorationGenerator
                 if (roll < 0.07 * near + (arch ? 0.03 : 0))
                 {
                     // A stand of giant kelp marking the spot from afar.
-                    CavePlacer.plant(ctx, lx, y, lz, new CaveEnvironment.PlantEntry(kelp, 8, arch ? 22 : 30), Direction.DOWN, ctx.noises.hash(x, y, z, 93), 40);
+                    CavePlacer.plantScaled(ctx, lx, y, lz, new CaveEnvironment.PlantEntry(kelp, 8, arch ? 22 : 30), Direction.DOWN, ctx.noises.hash(x, y, z, 93), 40, ratio);
                 }
                 else if (roll < 0.1 * near + 0.07 && !env.crystals.isEmpty())
                 {
@@ -245,7 +246,7 @@ final class CaveDecorationGenerator
                 }
                 else if (roll < 0.35 * near + 0.1 && !env.floorPlants.isEmpty())
                 {
-                    CavePlacer.plant(ctx, lx, y, lz, env.floorPlants.pick(ctx.noises.species(x, y, z)), Direction.DOWN, ctx.noises.hash(x, y, z, 95), 12);
+                    CavePlacer.plantScaled(ctx, lx, y, lz, env.floorPlants.pick(ctx.noises.species(x, y, z)), Direction.DOWN, ctx.noises.hash(x, y, z, 95), 12, ratio);
                 }
             });
         }

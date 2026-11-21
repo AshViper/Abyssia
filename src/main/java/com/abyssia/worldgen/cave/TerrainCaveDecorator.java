@@ -246,12 +246,13 @@ final class TerrainCaveDecorator
         if (cluster == null) return;
         // 0 in sparse vegetation zones, 1 in very dense ones.
         double zone = Mth.clamp((noises.vegetationZone(x, floor, z) - 0.25) / 2.95, 0.0, 1.0);
-        double lush = env.flora.density() * vegetation;
+        // Odds are capped as tuned (at the reference multiplier), then the configured share is kept (linear in the multiplier).
+        double lush = env.flora.density() * CavePlacer.VEG_REF, ratio = vegetation / CavePlacer.VEG_REF;
         boolean stalk = noises.hash(x, floor, z, 623) < Mth.lerp(Math.pow(cluster.q, 1.3), 0.75, 0.12);
 
         int kelp = 0;
         BlockState plant = kelpFor(env, space.environmentId.getPath(), cluster.roll, noises.hash(x, floor, z, 624));
-        if (plant != null && stalk && noises.hash(cluster.cellX, 5, cluster.cellZ, 622) < Math.min(0.9, lush * KELP * (0.3 + 0.7 * zone)))
+        if (plant != null && stalk && noises.hash(cluster.cellX, 5, cluster.cellZ, 622) < Math.min(0.9, lush * KELP * (0.3 + 0.7 * zone)) * ratio)
         {
             double h = gap * cluster.height * (1 - 0.4 * Math.pow(cluster.q, 1.5)) * (0.85 + 0.3 * noises.hash(x, floor, z, 625));
             int height = Math.min(Mth.floor(h), Math.min(MAX_KELP, gap - 3));
@@ -260,7 +261,7 @@ final class TerrainCaveDecorator
 
         if (!ctx.sturdy(lx, top + 1, lz, Direction.DOWN) || env.ceilingPlants.isEmpty()) return;
         boolean hangStalk = noises.hash(x, top, z, 626) < Mth.lerp(Math.pow(cluster.q, 1.3), 0.6, 0.1);
-        if (!hangStalk || noises.hash(cluster.cellX, 6, cluster.cellZ, 622) >= Math.min(0.85, lush * HANGING * (0.4 + 0.6 * zone))) return;
+        if (!hangStalk || noises.hash(cluster.cellX, 6, cluster.cellZ, 622) >= Math.min(0.85, lush * HANGING * (0.4 + 0.6 * zone)) * ratio) return;
         CaveEnvironment.PlantEntry entry = env.ceilingPlants.pick(Mth.clamp(noises.species(x + 53, top, z) + (noises.hash(x, top, z, 627) - 0.5) * 0.2, 0, 0.999));
         if (!(entry.state().getBlock() instanceof HangingPlantBlock)) return;
         int length;

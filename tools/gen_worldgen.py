@@ -81,7 +81,7 @@ def _deep_layer_constants():
 DL = _deep_layer_constants()
 SHIFT, MIN_Y, TOP_Y = DL["SHIFT"], DL["MIN_Y"], DL["TOP_Y"]
 BAND_TOP_Y, CEILING_BOTTOM_Y, SEABED_MAX_Y = DL["BAND_TOP_Y"], DL["CEILING_BOTTOM_Y"], DL["SEABED_MAX_Y"]
-DEEP_BOTTOM_Y, ABYSS_TOP_Y, ABYSS_CEILING_BOTTOM_Y, ABYSS_SEABED_BASE_Y = DL["DEEP_BOTTOM_Y"], DL["ABYSS_TOP_Y"], DL["ABYSS_CEILING_BOTTOM_Y"], DL["ABYSS_SEABED_BASE_Y"]
+DEEP_BOTTOM_Y, ABYSS_TOP_Y, ABYSS_CEILING_BOTTOM_Y = DL["DEEP_BOTTOM_Y"], DL["ABYSS_TOP_Y"], DL["ABYSS_CEILING_BOTTOM_Y"]
 WORLD_TOP = 320                    # top of the ocean world (exclusive): height = WORLD_TOP - MIN_Y
 # Where the router switches layers: between the noise cell corners at Y -72 / -64 (cells are 8 tall) and the biome
 # quarts at Y -68 / -64, so every sample point lands clearly on one side (the gradient below is not exact to 1e-9).
@@ -183,10 +183,23 @@ DEEP = dict(
 # Solid from the bedrock band down to a noisy underside between CEILING_BOTTOM_Y and CEILING_BOTTOM_Y + `relief`.
 CEILING = dict(relief=16)
 
+# ---------------------------------------------------------------- land gate of the deep layer
+# The deep layer (open water under the rock ceiling) only exists under oceans: land = 0 at sea, 1 on land (smoothstep).
+# `overworld` = vanilla continentalness ramp (vanilla: deep ocean < -0.455, ocean < -0.19, coast to -0.11, inland above): the
+# floor starts rising under the open ocean and meets the ceiling around the shoreline; `planet` = the planet's macro seabed M
+# (the 50 m seas m0 < M < 0 keep the deep sea, the rise to the ~Y 55 shallows and the islands above it are land; the open
+# continental slope M < m0 is untouched). The deep seabed is blended toward `land_y` (overworld Y, above the ceiling) by
+# `land`, so the floor rises as a continental slope whatever its depth was, and is rock at land = 1 (it meets the ceiling at
+# land ~0.2 under the shallowest seabed, ~0.85 under the deepest). `cave_lift` x land is added to the noise caves: the land's
+# rock stays solid.
+# Overworld ramp measured 2026-11-19 (seed 12345, 4096 blocks square): (-0.22, -0.04) put the floor from Y -200 up to the
+# ceiling within ~70 blocks; (-0.36, -0.06) starts the rise under the offshore ocean and closes deep floors near the shore.
+DEEP_LAND = dict(overworld=(-0.36, -0.06), planet=(0.0, 0.1), land_y=-40, cave_lift=4.0)
+
 # ---------------------------------------------------------------- abyss layer (overworld Y)
 # Under the deep layer: its rock (the deep seabeds reach about Y -362, ABYSS_TOP_Y -376 is where the router switches) and
-# a ceiling with a noisy underside between ABYSS_CEILING_BOTTOM_Y and + `relief`, then ~1300 blocks of open water down to a
-# seabed at ABYSS_SEABED_BASE_Y + 64 x offset (offset -3..3: about Y -1842..-1458) and bedrock from MIN_Y. The only ways
+# a ceiling with a noisy underside between ABYSS_CEILING_BOTTOM_Y and + `relief`, then (historic comment, the abyss is now a solid
+# crust with caves, see AB02) down to the bedrock from MIN_Y (-576). The deep sea spans Y -64..-568. The only ways
 # down are the hadal shafts: abyssia:rift columns (a second noise, so a second set of cells) over the deep layer's low
 # floors (seabed at the axis at or below `max_seabed`, in the deep layer's blocks/64 offset), opened through the deep
 # floor's rock and the ceiling from `open_below` down (max_seabed 0.35 = deep Y 22 = overworld Y -218, `open_below` above it).
@@ -196,7 +209,7 @@ ABYSS = dict(
     canyons=(0.35, 0.06, 16.0, -1.2),  # narrow canyons ~77 blocks deep
     offset_limit=3.0,              # seabed offset clamp: keeps the floor 25+ blocks over the bedrock
     ceiling_relief=16,
-    rift=dict(cell=320, chance=0.6, radius=(10, 16), max_seabed=0.35, carve=16.0, open_below=-205, shaft_bottom=-560),
+    rift=dict(cell=320, chance=0.6, radius=(10, 16), max_seabed=0.35, carve=16.0, open_below=-205, shaft_bottom=-545),
     # (the abyss router's continentalness is a function of Y now: ABYSS_CLIMATE, abyss_code)
 )
 
@@ -376,7 +389,16 @@ def terrain():
     def knee_clamp(raw):
         return flat(knee_expr(raw))
     write("density_function/deep_seabed_offset", knee_clamp(A("deep_seabed_raw")))
-    write("density_function/overworld/deep_seabed_offset_nr", knee_clamp(A("overworld/deep_seabed_raw_nr")))
+    # Land gate (0 = sea, 1 = land, see DEEP_LAND): past the knee clamp the deep seabed is blended toward land_y (above the
+    # ceiling), so under land the deep layer is solid rock. Only the overworld and planet noise settings use it.
+    dl = DEEP_LAND
+    write("density_function/overworld/deep_land", flat(ramp("minecraft:overworld/continents", *dl["overworld"])))
+    write("density_function/planet/deep_land", flat(ramp(A("planet/seabed_macro"), *dl["planet"])))
+
+    def land_blend(seabed, land):
+        return add(seabed, mul(land, add(y(dl["land_y"] - SHIFT), mul(-1, seabed))))
+    write("density_function/overworld/deep_seabed_offset_nr",
+          flat(land_blend(knee_expr(A("overworld/deep_seabed_raw_nr")), A("overworld/deep_land"))))
 
     def caves(cheese, cheese_threshold, min_y):
         cheese_d = mul(2.0, add(cheese_threshold, mul(-1, cheese)))
@@ -428,10 +450,11 @@ def terrain():
     write("density_function/overworld/abyss_density", abyss_density(A("overworld/abyss_rift")))
     write("density_function/abyss_initial_density", ABYSS_SOLID)  # solid all the way: the deep seabed search stays monotone
 
-    def deep_density(seabed_offset, openings, rift_fn, ceil=None):
+    def deep_density(seabed_offset, openings, rift_fn, ceil=None, land=None):
         # Deep layer: terrain and caves, under the ceiling (max: caves never cut into it), opened by the shafts; the
-        # hadal shafts to the abyss open its low floors downward.
-        density = dmin(dmax(dmin(add(DEEP_GRAD, seabed_offset), A("deep_caves")), ceiling if ceil is None else ceil), dmax(openings, deep_gate))
+        # hadal shafts to the abyss open its low floors downward. Under land (`land` = 1) the noise caves are lifted: solid rock.
+        caves_fn = A("deep_caves") if land is None else add(A("deep_caves"), mul(dl["cave_lift"], land))
+        density = dmin(dmax(dmin(add(DEEP_GRAD, seabed_offset), caves_fn), ceiling if ceil is None else ceil), dmax(openings, deep_gate))
         return dmin(density, shaft_in_deep(rift_fn))
 
     # Density is sampled at 4x8 cell corners and interpolated (smooth per block, cheap). One interpolation over the
@@ -446,7 +469,7 @@ def terrain():
     # The vanilla world's deep layer: no rifts, opened only by the slits of the (ocean-gated) fissures.
     vanilla_world_fields()
     write("density_function/overworld/deep_density_nr", deep_density(A("overworld/deep_seabed_offset_nr"), fissure_slit(A("overworld/fissure_strength")),
-                                                                       A("overworld/abyss_rift")))
+                                                                       A("overworld/abyss_rift"), land=A("overworld/deep_land")))
 
     # ---- the ocean planet (PLANET): the same functions under planet/, M-switched at the continental slope
     pl, M = PLANET, A("planet/seabed_macro")
@@ -477,7 +500,8 @@ def terrain():
     write("density_function/planet/deep_seabed_raw", flat(dmin(add(A("deep_macro_offset"), landforms), rift_limit_p)))
     # Slope: the slope surface or the deep floor, whichever is higher, with no SEABED_MAX_Y clamp (the lower bound stays).
     write("density_function/planet/deep_seabed_offset",
-          flat(below(clamp(dmax(slope_deep, P("deep_seabed_raw")), -1.9, 9.0), knee_expr(P("deep_seabed_raw")))))
+          flat(land_blend(below(clamp(dmax(slope_deep, P("deep_seabed_raw")), -1.9, 9.0), knee_expr(P("deep_seabed_raw"))),
+                          P("deep_land"))))  # land is 0 on the slope (M < m0)
     write("density_function/planet/abyss_rift", abyss_rift(P("deep_seabed_offset")))
     write("density_function/planet/abyss_density", abyss_density(P("abyss_rift")))
     openings_p = dmin(mul(-r["carve"], P("rift")), fissure_slit(P("fissure_strength")))
@@ -485,7 +509,7 @@ def terrain():
     write("density_function/planet/ocean_density", dmin(add(dmin(add(OCEAN_GRAD, P("seabed_offset")), A("ocean_caves")), mul(-1, funnel_p)),
                                                         openings_p))
     # No rock ceiling on the slope: the basin is open water from the deep floor to the surface.
-    write("density_function/planet/deep_density", deep_density(P("deep_seabed_offset"), openings_p, P("abyss_rift"), below(-1.0, ceiling)))
+    write("density_function/planet/deep_density", deep_density(P("deep_seabed_offset"), openings_p, P("abyss_rift"), below(-1.0, ceiling), land=P("deep_land")))
     write("density_function/planet/final_density", interp(layered(P("deep_density"), P("ocean_density"), P("abyss_density"))))
     # Router humidity: slope_humidity on the slope, fading to 0 within slope_edge above m0 (biome continental_slope above 1).
     write("density_function/planet/slope_humidity", flat(mul(pl["slope_humidity"], add(1.0, mul(-1, ramp(M, pl["m0"], pl["m0"] + pl["slope_edge"]))))))
@@ -585,11 +609,11 @@ GEOLOGY = {
     "thermal_vents": dict(surface=[(0.5, "sulfur_deposit"), (None, "mineral_sediment")], sub="mineral_sediment", rock="thermal_rock"),
     "deep_crystal_fields": dict(surface=[(0.3, "crystal_rock"), (None, "crystal_sediment")], sub="crystal_sediment", rock="crystal_rock",
                                 ceiling=[(0.4, "deep_crystal_block"), (None, "crystal_rock")]),
-    "abyssal_trench": dict(surface=[(0.1, "deep_mud"), (None, "mineral_sediment")], sub="mineral_sediment", rock="trench_rock"),
-    "hadal_zone": dict(surface=[(0.0, "abyssal_mud"), (None, "deep_mud")], sub="deep_sediment", rock="trench_rock", ceiling=[(0.45, "deep_crystal_block"), (None, "trench_rock")]),
-    "abyssal_forest": dict(surface=[(0.0, "organic_sediment"), (None, "abyssal_mud")], sub="abyssal_mud", rock="deep_sea_rock"),
-    "deep_forest": dict(surface=[(-0.2, "organic_sediment"), (None, "deep_sediment")], sub="abyssal_mud", rock="deep_sea_rock"),
-    "abyssal_ocean": dict(surface=[(0.35, "abyssal_mud"), (None, "deep_sediment")], sub="deep_sediment", rock="abyssal_rock"),
+    "abyssal_trench": dict(surface=[(0.1, "mineral_sediment"), (None, "deep_mud")], sub="mineral_sediment", rock="trench_rock"),
+    "hadal_zone": dict(surface=[(0.3, "deep_mud"), (None, "cave_sediment")], sub="deep_sediment", rock="trench_rock", ceiling=[(0.45, "deep_crystal_block"), (None, "trench_rock")]),
+    "abyssal_forest": dict(surface=[(0.45, "abyssal_mud"), (None, "organic_sediment")], sub="abyssal_mud", rock="deep_sea_rock"),
+    "deep_forest": dict(surface=[(0.3, "organic_sediment"), (None, "cave_mud")], sub="abyssal_mud", rock="deep_sea_rock"),
+    "abyssal_ocean": dict(surface=[(0.35, "deep_sediment"), (None, "abyssal_mud")], sub="deep_sediment", rock="abyssal_rock"),
     "deep_sea": dict(surface=[(0.3, "abyssal_mud"), (None, "deep_sediment")], sub="mineral_sediment", rock="deep_sea_rock"),
     # Water-mass / relic provinces on the abyssal plains (see biome_sources)
     "sunken_ruins": dict(surface=[(0.55, "ancient_masonry"), (None, "ruin_gravel")], sub="ruin_sediment", rock="ancient_masonry"),
@@ -1005,10 +1029,10 @@ def resource_plants():
     # TR01 small ancient trees (same shape as a grown ancient sapling): 0-2 per chunk, deep layer Y -300..-80.
     # Metres via DepthZone: Y -80 = deep Y 160 = 103 blocks = ~1090 m, Y -300 = deep Y -60 = 263 blocks = ~5260 m.
     feature("ancient_trees", {"type": A("ancient_tree"), "config": {}},
-            on_floor_depth((1090, 5260), {"type": "minecraft:count", "count": {"type": "minecraft:uniform", "value": {"min_inclusive": 0, "max_inclusive": 2}}}))
+            on_floor_depth((1090, 5260), cfg("tree_plants"), {"type": "minecraft:count", "count": {"type": "minecraft:uniform", "value": {"min_inclusive": 0, "max_inclusive": 2}}}))
     # OL01 cultivated oil kelp: 0-2 columns per chunk, Y -250..-64 (deep Y 176 = 87 blocks = ~827 m, deep Y -10 = 273 blocks = ~5460 m).
     feature("oil_kelp", {"type": A("oil_kelp"), "config": {}},
-            on_floor_depth((827, 5460), {"type": "minecraft:count", "count": {"type": "minecraft:uniform", "value": {"min_inclusive": 0, "max_inclusive": 2}}}))
+            on_floor_depth((827, 5460), cfg("tree_plants"), {"type": "minecraft:count", "count": {"type": "minecraft:uniform", "value": {"min_inclusive": 0, "max_inclusive": 2}}}))
 
 
 def add_resource_plants():
@@ -1726,35 +1750,35 @@ DEEP_BIOMES = {
     "abyssal_ocean": (0x2B1F6B, 0x0A0620, ["rock_spire", "abyssal_spire"], ["cave_abyssal_mushrooms"],
                       ["meadow_green_sparse", "tube_plants", "sponge_plants", "void_kelp", "patch_abyssal_mushroom", "patch_soul_coral",
                        "glow_plants_deep", "floating_blooms", "manganese_nodule_field", "seafloor_pebbles"]),
-    "abyssal_forest": (0x1A3A2A, 0x051510, [], ["cave_abyssal_mushrooms"],
+    "abyssal_forest": (0x0F5A3A, 0x04201A, [], ["cave_abyssal_mushrooms"],
                        ["meadow_organic_dense", "sponge_plants", "deep_kelp_dense", "large_deep_kelp", "giant_kelp_forest", "void_kelp_forest",
                         "patch_abyssal_bloom", "glow_plants_shallow", "floating_blooms", "seafloor_pebbles"]),
-    "deep_forest": (0x243A30, 0x06140E, [], ["cave_abyssal_mushrooms"],
+    "deep_forest": (0x6A7A1E, 0x1A2006, [], ["cave_abyssal_mushrooms"],
                     ["meadow_organic_full", "tube_plants_dense", "sponge_plants", "deep_kelp", "giant_kelp_scattered", "giant_tube_forest",
                      "glow_plants_shallow", "floating_blooms"]),
-    "abyssal_trench": (0x14103A, 0x040214, ["trench_spire"], ["cave_abyssal_mushrooms"],
+    "abyssal_trench": (0x5A1A4A, 0x1C0618, ["trench_spire"], ["cave_abyssal_mushrooms"],
                        ["meadow_ashen_normal", "tube_plants", "giant_tube_scattered", "patch_soul_coral", "patch_black_coral",
                         "glow_plants_deep", "patch_pressure_crystal", "seafloor_pebbles"]),
     "hadal_zone": (0x0A0A1A, 0x010104, ["abyssal_spire", "trench_spire"], ["cave_deep_crystals"],
                    ["meadow_ancient_normal", "large_deep_kelp", "giant_kelp_scattered", "giant_tube_scattered", "patch_black_coral",
                     "patch_hadal_bloom", "glow_plants_ancient", "floating_blooms", "patch_deep_crystal_cluster", "patch_pressure_crystal"]),
-    "volcanic_deep": (0x3A2A3A, 0x1A0A08, ["thermal_spire"], [],
+    "volcanic_deep": (0x8A2020, 0x2A0606, ["thermal_spire"], [],
                       ["meadow_thermal_sparse", "thermal_tubes", "mineral_vines"]),
-    "thermal_vents": (0x2A4A5A, 0x0E1A1E, ["thermal_spire"], [],
+    "thermal_vents": (0xB0602A, 0x2A1408, ["thermal_spire"], [],
                       ["meadow_thermal_normal", "thermal_tubes", "mineral_vines", "patch_abyssal_mushroom"]),
-    "deep_crystal_fields": (0x2A5A8A, 0x0A2040, ["crystal_spire"], ["cave_deep_crystals"],
+    "deep_crystal_fields": (0xA05AD0, 0x2A1048, ["crystal_spire"], ["cave_deep_crystals"],
                             ["meadow_crystal_normal", "crystal_plants", "glow_plants_crystal", "floating_blooms", "crystal_garden",
                              "crystal_spikes", "patch_deep_crystal_cluster"]),
-    "sunken_ruins": (0x3A5A6A, 0x10222A, ["rock_spire"], ["cave_abyssal_mushrooms"],
+    "sunken_ruins": (0x5A6A7A, 0x1A222A, ["rock_spire"], ["cave_abyssal_mushrooms"],
                      ["meadow_green_sparse", "tube_plants", "sponge_plants", "patch_soul_coral", "glow_plants_deep", "seafloor_pebbles"]),
-    "bone_graveyard": (0x3E3C4E, 0x121118, ["abyssal_spire"], [],
+    "bone_graveyard": (0x6A6458, 0x1E1C16, ["abyssal_spire"], [],
                        ["meadow_ashen_normal", "patch_black_coral", "patch_soul_coral", "glow_plants_ancient", "seafloor_pebbles"]),
-    "brine_lakes": (0x2F6A66, 0x0C2624, [], [],
+    "brine_lakes": (0x2A9A9A, 0x0A2E2E, [], [],
                     ["meadow_thermal_sparse", "mineral_vines", "patch_pressure_crystal", "seafloor_pebbles"]),
-    "glow_gardens": (0x1E7A5A, 0x082C20, [], ["cave_abyssal_mushrooms"],
+    "glow_gardens": (0x28B848, 0x0A3414, [], ["cave_abyssal_mushrooms"],
                      ["meadow_organic_dense", "sponge_plants", "patch_glow_coral", "patch_abyssal_mushroom", "patch_abyssal_bloom",
                       "glow_plants_shallow", "glow_plants_deep", "floating_blooms"]),
-    "frost_abyss": (0x4A7AAE, 0x13304C, ["rock_spire"], ["cave_deep_crystals"],
+    "frost_abyss": (0x8AB8D8, 0x24405A, ["rock_spire"], ["cave_deep_crystals"],
                     ["meadow_ancient_normal", "void_kelp", "patch_pressure_crystal", "patch_deep_crystal_cluster", "seafloor_pebbles"]),
 }
 # The abyss layer's biomes (AB02, see biome_sources): water colour and fog colour. The abyss is a solid crust, so there is no
@@ -1781,10 +1805,10 @@ ABYSS_HAZARD_TAGS = {
 }
 
 # ---- depth bands of the abyss crust (AB02)
-# Router continentalness of the abyss = abyss_code(Y) + a wobble (ABYSS_BAND_WOBBLE x biome_fuzz noise, about +-60 blocks of
-# band border), so the borders of the depth bands are not flat planes. The code runs -1.70 at Y -376 to -2.00 at Y CRUST_BOTTOM_Y (-998).
+# Router continentalness of the abyss = abyss_code(Y) + a wobble (ABYSS_BAND_WOBBLE x biome_fuzz noise, about +-19 blocks of
+# band border), so the borders of the depth bands are not flat planes. The code runs -1.70 at Y -376 to -2.00 at Y CRUST_BOTTOM_Y (-566).
 ABYSS_CRUST_BOTTOM_Y = DL["CRUST_BOTTOM_Y"]
-ABYSS_BAND_WOBBLE = 0.012
+ABYSS_BAND_WOBBLE = 0.03  # 0.012 (+-60 blocks) while the crust was 620 deep; the bands are 45-50 blocks now
 
 
 def abyss_code(y):

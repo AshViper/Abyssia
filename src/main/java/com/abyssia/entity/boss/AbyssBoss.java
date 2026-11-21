@@ -38,12 +38,14 @@ public abstract class AbyssBoss extends PathfinderMob
     /** Arena centre (head coordinates) and radius: a sphere around the spawn point. */
     @Nullable
     protected Vec3 center;
-    protected double boundRadius = 60;
+    protected double boundRadius = 110;
     protected Vec3 vel = Vec3.ZERO;
     protected int phase = 1;
-    /** The altar that summoned this boss (null: a plain /summon). Altar bosses never leave on their own; the altar retreats them. */
-    @Nullable
-    protected BlockPos altarPos;
+    /** Retreat: no non-spectator player within {@link BossFarPayload#RANGE} for this many ticks and the boss leaves (no drops). */
+    private static final long RETREAT_TICKS = 1200;
+    /** Game time a player was last seen within range; -1 = not set yet (fresh spawn). Saved, so time spent unloaded counts. */
+    private long lastPlayerSeen = -1;
+    private boolean retreatChecked;
 
     protected AbyssBoss(EntityType<? extends AbyssBoss> type, Level level, int joints, double spacing, BossEvent.BossBarColor color)
     {
@@ -52,7 +54,8 @@ public abstract class AbyssBoss extends PathfinderMob
         this.setNoGravity(true);
         this.setPersistenceRequired();
         this.chain = new BossChain(joints, spacing);
-        this.parts = new BossPart[(joints - 1 + 2) / 3];
+        int per = jointsPerPart();
+        this.parts = new BossPart[(joints - 1 + per - 1) / per];
         for (int i = 0; i < parts.length; i++) parts[i] = new BossPart(this, i);
         // part ids follow the boss id (the client needs the same ids to attack a part), like the ender dragon
         this.setId(ENTITY_COUNTER.getAndAdd(parts.length + 1) + 1);
@@ -65,14 +68,28 @@ public abstract class AbyssBoss extends PathfinderMob
     @Nullable
     public BossChain chainAt(int index) { return index == 0 ? chain : null; }
 
-    /** Altar summon: arena centred on the altar, first heading {@code launch} (the chain trails behind it). */
-    public void bindAltar(BlockPos altar, Vec3 arenaCenter, double radius, Vec3 launch)
+    /** Natural spawn: arena sphere centred on the spawn point, first heading {@code launch} (the chain trails behind it). */
+    public void bindArena(Vec3 arenaCenter, double radius, Vec3 launch)
     {
-        this.altarPos = altar;
         this.center = arenaCenter;
-        this.boundRadius = radius;
+        this.boundRadius = radius * arenaScale();
         this.vel = launch;
     }
+
+    /** Body scale against the original 200-block design (1 = unchanged); renderers and hitboxes follow it. */
+    public double size() { return 1.0; }
+
+    /** Body radius in blocks: contact damage reach from the spine, and the margin for culling and the fog test. */
+    public double bodyRadius() { return CONTACT_DISTANCE * size(); }
+
+    /** Joints per hitbox part (called from the constructor, so return a constant). */
+    protected int jointsPerPart() { return 3; }
+
+    /** The natural-spawn arena radius is multiplied by this (big bodies need room to turn). */
+    protected double arenaScale() { return 1.0; }
+
+    /** Entity scan range round the head for contact damage: the whole chain must fit inside. */
+    protected double reach() { return Math.max(CONTACT_RANGE, (chain.size() - 1) * chain.spacing() + 4 * bodyRadius()); }
 
     /** Kind id for the far silhouette (BossFarPayload). */
     protected int farKind() { return 0; }
@@ -148,9 +165,7 @@ public abstract class AbyssBoss extends PathfinderMob
         }
         tickChain();
         if (!isDeadOrDying() && tickCount % 2 == 0 && contactActive()) contactDamage();
-        // an altar boss whose altar no longer lists it (it retreated while the boss was unloaded) leaves
-        if (altarPos != null && tickCount % 100 == 0 && !isDeadOrDying()
-                && !(level().getBlockEntity(altarPos) instanceof AbyssalAltarBlockEntity a && a.owns(getUUID()))) discard();
+        if (!isDeadOrDying() && retreatCheck()) { discard(); return; }
         if (tickCount % 10 == 0) BossNetwork.sendToPlayersTrackingEntity(this, snapshotPayload());
         if (tickCount % 20 == 0)
         {
@@ -159,11 +174,32 @@ public abstract class AbyssBoss extends PathfinderMob
         if (tickCount % 10 == 0) keepLoaded();
     }
 
+    /** True when no player has been within range for {@link #RETREAT_TICKS} (counting time spent unloaded). */
+    private boolean retreatCheck()
+    {
+        long now = level().getGameTime();
+        if (lastPlayerSeen < 0) lastPlayerSeen = now;
+        boolean first = !retreatChecked;
+        if (!first && tickCount % 20 != 0) return false;
+        retreatChecked = true;
+        // the elapsed time first: a boss frozen in a non-ticking chunk (no player kept it loaded) resumes with the
+        // returning player already near, and refreshing first would forget that it was left alone
+        if (now - lastPlayerSeen > RETREAT_TICKS) return true;
+        double r2 = (double) BossFarPayload.RANGE * BossFarPayload.RANGE;
+        for (ServerPlayer p : ((net.minecraft.server.level.ServerLevel) level()).players())
+            if (!p.isSpectator() && p.distanceToSqr(this) < r2) { lastPlayerSeen = now; return false; }
+        return now - lastPlayerSeen > RETREAT_TICKS;
+    }
+
     /** Keeps the head's chunks entity-ticking (2 chunks around) while a player is within the LOD range; refreshed every 10 ticks, expires by timeout. */
     private static final net.minecraft.server.level.TicketType<net.minecraft.world.level.ChunkPos> BOSS_TICKET =
             net.minecraft.server.level.TicketType.create("abyssia_boss", java.util.Comparator.comparingLong(net.minecraft.world.level.ChunkPos::toLong), 60);
 
-    private void keepLoaded()
+    /**
+     * Holds the chunks round the head while a player is near. Also called by BossSpawner right after the spawn: a boss
+     * spawned beyond the simulation distance would otherwise never tick, so it would never add the ticket itself.
+     */
+    void keepLoaded()
     {
         if (isDeadOrDying()) return;
         var sl = (net.minecraft.server.level.ServerLevel) level();
@@ -285,7 +321,8 @@ public abstract class AbyssBoss extends PathfinderMob
         if (!chain.isInitialised()) return;
         for (BossPart part : parts)
         {
-            int j = Math.min(3 * part.index() + 2, chain.size() - 1);
+            int per = jointsPerPart();
+            int j = Math.min(1 + per * part.index() + (per - 1) / 2, chain.size() - 1);
             part.setPos(chain.x(j), chain.y(j) - part.getBbHeight() * 0.5, chain.z(j));
         }
     }
@@ -295,12 +332,13 @@ public abstract class AbyssBoss extends PathfinderMob
     private void contactDamage()
     {
         Vec3 head = headPos();
-        double r2 = CONTACT_RANGE * CONTACT_RANGE;
+        double r2 = reach() * reach();
+        double cd = bodyRadius();
         for (LivingEntity p : attackables())
         {
             Vec3 pc = p.getBoundingBox().getCenter();
             if (pc.distanceToSqr(head) > r2) continue;
-            if (chain.distanceSqr(pc.x, pc.y, pc.z) < CONTACT_DISTANCE * CONTACT_DISTANCE) p.hurt(damageSources().mobAttack(this), CONTACT_DAMAGE);
+            if (chain.distanceSqr(pc.x, pc.y, pc.z) < cd * cd) p.hurt(damageSources().mobAttack(this), CONTACT_DAMAGE);
         }
     }
 
@@ -383,7 +421,7 @@ public abstract class AbyssBoss extends PathfinderMob
     @Override
     public AABB getBoundingBoxForCulling()
     {
-        return chain.isInitialised() ? chain.bounds(3.0) : super.getBoundingBoxForCulling();
+        return chain.isInitialised() ? chain.bounds(Math.max(3.0, 2.5 * bodyRadius())) : super.getBoundingBoxForCulling();
     }
 
     @Override
@@ -415,13 +453,6 @@ public abstract class AbyssBoss extends PathfinderMob
     }
 
     @Override
-    public void die(DamageSource source)
-    {
-        super.die(source);
-        if (altarPos != null && level() instanceof net.minecraft.server.level.ServerLevel sl) AbyssalAltarBlockEntity.bossDefeated(sl, altarPos, getUUID());
-    }
-
-    @Override
     public void remove(RemovalReason reason)
     {
         bossEvent.removeAllPlayers();
@@ -439,7 +470,7 @@ public abstract class AbyssBoss extends PathfinderMob
             tag.putDouble("CenterZ", center.z);
         }
         tag.putDouble("BoundRadius", boundRadius);
-        if (altarPos != null) tag.putLong("Altar", altarPos.asLong());
+        if (lastPlayerSeen >= 0) tag.putLong("LastPlayerSeen", lastPlayerSeen);
         tag.putString("BossState", stateName());
         tag.putInt("Phase", phase);
         chain.save(tag);
@@ -450,7 +481,7 @@ public abstract class AbyssBoss extends PathfinderMob
     {
         super.readAdditionalSaveData(tag);
         if (tag.contains("CenterX")) center = new Vec3(tag.getDouble("CenterX"), tag.getDouble("CenterY"), tag.getDouble("CenterZ"));
-        if (tag.contains("Altar")) altarPos = BlockPos.of(tag.getLong("Altar"));
+        if (tag.contains("LastPlayerSeen")) lastPlayerSeen = tag.getLong("LastPlayerSeen");
         if (tag.contains("BoundRadius")) boundRadius = tag.getDouble("BoundRadius");
         chain.load(tag);
         float ratio = getHealth() / getMaxHealth();

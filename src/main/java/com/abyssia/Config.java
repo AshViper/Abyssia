@@ -92,13 +92,13 @@ public class Config
     public static final ForgeConfigSpec.BooleanValue VEGETATION_ENABLED = BUILDER.define("enabled", true);
     public static final ForgeConfigSpec.DoubleValue VEGETATION_DENSITY = BUILDER
             .comment("Multiplier for how many plant patches generate")
-            .defineInRange("density_multiplier", 0.9, 0.0, 4.0);
+            .defineInRange("density_multiplier", 0.24, 0.0, 4.0);
     public static final ForgeConfigSpec.DoubleValue GIANT_PLANT_CHANCE = BUILDER
-            .comment("How often giant kelp, giant tubes and other canopy plants appear (0.1 = default amount)")
-            .defineInRange("giant_plant_chance", 0.1, 0.0, 1.0);
+            .comment("How often giant kelp, giant tubes and other canopy plants appear (0.04 = default amount)")
+            .defineInRange("giant_plant_chance", 0.04, 0.0, 1.0);
     public static final ForgeConfigSpec.DoubleValue GLOWING_PLANT_CHANCE = BUILDER
-            .comment("How often glowing plant patches appear (0.03 = default amount)")
-            .defineInRange("glowing_plant_chance", 0.03, 0.0, 0.3);
+            .comment("How often glowing plant patches appear (0.012 = default amount)")
+            .defineInRange("glowing_plant_chance", 0.012, 0.0, 0.3);
     public static final ForgeConfigSpec.BooleanValue ABYSSAL_FORESTS = BUILDER
             .comment("Giant kelp and giant tube forests")
             .define("abyssal_forests", true);
@@ -154,7 +154,7 @@ public class Config
             .define("underground_lakes", true);
     public static final ForgeConfigSpec.DoubleValue CAVE_VEGETATION = BUILDER
             .comment("Multiplier for cave plant density (floors, walls, ceilings and cave forests)")
-            .defineInRange("vegetation_multiplier", 0.9, 0.0, 4.0);
+            .defineInRange("vegetation_multiplier", 0.24, 0.0, 4.0);
     public static final ForgeConfigSpec.DoubleValue CAVE_GLOW = BUILDER
             .comment("Multiplier for the share of luminous cave plants")
             .defineInRange("glowing_plant_multiplier", 1.0, 0.0, 4.0);
@@ -164,8 +164,8 @@ public class Config
 
     static {
         BUILDER.pop();
-        BUILDER.comment("AB02 crust cave windows: free-floating cave networks inside the abyss crust, one per depth window (B' Y -540..-380,",
-                "C -700..-540, D -860..-700, E -998..-860; see DeepLayer). The values below are per window in this order: B', C, D, E.",
+        BUILDER.comment("AB02 crust cave windows: free-floating cave networks inside the abyss crust, one per depth window (B' Y -472..-380,",
+                "C -566..-472, D and E have no systems; see DeepLayer). The values below are per window in this order: B', C, D, E.",
                 "The shallow, seabed-relative network above is configured by [caves] and is not affected. Changing spacing, size or the",
                 "vertical link chance reshapes the layout of chunks that are not generated yet: set them before exploring new areas.").push("caves_bands");
     }
@@ -327,6 +327,8 @@ public class Config
     public static final ForgeConfigSpec.DoubleValue THERMAL_UPDRAFT_STRENGTH = BUILDER.defineInRange("thermal_updraft_strength", 1.0, 0.0, 4.0);
     public static final ForgeConfigSpec.BooleanValue MINERAL_GENERATION = BUILDER.comment("Sulfur and sulfide ores in vent fields").define("mineral_generation", true);
     public static final ForgeConfigSpec.BooleanValue CRYSTAL_GENERATION = BUILDER.define("crystal_generation", true);
+    public static final ForgeConfigSpec.BooleanValue PRECIPITATOR_ENABLED = BUILDER.comment("PRC01: hydrothermal precipitator (raw metal from a live vent)").define("precipitator_enabled", true);
+    public static final ForgeConfigSpec.DoubleValue PRECIPITATOR_SPEED = BUILDER.comment("Precipitator speed multiplier (1.0: one raw metal per 400 ticks next to an ACTIVE vent)").defineInRange("precipitator_speed", 1.0, 0.1, 10.0);
 
     static {
         BUILDER.pop();
@@ -565,13 +567,13 @@ public class Config
             .defineInRange("rated_y_base", -300, -4096, 4096);
     public static final ForgeConfigSpec.IntValue SUBMARINE_RATED_Y_MK1 = BUILDER
             .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine with Depth Hull Mk1 takes crush damage")
-            .defineInRange("rated_y_mk1", -500, -4096, 4096);
+            .defineInRange("rated_y_mk1", -380, -4096, 4096);
     public static final ForgeConfigSpec.IntValue SUBMARINE_RATED_Y_MK2 = BUILDER
             .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine with Depth Hull Mk2 takes crush damage")
-            .defineInRange("rated_y_mk2", -800, -4096, 4096);
+            .defineInRange("rated_y_mk2", -450, -4096, 4096);
     public static final ForgeConfigSpec.IntValue SUBMARINE_RATED_Y_MK3 = BUILDER
             .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine with Depth Hull Mk3 takes crush damage")
-            .defineInRange("rated_y_mk3", -1000, -4096, 4096);
+            .defineInRange("rated_y_mk3", -566, -4096, 4096);
     public static final ForgeConfigSpec.DoubleValue SUBMARINE_CRUSH_DAMAGE = BUILDER
             .comment("Hull damage per second below the crush depth (break threshold is 40, or 70 with the Pressure Hull)")
             .defineInRange("crush_damage", 4.0, 0.0, 1000.0);

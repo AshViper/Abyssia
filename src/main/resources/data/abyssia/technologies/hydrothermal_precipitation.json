@@ -1,0 +1,21 @@
+{
+  "id": "abyssia:technology/hydrothermal_precipitation",
+  "type": "building",
+  "title": "technology.abyssia.hydrothermal_precipitation",
+  "tier": "mk2",
+  "depth_band": "D",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/thermal_vent",
+      "count": 3
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/deep_excavation",
+    "abyssia:technology/survey_vents_d"
+  ],
+  "unlocks": [
+    "abyssia:machine/hydrothermal_precipitator"
+  ],
+  "icon": "abyssia:thermal_vent"
+}

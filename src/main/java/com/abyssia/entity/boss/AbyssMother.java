@@ -79,7 +79,6 @@ public class AbyssMother extends AbyssBoss
     private int stateTicks;
     @Nullable
     private LivingEntity target;
-    private int idleTicks;
     private int pulseT = -1;
     private int pulseCd = 200;
     private int broodCd = 300;
@@ -389,13 +388,7 @@ public class AbyssMother extends AbyssBoss
         if (!validTarget(target))
         {
             target = null;
-            if (altarPos == null && ++idleTicks > 1200)
-            {
-                discard(); // /summon only; an altar boss is retreated by its altar
-                return;
-            }
         }
-        else idleTicks = 0;
 
         // drift around the arena centre, leaning toward the target; speeds up with the bell beat; stops in BLOOM
         Vec3 base = center;

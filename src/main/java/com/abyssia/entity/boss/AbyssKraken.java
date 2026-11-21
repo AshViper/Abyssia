@@ -80,7 +80,6 @@ public class AbyssKraken extends AbyssBoss
     private int stateLength = 80;
     @Nullable
     private LivingEntity target;
-    private int idleTicks;
     private int inkCooldown = 200;
     private Vec3 inkCenter = Vec3.ZERO;
     private boolean pendingFrenzy;
@@ -396,14 +395,8 @@ public class AbyssKraken extends AbyssBoss
         if (!validTarget(target))
         {
             target = null;
-            if (altarPos == null && ++idleTicks > 1200)
-            {
-                discard(); // /summon only; an altar boss is retreated by its altar
-                return;
-            }
             if (state != State.IDLE_SWAY && state != State.INK) abortAttacks();
         }
-        else idleTicks = 0;
         double mul = speedMul();
         // float around the arena centre, leaning a little toward the target
         Vec3 base = center;

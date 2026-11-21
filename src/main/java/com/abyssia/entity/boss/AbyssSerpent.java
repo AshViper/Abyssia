@@ -19,14 +19,21 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Abyssal Serpent: head + 40 joints of 5 blocks (about 200 blocks). Dev load test: start the game with
- * {@code -Dabyssia.boss.joints=360} to give every serpent a 360 joint chain.
+ * Abyssal Serpent, leviathan scale (BOSS02): the original 200-block design drawn {@link #SIZE} times thicker
+ * (body about 18 blocks across, head about 24 wide and 36 long), head + 28 joints of 14 blocks (about 400 blocks).
+ * Dev load test: start the game with {@code -Dabyssia.boss.joints=360} to give every serpent a 360 joint chain.
  */
 public class AbyssSerpent extends AbyssBoss
 {
+    /** Cross-section scale against the original model (shared with the renderer and the far silhouette). */
+    public static final double SIZE = 4.0;
+    /** Swim speeds against the original (a bigger body covers more water per tick, the jaw cue follows it). */
+    public static final double SPEED = 1.6;
+    /** AI distances (orbits, coil, swipe) against the original. */
+    private static final double K = 2.0;
     private static final EntityDataAccessor<Long> DATA_SWIPE_START = SynchedEntityData.defineId(AbyssSerpent.class, EntityDataSerializers.LONG);
     private static final int SWIPE_TICKS = 40;
-    private static final double TARGET_RANGE = 96;
+    private static final double TARGET_RANGE = 160;
 
     private enum State { CIRCLE, CHARGE, BITE, COIL, TAIL_SWIPE }
 
@@ -34,7 +41,6 @@ public class AbyssSerpent extends AbyssBoss
     private int stateTicks;
     private int stateLength = 120;
     private LivingEntity target;
-    private int idleTicks;
     private int biteCooldown;
     private double angle;
     private int dir = 1;
@@ -43,13 +49,28 @@ public class AbyssSerpent extends AbyssBoss
 
     public AbyssSerpent(EntityType<? extends AbyssSerpent> type, Level level)
     {
-        super(type, level, 1 + Integer.getInteger("abyssia.boss.joints", 40), 5.0, BossEvent.BossBarColor.BLUE);
+        super(type, level, 1 + Integer.getInteger("abyssia.boss.joints", 28), 14.0, BossEvent.BossBarColor.BLUE);
     }
+
+    @Override
+    public double size() { return SIZE; }
+
+    @Override
+    public double bodyRadius() { return 2.25 * SIZE; }
+
+    @Override
+    protected int jointsPerPart() { return 1; }
+
+    @Override
+    protected double arenaScale() { return 1.6; }
+
+    /** Joints that bend in the tail swipe (a quarter of the chain). */
+    private int tailJoints() { return Math.max(4, chain.size() / 4); }
 
     public static AttributeSupplier.Builder createAttributes()
     {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 1200.0).add(Attributes.ARMOR, 10.0).add(Attributes.MOVEMENT_SPEED, 1.0)
-                .add(Attributes.FOLLOW_RANGE, 96.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
+                .add(Attributes.FOLLOW_RANGE, 160.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
     @Override
@@ -72,7 +93,7 @@ public class AbyssSerpent extends AbyssBoss
         if (swiping())
         {
             double sign = (entityData.get(DATA_SWIPE_START) & 1L) == 0 ? 1 : -1;
-            chain.rotateTail(chain.size() - 11, sign * Math.toRadians(140.0 / SWIPE_TICKS));
+            chain.rotateTail(chain.size() - 1 - tailJoints(), sign * Math.toRadians(140.0 / SWIPE_TICKS));
         }
     }
 
@@ -89,7 +110,7 @@ public class AbyssSerpent extends AbyssBoss
             angle = Math.atan2(rel.z, rel.x);
             dir = random.nextBoolean() ? 1 : -1;
         }
-        if (s == State.CIRCLE) circleRadius = 40 + random.nextDouble() * 20;
+        if (s == State.CIRCLE) circleRadius = (40 + random.nextDouble() * 20) * K;
         if (s == State.TAIL_SWIPE)
         {
             swipeHit.clear();
@@ -108,9 +129,9 @@ public class AbyssSerpent extends AbyssBoss
     private boolean tailNear()
     {
         if (target == null) return false;
-        int pivot = chain.size() - 11;
+        int pivot = chain.size() - 1 - tailJoints();
         Vec3 t = target.position();
-        return Math.sqrt(chain.distanceSqr(t.x, t.y, t.z)) < 40 && t.distanceTo(new Vec3(chain.x(pivot), chain.y(pivot), chain.z(pivot))) < 60;
+        return Math.sqrt(chain.distanceSqr(t.x, t.y, t.z)) < 40 * K && t.distanceTo(new Vec3(chain.x(pivot), chain.y(pivot), chain.z(pivot))) < 60 * K;
     }
 
     @Override
@@ -135,28 +156,22 @@ public class AbyssSerpent extends AbyssBoss
         if (!validTarget(target))
         {
             target = null;
-            if (altarPos == null && ++idleTicks > 1200)
-            {
-                discard(); // /summon only; an altar boss is retreated by its altar
-                return;
-            }
-            steerAround(center, 40, 0.6);
+            steerAround(center, 40 * K, 0.6 * SPEED);
             return;
         }
-        idleTicks = 0;
         stateTicks++;
         Vec3 tp = target.position().add(0, target.getBbHeight() * 0.5, 0);
         switch (state)
         {
             case CIRCLE ->
             {
-                steerAround(tp, circleRadius, 0.9);
+                steerAround(tp, circleRadius, 0.9 * SPEED);
                 if (stateTicks >= stateLength) setState(State.CHARGE, 60);
             }
             case CHARGE ->
             {
-                steer(tp, 1.2, 0.2);
-                if (biteCooldown <= 0 && headPos().distanceTo(tp) < 4.0) bite(tp);
+                steer(tp, 1.2 * SPEED, 0.2);
+                if (biteCooldown <= 0 && headPos().distanceTo(tp) < 3.0 * SIZE) bite(tp);
                 else if (stateTicks >= stateLength) pickNext();
             }
             case BITE ->
@@ -166,12 +181,12 @@ public class AbyssSerpent extends AbyssBoss
             case COIL ->
             {
                 double t = Math.min(1.0, stateTicks / (double) stateLength);
-                steerAround(tp.add(0, t * 10 - 5, 0), 30 - 20 * t, 1.0);
+                steerAround(tp.add(0, (t * 10 - 5) * K, 0), (30 - 20 * t) * K, 1.0 * SPEED);
                 if (stateTicks >= stateLength) setState(State.CIRCLE, 100 + random.nextInt(60));
             }
             case TAIL_SWIPE ->
             {
-                steerAround(tp, 25, 1.0);
+                steerAround(tp, 25 * K, 1.0 * SPEED);
                 if (stateTicks >= stateLength) setState(State.CIRCLE, 100 + random.nextInt(60));
             }
         }
@@ -182,7 +197,7 @@ public class AbyssSerpent extends AbyssBoss
     private void steerAround(Vec3 c, double radius, double speed)
     {
         angle += dir * speed / Math.max(radius, 8.0);
-        Vec3 point = c.add(Math.cos(angle) * radius, Math.sin(angle * 0.5) * 6, Math.sin(angle) * radius);
+        Vec3 point = c.add(Math.cos(angle) * radius, Math.sin(angle * 0.5) * 6 * K, Math.sin(angle) * radius);
         steer(point, speed, 0.08);
     }
 
@@ -190,7 +205,7 @@ public class AbyssSerpent extends AbyssBoss
     {
         biteCooldown = 40;
         target.hurt(damageSources().mobAttack(this), 14.0F);
-        level().playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ATTACK, SoundSource.HOSTILE, 4.0F, 0.5F);
+        level().playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ATTACK, SoundSource.HOSTILE, 8.0F, 0.35F);
         setState(State.BITE, 10);
     }
 
@@ -203,10 +218,11 @@ public class AbyssSerpent extends AbyssBoss
         {
             if (!isValidTarget(p) || swipeHit.contains(p.getUUID())) continue;
             Vec3 pc = p.getBoundingBox().getCenter();
-            for (int i = Math.max(0, chain.size() - 10); i < chain.size(); i++)
+            double r2 = 12 * K * 12 * K;
+            for (int i = Math.max(0, chain.size() - tailJoints()); i < chain.size(); i++)
             {
                 double dx = pc.x - chain.x(i), dy = pc.y - chain.y(i), dz = pc.z - chain.z(i);
-                if (dx * dx + dy * dy + dz * dz > 144.0) continue;
+                if (dx * dx + dy * dy + dz * dz > r2) continue;
                 swipeHit.add(p.getUUID());
                 p.hurt(damageSources().mobAttack(this), 10.0F);
                 double len = Math.max(Math.sqrt(dx * dx + dz * dz), 1.0E-3);

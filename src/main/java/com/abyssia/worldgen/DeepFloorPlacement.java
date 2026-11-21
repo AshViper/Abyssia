@@ -65,6 +65,7 @@ public class DeepFloorPlacement extends PlacementModifier
         }
         long column = (long) x << 32 | (z & 0xFFFFFFFFL);
         int y = cache.floors.get(column);
+        if (y == DeepLayer.MIN_Y + 1) return y;  // cached 'no floor' (rock under land)
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, y, z);
         if (y != UNKNOWN)
         {

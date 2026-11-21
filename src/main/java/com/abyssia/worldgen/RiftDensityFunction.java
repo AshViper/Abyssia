@@ -101,6 +101,10 @@ public final class RiftDensityFunction implements DensityFunction
     @Override
     public DensityFunction mapAll(Visitor visitor)
     {
+        // PERF05: once the noises are wired (RandomState), later visitors are NoiseChunk's per-chunk wrapping, which this
+        // function has no use for: the seabed is sampled at the rift's axis, never at the chunk's own cells, so its markers
+        // only pass through. Re-mapping the whole seabed subtree for every NoiseChunk was 8-11% of ocean world generation.
+        if (noise.noise() != null && DeepLayer.PERF04) return visitor.apply(this);
         return visitor.apply(new RiftDensityFunction(visitor.visitNoise(noise), seabed.mapAll(visitor), cellSize, chance, minRadius, maxRadius, maxSeabed));
     }
 

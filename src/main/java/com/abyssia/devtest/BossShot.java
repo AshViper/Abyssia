@@ -5,11 +5,6 @@ import com.abyssia.client.boss.BossFarClient;
 import com.abyssia.entity.boss.AbyssBoss;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,12 +12,11 @@ import net.minecraftforge.fml.common.Mod;
 
 /**
  * Dev-only (BOSS01): with -Dabyssia.bossshot (gradle runBossShot) the client joins the local test server and stages
- * the serpent scenes at the B' hall altar (380 -506 -389): summon with the lure, then shots near / mid / far.
+ * the serpent scenes around the B' hall point (380 -506 -389): summon with /abyssia boss spawnnear abyss_serpent, then shots near / mid / far.
  */
 @Mod.EventBusSubscriber(modid = Abyssia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class BossShot
 {
-    private static final BlockPos ALTAR = new BlockPos(380, -506, -389);
     private static final String BOSS = "@e[type=abyssia:abyss_serpent,limit=1,sort=nearest]";
     private static int t = -1;
 
@@ -35,6 +29,13 @@ public final class BossShot
         if (mc.screen != null) { if (t > 0) mc.setScreen(null); return; }
         t++;
         var p = mc.player;
+        if ("idle".equals(System.getProperty("abyssia.bossshot")))
+        {
+            // the player only stands in the world; the test is driven over RCON
+            if (t == 60) { cmd(mc, "gamemode survival"); cmd(mc, "effect give @s minecraft:water_breathing 99999 0 true"); cmd(mc, "effect give @s minecraft:resistance 99999 4 true"); cmd(mc, "effect give @s minecraft:regeneration 99999 4 true"); }
+            if (t == 24000) { log("idle done"); mc.stop(); }
+            return;
+        }
         if ("smoke".equals(System.getProperty("abyssia.bossshot"))) { smokeScenes(mc); return; }
         if ("sever".equals(System.getProperty("abyssia.bossshot")) && t == 70) t = 745; // skip to the kraken scenes
         if ("model".equals(System.getProperty("abyssia.bossshot")) || "sever".equals(System.getProperty("abyssia.bossshot"))) { modelScenes(mc); return; }
@@ -43,10 +44,9 @@ public final class BossShot
             case 60 -> { cmd(mc, "gamemode survival"); cmd(mc, "clear @s"); cmd(mc, "effect clear @s");
                          cmd(mc, "effect give @s minecraft:water_breathing 9999 0 true"); cmd(mc, "effect give @s minecraft:resistance 9999 4 true");
                          cmd(mc, "effect give @s minecraft:regeneration 9999 4 true");
-                         cmd(mc, "tp @s 380 -505 -391 facing 380 -506 -389"); cmd(mc, "give @s abyssia:abyss_serpent_lure 2"); }
+                         cmd(mc, "tp @s 380 -505 -391 facing 380 -506 -389"); }
             case 120 -> { p.getInventory().selected = 0; log("start pos=" + p.blockPosition() + " held=" + p.getMainHandItem()); }
-            case 130 -> { var hit = new BlockHitResult(Vec3.atCenterOf(ALTAR), Direction.UP, ALTAR, false);
-                          log("useItemOn -> " + mc.gameMode.useItemOn(p, InteractionHand.MAIN_HAND, hit) + " held after=" + p.getMainHandItem()); }
+            case 130 -> cmd(mc, "abyssia boss spawnnear abyss_serpent"); // BOSS01: natural spawn 80-120 blocks off (the altar is gone)
             case 150 -> shot(mc, "boss_omen");
             case 260 -> { state(mc, "after summon"); mc.options.hideGui = true; mc.getToasts().clear();  }
             // near: stand 30 blocks off the serpent's head

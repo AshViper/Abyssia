@@ -90,7 +90,7 @@ public final class BossFarRenderer
                     }
                     else
                     {
-                        nearest = nearestJoint(b.chain(), cp, pt);
+                        nearest = nearestJoint(b.chain(), cp, pt) - b.bodyRadius();
                         p = jointPoints(b.chain(), pt);
                     }
                     if (nearest <= fogEndNow) continue;
@@ -119,6 +119,12 @@ public final class BossFarRenderer
                 RenderSystem.setShaderFogEnd(fogEndSaved);
             }
         }
+    }
+
+    /** Body scale of the chain bosses (0 = serpent, 1 = wyrm) for the silhouette width. */
+    private static double chainSize(int kind)
+    {
+        return kind == 0 ? com.abyssia.entity.boss.AbyssSerpent.SIZE : kind == 1 ? com.abyssia.entity.boss.TrenchWyrm.SIZE : 1.0;
     }
 
     /** Current fog end (64 when unknown): a tracked boss beyond it is drawn as the fog-ignoring ribbon instead of the model. */
@@ -189,7 +195,8 @@ public final class BossFarRenderer
                 double wx = dy * mz - dz * my, wy = dz * mx - dx * mz, wz = dx * my - dy * mx;
                 double wl = Math.sqrt(wx * wx + wy * wy + wz * wz);
                 if (wl < 1.0E-6) continue;
-                double half = (kind == 3 ? (k == 0 ? 15.0 : 1.2) : kind == 2 ? (k == 0 ? 6.5 : 2.2) : k == 0 ? 3.5 : 2.8 * (1.0 - 0.5 * k / (double) m)) + dist * 0.004;
+                double half = (kind == 3 ? (k == 0 ? 15.0 : 1.2) : kind == 2 ? (k == 0 ? 6.5 : 2.2)
+                        : (k == 0 ? 3.5 : 2.8 * (1.0 - 0.5 * k / (double) m)) * chainSize(kind)) + dist * 0.004;
                 if (pass == 0) half *= 1.35;
                 double s = half / wl;
                 float r = pass == 0 ? 0.05F : 0.01F, g = pass == 0 ? 0.28F : 0.02F, bl = pass == 0 ? 0.38F : 0.04F, a = pass == 0 ? 0.35F : 0.92F;
@@ -203,7 +210,7 @@ public final class BossFarRenderer
             if (Double.isNaN(p[3 * k])) continue;
             double x = p[3 * k] - cp.x, y = p[3 * k + 1] - cp.y, z = p[3 * k + 2] - cp.z;
             double dist = Math.sqrt(x * x + y * y + z * z);
-            float size = (float) ((k == 0 ? 2.5 : 1.2) + dist * (k == 0 ? 0.012 : 0.008));
+            float size = (float) ((k == 0 ? 2.5 : 1.2) * Math.sqrt(chainSize(kind)) + dist * (k == 0 ? 0.012 : 0.008));
             float a = k == 0 ? 1.0F : (float) (0.7 + 0.3 * Math.sin(time * 0.2 + k));
             float lx = left.x * size, ly = left.y * size, lz = left.z * size, ux = up.x * size, uy = up.y * size, uz = up.z * size;
             quad(vc, pose, x + lx - ux, y + ly - uy, z + lz - uz, x + lx + ux, y + ly + uy, z + lz + uz,

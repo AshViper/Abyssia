@@ -2,20 +2,8 @@
   "feature": "abyssia:crust_mk0_iron_b_medium",
   "placement": [
     {
-      "type": "minecraft:count",
-      "count": {
-        "type": "minecraft:weighted_list",
-        "distribution": [
-          {
-            "data": 0,
-            "weight": 56
-          },
-          {
-            "data": 1,
-            "weight": 44
-          }
-        ]
-      }
+      "type": "minecraft:rarity_filter",
+      "chance": 10
     },
     {
       "type": "abyssia:config",
@@ -29,7 +17,7 @@
       "height": {
         "type": "minecraft:uniform",
         "min_inclusive": {
-          "absolute": -540
+          "absolute": -426
         },
         "max_inclusive": {
           "absolute": -393

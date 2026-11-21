@@ -1,4 +1,4 @@
-"""AB02 crust ores: ore veins inside the solid abyss crust (Y -376 .. -1862), by depth band, excavator tier and biome.
+"""AB02 crust ores: ore veins inside the solid abyss crust (Y -376 .. -560), by depth band, excavator tier and biome.
 
 Generator module for tools/gen_worldgen.py (it does `try: import crust_ores`).  Nothing here writes files by itself.
 
@@ -27,7 +27,7 @@ CALL PROTOCOL (tools/gen_worldgen.py)
    [count | rarity_filter, abyssia:config (mk0_ore | mk1_ore | mk2_ore), in_square, height_range uniform absolute [yLo, yHi],
    minecraft:biome]; gen_worldgen's "every deep feature has a floor or a height_range" assert is satisfied by the height_range.
 
-Names: crust_<tier>_<metal>_<band>_<size>[_s]   tier mk0|mk1|mk2, band b (B' -650..-376) | c | d | e, size small|medium|large|huge;
+Names: crust_<tier>_<metal>_<band>_<size>[_s]   tier mk0|mk1|mk2, band b (B' -426..-393) | c (-476..-426) | d (-522..-476) | e (-559..-522), size small|medium|large|huge;
 a trailing _s marks the secondary (low-rate) biome group of the same vein (shares the configured feature of the primary one).
 Census: `python tools/crust_ores.py` prints the expected veins per chunk per band / tier / biome.  All numbers below are tunable.
 """
@@ -37,7 +37,7 @@ A = lambda n: "abyssia:" + n
 
 # ================================================================ bands (absolute Y of the placement point, inclusive)
 # A vein reaches at most 13 blocks from the placed point (OreVeinFeature.MAX_REACH), so B' stops at -393 (the vein stays below
-# -380) and E starts at -1855 (stays >= 4 above the world bottom -1872).
+# -380) and E starts at -559 (stays >= 4 above the world bottom -576).
 def _dl():
     import os, re
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src", "main", "java", "com", "abyssia", "worldgen", "DeepLayer.java")
@@ -132,7 +132,7 @@ MK1_BIAS = {       # per-metal band multipliers on top of MK1_BAND (shallow vs d
     "vanadium": {"d": 1.6, "e": 1.5}, "molybdenum": {"d": 1.5, "e": 1.5}, "titanium": {"d": 1.2},
 }
 
-# ---- MK2: tungsten platinum tellurium iridium uranium neodymium yttrium thorium.  Mainly below Y -650; each metal has a few
+# ---- MK2: tungsten platinum tellurium iridium uranium neodymium yttrium thorium.  Mainly below Y -476 (D, E); each metal has a few
 # preferred biomes only, so no single cavern or biome supplies everything.
 MK2_SIZES = {"small": 0.10, "medium": 0.07, "large": 0.02, "huge": 0.005}
 MK2_BAND = {"c": 0.4, "d": 1.0, "e": 1.8}

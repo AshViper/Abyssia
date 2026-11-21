@@ -30,6 +30,8 @@ public record VegetationFormation(Shape shape, Span radius, Span width, float de
     private static final Codec<SimpleWeightedRandomList<CaveEnvironment.PlantEntry>> PLANTS =
             SimpleWeightedRandomList.wrappedCodecAllowingEmpty(CaveEnvironment.PlantEntry.CODEC);
     public static final String TYPE = "vegetation";
+    /** Structure dressing plants at 40% of the profile densities (chunk generation cost). */
+    private static final double DENSITY_SCALE = 0.4;
     public static final Codec<VegetationFormation> CODEC = RecordCodecBuilder.create(i -> i.group(
             Shape.CODEC.optionalFieldOf("shape", Shape.GROVE).forGetter(VegetationFormation::shape),
             Span.CODEC.fieldOf("radius").forGetter(VegetationFormation::radius),
@@ -137,14 +139,16 @@ public record VegetationFormation(Shape shape, Span radius, Span width, float de
                 if (!p.inReach(x, z)) continue;
                 double m = mask(site, p, l, x, z);
                 if (m <= 0) continue;
+                double roll = p.hash(x, 0, z, 74);
+                // Cheap cut before noise and floor lookups: m only shrinks below, so a roll above this bound fails there too.
+                if (roll >= (density + understoryDensity) * DENSITY_SCALE * m) continue;
                 // Glades: open patches inside the stand.
                 if (clearings > 0 && p.noise(x * 0.06 + 11, z * 0.06) < clearings * 2 - 1) m *= 0.15;
                 int y = p.floor(x, z);
-                double roll = p.hash(x, 0, z, 74);
                 // Even tiers: heights follow smooth noise with a little jitter.
                 double tier = Mth.clamp(0.5 + 0.5 * p.noise(x * 0.07, z * 0.07 + 70) + (p.hash(x, 1, z, 75) - 0.5) * 0.25, 0, 1);
-                if (roll < density * m && !canopy.isEmpty()) p.plant(x, y, z, canopy.pick(p.hash(x, 2, z, 76)), tier);
-                else if (roll < density * m + understoryDensity * m && !under.isEmpty()) p.plant(x, y, z, under.pick(p.hash(x, 3, z, 77)), p.hash(x, 4, z, 78));
+                if (roll < density * DENSITY_SCALE * m && !canopy.isEmpty()) p.plant(x, y, z, canopy.pick(p.hash(x, 2, z, 76)), tier);
+                else if (roll < (density + understoryDensity) * DENSITY_SCALE * m &&!under.isEmpty()) p.plant(x, y, z, under.pick(p.hash(x, 3, z, 77)), p.hash(x, 4, z, 78));
             }
         }
     }

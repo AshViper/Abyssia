@@ -93,6 +93,13 @@ minecraft {
                 property 'abyssia.bossshot', project.findProperty('bossShot') ?: '1'
                 args '--quickPlayMultiplayer', 'localhost:25641'
             }
+            else if (project.hasProperty('prcGuiShot'))
+            {
+                // Dev-only: devtest/PrcGuiShot enters the singleplayer world 'PrcGuiShot' and screenshots the precipitator GUI (PRC01).
+                // `gradlew runClient -PprcGuiShot=1`; log lines "PRCGUI ...".
+                property 'abyssia.prcguishot', '1'
+                args '--quickPlaySingleplayer', 'PrcGuiShot'
+            }
             else
             {
                 property 'abyssia.autoshot', '1'
@@ -103,6 +110,8 @@ minecraft {
         }
 
         server {
+            // Dev-only: `gradlew runServer -Pprc01Test=1` runs devtest/Prc01Test (PRC01 checks, log lines "PRC01 ...") and halts.
+            if (project.hasProperty('prc01Test')) property 'abyssia.prc01test', '1'
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
         }

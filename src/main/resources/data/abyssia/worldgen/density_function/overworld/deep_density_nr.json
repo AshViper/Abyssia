@@ -17,7 +17,15 @@
           },
           "argument2": "abyssia:overworld/deep_seabed_offset_nr"
         },
-        "argument2": "abyssia:deep_caves"
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": "abyssia:deep_caves",
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": 4.0,
+            "argument2": "abyssia:overworld/deep_land"
+          }
+        }
       },
       "argument2": {
         "type": "minecraft:add",

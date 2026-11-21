@@ -49,7 +49,10 @@ LIT_MACHINES = {
     "auxiliary_generator": ("Auxiliary Generator Mk1", "補助発電機 Mk1"),
     "high_temp_furnace": ("High-Temperature Furnace", "高温炉"),
     "selective_leaching_separator": ("Selective Leaching Separator", "選択浸出分離機"),     # I02
+    "hydrothermal_precipitator": ("Hydrothermal Precipitator", "熱水析出機"),     # PRC01
 }
+# PRC01: no textures of its own yet, it borrows the separator's
+TEXTURE_ALIAS = {"hydrothermal_precipitator": "selective_leaching_separator"}
 # ORE01 abyssal excavator Mk1 / Mk2: multiblock drawn by industry/client/ExcavatorRenderer; blockstates + chunk models come from
 # tools/bt01/excavator_assets.py; built with the habitat constructor (no item)
 EXCAVATORS = {
@@ -182,6 +185,7 @@ def _simple_model(frm, to, texture, faces=FACES):
 def _fallback_machine(machine):
     full = [0, 0, 0], [16, 16, 16]
     u = [0, 0, 16, 16]
+    machine = TEXTURE_ALIAS.get(machine, machine)
     faces = {"north": "#front", "south": "#side", "east": "#side", "west": "#side", "up": "#top", "down": "#bottom"}
     return {"parent": "minecraft:block/block",
             "textures": {"front": rl(f"{machine}_front"), "side": rl(f"{machine}_side"),
@@ -401,7 +405,7 @@ def generate(write, bs, bm, im, data_dir):
 
     # ---- machines, generators, energy device
     for machine in LIT_MACHINES:
-        write(bm(machine + "_on"), {"parent": rl(machine), "textures": {"front": rl(f"{machine}_front_on")}})
+        write(bm(machine + "_on"), {"parent": rl(machine), "textures": {"front": rl(f"{TEXTURE_ALIAS.get(machine, machine)}_front_on")}})
         write(bs(machine), _machine_blockstate(machine))
         write(im(machine), {"parent": item_parent(machine, rl(machine))})
     front = {0: f"{ENERGY}_front", 1: f"{ENERGY}_front_c1", 2: f"{ENERGY}_front_c2", 3: f"{ENERGY}_front_on"}
@@ -490,6 +494,7 @@ def recipes(write, data_dir):
     shaped("high_temp_furnace", ["HTH", "TFT", "PVP"], {**mach, "H": "heat_resistant_alloy_ingot"}, 1, "misc")
     # ORE01: the excavators have no recipe (habitat constructor build entries, industry/ExcavatorEntry)
     shaped("selective_leaching_separator", ["ATA", "VFV", "PRP"], {**mach, "R": LEACHING_REAGENT}, 1, "misc")
+    shaped("hydrothermal_precipitator", ["ATA", "VFV", "PKP"], mach, 1, "misc")   # PRC01
     write(rd(LEACHING_REAGENT), {
         "type": "minecraft:crafting_shapeless", "category": "misc",
         "ingredients": [item("sulfur"), item("sulfur"), item("thermal_reagent"), item("minecraft:water_bucket")],

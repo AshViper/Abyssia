@@ -38,9 +38,14 @@ public record SkeletonFormation(Span length, Span rib, float ribGap, float bend,
     @Override
     public void paint(Site site, Painter p)
     {
+        paintAt(site.x, site.z, site.random(), p);
+    }
+
+    /** One skeleton centred at (cx0, cz0) whose layout is drawn from {@code random} (the graveyard places several). */
+    public void paintAt(int cx0, int cz0, RandomSource random, Painter p)
+    {
         if (p.isEmpty()) return;
         // The whole layout is drawn up front, in a fixed order, so every chunk agrees on it.
-        RandomSource random = site.random();
         double len = length.sample(random);
         double ribMax = rib.sample(random);
         double angle = random.nextDouble() * Math.PI * 2;
@@ -56,7 +61,7 @@ public record SkeletonFormation(Span length, Span rib, float ribGap, float bend,
             tip[k] = 0.7 + 0.3 * random.nextDouble();
         }
         int jaw = 1 + random.nextInt(3);
-        Spine spine = new Spine(site.x, site.z, len, Math.cos(angle), Math.sin(angle), amp, phase);
+        Spine spine = new Spine(cx0, cz0, len, Math.cos(angle), Math.sin(angle), amp, phase);
 
         // Vertebrae: a fat one every other block, a narrow link between, and a spike up from the fat ones.
         int count = (int) len;

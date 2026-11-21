@@ -421,6 +421,21 @@ public final class CaveNetwork
     }
 
     /**
+     * Whether (x, z) is land: the deep layer's seabed there reaches its rock ceiling (the deep land gate raises it above the
+     * ceiling, so the deep layer is solid rock). The crust windows ask the shallow network: under land the crust stays solid
+     * too (no abyss cavities, no window systems or their parts). One binary search; callers cache.
+     */
+    public boolean land(double x, double z)
+    {
+        CaveNetwork shallow = root != null ? root : this;
+        // PERF04: the seabed density falls with Y (seabed() searches it as such), so "seabed above maxEntranceY" is "solid at
+        // maxEntranceY": one density sample instead of a ten-step binary search.
+        int top = shallow.maxEntranceY();
+        if (!DeepLayer.PERF04 || top <= shallow.minY || top >= shallow.maxY - 1) return shallow.seabed(x, z) > top;
+        return shallow.solid((int) Math.floor(x), top, (int) Math.floor(z));
+    }
+
+    /**
      * Lowest seabed over a disc (centre, an inner ring and an outer ring spaced at most ~12 blocks apart), to keep a
      * chamber of this radius, and especially a lake's gas dome, under solid rock even where a narrow canyon crosses.
      */

@@ -37,7 +37,7 @@ import java.util.List;
  *              message.abyssia.submarine.upgrade_hull_damaged, message.abyssia.submarine.sonar.* (see vehicle_assets.py)
  * Config:      [submarine.upgrades] in abyssia-common.toml (Config.SUBMARINE_HULL_* ... SUBMARINE_SONAR_*)
  * </pre>
- * SUB08 crush depth as a Y coordinate: -300 without a DEPTH upgrade, Mk1 -500, Mk2 -800, Mk3 -1000 (Config
+ * SUB08 crush depth as a Y coordinate: -300 without a DEPTH upgrade, Mk1 -380, Mk2 -450, Mk3 -566 (Config
  * SUBMARINE_RATED_Y_*). Below it the hull takes crush damage once a second (Submarine.crush).
  * Speed order (fixed): base (Config max_speed / 0.38 / 0.36) -> thruster replaces (0.56 / 0.51 / 0.48) -> x hull 0.92
  * -> (vertical only) x battery 0.95. Thrust FE is flat per moving tick: 8 (Config thrust_fe_per_tick) or 12 with the thruster.

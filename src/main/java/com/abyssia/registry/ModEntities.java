@@ -86,11 +86,11 @@ public final class ModEntities
 
     /** 200 block boss: 4.5 block head hitbox, tracked 16 chunks out, position every tick (see com.abyssia.entity.boss). */
     public static final RegistryObject<EntityType<com.abyssia.entity.boss.AbyssSerpent>> ABYSS_SERPENT = ENTITIES.register("abyss_serpent",
-            () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssSerpent::new, MobCategory.MONSTER).sized(4.5F, 4.5F).fireImmune()
+            () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssSerpent::new, MobCategory.MONSTER).sized(18.0F, 18.0F).fireImmune()
                     .clientTrackingRange(16).updateInterval(1).build("abyss_serpent"));
 
     public static final RegistryObject<EntityType<com.abyssia.entity.boss.TrenchWyrm>> TRENCH_WYRM = ENTITIES.register("trench_wyrm",
-            () -> EntityType.Builder.of(com.abyssia.entity.boss.TrenchWyrm::new, MobCategory.MONSTER).sized(5.5F, 5.5F).fireImmune()
+            () -> EntityType.Builder.of(com.abyssia.entity.boss.TrenchWyrm::new, MobCategory.MONSTER).sized(16.5F, 16.5F).fireImmune()
                     .clientTrackingRange(16).updateInterval(1).build("trench_wyrm"));
     public static final RegistryObject<EntityType<com.abyssia.entity.boss.AbyssKraken>> ABYSS_KRAKEN = ENTITIES.register("abyss_kraken",
             () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssKraken::new, MobCategory.MONSTER).sized(6.0F, 6.0F).fireImmune()
