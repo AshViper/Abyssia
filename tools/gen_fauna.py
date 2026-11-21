@@ -64,6 +64,34 @@ ITEM_NAMES = {}
 for _s in species():
     _en, _ja = _s.INFO["names"]
     ITEM_NAMES[sid(_s) + "_spawn_egg"] = (_en + " Spawn Egg", _ja + "のスポーンエッグ")
+GIANT_NAMES = [
+    ('lancejaw', 'Lancejaw', '槍顎'),
+    ('lumenwing', 'Lumenwing', '灯翼'),
+    ('lantern_grazer', 'Lanternbaleen', '灯髭ウオ'),
+    ('hush_whale', 'Hush Whale', '静寂鯨'),
+    ('slateback', 'Slateback', '石鱗ウオ'),
+    ('rift_lamprey', 'Rift Lamprey', '裂溝ヤツメ'),
+    ('shroud_ray', 'Shroud Ray', '帳エイ'),
+    ('glassback', 'Glassback', '硝子背'),
+    ('crestfin', 'Crestfin', '冠鰭'),
+    ('duskmaw', 'Duskmaw', '宵喰らい'),
+]
+
+_EXTRA_EGG_NAMES = [
+    ("abyss_serpent", "Abyssal Serpent", "深淵の大海蛇"), ("trench_wyrm", "Trench Wyrm", "海溝の大ワーム"),
+    ("abyss_angler", "Abyss Angler", "アビスアングラー"), ("abyss_kraken", "Great Kraken", "大クラーケン"),
+    ("abyss_mother", "Abyss Mother", "深淵の母"),
+]
+_GIANT_EGG_IDS = ("lancejaw", "lumenwing", "lantern_grazer", "hush_whale", "slateback",
+                  "rift_lamprey", "shroud_ray", "glassback", "crestfin", "duskmaw")
+
+
+    giants = {g: (e, j) for g, e, j in GIANT_NAMES}
+    return _EXTRA_EGG_NAMES + [(g, giants[g][0], giants[g][1]) for g in _GIANT_EGG_IDS]
+
+
+
+
 # "<item>.dropped_by": which species drop an item (from INFO["loot"]), shown as a JEI info page (com.abyssia.compat.jei)
 _DROPPERS = {}
 for _s in species():
@@ -76,8 +104,8 @@ for _item, _names in _DROPPERS.items():
 
 
 def item_models(write, im):
-    for s in species():
         write(im(sid(s) + "_spawn_egg"), {"parent": "minecraft:item/template_spawn_egg"})
+    for i in ids:
 
 
 # ================================================================ models from the generator
@@ -250,6 +278,7 @@ def loot_table(name, drops):
 
 # ================================================================ translations
 
+
 def lang():
     for code, idx in (("en_us", 0), ("ja_jp", 1)):
         path = os.path.join(ASSETS, "lang", code + ".json")
@@ -258,6 +287,8 @@ def lang():
                 and not (k.startswith("item.abyssia.") and k.endswith(".dropped_by"))}
         keep["entity.abyssia.abyss_serpent"] = ("Abyssal Serpent", "深淵の大海蛇")[idx]  # BOSS01 boss, not a species
         keep["entity.abyssia.abyss_angler"] = ("Abyss Angler", "アビスアングラー")[idx]  # BOSS03 boss, not a species
+        for gid, gen, gja in GIANT_NAMES:  # GNT01 giants, not species
+            keep["entity.abyssia." + gid] = (gen, gja)[idx]
         for s in species():
             name = sid(s)
             keep["entity.abyssia." + name] = s.INFO["names"][idx]

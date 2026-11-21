@@ -1,0 +1,574 @@
+{
+ "entity": "rift_lamprey",
+ "generator": "tools/boss/rift_lamprey_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/rift_lamprey.geo.json",
+ "animation": "assets/abyssia/animations/entity/rift_lamprey.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/rift_lamprey_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/rift_lamprey_geo_glow.png",
+ "glow_note": "光らない画素は (0,0,0,0)。光るのは体側の点の列（青緑、seg_01..19）と首の小さな目（淡い橙）",
+ "texture_size": [
+  128,
+  128
+ ],
+ "texel": "1 テクセル = 2 単位 = 0.25 ブロック",
+ "model_scale": 2.0,
+ "segment_length_units": 16.0,
+ "segment_length_blocks": 2.0,
+ "joints": 23,
+ "segments": 22,
+ "rest_pose": "一直線。関節 j は (0, 0, 16j)、頭は -Z。芯は y = 0",
+ "head_pivot": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, 16 (k - 0.5))",
+ "extent_units": {
+  "mouth_z": -16.0,
+  "tail_z": 336.0,
+  "total_length_blocks": 44.0,
+  "max_half_width": 18.0,
+  "max_top_y": 18.0,
+  "min_bottom_y": -18.0
+ },
+ "bone_rule": "head と seg_01..seg_22 は root 直下で、Java が毎フレーム位置と回転を上書きする。箱は子の body_01..body_21 にあり（seg_22 は尾の先より後ろで空）、idle の進行波は body_k の position x と rotation y。Java は body_k / mouth / teeth / sleeve に触らない",
+ "mouth": {
+  "bones": "mouth（head の子: 吸盤の輪と喉の壁）→ teeth（歯 12 本）。sleeve（head の子: 喉の筒）",
+  "rule": "突き出し量 p（単位）のとき mouth position = (0, 0, -p)、sleeve scale z = 1 + p / 8 を同じ時刻に入れる。開きは mouth scale xy（静止 1、開く 1.3〜1.35）。teeth の rotation z で削る",
+  "attack_reach_blocks": 1.75
+ },
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 4.0,
+   "bones": [
+    "body_02",
+    "body_03",
+    "body_04",
+    "body_05",
+    "body_06",
+    "body_07",
+    "body_08",
+    "body_09",
+    "body_10",
+    "body_11",
+    "body_12",
+    "body_13",
+    "body_14",
+    "body_15",
+    "body_16",
+    "body_17",
+    "body_18",
+    "body_19",
+    "body_20",
+    "body_21",
+    "mouth"
+   ]
+  },
+  "attack": {
+   "loop": false,
+   "length": 1.2,
+   "bones": [
+    "mouth",
+    "sleeve",
+    "teeth"
+   ]
+  },
+  "latch": {
+   "loop": "hold_on_last_frame",
+   "length": 0.3,
+   "bones": [
+    "mouth",
+    "sleeve"
+   ]
+  },
+  "latch_grind": {
+   "loop": true,
+   "length": 0.8,
+   "bones": [
+    "mouth",
+    "sleeve",
+    "teeth"
+   ]
+  }
+ },
+ "animation_notes": {
+  "idle": "蛇行遊泳ループ（頭→尾へ進む波、振幅 0.75 ブロック、波長 22 ブロック）と吸盤の伸縮",
+  "attack": "吸盤をすぼめて引き、開いて 1.75 ブロック突き出す 1 回。当たりは 0.5 秒",
+  "latch": "吸盤を開いて 0.75 ブロック出したまま保持（hold_on_last_frame）",
+  "latch_grind": "追加。latch と同じ姿勢で歯を回すループ（吸い付いて削る間に使える。使わなくてもよい）"
+ },
+ "cube_count": 111,
+ "bones": [
+  {
+   "name": "head",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "sleeve",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "cubes": 1
+  },
+  {
+   "name": "mouth",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    0.0,
+    -6.0
+   ],
+   "cubes": 9
+  },
+  {
+   "name": "teeth",
+   "parent": "mouth",
+   "pivot": [
+    0.0,
+    0.0,
+    -14.0
+   ],
+   "cubes": 12
+  },
+  {
+   "name": "seg_01",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    8.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_01",
+   "parent": "seg_01",
+   "pivot": [
+    0.0,
+    0.0,
+    8.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_02",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    24.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_02",
+   "parent": "seg_02",
+   "pivot": [
+    0.0,
+    0.0,
+    24.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_03",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_03",
+   "parent": "seg_03",
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_04",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    56.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_04",
+   "parent": "seg_04",
+   "pivot": [
+    0.0,
+    0.0,
+    56.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_05",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    72.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_05",
+   "parent": "seg_05",
+   "pivot": [
+    0.0,
+    0.0,
+    72.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_06",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    88.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_06",
+   "parent": "seg_06",
+   "pivot": [
+    0.0,
+    0.0,
+    88.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_07",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    104.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_07",
+   "parent": "seg_07",
+   "pivot": [
+    0.0,
+    0.0,
+    104.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_08",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_08",
+   "parent": "seg_08",
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_09",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    136.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_09",
+   "parent": "seg_09",
+   "pivot": [
+    0.0,
+    0.0,
+    136.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_10",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    152.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_10",
+   "parent": "seg_10",
+   "pivot": [
+    0.0,
+    0.0,
+    152.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_11",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    168.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_11",
+   "parent": "seg_11",
+   "pivot": [
+    0.0,
+    0.0,
+    168.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_12",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    184.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_12",
+   "parent": "seg_12",
+   "pivot": [
+    0.0,
+    0.0,
+    184.0
+   ],
+   "cubes": 5
+  },
+  {
+   "name": "seg_13",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_13",
+   "parent": "seg_13",
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ],
+   "cubes": 5
+  },
+  {
+   "name": "seg_14",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    216.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_14",
+   "parent": "seg_14",
+   "pivot": [
+    0.0,
+    0.0,
+    216.0
+   ],
+   "cubes": 5
+  },
+  {
+   "name": "seg_15",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    232.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_15",
+   "parent": "seg_15",
+   "pivot": [
+    0.0,
+    0.0,
+    232.0
+   ],
+   "cubes": 5
+  },
+  {
+   "name": "seg_16",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    248.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_16",
+   "parent": "seg_16",
+   "pivot": [
+    0.0,
+    0.0,
+    248.0
+   ],
+   "cubes": 5
+  },
+  {
+   "name": "seg_17",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    264.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_17",
+   "parent": "seg_17",
+   "pivot": [
+    0.0,
+    0.0,
+    264.0
+   ],
+   "cubes": 5
+  },
+  {
+   "name": "seg_18",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    280.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_18",
+   "parent": "seg_18",
+   "pivot": [
+    0.0,
+    0.0,
+    280.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_19",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    296.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_19",
+   "parent": "seg_19",
+   "pivot": [
+    0.0,
+    0.0,
+    296.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_20",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    312.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_20",
+   "parent": "seg_20",
+   "pivot": [
+    0.0,
+    0.0,
+    312.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_21",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    328.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_21",
+   "parent": "seg_21",
+   "pivot": [
+    0.0,
+    0.0,
+    328.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "seg_22",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    344.0
+   ],
+   "cubes": 0
+  }
+ ]
+}

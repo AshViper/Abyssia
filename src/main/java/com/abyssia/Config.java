@@ -471,6 +471,26 @@ public class Config
             .comment("Small fish are drawn to anglerfish lures in the dark (and may be eaten)")
             .define("lure_attraction", true);
 
+    // GNT01 giant wild animals (30+ blocks): spawn rules are data/<namespace>/giant_spawns
+    public static final ModConfigSpec.BooleanValue GIANT_ENABLED = BUILDER
+            .comment("Giant wild animals (30+ blocks) spawn around players")
+            .define("giant_enabled", true);
+    public static final ModConfigSpec.IntValue GIANT_MAX_LOADED = BUILDER
+            .comment("At most this many giants loaded in the world at once")
+            .defineInRange("giant_max_loaded", 8, 0, 64);
+    public static final ModConfigSpec.IntValue GIANT_SPAWN_INTERVAL = BUILDER
+            .comment("Ticks between giant spawn rolls per player")
+            .defineInRange("giant_spawn_interval_ticks", 100, 20, 24000);
+    public static final ModConfigSpec.DoubleValue GIANT_SPAWN_CHANCE = BUILDER
+            .comment("Chance per roll that a giant spawns near a player")
+            .defineInRange("giant_spawn_chance", 0.2, 0.0, 1.0);
+    public static final ModConfigSpec.IntValue GIANT_PLAYER_COOLDOWN = BUILDER
+            .comment("Ticks a player waits after a giant spawned near them before the next one can")
+            .defineInRange("giant_player_cooldown_ticks", 0, 0, 1000000);
+    public static final ModConfigSpec.IntValue GIANT_SUB_HULL_FLOOR = BUILDER
+            .comment("Hull value (submarine damage budget left) a giant never grinds a submarine below; 0 = it can wear the hull down to breaking")
+            .defineInRange("giant_sub_hull_floor", 0, 0, 100000);
+
     public static final ModConfigSpec.BooleanValue DIVER_HELMET_NIGHT_VISION = BUILDER
             .comment("Allow the Deep Diver's Helmet to grant weak underwater night vision")
             .define("diver_helmet_night_vision", true);

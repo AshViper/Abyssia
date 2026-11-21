@@ -1,0 +1,32 @@
+{
+  "parent": "abyssia:life/giant_sighting",
+  "display": {
+    "icon": {
+      "id": "minecraft:heart_of_the_sea"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.giant_census.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.giant_census.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "scan_giant_complete": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "group": "giant_",
+        "complete": true
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_giant_complete"
+    ]
+  ],
+  "rewards": {
+    "experience": 200
+  }
+}

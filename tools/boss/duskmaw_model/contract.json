@@ -1,0 +1,818 @@
+{
+ "entity": "duskmaw",
+ "generator": "tools/boss/duskmaw_model/build.py（出力は手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/duskmaw.geo.json",
+ "animation": "assets/abyssia/animations/entity/duskmaw.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/duskmaw_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/duskmaw_geo_glow.png",
+ "texture_size": [
+  256,
+  256
+ ],
+ "texel_blocks": 0.25,
+ "model_scale": 2.0,
+ "segment_length_units": 16,
+ "segment_length_blocks": 2.0,
+ "joints": 29,
+ "segments": 28,
+ "rest_pose": "頭から尾まで一直線。関節 j は geo の (0, 0, 16j)。頭が -Z。体の芯は y = 0",
+ "head_pivot": [
+  0,
+  0,
+  0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, 16 * (k - 0.5))",
+ "extent_units": {
+  "front_z": -24,
+  "tail_z": 450,
+  "total_length_blocks": 59.25
+ },
+ "bone_rule": "head と seg_01..seg_28 は root 直下で、体節鎖が毎フレーム上書きする。頭骨は head に載る硬い 9 ブロック（z -24..48）で、seg_01..seg_03 は箱なし。胴は seg_04 から。子の骨は animation だけが動かす",
+ "child_bones": {
+  "jaw": "下顎（head の子）。pivot は顎関節 (0, -4, 44)。静止で 38 度開いている",
+  "tent_N_a..d (N=1..7)": "触手の鎖。a が付け根（1,2 は head、3,4 は seg_04、5 は seg_05、6 は seg_06、7 は seg_09 の子）。d の先に光る玉",
+  "crest / crest_2 / dorsal_1..3 / anal / pectoral_l,r / pelvic_l,r / caudal": "ひれ。pivot は付け根"
+ },
+ "animation_signs": {
+  "jaw": "rotation x 正で開く。-38 で噛み合う",
+  "tent_*": "rotation x 負で前（-Z）へ、正で後ろへ。z は左右",
+  "caudal": "rotation y で左右に振る"
+ },
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 5.0,
+   "bones": 36
+  },
+  "attack": {
+   "loop": false,
+   "length": 1.0,
+   "bones": 15
+  },
+  "grab": {
+   "loop": "hold_on_last_frame",
+   "length": 0.7,
+   "bones": 29
+  }
+ },
+ "cube_count": 126,
+ "bones": [
+  {
+   "name": "head",
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "seg_01",
+   "pivot": [
+    0.0,
+    0.0,
+    8.0
+   ]
+  },
+  {
+   "name": "seg_02",
+   "pivot": [
+    0.0,
+    0.0,
+    24.0
+   ]
+  },
+  {
+   "name": "seg_03",
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ]
+  },
+  {
+   "name": "seg_04",
+   "pivot": [
+    0.0,
+    0.0,
+    56.0
+   ]
+  },
+  {
+   "name": "seg_05",
+   "pivot": [
+    0.0,
+    0.0,
+    72.0
+   ]
+  },
+  {
+   "name": "seg_06",
+   "pivot": [
+    0.0,
+    0.0,
+    88.0
+   ]
+  },
+  {
+   "name": "seg_07",
+   "pivot": [
+    0.0,
+    0.0,
+    104.0
+   ]
+  },
+  {
+   "name": "seg_08",
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ]
+  },
+  {
+   "name": "seg_09",
+   "pivot": [
+    0.0,
+    0.0,
+    136.0
+   ]
+  },
+  {
+   "name": "seg_10",
+   "pivot": [
+    0.0,
+    0.0,
+    152.0
+   ]
+  },
+  {
+   "name": "seg_11",
+   "pivot": [
+    0.0,
+    0.0,
+    168.0
+   ]
+  },
+  {
+   "name": "seg_12",
+   "pivot": [
+    0.0,
+    0.0,
+    184.0
+   ]
+  },
+  {
+   "name": "seg_13",
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ]
+  },
+  {
+   "name": "seg_14",
+   "pivot": [
+    0.0,
+    0.0,
+    216.0
+   ]
+  },
+  {
+   "name": "seg_15",
+   "pivot": [
+    0.0,
+    0.0,
+    232.0
+   ]
+  },
+  {
+   "name": "seg_16",
+   "pivot": [
+    0.0,
+    0.0,
+    248.0
+   ]
+  },
+  {
+   "name": "seg_17",
+   "pivot": [
+    0.0,
+    0.0,
+    264.0
+   ]
+  },
+  {
+   "name": "seg_18",
+   "pivot": [
+    0.0,
+    0.0,
+    280.0
+   ]
+  },
+  {
+   "name": "seg_19",
+   "pivot": [
+    0.0,
+    0.0,
+    296.0
+   ]
+  },
+  {
+   "name": "seg_20",
+   "pivot": [
+    0.0,
+    0.0,
+    312.0
+   ]
+  },
+  {
+   "name": "seg_21",
+   "pivot": [
+    0.0,
+    0.0,
+    328.0
+   ]
+  },
+  {
+   "name": "seg_22",
+   "pivot": [
+    0.0,
+    0.0,
+    344.0
+   ]
+  },
+  {
+   "name": "seg_23",
+   "pivot": [
+    0.0,
+    0.0,
+    360.0
+   ]
+  },
+  {
+   "name": "seg_24",
+   "pivot": [
+    0.0,
+    0.0,
+    376.0
+   ]
+  },
+  {
+   "name": "seg_25",
+   "pivot": [
+    0.0,
+    0.0,
+    392.0
+   ]
+  },
+  {
+   "name": "seg_26",
+   "pivot": [
+    0.0,
+    0.0,
+    408.0
+   ]
+  },
+  {
+   "name": "seg_27",
+   "pivot": [
+    0.0,
+    0.0,
+    424.0
+   ]
+  },
+  {
+   "name": "seg_28",
+   "pivot": [
+    0.0,
+    0.0,
+    440.0
+   ]
+  },
+  {
+   "name": "crest",
+   "pivot": [
+    0.0,
+    28.0,
+    40.0
+   ],
+   "parent": "head"
+  },
+  {
+   "name": "jaw",
+   "pivot": [
+    0.0,
+    -4.0,
+    44.0
+   ],
+   "parent": "head",
+   "rotation": [
+    38.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "crest_2",
+   "pivot": [
+    0.0,
+    24.0,
+    56.0
+   ],
+   "parent": "seg_04"
+  },
+  {
+   "name": "dorsal_1",
+   "pivot": [
+    0.0,
+    24.0,
+    152.0
+   ],
+   "parent": "seg_10"
+  },
+  {
+   "name": "dorsal_2",
+   "pivot": [
+    0.0,
+    16.0,
+    264.0
+   ],
+   "parent": "seg_17"
+  },
+  {
+   "name": "dorsal_3",
+   "pivot": [
+    0.0,
+    12.0,
+    344.0
+   ],
+   "parent": "seg_22"
+  },
+  {
+   "name": "anal",
+   "pivot": [
+    0.0,
+    -8.0,
+    312.0
+   ],
+   "parent": "seg_20"
+  },
+  {
+   "name": "pectoral_l",
+   "pivot": [
+    14.0,
+    -16.0,
+    104.0
+   ],
+   "parent": "seg_07",
+   "rotation": [
+    0.0,
+    0.0,
+    -32.0
+   ]
+  },
+  {
+   "name": "pelvic_l",
+   "pivot": [
+    8.0,
+    -12.0,
+    232.0
+   ],
+   "parent": "seg_15",
+   "rotation": [
+    0.0,
+    0.0,
+    -28.0
+   ]
+  },
+  {
+   "name": "pectoral_r",
+   "pivot": [
+    -14.0,
+    -16.0,
+    104.0
+   ],
+   "parent": "seg_07",
+   "rotation": [
+    0.0,
+    0.0,
+    32.0
+   ]
+  },
+  {
+   "name": "pelvic_r",
+   "pivot": [
+    -8.0,
+    -12.0,
+    232.0
+   ],
+   "parent": "seg_15",
+   "rotation": [
+    0.0,
+    0.0,
+    28.0
+   ]
+  },
+  {
+   "name": "caudal",
+   "pivot": [
+    0.0,
+    0.0,
+    424.0
+   ],
+   "parent": "seg_28"
+  },
+  {
+   "name": "tent_1_a",
+   "pivot": [
+    -12.0,
+    -20.0,
+    40.0
+   ],
+   "parent": "head",
+   "rotation": [
+    -18.0,
+    0.0,
+    16.0
+   ]
+  },
+  {
+   "name": "tent_1_b",
+   "pivot": [
+    -12.0,
+    -40.0,
+    40.0
+   ],
+   "parent": "tent_1_a",
+   "rotation": [
+    -14.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_1_c",
+   "pivot": [
+    -12.0,
+    -60.0,
+    40.0
+   ],
+   "parent": "tent_1_b",
+   "rotation": [
+    10.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_1_d",
+   "pivot": [
+    -12.0,
+    -80.0,
+    40.0
+   ],
+   "parent": "tent_1_c",
+   "rotation": [
+    16.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_2_a",
+   "pivot": [
+    12.0,
+    -20.0,
+    44.0
+   ],
+   "parent": "head",
+   "rotation": [
+    -8.0,
+    0.0,
+    -16.0
+   ]
+  },
+  {
+   "name": "tent_2_b",
+   "pivot": [
+    12.0,
+    -44.0,
+    44.0
+   ],
+   "parent": "tent_2_a",
+   "rotation": [
+    -16.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_2_c",
+   "pivot": [
+    12.0,
+    -68.0,
+    44.0
+   ],
+   "parent": "tent_2_b",
+   "rotation": [
+    14.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_2_d",
+   "pivot": [
+    12.0,
+    -92.0,
+    44.0
+   ],
+   "parent": "tent_2_c",
+   "rotation": [
+    8.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_3_a",
+   "pivot": [
+    -14.0,
+    -24.0,
+    54.0
+   ],
+   "parent": "seg_04",
+   "rotation": [
+    6.0,
+    0.0,
+    16.0
+   ]
+  },
+  {
+   "name": "tent_3_b",
+   "pivot": [
+    -14.0,
+    -50.0,
+    54.0
+   ],
+   "parent": "tent_3_a",
+   "rotation": [
+    -16.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_3_c",
+   "pivot": [
+    -14.0,
+    -76.0,
+    54.0
+   ],
+   "parent": "tent_3_b",
+   "rotation": [
+    -10.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_3_d",
+   "pivot": [
+    -14.0,
+    -102.0,
+    54.0
+   ],
+   "parent": "tent_3_c",
+   "rotation": [
+    14.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_4_a",
+   "pivot": [
+    14.0,
+    -24.0,
+    60.0
+   ],
+   "parent": "seg_04",
+   "rotation": [
+    14.0,
+    0.0,
+    -16.0
+   ]
+  },
+  {
+   "name": "tent_4_b",
+   "pivot": [
+    14.0,
+    -46.0,
+    60.0
+   ],
+   "parent": "tent_4_a",
+   "rotation": [
+    -18.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_4_c",
+   "pivot": [
+    14.0,
+    -68.0,
+    60.0
+   ],
+   "parent": "tent_4_b",
+   "rotation": [
+    8.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_4_d",
+   "pivot": [
+    14.0,
+    -90.0,
+    60.0
+   ],
+   "parent": "tent_4_c",
+   "rotation": [
+    -10.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_5_a",
+   "pivot": [
+    0.0,
+    -24.0,
+    76.0
+   ],
+   "parent": "seg_05",
+   "rotation": [
+    4.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_5_b",
+   "pivot": [
+    0.0,
+    -48.0,
+    76.0
+   ],
+   "parent": "tent_5_a",
+   "rotation": [
+    12.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_5_c",
+   "pivot": [
+    0.0,
+    -72.0,
+    76.0
+   ],
+   "parent": "tent_5_b",
+   "rotation": [
+    -16.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_5_d",
+   "pivot": [
+    0.0,
+    -96.0,
+    76.0
+   ],
+   "parent": "tent_5_c",
+   "rotation": [
+    -8.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_6_a",
+   "pivot": [
+    -12.0,
+    -24.0,
+    92.0
+   ],
+   "parent": "seg_06",
+   "rotation": [
+    16.0,
+    0.0,
+    16.0
+   ]
+  },
+  {
+   "name": "tent_6_b",
+   "pivot": [
+    -12.0,
+    -44.0,
+    92.0
+   ],
+   "parent": "tent_6_a",
+   "rotation": [
+    10.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_6_c",
+   "pivot": [
+    -12.0,
+    -64.0,
+    92.0
+   ],
+   "parent": "tent_6_b",
+   "rotation": [
+    -14.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_6_d",
+   "pivot": [
+    -12.0,
+    -84.0,
+    92.0
+   ],
+   "parent": "tent_6_c",
+   "rotation": [
+    -12.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_7_a",
+   "pivot": [
+    12.0,
+    -20.0,
+    140.0
+   ],
+   "parent": "seg_09",
+   "rotation": [
+    22.0,
+    0.0,
+    -16.0
+   ]
+  },
+  {
+   "name": "tent_7_b",
+   "pivot": [
+    12.0,
+    -42.0,
+    140.0
+   ],
+   "parent": "tent_7_a",
+   "rotation": [
+    12.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_7_c",
+   "pivot": [
+    12.0,
+    -64.0,
+    140.0
+   ],
+   "parent": "tent_7_b",
+   "rotation": [
+    -10.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "tent_7_d",
+   "pivot": [
+    12.0,
+    -86.0,
+    140.0
+   ],
+   "parent": "tent_7_c",
+   "rotation": [
+    -16.0,
+    0.0,
+    0.0
+   ]
+  }
+ ]
+}

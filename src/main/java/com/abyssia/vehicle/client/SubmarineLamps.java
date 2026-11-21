@@ -50,7 +50,7 @@ public final class SubmarineLamps
         for (float side : new float[] {-1.0f, 1.0f})
         {
             Vec3 origin = position.add(vec(pose.transformPosition(new Vector3f(side * LAMP_X, LAMP_Y, LAMP_Z))));
-            out.accept(new Spotlight(origin, direction, RANGE, HALF_ANGLE, COLOR, 1.0f, BEAM_LENGTH, BEAM_RADIUS, sub));
+            out.accept(new Spotlight(origin, direction, RANGE, HALF_ANGLE, COLOR, sub.lampStrength(), BEAM_LENGTH, BEAM_RADIUS, sub));
         }
     }
 

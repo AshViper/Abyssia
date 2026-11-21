@@ -69,6 +69,7 @@ neoForge {
             gameDirectory = project.file('run')
             programArguments.addAll '--quickPlayMultiplayer', 'localhost:25631'
             systemProperty 'abyssia.bossshot', (project.findProperty('bossShot') ?: '1')
+            if (project.findProperty('giantId')) systemProperty 'abyssia.giantshot.id', project.findProperty('giantId')
             if (project.findProperty('bossOldMesh') == 'true') systemProperty 'abyssia.boss.oldmesh', 'true'
         }
 
@@ -86,6 +87,10 @@ neoForge {
             gameDirectory = project.file('run')
             programArguments.addAll '--quickPlaySingleplayer', 'PrcGuiShot'
             systemProperty 'abyssia.contentshot', '1'
+        }
+
+            client()
+            gameDirectory = project.file('run')
         }
 
         // Dev-only: devtest/LangShot screenshots the text-heavy screens in each language (-PlangShot=zh_cn,ru_ru; log lines "LANGSHOT ...").
@@ -141,6 +146,14 @@ neoForge {
             gameDirectory = project.file('run')
             programArgument '--nogui'
             systemProperty 'abyssia.trp01test', '1'
+        }
+
+        // Dev-only: devtest/GiantTest runs the GNT01 giant animal checks on a dedicated server and halts (log lines "GNT01 ...").
+        giantTest {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'abyssia.gianttest', (project.findProperty('giantId') ?: '1')
         }
 
         gameTestServer {

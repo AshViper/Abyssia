@@ -1,0 +1,31 @@
+{
+  "parent": "abyssia:life/giant_sighting",
+  "display": {
+    "icon": {
+      "id": "abyssia:lumen_filament"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.giant_shear.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.giant_shear.description"
+    }
+  },
+  "criteria": {
+    "lumen_filament": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "abyssia:lumen_filament"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "lumen_filament"
+    ]
+  ]
+}

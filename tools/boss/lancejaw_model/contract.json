@@ -1,0 +1,357 @@
+{
+ "entity": "lancejaw",
+ "generator": "tools/boss/lancejaw_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/lancejaw.geo.json",
+ "animation": "assets/abyssia/animations/entity/lancejaw.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/lancejaw_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/lancejaw_geo_glow.png",
+ "texture_size": [
+  256,
+  256
+ ],
+ "texture_used_rows": 94,
+ "texel_blocks": 0.25,
+ "model_scale": 2.0,
+ "units": "geo の 1 単位 = 1/16 ブロック。描画で MODEL_SCALE 倍する",
+ "segment_length_units": 16.0,
+ "segment_length_blocks": 2.0,
+ "joints": 17,
+ "segments": 16,
+ "rest_pose": "頭から尾まで一直線。関節 j は geo の (0, 0, 16j)。頭は -Z を向く",
+ "head_pivot": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, 16 * (k - 0.5))",
+ "extent_units": {
+  "front_z": -32.0,
+  "tail_z": 224.0,
+  "note": "回していない箱の範囲（回した鰭の先は含まない）"
+ },
+ "bone_rule": "head と seg_01..seg_NN は root 直下で、Java が毎フレーム位置と回転を上書きする。それ以外の骨（子）は animation に任せ、Java からは触らない",
+ "design": "槍顎（ヤリアゴ）。GNT01-design-sheet.png の 1 番。藍黒の背・灰青の腹、鼻先を覆う骨の鞘、骨の下顎から 2 段で伸びる槍、背の両脇の青緑の発光線、赤いえら 3 本、板状の背びれ 2 枚、二叉の尾",
+ "glow_note": "光らない画素は (0,0,0,0)。光るのは体側の発光線（青緑）・眼（青緑）・えら 3 本（暗い赤 = うっすら）。RenderType.eyes（加算）か GeckoLib の AutoGlowingGeoLayer 相当で、同じ geo に重ねる",
+ "total_length_blocks": 32.0,
+ "jaw": {
+  "bones": "jaw（head の子: 下顎の骨・1 段目の筒・鉤歯）→ jaw_tip（槍の柄・かえし・穂先）",
+  "stage_units": [
+   0.0,
+   0.0,
+   -24.0
+  ],
+  "reach_blocks": 6.0,
+  "rule": "jaw の position z = -24 で 1 段目（3 ブロック）、jaw_tip の position z = -24 を足して 2 段目（計 6 ブロック）"
+ },
+ "animation_signs": {
+  "jaw / jaw_tip": "position（geo 単位）。z が負で前へ伸びる",
+  "fin_l / fin_r / pelvic_l / pelvic_r": "胸びれ（seg_04）と腹びれ（seg_09）。付け根が pivot、z で上下に煽る",
+  "dorsal_1 / dorsal_2 / anal": "背びれ（seg_04 / seg_09）と臀びれ（seg_11）。z で左右に揺れる",
+  "tail_fin": "二叉の尾びれ（seg_14 の子）。y で左右に煽る"
+ },
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 3.0,
+   "bones": [
+    "anal",
+    "dorsal_1",
+    "dorsal_2",
+    "fin_l",
+    "fin_r",
+    "pelvic_l",
+    "pelvic_r",
+    "tail_fin"
+   ]
+  },
+  "attack": {
+   "loop": false,
+   "length": 1.4,
+   "bones": [
+    "jaw",
+    "jaw_tip"
+   ]
+  },
+  "jaw_out": {
+   "loop": "hold_on_last_frame",
+   "length": 0.35,
+   "bones": [
+    "jaw",
+    "jaw_tip"
+   ]
+  }
+ },
+ "cube_count": 73,
+ "bones": [
+  {
+   "name": "head",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "cubes": 12
+  },
+  {
+   "name": "seg_01",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    8.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "seg_02",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    24.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_03",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_04",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    56.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_05",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    72.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_06",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    88.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_07",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    104.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_08",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_09",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    136.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_10",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    152.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_11",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    168.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_12",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    184.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_13",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_14",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    216.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_15",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    232.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "seg_16",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    248.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "jaw",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    -8.0,
+    16.0
+   ],
+   "cubes": 10
+  },
+  {
+   "name": "jaw_tip",
+   "parent": "jaw",
+   "pivot": [
+    0.0,
+    -8.0,
+    16.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "dorsal_1",
+   "parent": "seg_04",
+   "pivot": [
+    0.0,
+    14.0,
+    56.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "dorsal_2",
+   "parent": "seg_09",
+   "pivot": [
+    0.0,
+    8.0,
+    136.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "fin_l",
+   "parent": "seg_04",
+   "pivot": [
+    12.0,
+    -10.0,
+    52.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "pelvic_l",
+   "parent": "seg_09",
+   "pivot": [
+    8.0,
+    -6.0,
+    134.0
+   ],
+   "cubes": 1
+  },
+  {
+   "name": "fin_r",
+   "parent": "seg_04",
+   "pivot": [
+    -12.0,
+    -10.0,
+    52.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "pelvic_r",
+   "parent": "seg_09",
+   "pivot": [
+    -8.0,
+    -6.0,
+    134.0
+   ],
+   "cubes": 1
+  },
+  {
+   "name": "anal",
+   "parent": "seg_11",
+   "pivot": [
+    0.0,
+    -6.0,
+    164.0
+   ],
+   "cubes": 1
+  },
+  {
+   "name": "tail_fin",
+   "parent": "seg_14",
+   "pivot": [
+    0.0,
+    1.0,
+    208.0
+   ],
+   "cubes": 6
+  }
+ ]
+}

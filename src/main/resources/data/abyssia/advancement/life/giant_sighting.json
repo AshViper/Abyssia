@@ -1,0 +1,30 @@
+{
+  "parent": "abyssia:life/neighbours",
+  "display": {
+    "icon": {
+      "id": "minecraft:spyglass"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.giant_sighting.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.giant_sighting.description"
+    }
+  },
+  "criteria": {
+    "scan_giant_count1": {
+      "trigger": "abyssia:scan",
+      "conditions": {
+        "group": "giant_",
+        "count": {
+          "min": 1
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "scan_giant_count1"
+    ]
+  ]
+}

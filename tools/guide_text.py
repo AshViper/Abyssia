@@ -20,7 +20,9 @@ EXTRA = {
                "description": "guide.abyssia.intro.book.desc", "obtaining": "guide.abyssia.intro.book.obtaining",
                "recipe": "abyssia:abyss_guide_book"}],
     "creatures": [{"type": "text", "id": "creatures.boss_materials", "chapter": "creatures",
-                   "title": "guide.abyssia.creatures.boss_materials.title", "text": "guide.abyssia.creatures.boss_materials.text"}],
+                   "title": "guide.abyssia.creatures.boss_materials.title", "text": "guide.abyssia.creatures.boss_materials.text"},
+                  {"type": "text", "id": "creatures.giant_wildlife", "chapter": "creatures",
+                   "title": "guide.abyssia.creatures.giant_wildlife.title", "text": "guide.abyssia.creatures.giant_wildlife.text"}],
     "waypoints": [{"type": "text", "id": "waypoints.deep_maps", "chapter": "waypoints",
                    "title": "guide.abyssia.waypoints.deep_maps.title", "text": "guide.abyssia.waypoints.deep_maps.text"}],
     "encyclopedia": [{"type": "recipe", "id": "encyclopedia.guide_recipe", "chapter": "encyclopedia",
@@ -49,6 +51,16 @@ EXTRA_LANG = {
         "- Heart Tank: 1 Abyss Heart + 4 Mother Bell Gel + Pressure Dive Tank\n"
         "- Abyssal Excavator Mk3: 6 Trench Wyrm Fangs + 4 Tungsten Ingots + 2 Hadal Plating + the Mk2 materials (Habitat Constructor)\n"
         "- Fang Drill: 3 Trench Wyrm Fangs + Abyssal Drill + 2 Pressure Crystal Shards"),
+    "guide.abyssia.creatures.giant_wildlife.title": ("巨大生物の素材", "Giant Wildlife Materials"),
+    "guide.abyssia.creatures.giant_wildlife.text": (
+        "深海には体長数十〜百メートル級の野生の巨大生物が泳いでいます。倒す・刈るなどして素材が手に入り、研究「巨大生物学」で灯翼ランタンが作れます。\n"
+        "・槍顎の骨槍: 深淵合金の剣 / 石鱗油: 精製油 / やすり歯輪: ドリルヘッド\n"
+        "・硝子背骨: 耐圧殻 / 冠鰭の棘: 硬化チップ / 宵腺: 深淵エネルギーセル\n"
+        "・反響器官: 深海ソナー / 帳膜: 海布 (それぞれの代替レシピ)",
+        "Wild giants tens to a hundred metres long swim the deep sea. Defeat or shear them for materials; the research \"Giant Biology\" unlocks the Lumen Lantern.\n"
+        "- Lance Jaw: Abyssal Alloy Sword / Slateback Oil: Refined Oil / Rasp Ring: Drill Head\n"
+        "- Glass Spine: Pressure Shell / Crest Spine: Hardened Tip / Umbral Gland: Abyssal Energy Cell\n"
+        "- Echo Organ: Deep-Sea Sonar / Shroud Membrane: Sea Cloth (alternative recipes)"),
     "guide.abyssia.ui.contents": ("目次", "Contents"),
     "guide.abyssia.ui.obtaining": ("入手方法", "Obtaining"),
     "guide.abyssia.ui.prev": ("前のページ", "Previous page"),
