@@ -107,7 +107,7 @@ public final class BossFarClient
         return new ArrayList<>(BOSSES.values());
     }
 
-    /** True while the server reports a boss fight (a boss bar is up): the deep fog opens up. */
+    /** True while the server reports a boss fight (a player within 128 blocks of the boss): the deep fog opens up. */
     public static boolean inCombat()
     {
         ClientLevel lvl = Minecraft.getInstance().level;
