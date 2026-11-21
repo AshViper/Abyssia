@@ -13,7 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -106,7 +105,7 @@ public class AbyssMother extends AbyssBoss implements software.bernie.geckolib.a
 
     public AbyssMother(EntityType<? extends AbyssMother> type, Level level)
     {
-        super(type, level, 2, 8.0, BossEvent.BossBarColor.PURPLE);
+        super(type, level, 2, 8.0);
         mParts = new MotherPart[BELL_PARTS + TENTACLES * PART_JOINTS.length];
         for (int i = 0; i < BELL_PARTS; i++) mParts[i] = new MotherPart(this, i, -1, i == BELL_PARTS - 1, 8.0F);
         for (int t = 0; t < TENTACLES; t++)

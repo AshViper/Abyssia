@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -83,7 +82,7 @@ public class TrenchWyrm extends AbyssBoss implements software.bernie.geckolib.an
 
     public TrenchWyrm(EntityType<? extends TrenchWyrm> type, Level level)
     {
-        super(type, level, 1 + 26, 12.0, BossEvent.BossBarColor.YELLOW);
+        super(type, level, 1 + 26, 12.0);
     }
 
     @Override

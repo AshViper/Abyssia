@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -111,7 +110,7 @@ public class AbyssKraken extends AbyssBoss implements software.bernie.geckolib.a
     public AbyssKraken(EntityType<? extends AbyssKraken> type, Level level)
     {
         // the spine chain is just the mantle centre (2 joints); the tentacles are the extra chains
-        super(type, level, 2, 8.0, BossEvent.BossBarColor.RED);
+        super(type, level, 2, 8.0);
         kParts = new KrakenPart[BODY_PARTS + TENTACLES * PART_JOINTS.length];
         for (int i = 0; i < BODY_PARTS; i++) kParts[i] = new KrakenPart(this, i, -1, 6.0F);
         for (int t = 0; t < TENTACLES; t++)

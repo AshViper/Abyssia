@@ -5,7 +5,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -65,7 +64,7 @@ public class AbyssSerpent extends AbyssBoss implements software.bernie.geckolib.
 
     public AbyssSerpent(EntityType<? extends AbyssSerpent> type, Level level)
     {
-        super(type, level, 1 + Integer.getInteger("abyssia.boss.joints", 28), 14.0, BossEvent.BossBarColor.BLUE);
+        super(type, level, 1 + Integer.getInteger("abyssia.boss.joints", 28), 14.0);
     }
 
     @Override

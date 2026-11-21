@@ -6,7 +6,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -69,7 +68,7 @@ public class AbyssAngler extends AbyssBoss implements software.bernie.geckolib.a
 
     public AbyssAngler(EntityType<? extends AbyssAngler> type, Level level)
     {
-        super(type, level, 10, 15.0, BossEvent.BossBarColor.BLUE);
+        super(type, level, 10, 15.0);
     }
 
     @Override

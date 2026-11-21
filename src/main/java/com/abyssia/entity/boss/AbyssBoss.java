@@ -2,13 +2,10 @@ package com.abyssia.entity.boss;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,12 +19,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import javax.annotation.Nullable;
 
 /**
- * A 200 block class boss: a head (this entity) dragging a {@link BossChain}, hitboxes as {@link BossPart}s, a boss bar,
+ * A 200 block class boss: a head (this entity) dragging a {@link BossChain}, hitboxes as {@link BossPart}s,
  * three phases (66% / 33% health) and a spherical arena. No pathfinding: the subclass steers the head in a straight line.
  */
 public abstract class AbyssBoss extends PathfinderMob
 {
-    public static final double BAR_RANGE = 128;
+    /** Players within this distance of the boss count as in the fight (the client opens the deep fog). */
+    public static final double FIGHT_RANGE = 128;
     public static final double CONTACT_RANGE = 220;
     public static final double CONTACT_DISTANCE = 2.5;
     public static final float CONTACT_DAMAGE = 6.0F;
@@ -35,7 +33,6 @@ public abstract class AbyssBoss extends PathfinderMob
 
     protected final BossChain chain;
     private final BossPart[] parts;
-    private final ServerBossEvent bossEvent;
     /** Arena centre (head coordinates) and radius: a sphere around the spawn point. */
     @Nullable
     protected Vec3 center;
@@ -48,7 +45,7 @@ public abstract class AbyssBoss extends PathfinderMob
     private long lastPlayerSeen = -1;
     private boolean retreatChecked;
 
-    protected AbyssBoss(EntityType<? extends AbyssBoss> type, Level level, int joints, double spacing, BossEvent.BossBarColor color)
+    protected AbyssBoss(EntityType<? extends AbyssBoss> type, Level level, int joints, double spacing)
     {
         super(type, level);
         this.noPhysics = true;
@@ -60,7 +57,6 @@ public abstract class AbyssBoss extends PathfinderMob
         for (int i = 0; i < parts.length; i++) parts[i] = new BossPart(this, i);
         // part ids follow the boss id (the client needs the same ids to attack a part), like the ender dragon
         this.setId(ENTITY_COUNTER.getAndAdd(parts.length + 1) + 1);
-        this.bossEvent = new ServerBossEvent(type.getDescription(), color, BossEvent.BossBarOverlay.PROGRESS);
     }
 
     public BossChain chain() { return chain; }
@@ -159,8 +155,6 @@ public abstract class AbyssBoss extends PathfinderMob
                 level().playSound(null, getX(), getY(), getZ(), SoundEvents.ENDER_DRAGON_GROWL, SoundSource.HOSTILE, 8.0F, 0.6F);
                 onPhaseChange(np);
             }
-            bossEvent.setProgress(Math.max(0, ratio));
-            if (tickCount % 10 == 0) updateBarPlayers();
             // NoAI (e.g. /summon ... {NoAI:1b}, devtest BossShot): the boss stays where it is, the body lies straight behind the head
             if (!isNoAi())
             {
@@ -228,7 +222,7 @@ public abstract class AbyssBoss extends PathfinderMob
         BossFarPayload fight = new BossFarPayload(getId(), farKind(), true, chain.x(0), chain.y(0), chain.z(0), rel);
         double r2 = (double) BossFarPayload.RANGE * BossFarPayload.RANGE;
         for (ServerPlayer p : ((net.minecraft.server.level.ServerLevel) level()).players())
-            if (p.distanceToSqr(chain.x(0), chain.y(0), chain.z(0)) < r2) PacketDistributor.sendToPlayer(p, bossEvent.getPlayers().contains(p) ? fight : calm);
+            if (p.distanceToSqr(chain.x(0), chain.y(0), chain.z(0)) < r2) PacketDistributor.sendToPlayer(p, p.distanceToSqr(this) < FIGHT_RANGE * FIGHT_RANGE ? fight : calm);
     }
 
     /** Far silhouette points after the head: head-relative, {@link BossChain#UNIT} units, x y z each (default: every 4th joint). */
@@ -262,21 +256,6 @@ public abstract class AbyssBoss extends PathfinderMob
     {
         super.startSeenByPlayer(player);
         if (chain.isInitialised()) PacketDistributor.sendToPlayer(player, snapshotPayload());
-    }
-
-    private void updateBarPlayers()
-    {
-        for (ServerPlayer p : new java.util.ArrayList<>(bossEvent.getPlayers()))
-            if (p.isRemoved() || p.level() != level() || p.distanceToSqr(this) >= BAR_RANGE * BAR_RANGE) bossEvent.removePlayer(p);
-        for (ServerPlayer p : ((net.minecraft.server.level.ServerLevel) level()).players())
-            if (p.distanceToSqr(this) < BAR_RANGE * BAR_RANGE) bossEvent.addPlayer(p);
-    }
-
-    @Override
-    public void onRemovedFromLevel()
-    {
-        bossEvent.removeAllPlayers();
-        super.onRemovedFromLevel();
     }
 
     // ---- movement: straight steering inside the arena sphere
@@ -451,20 +430,6 @@ public abstract class AbyssBoss extends PathfinderMob
     public boolean removeWhenFarAway(double distance) { return false; }
 
     @Override
-    public void setCustomName(@Nullable Component name)
-    {
-        super.setCustomName(name);
-        bossEvent.setName(getDisplayName());
-    }
-
-    @Override
-    public void remove(RemovalReason reason)
-    {
-        bossEvent.removeAllPlayers();
-        super.remove(reason);
-    }
-
-    @Override
     public void addAdditionalSaveData(CompoundTag tag)
     {
         super.addAdditionalSaveData(tag);
@@ -491,6 +456,5 @@ public abstract class AbyssBoss extends PathfinderMob
         chain.load(tag);
         float ratio = getHealth() / getMaxHealth();
         phase = ratio > 0.66F ? 1 : ratio > 0.33F ? 2 : 3;
-        if (hasCustomName()) bossEvent.setName(getDisplayName());
     }
 }
