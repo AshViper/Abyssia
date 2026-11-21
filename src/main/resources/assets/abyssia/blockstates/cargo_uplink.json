@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,receiver=false": {
+      "model": "abyssia:block/cargo_uplink"
+    },
+    "facing=north,receiver=true": {
+      "model": "abyssia:block/cargo_uplink_receiver"
+    },
+    "facing=east,receiver=false": {
+      "model": "abyssia:block/cargo_uplink",
+      "y": 90
+    },
+    "facing=east,receiver=true": {
+      "model": "abyssia:block/cargo_uplink_receiver",
+      "y": 90
+    },
+    "facing=south,receiver=false": {
+      "model": "abyssia:block/cargo_uplink",
+      "y": 180
+    },
+    "facing=south,receiver=true": {
+      "model": "abyssia:block/cargo_uplink_receiver",
+      "y": 180
+    },
+    "facing=west,receiver=false": {
+      "model": "abyssia:block/cargo_uplink",
+      "y": 270
+    },
+    "facing=west,receiver=true": {
+      "model": "abyssia:block/cargo_uplink_receiver",
+      "y": 270
+    }
+  }
+}

@@ -796,36 +796,36 @@ FOOD_INGREDIENTS = (
 # recipe: ("s", [ingredients]) shapeless | ("p", rows, key) shaped | ("c", ingredient, kinds) cooking
 _C = "smelting smoking campfire"
 FOODS = (
-    ("fish_mushroom_skewer", "Fish Mushroom Skewer", "魚とキノコの串焼き", 6, 0.8, [NV(0.1)], False, ("s", ["mushroom_cap", "cooked_abyssal_fish", "minecraft:stick"])),
-    ("gourd_fish_skewer", "Gourd Fish Skewer", "ゴード魚串", 7, 0.9, [WB(0.1)], False, ("s", ["gourd_flesh", "cooked_shark_flesh", "minecraft:stick"])),
-    ("kelp_fish_skewer", "Kelp Fish Skewer", "海藻魚串", 5, 0.7, [], False, ("s", ["kelp_leaf", "cooked_eelpout_flesh", "minecraft:stick"])),
-    ("mushroom_stew", "Abyssal Mushroom Stew", "深海キノコシチュー", 7, 0.8, [NV(0.15)], True, ("s", ["mushroom_cap"] * 2 + ["organic_matter", "minecraft:bowl"])),
-    ("gourd_soup", "Gourd Soup", "ゴードスープ", 6, 0.8, [WB(0.15)], True, ("s", ["gourd_flesh"] * 2 + ["deep_fiber", "minecraft:bowl"])),
-    ("kelp_soup", "Deep Kelp Soup", "深海海藻スープ", 5, 0.7, [], True, ("s", ["kelp_leaf"] * 3 + ["plant_resin", "minecraft:bowl"])),
+    ("fish_mushroom_skewer", "Fish Mushroom Skewer", "魚とキノコの串焼き", 6, 0.8, [("deep_sight", 90, 1.0, 0)], False, ("s", ["mushroom_cap", "cooked_abyssal_fish", "minecraft:stick"])),
+    ("gourd_fish_skewer", "Gourd Fish Skewer", "ゴード魚串", 7, 0.9, [("water_breathing", 45, 1.0, 0)], False, ("s", ["gourd_flesh", "cooked_shark_flesh", "minecraft:stick"])),
+    ("kelp_fish_skewer", "Kelp Fish Skewer", "海藻魚串", 5, 0.7, [("abyssal_current", 90, 1.0, 0)], False, ("s", ["kelp_leaf", "cooked_eelpout_flesh", "minecraft:stick"])),
+    ("mushroom_stew", "Abyssal Mushroom Stew", "深海キノコシチュー", 7, 0.8, [("deep_sight", 120, 1.0, 0)], True, ("s", ["mushroom_cap"] * 2 + ["organic_matter", "minecraft:bowl"])),
+    ("gourd_soup", "Gourd Soup", "ゴードスープ", 6, 0.8, [("water_breathing", 60, 1.0, 0)], True, ("s", ["gourd_flesh"] * 2 + ["deep_fiber", "minecraft:bowl"])),
+    ("kelp_soup", "Deep Kelp Soup", "深海海藻スープ", 5, 0.7, [("abyssal_current", 120, 1.0, 0)], True, ("s", ["kelp_leaf"] * 3 + ["plant_resin", "minecraft:bowl"])),
     ("fish_soup", "Abyssal Fish Soup", "深海魚スープ", 8, 1.0, [WB(0.15)], True, ("s", ["cooked_abyssal_fish", "deep_fiber", "organic_matter", "minecraft:bowl"])),
-    ("mushroom_fish_stew", "Fish Mushroom Stew", "魚キノコ煮込み", 9, 1.0, [RG(0.05)], True, ("s", ["mushroom_cap", "cooked_viper_flesh", "organic_matter", "minecraft:bowl"])),
-    ("gourd_fish_stew", "Gourd Fish Stew", "ゴード魚煮込み", 9, 1.0, [WB(0.2)], True, ("s", ["gourd_flesh", "cooked_shark_flesh", "organic_matter", "minecraft:bowl"])),
+    ("mushroom_fish_stew", "Fish Mushroom Stew", "魚キノコ煮込み", 9, 1.0, [("deep_sight", 120, 1.0, 0), RG(0.05)], True, ("s", ["mushroom_cap", "cooked_viper_flesh", "organic_matter", "minecraft:bowl"])),
+    ("gourd_fish_stew", "Gourd Fish Stew", "ゴード魚煮込み", 9, 1.0, [("water_breathing", 60, 1.0, 0)], True, ("s", ["gourd_flesh", "cooked_shark_flesh", "organic_matter", "minecraft:bowl"])),
     ("kelp_fish_stew", "Kelp Fish Stew", "海藻魚煮込み", 8, 0.9, [], True, ("s", ["kelp_leaf"] * 2 + ["cooked_eelpout_flesh", "organic_matter", "minecraft:bowl"])),
-    ("mushroom_pie", "Deep Mushroom Pie", "深海キノコパイ", 8, 0.8, [], False, ("p", ["MMM", "MCM", "MMM"], {"M": "mushroom_cap", "C": "crystal_sap"})),
-    ("gourd_pie", "Gourd Pie", "ゴードパイ", 8, 0.9, [NV(0.1)], False, ("p", ["GGG", "GCG", "GGG"], {"G": "gourd_flesh", "C": "crystal_sap"})),
-    ("fish_pie", "Abyssal Fish Pie", "深海魚パイ", 10, 1.0, [RG(0.05)], False, ("p", ["FFF", "FCF", "FFF"], {"F": "cooked_abyssal_fish", "C": "crystal_sap"})),
-    ("mushroom_fish_pie", "Fish Mushroom Pie", "魚キノコパイ", 10, 1.1, [NV(0.15)], False, ("p", ["MFM", "FCF", "MFM"], {"M": "mushroom_cap", "F": "cooked_viper_flesh", "C": "crystal_sap"})),
-    ("gourd_fish_pie", "Gourd Fish Pie", "ゴード魚パイ", 10, 1.1, [WB(0.15)], False, ("p", ["GFG", "FCF", "GFG"], {"G": "gourd_flesh", "F": "cooked_shark_flesh", "C": "crystal_sap"})),
-    ("kelp_fish_pie", "Kelp Fish Pie", "海藻魚パイ", 9, 1.0, [], False, ("p", ["KFK", "FCF", "KFK"], {"K": "kelp_leaf", "F": "cooked_eelpout_flesh", "C": "crystal_sap"})),
-    ("preserved_fish", "Preserved Abyssal Fish", "深海魚保存食", 7, 1.0, [], False, ("s", ["abyssal_fish_fillet", "plant_resin", "organic_matter"])),
-    ("smoked_mushroom", "Smoked Deep Mushroom", "燻製深海キノコ", 4, 0.7, [], False, ("c", "mushroom_cap", "smoking campfire")),
-    ("smoked_gourd", "Smoked Gourd", "燻製ゴード", 5, 0.8, [WB(0.05)], False, ("c", "gourd_flesh", "smoking campfire")),
-    ("grilled_kelp", "Grilled Deep Kelp", "焼き深海海藻", 4, 0.6, [], False, ("c", "kelp_leaf", _C)),
+    ("mushroom_pie", "Deep Mushroom Pie", "深海キノコパイ", 8, 0.8, [("deep_sight", 180, 1.0, 0)], False, ("p", ["MMM", "MCM", "MMM"], {"M": "mushroom_cap", "C": "crystal_sap"})),
+    ("gourd_pie", "Gourd Pie", "ゴードパイ", 8, 0.9, [("water_breathing", 90, 1.0, 0)], False, ("p", ["GGG", "GCG", "GGG"], {"G": "gourd_flesh", "C": "crystal_sap"})),
+    ("fish_pie", "Abyssal Fish Pie", "深海魚パイ", 10, 1.0, [("digging_speed", 180, 1.0, 0), RG(0.05)], False, ("p", ["FFF", "FCF", "FFF"], {"F": "cooked_abyssal_fish", "C": "crystal_sap"})),
+    ("mushroom_fish_pie", "Fish Mushroom Pie", "魚キノコパイ", 10, 1.1, [("deep_sight", 180, 1.0, 0)], False, ("p", ["MFM", "FCF", "MFM"], {"M": "mushroom_cap", "F": "cooked_viper_flesh", "C": "crystal_sap"})),
+    ("gourd_fish_pie", "Gourd Fish Pie", "ゴード魚パイ", 10, 1.1, [("water_breathing", 90, 1.0, 0)], False, ("p", ["GFG", "FCF", "GFG"], {"G": "gourd_flesh", "F": "cooked_shark_flesh", "C": "crystal_sap"})),
+    ("kelp_fish_pie", "Kelp Fish Pie", "海藻魚パイ", 9, 1.0, [("abyssal_current", 180, 1.0, 0)], False, ("p", ["KFK", "FCF", "KFK"], {"K": "kelp_leaf", "F": "cooked_eelpout_flesh", "C": "crystal_sap"})),
+    ("preserved_fish", "Preserved Abyssal Fish", "深海魚保存食", 7, 1.0, [("digging_speed", 240, 1.0, 0)], False, ("s", ["abyssal_fish_fillet", "plant_resin", "organic_matter"])),
+    ("smoked_mushroom", "Smoked Deep Mushroom", "燻製深海キノコ", 4, 0.7, [("deep_sight", 60, 1.0, 0)], False, ("c", "mushroom_cap", "smoking campfire")),
+    ("smoked_gourd", "Smoked Gourd", "燻製ゴード", 5, 0.8, [("water_breathing", 30, 1.0, 0)], False, ("c", "gourd_flesh", "smoking campfire")),
+    ("grilled_kelp", "Grilled Deep Kelp", "焼き深海海藻", 4, 0.6, [("abyssal_current", 60, 1.0, 0)], False, ("c", "kelp_leaf", _C)),
     ("mushroom_fish_grill", "Mushroom Fish Grill", "キノコ魚焼き", 8, 0.9, [NV(0.1)], False, ("s", ["mushroom_cap", "cooked_abyssal_fish", "hard_stalk"])),
-    ("gourd_fish_grill", "Gourd Fish Grill", "ゴード魚焼き", 9, 1.0, [WB(0.1)], False, ("s", ["gourd_flesh", "cooked_shark_flesh", "hard_stalk"])),
-    ("kelp_fish_grill", "Kelp Fish Grill", "海藻魚焼き", 7, 0.8, [], False, ("s", ["kelp_leaf", "cooked_angler_flesh", "hard_stalk"])),
+    ("gourd_fish_grill", "Gourd Fish Grill", "ゴード魚焼き", 9, 1.0, [("water_breathing", 60, 1.0, 0)], False, ("s", ["gourd_flesh", "cooked_shark_flesh", "hard_stalk"])),
+    ("kelp_fish_grill", "Kelp Fish Grill", "海藻魚焼き", 7, 0.8, [("abyssal_current", 120, 1.0, 0)], False, ("s", ["kelp_leaf", "cooked_angler_flesh", "hard_stalk"])),
     ("jellyfish_skewer", "Jellyfish Tentacle Skewer", "クラゲ触手串", 6, 0.8, [WB(0.1)], False, ("s", ["jelly_tentacle", "kelp_leaf", "minecraft:stick"])),
     ("jellyfish_stew", "Jellyfish Tentacle Soup", "クラゲ触手スープ", 7, 0.9, [RG(0.05)], True, ("s", ["jelly_tentacle", "deep_fiber", "lumen_gel", "minecraft:bowl"])),
     ("abyssal_survival_ration", "Abyssal Survival Ration", "深海保存食", 10, 1.2, [NV(0.1), WB(0.1)], False, ("s", ["cooked_shark_flesh", "hard_stalk", "organic_matter", "bio_oil"])),
-    ("thermal_ration", "Thermal Fiber Ration", "熱水保存食", 9, 1.1, [RG(0.05)], False, ("s", ["cooked_angler_flesh", "thermal_fiber", "organic_matter"])),
-    ("mushroom_salad", "Deep Mushroom Salad", "深海キノコサラダ", 5, 0.7, [], True, ("s", ["mushroom_cap"] * 2 + ["kelp_leaf", "deep_fiber", "minecraft:bowl"])),
-    ("gourd_kelp_salad", "Gourd Kelp Salad", "ゴード海藻サラダ", 5, 0.7, [WB(0.05)], True, ("s", ["gourd_flesh"] + ["kelp_leaf"] * 2 + ["crystal_sap", "minecraft:bowl"])),
-    ("abyssal_vegetable_stew", "Abyssal Vegetable Stew", "深海野菜煮込み", 7, 0.9, [NV(0.1)], True, ("s", ["mushroom_cap", "gourd_flesh", "kelp_leaf", "organic_matter", "minecraft:bowl"])),
+    ("thermal_ration", "Thermal Fiber Ration", "熱水保存食", 9, 1.1, [("fire_resistance", 240, 1.0, 0), RG(0.05)], False, ("s", ["cooked_angler_flesh", "thermal_fiber", "organic_matter"])),
+    ("mushroom_salad", "Deep Mushroom Salad", "深海キノコサラダ", 5, 0.7, [("deep_sight", 90, 1.0, 0)], True, ("s", ["mushroom_cap"] * 2 + ["kelp_leaf", "deep_fiber", "minecraft:bowl"])),
+    ("gourd_kelp_salad", "Gourd Kelp Salad", "ゴード海藻サラダ", 5, 0.7, [("water_breathing", 45, 1.0, 0)], True, ("s", ["gourd_flesh"] + ["kelp_leaf"] * 2 + ["crystal_sap", "minecraft:bowl"])),
+    ("abyssal_vegetable_stew", "Abyssal Vegetable Stew", "深海野菜煮込み", 7, 0.9, [("deep_sight", 90, 1.0, 0), ("water_breathing", 45, 1.0, 0), ("abyssal_current", 90, 1.0, 0)], True, ("s", ["mushroom_cap", "gourd_flesh", "kelp_leaf", "organic_matter", "minecraft:bowl"])),
 )
 FOOD_NAMES = {_i: (_en, _ja) for _i, _en, _ja, *_ in FOOD_INGREDIENTS}
 FOOD_NAMES.update({_i: (_en, _ja) for _i, _en, _ja, *_ in FOODS})
@@ -1472,3 +1472,8 @@ def lang():
 
 if __name__ == "__main__":
     main()
+    # stand-alone generators whose models / recipes live in the folders reset above (BAS01)
+    import habitat_upkeep_assets
+    habitat_upkeep_assets.main()
+    import qol01_assets  # QOL01
+    qol01_assets.main()

@@ -115,6 +115,12 @@ minecraft {
             if (project.hasProperty('prc01Test')) property 'abyssia.prc01test', '1'
             // Dev-only: `gradlew runServer -Ptrp01Test=1` runs devtest/Trp01Test (TRP01 boss-material gear checks, log lines "TRP01 ...") and halts.
             if (project.hasProperty('trp01Test')) property 'abyssia.trp01test', '1'
+            // Dev-only: `gradlew runServer -Pqol01Test=1` runs devtest/Qol01Test (QOL01 checks: dish buffs, beacon travel, contracts, structure fauna; log lines "QOL01 ...") and halts.
+            if (project.hasProperty('qol01Test')) property 'abyssia.qol01test', '1'
+            // Dev-only: `gradlew runServer -Pbas01Test=1` runs devtest/Bas01Test (BAS01 habitat upkeep checks, log lines "BAS01 ...") and halts.
+            if (project.hasProperty('bas01Test')) property 'abyssia.bas01test', '1'
+            // Dev-only: `gradlew runServer -Plog01Test=1` runs devtest/Log01Test (LOG01 logistics checks, log lines "LOG01 ...") and halts.
+            if (project.hasProperty('log01Test')) property 'abyssia.log01test', '1'
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
         }

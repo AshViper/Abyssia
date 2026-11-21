@@ -58,6 +58,10 @@ public final class AbyssiaNetwork
         CHANNEL.messageBuilder(com.abyssia.research.TechUnlockedPayload.class, 10, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(com.abyssia.research.TechUnlockedPayload::encode).decoder(com.abyssia.research.TechUnlockedPayload::decode)
                 .consumerMainThread(com.abyssia.research.TechUnlockedPayload::handle).add();
+        // QOL01: beacon travel pick (C2S)
+        CHANNEL.messageBuilder(com.abyssia.waypoint.BeaconTravelPacket.class, 11, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(com.abyssia.waypoint.BeaconTravelPacket::encode).decoder(com.abyssia.waypoint.BeaconTravelPacket::decode)
+                .consumerMainThread(com.abyssia.waypoint.BeaconTravelPacket::handle).add();
     }
 
     public static void sendToServer(Object message)

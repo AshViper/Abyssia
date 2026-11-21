@@ -240,7 +240,7 @@ public final class HabitatPower
         List<HabitatBases.Module> mods = new ArrayList<>();
         for (HabitatBases.Module m : data.modules())
             if (data.root(m.id()) == rt.base && m.box().getYSpan() > 1) mods.add(m);
-        int drain = mods.size() * LIFE_SUPPORT_FE;
+        int drain = mods.size() * LIFE_SUPPORT_FE + com.abyssia.habitat.upkeep.HabitatUpkeep.extraFe(level, mods);
         if (stored < drain)
             for (IEnergyStorage b : batteries)
             {
@@ -252,7 +252,10 @@ public final class HabitatPower
         rt.powered = powered;
         rt.lastDrain = powered ? drain : 0;
         HabitatAir air = HabitatAir.get(level);
-        for (HabitatBases.Module m : mods) air.step(m.id(), powered);
+        for (HabitatBases.Module m : mods)
+        {
+            if (!air.step(m.id(), powered)) com.abyssia.habitat.upkeep.HabitatUpkeep.leak(level, m.id(), air);
+        }
         if (rt.lightsSet == null || rt.lightsSet != powered || now >= rt.nextLightSync)
         {
             syncLights(level, data.boxes(rt.base), powered);
@@ -384,6 +387,7 @@ public final class HabitatPower
         player.displayClientMessage(Component.translatable(key, String.format("%,d", stored(server, base)), String.format("%,d", CAPACITY),
                 String.format("%,d", rt.lastInput), String.format("%,d", rt.lastOutput), String.format("%,d", rt.lastDrain),
                 String.valueOf(oxygen * 100 / HabitatAir.MAX)), true);
+        com.abyssia.habitat.upkeep.HabitatUpkeep.sendStatusLine(server, player, module);
     }
 
     // ---------------------------------------------------------------- harness / tooling

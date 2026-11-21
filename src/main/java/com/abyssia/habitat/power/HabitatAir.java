@@ -31,14 +31,25 @@ public class HabitatAir extends SavedData
         return oxygen.getOrDefault(module, MAX);
     }
 
-    /** One tick of one module: refill when powered, drain when not. */
-    public void step(int module, boolean powered)
+    /** One tick of one module: refill when powered, drain when not; true when the module is full and powered (no leak drain then). */
+    public boolean step(int module, boolean powered)
     {
         int now = oxygen(module);
         int next = powered ? Math.min(MAX, now + REFILL) : Math.max(0, now - 1);
-        if (next == now) return;
+        if (next == now) return powered && now == MAX;
         if (next == MAX) oxygen.remove(module);
         else oxygen.put(module, next);
+        setDirty();
+        return next == MAX;
+    }
+
+    /** BAS01: leak - removes n ticks of reserve (never below 0). */
+    public void drain(int module, int n)
+    {
+        int now = oxygen(module);
+        int next = Math.max(0, now - n);
+        if (next == now) return;
+        oxygen.put(module, next);
         setDirty();
     }
 

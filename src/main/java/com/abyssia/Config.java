@@ -402,6 +402,54 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("QOL01 long-play conveniences: dish buff tooltip, beacon travel, daily supply contracts, structure fauna").push("qol01");
+        BUILDER.push("food");
+    }
+    public static final ForgeConfigSpec.BooleanValue QOL01_FOOD_TOOLTIP = BUILDER
+            .comment("List the guaranteed effects of Abyssia dishes in their tooltip")
+            .define("tooltip", true);
+    static {
+        BUILDER.pop();
+        BUILDER.push("beacon_travel");
+    }
+    public static final ForgeConfigSpec.BooleanValue QOL01_TRAVEL_ENABLED = BUILDER
+            .comment("Sneak + empty-hand click on a waypoint beacon opens a list of your other beacons to travel to")
+            .define("enabled", true);
+    public static final ForgeConfigSpec.IntValue QOL01_TRAVEL_BASE_COST = BUILDER
+            .comment("FE the departure beacon pays per trip")
+            .defineInRange("base_cost", 2000, 0, 20000);
+    public static final ForgeConfigSpec.IntValue QOL01_TRAVEL_COST_PER_BLOCK = BUILDER
+            .comment("Extra FE per horizontal block of distance")
+            .defineInRange("cost_per_block", 4, 0, 1000);
+    public static final ForgeConfigSpec.IntValue QOL01_TRAVEL_DEST_MIN = BUILDER
+            .comment("FE the destination beacon must hold (not consumed)")
+            .defineInRange("dest_min", 1000, 0, 20000);
+    public static final ForgeConfigSpec.IntValue QOL01_TRAVEL_COOLDOWN = BUILDER
+            .comment("Ticks between two trips of a player")
+            .defineInRange("cooldown", 600, 0, 72000);
+    static {
+        BUILDER.pop();
+        BUILDER.push("contracts");
+    }
+    public static final ForgeConfigSpec.BooleanValue QOL01_CONTRACTS_ENABLED = BUILDER
+            .comment("Supply contract paper: one delivery request per player per day for a reward")
+            .define("enabled", true);
+    public static final ForgeConfigSpec.IntValue QOL01_CONTRACT_XP = BUILDER
+            .comment("Experience points on top of the reward")
+            .defineInRange("xp", 50, 0, 10000);
+    static {
+        BUILDER.pop();
+        BUILDER.push("structure_fauna");
+    }
+    public static final ForgeConfigSpec.DoubleValue QOL01_STRUCTURE_FAUNA_BOOST = BUILDER
+            .comment("Spawn weight multiplier for species a seabed structure prefers (preferred_mobs) around it; 1 = off")
+            .defineInRange("structure_fauna_boost", 3.0, 1.0, 20.0);
+    static {
+        BUILDER.pop();     // leaves "qol01" open; the fauna section's pop() closes it
+    }
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Deep-sea fauna. Which animals live where (depth in metres, habitat, caps) is datapack data: data/<namespace>/fauna_spawns").push("fauna");
     }
 
@@ -480,6 +528,32 @@ public class Config
     public static final ForgeConfigSpec.IntValue HAZARD_INTENSITY_OVERRIDE = BUILDER
             .comment("0 = intensity follows the depth band (B' 1, C 2, D 3, E 4); 1..4 forces that intensity everywhere")
             .defineInRange("intensity_override", 0, 0, 4);
+    static {
+        BUILDER.pop();
+    }
+
+    static {
+        BUILDER.comment("BAS01 habitat upkeep: shell integrity wear, leaks and seabed quakes (see com.abyssia.habitat.upkeep)").push("habitat_upkeep");
+    }
+
+    public static final ForgeConfigSpec.BooleanValue UPKEEP_ENABLED = BUILDER
+            .comment("false = no shell wear, no leaks, no quakes")
+            .define("enabled", true);
+    public static final ForgeConfigSpec.DoubleValue UPKEEP_WEAR_MULTIPLIER = BUILDER
+            .comment("Multiplier of the slow shell wear of loaded habitat modules")
+            .defineInRange("wear_multiplier", 1.0, 0.0, 10.0);
+    public static final ForgeConfigSpec.IntValue UPKEEP_MIN_INTEGRITY_PERCENT = BUILDER
+            .comment("Wear and quakes never lower a shell below this percentage")
+            .defineInRange("min_integrity_percent", 20, 0, 50);
+    public static final ForgeConfigSpec.BooleanValue UPKEEP_QUAKES_ENABLED = BUILDER
+            .comment("Seabed quakes near habitats")
+            .define("quakes_enabled", true);
+    public static final ForgeConfigSpec.DoubleValue UPKEEP_QUAKE_FREQUENCY = BUILDER
+            .comment("Multiplier of the quake chance")
+            .defineInRange("quake_frequency", 1.0, 0.0, 10.0);
+    public static final ForgeConfigSpec.DoubleValue UPKEEP_QUAKE_DAMAGE = BUILDER
+            .comment("Multiplier of the quake shell damage")
+            .defineInRange("quake_damage", 1.0, 0.0, 5.0);
     static {
         BUILDER.pop();
     }
@@ -667,6 +741,36 @@ public class Config
     public static final ForgeConfigSpec.BooleanValue RESEARCH_JEI_HIDE_LOCKED = BUILDER
             .comment("JEI hides recipes whose result is locked by a technology (abyssia:recipe/<item>) and the recipes of locked machines (display only)")
             .define("jei_hide_locked", true);
+
+    static
+    {
+        BUILDER.pop();
+    }
+
+    static
+    {
+        BUILDER.comment("Logistics (LOG01): logistics pump and cargo uplink").push("logistics");
+    }
+
+    public static final ForgeConfigSpec.BooleanValue LOGISTICS_ENABLED = BUILDER
+            .comment("false: the logistics pump and the cargo uplink do nothing")
+            .define("logistics_enabled", true);
+
+    public static final ForgeConfigSpec.IntValue PUMP_ITEMS_PER_OP = BUILDER
+            .comment("Items a logistics pump moves every 10 ticks")
+            .defineInRange("pump_items_per_op", 8, 1, 64);
+
+    public static final ForgeConfigSpec.IntValue PUMP_MAX_PIPES = BUILDER
+            .comment("Industrial pipes a logistics pump follows from its start")
+            .defineInRange("pump_max_pipes", 128, 1, 1024);
+
+    public static final ForgeConfigSpec.IntValue CARGO_FE_PER_ITEM = BUILDER
+            .comment("FE a cargo uplink in send mode uses per item")
+            .defineInRange("cargo_fe_per_item", 8, 0, 10000);
+
+    public static final ForgeConfigSpec.IntValue CARGO_BUFFER_STACKS = BUILDER
+            .comment("Stacks of the cargo buffer each owner has")
+            .defineInRange("cargo_buffer_stacks", 27, 1, 270);
 
     static
     {

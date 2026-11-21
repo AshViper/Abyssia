@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -60,6 +61,13 @@ public class WaypointRegistry extends SavedData
         if (reg.beacons.remove(pos) == null) return;
         reg.setDirty();
         syncLevel(level);
+    }
+
+    /** QOL01: the registered beacon at pos, or null */
+    @Nullable
+    public WaypointEntry entry(BlockPos pos)
+    {
+        return beacons.get(pos);
     }
 
     /** The beacons a player may see: all of them, or with share_beacons off only the ones they placed. */

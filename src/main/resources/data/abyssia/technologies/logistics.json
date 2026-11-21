@@ -1,0 +1,20 @@
+{
+  "id": "abyssia:technology/logistics",
+  "type": "machine",
+  "title": "technology.abyssia.logistics",
+  "tier": "mk0",
+  "depth_band": "A",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_copper",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/basic_metallurgy"
+  ],
+  "unlocks": [
+    "abyssia:machine/logistics_pump"
+  ],
+  "icon": "abyssia:industrial_pipe"
+}
