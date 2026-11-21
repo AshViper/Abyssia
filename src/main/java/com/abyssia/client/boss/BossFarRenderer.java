@@ -2,6 +2,7 @@ package com.abyssia.client.boss;
 
 import com.abyssia.Abyssia;
 import com.abyssia.ClientConfig;
+import com.abyssia.entity.boss.AbyssAngler;
 import com.abyssia.entity.boss.AbyssBoss;
 import com.abyssia.entity.boss.AbyssKraken;
 import com.abyssia.entity.boss.BossChain;
@@ -36,6 +37,8 @@ public final class BossFarRenderer
 {
     private static final ResourceLocation WHITE = ResourceLocation.withDefaultNamespace("textures/misc/white.png");
     private static final float[][] UV = {{0, 0}, {0, 1}, {1, 1}, {1, 0}};
+    /** Far kind of the abyss angler ({@code AbyssAngler.farKind()} must return it). */
+    static final int ANGLER = 4;
 
     private BossFarRenderer() {}
 
@@ -64,6 +67,7 @@ public final class BossFarRenderer
         double fogEndNow = fogEnd();
         float fogStart = RenderSystem.getShaderFogStart(), fogEndSaved = RenderSystem.getShaderFogEnd();
         VertexConsumer vc = null;
+        boolean fogPushed = false, drewModel = false;
         PoseStack.Pose pose = new PoseStack().last();
         try
         {
@@ -90,10 +94,21 @@ public final class BossFarRenderer
                     }
                     else
                     {
-                        nearest = nearestJoint(b.chain(), cp, pt);
+                        if (b instanceof AbyssAngler) kind = ANGLER;
+                        nearest = nearestJoint(b.chain(), cp, pt) - b.bodyRadius();
                         p = jointPoints(b.chain(), pt);
                     }
                     if (nearest <= fogEndNow) continue;
+                    if (nearest > maxDist) continue;
+                    // tracked and beyond the fog end: the same GeckoLib model, drawn with the fog pushed out (no box silhouette)
+                    if (!fogPushed)
+                    {
+                        RenderSystem.setShaderFogStart(1.0E8F);
+                        RenderSystem.setShaderFogEnd(2.0E8F);
+                        fogPushed = true;
+                    }
+                    drewModel |= drawModel(b, mc, cam, buffers, event.getPartialTick().getGameTimeDeltaPartialTick(false));
+                    continue;
                 }
                 else
                 {
@@ -101,24 +116,120 @@ public final class BossFarRenderer
                     nearest = nearestPoint(p, cp);
                 }
                 if (nearest > maxDist) continue;
-                if (vc == null)
+                if (!fogPushed)
                 {
                     RenderSystem.setShaderFogStart(1.0E8F);
                     RenderSystem.setShaderFogEnd(2.0E8F);
-                    vc = buffers.getBuffer(type);
+                    fogPushed = true;
                 }
+                // not synced: the same GeckoLib model on a client-only stand-in entity filled from the snapshot points
+                AbyssBoss dummy = standIn(f, level, p);
+                if (dummy != null)
+                {
+                    drewModel |= drawModel(dummy, mc, cam, buffers, event.getPartialTick().getGameTimeDeltaPartialTick(false));
+                    continue;
+                }
+                if (vc == null) vc = buffers.getBuffer(type);
                 draw(vc, pose, cam, cp, p, time, kind);
             }
         }
         finally
         {
-            if (vc != null)
+            if (vc != null) buffers.endBatch(type);
+            if (drewModel) buffers.endBatch();
+            if (fogPushed)
             {
-                buffers.endBatch(type);
                 RenderSystem.setShaderFogStart(fogStart);
                 RenderSystem.setShaderFogEnd(fogEndSaved);
             }
         }
+    }
+
+    private static final int[] KRAKEN_JOINTS = {0, 4, 8, 12, 15};   // = AbyssKraken.FAR_JOINTS
+    private static final int[] MOTHER_JOINTS = {0, 5, 10, 16, 22, 27};   // = AbyssMother.FAR_JOINTS
+
+    /**
+     * The far entry's stand-in entity (created once, never added to the level or ticked) with its chains rebuilt from the
+     * snapshot points {@code p} (sparse joints bridged by a Catmull-Rom curve), or null when the layout does not fit.
+     */
+    private static AbyssBoss standIn(BossFarClient.Far f, ClientLevel level, double[] p)
+    {
+        if (f.dummy == null)
+        {
+            net.minecraft.world.entity.EntityType<?> type = switch (f.kind)
+            {
+                case 0 -> com.abyssia.registry.ModEntities.ABYSS_SERPENT.get();
+                case 1 -> com.abyssia.registry.ModEntities.TRENCH_WYRM.get();
+                case 2 -> com.abyssia.registry.ModEntities.ABYSS_KRAKEN.get();
+                case 3 -> com.abyssia.registry.ModEntities.ABYSS_MOTHER.get();
+                case ANGLER -> com.abyssia.registry.ModEntities.ABYSS_ANGLER.get();
+                default -> null;
+            };
+            if (type == null || !(type.create(level) instanceof AbyssBoss b)) return null;
+            f.dummy = b;
+        }
+        AbyssBoss b = f.dummy;
+        if (p.length < 3 || Double.isNaN(p[0])) return null;
+        BossChain spine = b.chain();
+        int n = spine.size();
+        if (b instanceof AbyssKraken || b instanceof com.abyssia.entity.boss.AbyssMother)
+        {
+            boolean kraken = b instanceof AbyssKraken;
+            int[] fj = kraken ? KRAKEN_JOINTS : MOTHER_JOINTS;
+            int tents = kraken ? AbyssKraken.TENTACLES : com.abyssia.entity.boss.AbyssMother.TENTACLES;
+            if (p.length != 3 * (2 + tents * (1 + fj.length)) || n < 2) return null;
+            spine.fillSampled(new int[]{0, n - 1}, new double[]{p[0], p[1], p[2], p[0], p[1], p[2]}, 0);
+            for (int t = 0; t < tents; t++)
+            {
+                BossChain c = kraken ? ((AbyssKraken) b).tentacle(t) : ((com.abyssia.entity.boss.AbyssMother) b).tentacle(t);
+                int off = 3 * (2 + t * (1 + fj.length) + 1);   // skip the break marker
+                if (Double.isNaN(p[off])) return null;
+                c.fillSampled(fj, p, off);
+            }
+        }
+        else
+        {
+            java.util.List<Integer> idx = new java.util.ArrayList<>();
+            idx.add(0);
+            for (int i = BossFarPayload.STEP; i < n; i += BossFarPayload.STEP) idx.add(i);
+            if (idx.get(idx.size() - 1) != n - 1) idx.add(n - 1);
+            if (p.length != 3 * idx.size()) return null;
+            spine.fillSampled(idx.stream().mapToInt(Integer::intValue).toArray(), p, 0);
+        }
+        b.setPos(p[0], p[1], p[2]);
+        b.setOldPosAndRot();
+        return b;
+    }
+
+    /** Draws the boss's own GeckoLib renderer (cut-off lifted, dim light) at its interpolated position; false if it could not. */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static boolean drawModel(AbyssBoss b, Minecraft mc, Camera cam, MultiBufferSource buffers, float pt)
+    {
+        net.minecraft.client.renderer.entity.EntityRenderer renderer = mc.getEntityRenderDispatcher().getRenderer(b);
+        if (renderer == null) return false;
+        Vec3 cp = cam.getPosition();
+        PoseStack ps = new PoseStack();
+        ps.pushPose();
+        ps.translate(net.minecraft.util.Mth.lerp(pt, b.xo, b.getX()) - cp.x, net.minecraft.util.Mth.lerp(pt, b.yo, b.getY()) - cp.y,
+                net.minecraft.util.Mth.lerp(pt, b.zo, b.getZ()) - cp.z);
+        BossGeo.forceFar = true;
+        try
+        {
+            renderer.render(b, net.minecraft.util.Mth.lerp(pt, b.yRotO, b.getYRot()), pt, ps, buffers, LightTexture.pack(0, 0));
+        }
+        finally
+        {
+            BossGeo.forceFar = false;
+            ps.popPose();
+        }
+        return true;
+    }
+
+    /** Body scale of the chain bosses (0 = serpent, 1 = wyrm, 4 = angler) for the silhouette width. */
+    private static double chainSize(int kind)
+    {
+        return kind == 0 ? com.abyssia.entity.boss.AbyssSerpent.SIZE : kind == 1 ? com.abyssia.entity.boss.TrenchWyrm.SIZE
+                : kind == ANGLER ? AbyssAngler.SIZE : 1.0;
     }
 
     /** Current fog end (64 when unknown): a tracked boss beyond it is drawn as the fog-ignoring ribbon instead of the model. */
@@ -189,7 +300,9 @@ public final class BossFarRenderer
                 double wx = dy * mz - dz * my, wy = dz * mx - dx * mz, wz = dx * my - dy * mx;
                 double wl = Math.sqrt(wx * wx + wy * wy + wz * wz);
                 if (wl < 1.0E-6) continue;
-                double half = (kind == 3 ? (k == 0 ? 15.0 : 1.2) : kind == 2 ? (k == 0 ? 6.5 : 2.2) : k == 0 ? 3.5 : 2.8 * (1.0 - 0.5 * k / (double) m)) + dist * 0.004;
+                double half = (kind == 3 ? (k == 0 ? 15.0 : 1.2) : kind == 2 ? (k == 0 ? 6.5 : 2.2)
+                        : kind == ANGLER ? (k == 0 ? 6.5 : k == 1 ? 3.4 : 1.2) * chainSize(kind)   // big head, tapering body
+                        : (k == 0 ? 3.5 : 2.8 * (1.0 - 0.5 * k / (double) m)) * chainSize(kind)) + dist * 0.004;
                 if (pass == 0) half *= 1.35;
                 double s = half / wl;
                 float r = pass == 0 ? 0.05F : 0.01F, g = pass == 0 ? 0.28F : 0.02F, bl = pass == 0 ? 0.38F : 0.04F, a = pass == 0 ? 0.35F : 0.92F;
@@ -203,11 +316,38 @@ public final class BossFarRenderer
             if (Double.isNaN(p[3 * k])) continue;
             double x = p[3 * k] - cp.x, y = p[3 * k + 1] - cp.y, z = p[3 * k + 2] - cp.z;
             double dist = Math.sqrt(x * x + y * y + z * z);
-            float size = (float) ((k == 0 ? 2.5 : 1.2) + dist * (k == 0 ? 0.012 : 0.008));
+            float size = (float) ((k == 0 ? 2.5 : 1.2) * Math.sqrt(chainSize(kind)) + dist * (k == 0 ? 0.012 : 0.008));
             float a = k == 0 ? 1.0F : (float) (0.7 + 0.3 * Math.sin(time * 0.2 + k));
             float lx = left.x * size, ly = left.y * size, lz = left.z * size, ux = up.x * size, uy = up.y * size, uz = up.z * size;
             quad(vc, pose, x + lx - ux, y + ly - uy, z + lz - uz, x + lx + ux, y + ly + uy, z + lz + uz,
                     x - lx + ux, y - ly + uy, z - lz + uz, x - lx - ux, y - ly - uy, z - lz - uz, 0.4F, 0.95F, 1.0F, a);
+        }
+        if (kind == ANGLER && m >= 2 && !Double.isNaN(p[3])) anglerLures(vc, pose, left, up, cp, p, time);
+    }
+
+    /**
+     * The angler's lure lights: where its bulbs hang at rest ({@link AnglerMesh#FAR_LURES}, forward / up from the head),
+     * forward along head minus the next sample, up = world up square to it. Pulsing out of step, sized against the distance.
+     */
+    private static void anglerLures(VertexConsumer vc, PoseStack.Pose pose, Vector3f left, Vector3f up, Vec3 cp, double[] p, double time)
+    {
+        double fx = p[0] - p[3], fy = p[1] - p[4], fz = p[2] - p[5], fl = Math.sqrt(fx * fx + fy * fy + fz * fz);
+        if (fl < 1.0E-6) return;
+        fx /= fl; fy /= fl; fz /= fl;
+        double ux = -fx * fy, uy = 1 - fy * fy, uz = -fz * fy, ul = Math.sqrt(ux * ux + uy * uy + uz * uz);
+        if (ul < 1.0E-3) { ux = 1; uy = 0; uz = 0; ul = 1; }
+        ux /= ul; uy /= ul; uz /= ul;
+        double sc = AbyssAngler.SIZE / AnglerMesh.DESIGN;
+        for (int i = 0; i < AnglerMesh.FAR_LURES.length; i++)
+        {
+            float[] o = AnglerMesh.FAR_LURES[i];
+            double x = p[0] + (fx * o[0] + ux * o[1]) * sc - cp.x, y = p[1] + (fy * o[0] + uy * o[1]) * sc - cp.y, z = p[2] + (fz * o[0] + uz * o[1]) * sc - cp.z;
+            double dist = Math.sqrt(x * x + y * y + z * z);
+            float size = (float) ((i == 0 ? 2.2 : 1.5) * Math.sqrt(sc) + dist * (i == 0 ? 0.011 : 0.008));
+            float a = (float) (0.75 + 0.25 * Math.sin(time * 0.13 + i * 1.9));
+            float lx = left.x * size, ly = left.y * size, lz = left.z * size, vx = up.x * size, vy = up.y * size, vz = up.z * size;
+            quad(vc, pose, x + lx - vx, y + ly - vy, z + lz - vz, x + lx + vx, y + ly + vy, z + lz + vz,
+                    x - lx + vx, y - ly + vy, z - lz + vz, x - lx - vx, y - ly - vy, z - lz - vz, 0.30F, 0.78F, 1.0F, a);
         }
     }
 

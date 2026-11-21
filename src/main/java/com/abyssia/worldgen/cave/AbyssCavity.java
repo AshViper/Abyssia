@@ -36,6 +36,9 @@ final class AbyssCavity
     static final double LINK_LIFT = 26;
     /** Cavities whose centres are closer than this (blocks) are one stacked column: their link is a wide shaft through both centres. */
     static final double STACK_DISTANCE = 8;
+    /** Land test of a cavity: rim points (share of its radius) besides the centre. 0 samples = the centre alone (user 2026-11-19: the rim test left too few cavities; a cavity may reach under a coast by up to its radius). */
+    static final double LAND_RIM = 0.8;
+    static final int LAND_SAMPLES = 0;
 
     private AbyssCavity() {}
 
@@ -60,18 +63,34 @@ final class AbyssCavity
         CaveType type = CaveType.ABYSS_CAVITY;
         double radius = Mth.lerp(rng.nextDouble(), type.minRadius, type.maxRadius);
         if (new XoroshiroRandomSource(RandomSupport.mixStafford13(base ^ net.salt())).nextDouble() >= BAND_CHANCE) return null;
+        if (underLand(net, x, z, radius)) return null;  // the crust under land stays solid rock
         int cell = net.cellSize();
         int cellX = Math.floorDiv(Mth.floor(x), cell), cellZ = Math.floorDiv(Mth.floor(z), cell);
         // The radius stays, the height gives: the vault must fit the window (margin 8 above, 4 in the thin bottom window, 4 below),
         // so the hall fills the window (about 100 of 160 blocks, the rest being basin + thin floor and roof slabs).
         double y = Math.floor(net.minY() + 4 + CaveChamberGenerator.hallBelow(radius));
-        double above = net.band() == DepthBand.E ? 4 : 8;
+        double above = net.band() == DepthBand.C ? 4 : 8;
         double height = Math.min(radius * 1.2, net.maxY() - above - y - CaveChamberGenerator.hallAbove(0, radius));
-        if (height < 40) return null;
+        if (height < 30) return null;  // the two ~92 block windows give flat halls of ~34-40 (was 40 with 160 block windows)
         CaveProfile profile = net.profileAt(Mth.floor(x), Mth.floor(y + height * 0.5), Mth.floor(z));
         if (profile == null) return null;
         ResourceLocation env = net.luminous(profile, Mth.floor(x), Mth.floor(z)) ? net.environmentId("luminous", profile) : profile.environment;
         return new Site(cellX, cellZ, x, y, z, radius, height, profile, env);
+    }
+
+    /**
+     * Whether a cavity here would reach under land: its centre or any of {@link #LAND_SAMPLES} rim points at {@link #LAND_RIM} x
+     * its radius is land (with no rim samples: only a cavity centred under land is dropped).
+     */
+    static boolean underLand(CaveNetwork net, double x, double z, double radius)
+    {
+        if (net.land(x, z)) return true;
+        for (int i = 0; i < LAND_SAMPLES; i++)
+        {
+            double a = i * Math.PI * 2 / LAND_SAMPLES;
+            if (net.land(x + Math.cos(a) * radius * LAND_RIM, z + Math.sin(a) * radius * LAND_RIM)) return true;
+        }
+        return false;
     }
 
     /** The cavity whose cell is exactly this one, or null. */

@@ -21,7 +21,12 @@ public final class DeepLayer
     /** Overworld Y = old deep-ocean Y + SHIFT. */
     public static final int SHIFT = -240;
     /** Bottom of the world (bedrock floor of the abyss layer). */
-    public static final int MIN_Y = -1008;
+    /** PERF04 shortcuts (land test by one sample, buried rock skipped by the surface rules); {@code -Dabyssia.noperf04=true} runs the old paths for A/B checks. */
+    public static final boolean PERF04 = !Boolean.getBoolean("abyssia.noperf04");
+    /** PERF06 (DeepAquifer) is not verified on a real server yet: off unless {@code -Dabyssia.perf06=true}. */
+    public static final boolean PERF06 = Boolean.getBoolean("abyssia.perf06");
+
+    public static final int MIN_Y = -576;
     /** Bottom of the deep layer as it was before the abyss layer existed (its seabeds reach about Y -362): old deep Y -128. */
     public static final int DEEP_BOTTOM_Y = -368;
     /** Top of the abyss layer (exclusive, a multiple of 8): everything below is the abyss, rock down to its ceiling. */
@@ -30,17 +35,18 @@ public final class DeepLayer
     public static final int ABYSS_CEILING_BOTTOM_Y = -408;
     /*
      * AB02 depth bands (inbox/specs/AB02-deep-bands.md). The abyss layer is a solid crust (caves, caverns and ores live
-     * in it); the bands are only where biomes, cave windows and ore ranges change: A -64..-300 (the deep layer's seabed
-     * and its rock), B' -380..-540, C -540..-700, D -700..-860, E -860..-998 (the world bottom is Y -1008; scaled from 1865 down to 1000 deep for chunk speed). Borders are blended with noise, never a flat line.
+     * in it); the bands are only where biomes, hazards and ore ranges change: A -64..-300 (the deep layer's seabed
+     * and its rock), B' -380..-426, C -426..-476, D -476..-522, E -522..-566 (the world bottom is Y -576; the deep sea spans -64..-568).
+     * Borders are blended with noise, never a flat line. The cave windows do NOT follow these bands (see CAVE_WINDOW_B_BOTTOM_Y).
      */
     public static final int BAND_B_TOP_Y = -300;
-    public static final int BAND_C_TOP_Y = -540;
-    public static final int BAND_D_TOP_Y = -700;
-    public static final int BAND_E_TOP_Y = -860;
+    public static final int BAND_C_TOP_Y = -426;
+    public static final int BAND_D_TOP_Y = -476;
+    public static final int BAND_E_TOP_Y = -522;
     /** Lowest Y caves and ores reach (5+ blocks of rock stay over the bedrock at MIN_Y). */
-    public static final int CRUST_BOTTOM_Y = -998;
-    /** The abyss seabed is this Y + 64 x its seabed offset (about Y -1840 .. -1460): the layer holds ~1300 blocks of open water. */
-    public static final int ABYSS_SEABED_BASE_Y = -1650;
+    public static final int CRUST_BOTTOM_Y = -566;
+    /** Boundary of the two crust cave windows (B' above, C below): each is ~90 blocks, enough for an abyss cavity. D and E have none. */
+    public static final int CAVE_WINDOW_B_BOTTOM_Y = -472;
     /** Bottom of the bedrock band between the ocean world and the deep layer; everything below is the deep layer. */
     public static final int TOP_Y = -64;
     /** Top of the bedrock band (exclusive). */
@@ -97,7 +103,8 @@ public final class DeepLayer
     /**
      * The deep seabed at a column of real blocks: scans down from under the ceiling, skips the ceiling's rock and
      * returns the Y of the first motion-blocking block with open water (or air in a gas pocket) above it, or
-     * {@code MIN_Y} if none. Like {@code OCEAN_FLOOR_WG}, thin blocks (carpets, plants) are not a floor.
+     * {@code MIN_Y} if none: also under land, where the deep layer is rock (the first opening more than 8 blocks under
+     * the ceiling's lowest underside is a cave, not the sea). Like {@code OCEAN_FLOOR_WG}, thin blocks (carpets, plants) are not a floor.
      * For code that places on, or moves along, real blocks; planning code reads the density seabed instead.
      */
     public static int floorY(BlockGetter level, int x, int z)
@@ -112,7 +119,12 @@ public final class DeepLayer
             for (int y = Math.min(CEILING_BOTTOM_Y + 24, chunk.getMaxBuildHeight() - 1); y > Math.max(MIN_Y, minY); y--)
             {
                 boolean solid = sections[(y - minY) >> 4].getBlockState(lx, y & 15, lz).blocksMotion();
-                if (!solid) open = true;
+                if (!solid)
+                {
+                    // Under land the deep layer is rock: the first opening far under the ceiling is a cave, not a seabed.
+                    if (!open && y < CEILING_BOTTOM_Y - 8) return MIN_Y;
+                    open = true;
+                }
                 else if (open) return y;
             }
             return MIN_Y;
@@ -122,7 +134,11 @@ public final class DeepLayer
         for (int y = CEILING_BOTTOM_Y + 24; y > MIN_Y; y--)
         {
             boolean solid = level.getBlockState(pos.setY(y)).blocksMotion();
-            if (!solid) open = true;
+            if (!solid)
+            {
+                if (!open && y < CEILING_BOTTOM_Y - 8) return MIN_Y;
+                open = true;
+            }
             else if (open) return y;
         }
         return MIN_Y;

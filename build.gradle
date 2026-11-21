@@ -16,6 +16,12 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    // GeckoLib (boss animations)
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content { includeGroup("software.bernie.geckolib") }
+    }
     // JEI (optional integration, see com.abyssia.compat.jei)
     maven {
         name = 'BlameJared'
@@ -63,6 +69,15 @@ neoForge {
             gameDirectory = project.file('run')
             programArguments.addAll '--quickPlayMultiplayer', 'localhost:25631'
             systemProperty 'abyssia.bossshot', (project.findProperty('bossShot') ?: '1')
+            if (project.findProperty('bossOldMesh') == 'true') systemProperty 'abyssia.boss.oldmesh', 'true'
+        }
+
+        // Dev-only: devtest/PrcGuiShot enters a singleplayer world and screenshots the precipitator GUI (log lines "PRCGUI ...").
+        prcGuiShot {
+            client()
+            gameDirectory = project.file('run')
+            programArguments.addAll '--quickPlaySingleplayer', 'PrcGuiShot'
+            systemProperty 'abyssia.prcguishot', '1'
         }
 
         server {
@@ -70,6 +85,14 @@ neoForge {
             gameDirectory = project.file('run')
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        // Dev-only: devtest/Prc01Test runs the PRC01 precipitator checks on a dedicated server and halts (log lines "PRC01 ...").
+        prc01Test {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'abyssia.prc01test', '1'
         }
 
         gameTestServer {
@@ -112,6 +135,8 @@ configurations {
 }
 
 dependencies {
+    // GeckoLib
+    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     // JEI is an optional dependency: compile against its API only, and run the full mod in every dev run.
     // `-PnoJei` leaves it out to check that Abyssia still runs without JEI.
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"

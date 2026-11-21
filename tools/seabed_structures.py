@@ -458,6 +458,19 @@ structure("giant_skeleton", "landmark", "medium", 38, 18,
           dressing=dress(30, 0.05, [("seafloor_pebbles", 3), ("sponge_plant", 2), (("tube_plant", 2, 5), 2)]),
           max_slope=0.7, min_y=-100, max_y=160, max_top_y=170)
 
+# Bone graveyard: several giant skeletons on a bone-sediment patch with scattered bones (fossil_graveyard formation).
+GRAVEYARD_GROUND = mix(("bone_sediment", 5), ("fossil_rock", 2))
+GRAVEYARD_SKELETON = f("skeleton", length=span(20, 45), rib=span(4, 7), rib_gap=0.2, bend=4, bone=BONE, accent=BONE_ACCENT)
+structure("fossil_graveyard_small", "landmark", "medium", 40, 18,
+          f("fossil_graveyard", count=span(1, 4), spread=10, skeleton=GRAVEYARD_SKELETON, ground=GRAVEYARD_GROUND,
+            ground_radius=span(12, 20), scatter=span(4, 10)),
+          max_slope=0.8, min_y=-100, max_y=160, max_top_y=170)
+structure("fossil_graveyard_large", "landmark", "large", 66, 18,
+          f("fossil_graveyard", count=span(3, 5), spread=34, skeleton=GRAVEYARD_SKELETON, ground=GRAVEYARD_GROUND,
+            ground_radius=span(16, 24), scatter=span(10, 20), crate=mix("minecraft:barrel"),
+            loot="abyssia:chests/fossil_graveyard", loot_chance=0.7),
+          max_slope=0.8, min_y=-100, max_y=160, max_top_y=170)
+
 # ================================================================ profiles
 
 SMALL, MEDIUM, LARGE, COLOSSAL = (20, 40), (64, 128), (160, 288), (640, 1280)
@@ -487,6 +500,7 @@ PROFILES = {
         e("abyssal_tower", 0.45, (700, 1280)),
         e("rotten_tree", 0.35, SMALL), e("fallen_log", 0.35, SMALL),
         e("container_stack", 0.4, (48, 96)), e("artifact_field", 0.35, (40, 80)), e("giant_skeleton", 0.3, MEDIUM),
+        e("fossil_graveyard_small", 0.12, (96, 192)),
         *cavern_entries(CAVE_ABYSSAL)]),
     "deep_sea": (["deep_sea"], 1.0, [
         e("wreck", 0.9, (48, 84)),
@@ -494,6 +508,7 @@ PROFILES = {
         e("sediment_swell", 0.25, LARGE),
         e("rotten_tree", 0.35, SMALL), e("fallen_log", 0.35, SMALL),
         e("container_stack", 0.4, (48, 96)), e("artifact_field", 0.35, (40, 80)), e("giant_skeleton", 0.25, MEDIUM),
+        e("fossil_graveyard_small", 0.1, (96, 192)),
         *cavern_entries(CAVE_ABYSSAL, 0.6)]),
     "abyssal_trench": (["abyssal_trench"], 1.0, [
         e("wreck", 0.9, (48, 84)),
@@ -527,6 +542,11 @@ PROFILES = {
         e("large_crystal_cluster", 0.55, (176, 304)),
         e("crystal_cathedral", 0.45, (700, 1280)),
         *cavern_entries(CAVE_CRYSTAL, 0.8)]),
+    "bone_graveyard": (["bone_graveyard"], 1.0, [
+        e("wreck", 0.9, (48, 84)),
+        e("sea_boulder", 0.25, SMALL), e("mud_mounds", 0.2, SMALL),
+        e("giant_skeleton", 0.5, MEDIUM),
+        e("fossil_graveyard_small", 0.8, MEDIUM), e("fossil_graveyard_large", 0.6, LARGE)]),
     "abyssal_forest": (["abyssal_forest"], 1.0, [
         e("wreck", 0.9, (48, 84)),
         e("kelp_wall", 0.45, (72, 144)), e("kelp_tunnel", 0.4, (80, 160)), e("overgrown_hill", 0.45, MEDIUM),

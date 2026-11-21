@@ -54,6 +54,8 @@ public interface Formation
             case ArtifactFieldFormation.TYPE -> ArtifactFieldFormation.CODEC;
             case WreckFormation.TYPE -> WreckFormation.CODEC;
             case HabitatRuinFormation.TYPE -> HabitatRuinFormation.CODEC;
+            case com.abyssia.worldgen.structure.formation.FossilGraveyardFormation.TYPE ->
+                    com.abyssia.worldgen.structure.formation.FossilGraveyardFormation.CODEC;
             default -> null;
         };
         return codec != null ? DataResult.success(codec) : DataResult.error(() -> "Unknown seabed structure formation: " + type);

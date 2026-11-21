@@ -28,7 +28,7 @@ import java.util.List;
  * submarine_upgrade_depth_mk1..3); the entity saves {@code Upgrades} =
  * {Hull, Battery, Thruster, Utility, Depth} item id strings (empty slots omitted), the submarine item carries the same compound
  * in the abyssia:submarine_upgrades data component. Effects: {@link Submarine} (bit mask {@link #bit}; bits 5-6 = Depth Hull tier).
- * SUB08 crush depth as a Y coordinate: -300 without a DEPTH upgrade, Mk1 -500, Mk2 -800, Mk3 -1000 (Config SUBMARINE_RATED_Y_*);
+ * SUB08 crush depth as a Y coordinate: -300 without a DEPTH upgrade, Mk1 -380, Mk2 -450, Mk3 -566 (Config SUBMARINE_RATED_Y_*);
  * below it the hull takes crush damage once a second (Submarine.crush).
  */
 public final class SubmarineUpgrades

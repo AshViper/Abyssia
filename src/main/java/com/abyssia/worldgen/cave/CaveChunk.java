@@ -501,6 +501,7 @@ public final class CaveChunk
         int az = Math.max(hall.minZ, z0 - PAD), bz = Math.min(hall.maxZ, z0 + 15 + PAD);
         int ay = Math.max(hall.minY, yMin), by = Math.min(hall.maxY, yMax);
         double[] col = new double[4];
+        double pull = space.maxPull();
         for (int z = az; z <= bz; z++)
         {
             int row = (z - z0 + PAD) * SIZE;
@@ -517,7 +518,12 @@ public final class CaveChunk
                     double v = hall.vault(col, y + 0.5);
                     if (v - reach > WALL_DEPTH + 0.5) continue;
                     int idx = index(x - x0, y, z - z0);
-                    if (v + reach > -0.5) v += displacement(space, idx, x, y, z, row + x - x0 + PAD);
+                    if (v + reach > -0.5)
+                    {
+                        // PERF03: already covered at least as deeply, whatever the noise adds (it pulls by at most pull): nothing to store.
+                        if (field[idx] <= Math.max(v - pull, ground)) continue;
+                        v += displacement(space, idx, x, y, z, row + x - x0 + PAD);
+                    }
                     double s = Math.max(v, ground);
                     if (s < field[idx])
                     {
@@ -746,7 +752,11 @@ public final class CaveChunk
         for (int y = DeepLayer.CEILING_BOTTOM_Y + 24; y > minBuildY; y--)
         {
             boolean solid = sections[(y - minBuildY) >> 4].getBlockState(lx, y & 15, lz).blocksMotion();
-            if (!solid) open = true;
+            if (!solid)
+            {
+                if (!open && y < DeepLayer.CEILING_BOTTOM_Y - 8) return minBuildY;  // under land: rock, not a seabed
+                open = true;
+            }
             else if (open) return y + 1;
         }
         return minBuildY;
@@ -928,6 +938,7 @@ public final class CaveChunk
         solidY1 = yMax + 1;
         int words = ((solidY1 - solidY0 + 1) << 8) + 63 >> 6;
         long[] bits = new long[words], water = new long[words], air = new long[words];
+        byte[] kinds = new byte[sections.length];
         for (int y = solidY0; y <= solidY1; y++)
         {
             int base = (y - solidY0) << 8;
@@ -938,6 +949,15 @@ public final class CaveChunk
                 continue;
             }
             LevelChunkSection section = sections[(y - minBuildY) >> 4];
+            // PERF03: a section of one class of block (all air, all water, all solid) fills its 256 bits of the layer at once.
+            byte kind = kinds[(y - minBuildY) >> 4];
+            if (kind == 0) kinds[(y - minBuildY) >> 4] = kind = sectionKind(section);
+            if (kind != 1)
+            {
+                long[] bitsFor = kind == 3 ? air : kind == 4 ? water : kind == 5 ? bits : null;
+                if (bitsFor != null) Arrays.fill(bitsFor, base >> 6, (base >> 6) + 4, -1L);
+                continue;
+            }
             for (int lz = 0; lz < 16; lz++)
             {
                 for (int lx = 0; lx < 16; lx++)
@@ -954,6 +974,24 @@ public final class CaveChunk
         waterBits = water;
         airBits = air;
         solid = bits;
+    }
+
+    /** 1 = mixed (read per block), 2 = no block counted (nothing to set), 3 = all air, 4 = all water, 5 = all solid (not air, no fluid). */
+    private static byte sectionKind(LevelChunkSection section)
+    {
+        int[] seen = new int[1];
+        section.getStates().count((state, n) ->
+        {
+            seen[0] |= state.isAir() ? 1 : state.is(Blocks.WATER) ? 2 : state.getFluidState().isEmpty() ? 4 : 8;
+        });
+        return switch (seen[0])
+        {
+            case 1 -> 3;
+            case 2 -> 4;
+            case 4 -> 5;
+            case 8 -> 2;
+            default -> 1;
+        };
     }
 
     /** Per section: 0 = not yet known, 1 = only air / fluid blocks (nothing sturdy), 2 = holds some solid block. Reset by set(). */

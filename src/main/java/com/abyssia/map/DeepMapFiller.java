@@ -140,13 +140,19 @@ public final class DeepMapFiller
         LevelChunk chunk = level.getChunkSource().getChunkNow(x0 >> 4, z0 >> 4);
         if (chunk == null) return Short.MIN_VALUE;
         int[] counts = new int[PALETTE.length];
-        int sum = 0;
+        int sum = 0, rock = 0;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int dx = 0; dx < b; dx++)
             for (int dz = 0; dz < b; dz++)
             {
                 int x = x0 + dx, z = z0 + dz;
                 int y = DeepLayer.floorY(chunk, x, z);
+                if (y <= DeepLayer.MIN_Y)  // under land: plain rock, left out of the depth average
+                {
+                    counts[0]++;
+                    rock++;
+                    continue;
+                }
                 sum += y;
                 pos.set(x, y, z);
                 counts[category(chunk.getBlockState(pos).getMapColor(level, pos))]++;
@@ -154,7 +160,8 @@ public final class DeepMapFiller
         state.scanned += b * b;
         int best = 0;
         for (int k = 1; k < counts.length; k++) if (counts[k] > counts[best]) best = k;
-        int floor = Math.round(sum / (float) (b * b));
+        // All rock (under land): drawn as the shallowest band, as high as the ceiling, so the coast shades like a rise.
+        int floor = rock == b * b ? DeepLayer.CEILING_BOTTOM_Y : Math.round(sum / (float) (b * b - rock));
         state.floors[i] = (short) floor;
         state.colors[i] = (byte) best;
         return floor;

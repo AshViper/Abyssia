@@ -93,7 +93,7 @@ public final class DivingBreathing
         int tier = DiveTank.tankTier(tank);
         int capacity = DiveTank.capacitySeconds(tier);
         // A submarine keeps its crew's air full itself, so the tank is not drawn on aboard.
-        boolean drain = inWater && pair && !(player.getVehicle() instanceof Submarine) && !MobEffectUtil.hasWaterBreathing(player);
+        boolean drain = inWater && pair && !com.abyssia.vehicle.Vehicles.isShielded(player) && !MobEffectUtil.hasWaterBreathing(player);
         boolean refill = !inWater && tier > 0 && DiveTank.oxygen(tank) < capacity;
         int mode = drain ? 1 : refill ? 2 : 0;
         if (mode != st.tankMode)

@@ -3,6 +3,8 @@ package com.abyssia.vehicle.client;
 import com.abyssia.Abyssia;
 import com.abyssia.client.light.SpotlightProjector;
 import com.abyssia.habitat.client.HabitatClient;
+import com.abyssia.item.electric.PropulsionScrewItem;
+import com.abyssia.item.electric.ScrewLightPacket;
 import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.vehicle.Submarine;
 import com.abyssia.vehicle.SubmarineLightPacket;
@@ -70,8 +72,15 @@ public final class SubmarineClient
     public static void clientTick(ClientTickEvent.Post event)
     {
         while (LIGHT.consumeClick())
-            if (Minecraft.getInstance().screen == null && riding() != null)
+        {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.screen != null || mc.player == null) continue;
+            if (riding() != null)
                 AbyssiaNetwork.sendToServer(new SubmarineLightPacket(SubmarineLightPacket.Action.TOGGLE_LIGHTS));
+            else if (mc.player.getMainHandItem().getItem() instanceof PropulsionScrewItem
+                    || mc.player.getOffhandItem().getItem() instanceof PropulsionScrewItem)
+                AbyssiaNetwork.sendToServer(new ScrewLightPacket());
+        }
     }
 
     @EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
@@ -95,6 +104,7 @@ public final class SubmarineClient
         public static void renderers(EntityRenderersEvent.RegisterRenderers event)
         {
             event.registerEntityRenderer(VehicleContent.SUBMARINE.get(), SubmarineRenderer::new);
+            event.registerEntityRenderer(VehicleContent.EXOSUIT.get(), ExosuitRenderer::new);
             event.registerBlockEntityRenderer(VehicleContent.SUBMARINE_DOCK_ENTITY.get(), DockRenderer::new);
         }
 

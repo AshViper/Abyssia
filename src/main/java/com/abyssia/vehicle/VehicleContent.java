@@ -44,6 +44,10 @@ public final class VehicleContent
             () -> EntityType.Builder.<Submarine>of(Submarine::new, MobCategory.MISC).sized(3.0F, 2.2F)
                     .clientTrackingRange(10).updateInterval(1).build("submarine"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<Exosuit>> EXOSUIT = ENTITIES.register("exosuit",
+            () -> EntityType.Builder.<Exosuit>of(Exosuit::new, MobCategory.MISC).sized(1.4F, 2.6F)
+                    .clientTrackingRange(10).updateInterval(1).build("exosuit"));
+
     public static final DeferredBlock<Block> SUBMARINE_DOCK = BLOCKS.register("submarine_dock",
             () -> new SubmarineDockBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0f, 6.0f)
                     .noLootTable().noOcclusion().sound(SoundType.METAL).lightLevel(s -> 12)));
@@ -55,6 +59,7 @@ public final class VehicleContent
             "submarine_dock", () -> BlockEntityType.Builder.of(SubmarineDockBlockEntity::new, SUBMARINE_DOCK.get()).build(null));
 
     public static DeferredItem<Item> SUBMARINE_ITEM;
+    public static DeferredItem<Item> EXOSUIT_ITEM;
 
     private VehicleContent() {}
 
@@ -74,6 +79,8 @@ public final class VehicleContent
     {
         SUBMARINE_ITEM = items.register("submarine", () -> new SubmarineItem(new Item.Properties().stacksTo(1)));
         tab.add(SUBMARINE_ITEM);
+        EXOSUIT_ITEM = items.register("exosuit", () -> new ExosuitItem(new Item.Properties().stacksTo(1)));
+        tab.add(EXOSUIT_ITEM);
         SubmarineUpgrades.registerItems(items, tab);
     }
 
@@ -92,7 +99,7 @@ public final class VehicleContent
         @SubscribeEvent
         public static void breathe(LivingBreatheEvent event)
         {
-            if (event.getEntity() instanceof Player && event.getEntity().getVehicle() instanceof Submarine)
+            if (event.getEntity() instanceof Player && Vehicles.isShielded(event.getEntity()))
             {
                 event.setCanBreathe(true);
                 event.setRefillAirAmount(event.getEntity().getMaxAirSupply());
@@ -102,14 +109,14 @@ public final class VehicleContent
         @SubscribeEvent
         public static void drown(LivingDrownEvent event)
         {
-            if (event.getEntity().getVehicle() instanceof Submarine) event.setCanceled(true);
+            if (Vehicles.isShielded(event.getEntity())) event.setCanceled(true);
         }
 
         /** no suffocation for the pilot either (spec: neither drowning nor suffocation) */
         @SubscribeEvent
         public static void damage(LivingIncomingDamageEvent event)
         {
-            if (event.getEntity().getVehicle() instanceof Submarine && event.getSource().is(DamageTypes.IN_WALL)) event.setCanceled(true);
+            if (Vehicles.isShielded(event.getEntity()) && event.getSource().is(DamageTypes.IN_WALL)) event.setCanceled(true);
         }
     }
 }

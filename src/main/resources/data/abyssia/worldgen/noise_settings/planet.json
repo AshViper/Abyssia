@@ -14,8 +14,8 @@
     }
   },
   "noise": {
-    "min_y": -1008,
-    "height": 1328,
+    "min_y": -576,
+    "height": 896,
     "size_horizontal": 1,
     "size_vertical": 2
   },
@@ -28,24 +28,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1008,
+        "from_y": -576,
         "to_y": 320,
-        "from_value": -1008,
+        "from_value": -576,
         "to_value": 320
       },
-      "min_inclusive": -1009,
+      "min_inclusive": -577,
       "max_exclusive": -378,
       "when_in_range": "abyssia:region_temperature",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1008,
+          "from_y": -576,
           "to_y": 320,
-          "from_value": -1008,
+          "from_value": -576,
           "to_value": 320
         },
-        "min_inclusive": -1009,
+        "min_inclusive": -577,
         "max_exclusive": -66,
         "when_in_range": "abyssia:region_temperature",
         "when_out_of_range": {
@@ -71,24 +71,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1008,
+        "from_y": -576,
         "to_y": 320,
-        "from_value": -1008,
+        "from_value": -576,
         "to_value": 320
       },
-      "min_inclusive": -1009,
+      "min_inclusive": -577,
       "max_exclusive": -378,
       "when_in_range": "abyssia:region_habitat",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1008,
+          "from_y": -576,
           "to_y": 320,
-          "from_value": -1008,
+          "from_value": -576,
           "to_value": 320
         },
-        "min_inclusive": -1009,
+        "min_inclusive": -577,
         "max_exclusive": -66,
         "when_in_range": "abyssia:region_habitat",
         "when_out_of_range": "abyssia:planet/slope_humidity"
@@ -98,25 +98,25 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1008,
+        "from_y": -576,
         "to_y": 320,
-        "from_value": -1008,
+        "from_value": -576,
         "to_value": 320
       },
-      "min_inclusive": -1009,
+      "min_inclusive": -577,
       "max_exclusive": -378,
       "when_in_range": {
         "type": "minecraft:add",
         "argument1": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -998,
+          "from_y": -566,
           "to_y": -376,
           "from_value": -2.0,
           "to_value": -1.7
         },
         "argument2": {
           "type": "minecraft:mul",
-          "argument1": 0.012,
+          "argument1": 0.03,
           "argument2": {
             "type": "minecraft:shifted_noise",
             "noise": "abyssia:biome_fuzz",
@@ -132,12 +132,12 @@
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1008,
+          "from_y": -576,
           "to_y": 320,
-          "from_value": -1008,
+          "from_value": -576,
           "to_value": 320
         },
-        "min_inclusive": -1009,
+        "min_inclusive": -577,
         "max_exclusive": -66,
         "when_in_range": {
           "type": "minecraft:clamp",
@@ -204,24 +204,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1008,
+        "from_y": -576,
         "to_y": 320,
-        "from_value": -1008,
+        "from_value": -576,
         "to_value": 320
       },
-      "min_inclusive": -1009,
+      "min_inclusive": -577,
       "max_exclusive": -378,
       "when_in_range": "abyssia:region_erosion",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1008,
+          "from_y": -576,
           "to_y": 320,
-          "from_value": -1008,
+          "from_value": -576,
           "to_value": 320
         },
-        "min_inclusive": -1009,
+        "min_inclusive": -577,
         "max_exclusive": -66,
         "when_in_range": "abyssia:region_erosion",
         "when_out_of_range": {
@@ -235,24 +235,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1008,
+        "from_y": -576,
         "to_y": 320,
-        "from_value": -1008,
+        "from_value": -576,
         "to_value": 320
       },
-      "min_inclusive": -1009,
+      "min_inclusive": -577,
       "max_exclusive": -378,
       "when_in_range": 10.0,
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1008,
+          "from_y": -576,
           "to_y": 320,
-          "from_value": -1008,
+          "from_value": -576,
           "to_value": 320
         },
-        "min_inclusive": -1009,
+        "min_inclusive": -577,
         "max_exclusive": -66,
         "when_in_range": 10.0,
         "when_out_of_range": -10.0
@@ -262,24 +262,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1008,
+        "from_y": -576,
         "to_y": 320,
-        "from_value": -1008,
+        "from_value": -576,
         "to_value": 320
       },
-      "min_inclusive": -1009,
+      "min_inclusive": -577,
       "max_exclusive": -378,
       "when_in_range": "abyssia:region_volcanic",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1008,
+          "from_y": -576,
           "to_y": 320,
-          "from_value": -1008,
+          "from_value": -576,
           "to_value": 320
         },
-        "min_inclusive": -1009,
+        "min_inclusive": -577,
         "max_exclusive": -66,
         "when_in_range": "abyssia:region_volcanic",
         "when_out_of_range": {
@@ -293,24 +293,24 @@
       "type": "minecraft:range_choice",
       "input": {
         "type": "minecraft:y_clamped_gradient",
-        "from_y": -1008,
+        "from_y": -576,
         "to_y": 320,
-        "from_value": -1008,
+        "from_value": -576,
         "to_value": 320
       },
-      "min_inclusive": -1009,
+      "min_inclusive": -577,
       "max_exclusive": -378,
       "when_in_range": "abyssia:abyss_initial_density",
       "when_out_of_range": {
         "type": "minecraft:range_choice",
         "input": {
           "type": "minecraft:y_clamped_gradient",
-          "from_y": -1008,
+          "from_y": -576,
           "to_y": 320,
-          "from_value": -1008,
+          "from_value": -576,
           "to_value": 320
         },
-        "min_inclusive": -1009,
+        "min_inclusive": -577,
         "max_exclusive": -66,
         "when_in_range": {
           "type": "minecraft:add",
@@ -644,10 +644,10 @@
                 "type": "minecraft:vertical_gradient",
                 "random_name": "minecraft:bedrock_floor",
                 "true_at_and_below": {
-                  "absolute": -1008
+                  "absolute": -576
                 },
                 "false_at_and_above": {
-                  "absolute": -1003
+                  "absolute": -571
                 }
               },
               "then_run": {
@@ -964,14 +964,14 @@
                                     "then_run": {
                                       "type": "minecraft:block",
                                       "result_state": {
-                                        "Name": "abyssia:deep_mud"
+                                        "Name": "abyssia:mineral_sediment"
                                       }
                                     }
                                   },
                                   {
                                     "type": "minecraft:block",
                                     "result_state": {
-                                      "Name": "abyssia:mineral_sediment"
+                                      "Name": "abyssia:deep_mud"
                                     }
                                   }
                                 ]
@@ -1025,20 +1025,20 @@
                                     "if_true": {
                                       "type": "minecraft:noise_threshold",
                                       "noise": "minecraft:surface",
-                                      "min_threshold": 0.0,
+                                      "min_threshold": 0.3,
                                       "max_threshold": 10.0
                                     },
                                     "then_run": {
                                       "type": "minecraft:block",
                                       "result_state": {
-                                        "Name": "abyssia:abyssal_mud"
+                                        "Name": "abyssia:deep_mud"
                                       }
                                     }
                                   },
                                   {
                                     "type": "minecraft:block",
                                     "result_state": {
-                                      "Name": "abyssia:deep_mud"
+                                      "Name": "abyssia:cave_sediment"
                                     }
                                   }
                                 ]
@@ -1092,20 +1092,20 @@
                                     "if_true": {
                                       "type": "minecraft:noise_threshold",
                                       "noise": "minecraft:surface",
-                                      "min_threshold": 0.0,
+                                      "min_threshold": 0.45,
                                       "max_threshold": 10.0
                                     },
                                     "then_run": {
                                       "type": "minecraft:block",
                                       "result_state": {
-                                        "Name": "abyssia:organic_sediment"
+                                        "Name": "abyssia:abyssal_mud"
                                       }
                                     }
                                   },
                                   {
                                     "type": "minecraft:block",
                                     "result_state": {
-                                      "Name": "abyssia:abyssal_mud"
+                                      "Name": "abyssia:organic_sediment"
                                     }
                                   }
                                 ]
@@ -1159,7 +1159,7 @@
                                     "if_true": {
                                       "type": "minecraft:noise_threshold",
                                       "noise": "minecraft:surface",
-                                      "min_threshold": -0.2,
+                                      "min_threshold": 0.3,
                                       "max_threshold": 10.0
                                     },
                                     "then_run": {
@@ -1172,7 +1172,7 @@
                                   {
                                     "type": "minecraft:block",
                                     "result_state": {
-                                      "Name": "abyssia:deep_sediment"
+                                      "Name": "abyssia:cave_mud"
                                     }
                                   }
                                 ]
@@ -1232,14 +1232,14 @@
                                     "then_run": {
                                       "type": "minecraft:block",
                                       "result_state": {
-                                        "Name": "abyssia:abyssal_mud"
+                                        "Name": "abyssia:deep_sediment"
                                       }
                                     }
                                   },
                                   {
                                     "type": "minecraft:block",
                                     "result_state": {
-                                      "Name": "abyssia:deep_sediment"
+                                      "Name": "abyssia:abyssal_mud"
                                     }
                                   }
                                 ]

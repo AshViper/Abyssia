@@ -1,0 +1,694 @@
+{
+ "entity": "abyss_angler",
+ "generator": "tools/boss/angler_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/abyss_angler.geo.json",
+ "animation": "assets/abyssia/animations/entity/abyss_angler.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/abyss_angler_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/abyss_angler_geo_glow.png",
+ "glow_note": "光らない画素は (0,0,0,0)。RenderType.eyes（加算）でも GeckoLib の自動発光層でも使える。光るのは提灯の珠・眼・体の発光器・頭と顎の発光点・口の中の裏地（ごく暗い紫）",
+ "membrane_note": "鰭膜（FIN / MEMBRANE 領域）は旧テクスチャと同じ部分不透明（alpha 120〜235）。entityCutoutNoCull なら不透明の膜、entityTranslucent なら透ける膜になる。膜は厚み 0 の板なので裏面も描く（NoCull）こと",
+ "texture_size": [
+  512,
+  512
+ ],
+ "model_scale": 3.0,
+ "units": "geo の 1 単位 = 1/16 ブロック。描画で MODEL_SCALE 倍するので、ゲーム内では MODEL_SCALE/16 ブロック",
+ "segment_length_units": 80.0,
+ "segment_length_blocks": 15.0,
+ "joints": 10,
+ "segments": 9,
+ "rest_pose": "頭から尾まで一直線。関節 j は geo の (0, 0, segment_length_units * j)。頭は -Z を向く。体の芯は y = 0",
+ "head_pivot": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, segment_length_units * (k - 0.5))",
+ "jaw_hinge": [
+  0.0,
+  -66.67,
+  66.67
+ ],
+ "rest_head_extent_units": {
+  "snout_z": -80.0,
+  "chin_z": -116.27,
+  "rear_z": 80.0,
+  "half_width": 144.0,
+  "top_y": 201.6,
+  "jaw_bottom_y": -189.87
+ },
+ "body_section_units": [
+  {
+   "k": 1.0,
+   "half_width": 142.93,
+   "up": 198.4,
+   "down": 186.67
+  },
+  {
+   "k": 1.5,
+   "half_width": 142.4,
+   "up": 195.73,
+   "down": 183.47
+  },
+  {
+   "k": 2.0,
+   "half_width": 139.73,
+   "up": 189.87,
+   "down": 177.07
+  },
+  {
+   "k": 2.5,
+   "half_width": 134.4,
+   "up": 180.27,
+   "down": 166.93
+  },
+  {
+   "k": 3.0,
+   "half_width": 125.87,
+   "up": 165.33,
+   "down": 152.53
+  },
+  {
+   "k": 3.5,
+   "half_width": 114.13,
+   "up": 145.6,
+   "down": 133.87
+  },
+  {
+   "k": 4.0,
+   "half_width": 99.2,
+   "up": 121.6,
+   "down": 111.47
+  },
+  {
+   "k": 4.5,
+   "half_width": 81.07,
+   "up": 94.93,
+   "down": 86.93
+  },
+  {
+   "k": 5.0,
+   "half_width": 60.8,
+   "up": 68.27,
+   "down": 62.93
+  },
+  {
+   "k": 5.5,
+   "half_width": 39.47,
+   "up": 47.47,
+   "down": 44.27
+  },
+  {
+   "k": 6.0,
+   "half_width": 22.4,
+   "up": 35.2,
+   "down": 33.07
+  },
+  {
+   "k": 6.5,
+   "half_width": 13.33,
+   "up": 24.53,
+   "down": 22.93
+  },
+  {
+   "k": 6.9,
+   "half_width": 4.8,
+   "up": 9.6,
+   "down": 9.07
+  }
+ ],
+ "body_section_note": "関節座標 k（0 が頭の関節、9 が尾の先）での体の断面。超楕円の指数 BODY_E",
+ "lure_bulbs": [
+  {
+   "bone": "lure_bulb",
+   "parent": "head",
+   "center": [
+    0.0,
+    84.89,
+    -193.46
+   ],
+   "radius_units": 13.87,
+   "main": true
+  },
+  {
+   "bone": "lure_nape_1",
+   "parent": "head",
+   "center": [
+    -48.96,
+    206.04,
+    65.74
+   ],
+   "radius_units": 6.93,
+   "main": false
+  },
+  {
+   "bone": "lure_nape_2",
+   "parent": "head",
+   "center": [
+    49.5,
+    206.22,
+    105.46
+   ],
+   "radius_units": 6.4,
+   "main": false
+  },
+  {
+   "bone": "lure_chin_1",
+   "parent": "jaw",
+   "center": [
+    0.0,
+    -184.13,
+    -22.18
+   ],
+   "radius_units": 6.93,
+   "main": false
+  },
+  {
+   "bone": "lure_chin_2",
+   "parent": "jaw",
+   "center": [
+    -49.05,
+    -209.06,
+    22.12
+   ],
+   "radius_units": 6.4,
+   "main": false
+  },
+  {
+   "bone": "lure_chin_3",
+   "parent": "jaw",
+   "center": [
+    47.42,
+    -227.06,
+    58.96
+   ],
+   "radius_units": 6.4,
+   "main": false
+  },
+  {
+   "bone": "lure_back_1",
+   "parent": "seg_03",
+   "center": [
+    -26.53,
+    194.29,
+    223.87
+   ],
+   "radius_units": 6.4,
+   "main": false
+  },
+  {
+   "bone": "lure_back_2",
+   "parent": "seg_04",
+   "center": [
+    22.58,
+    157.29,
+    307.74
+   ],
+   "radius_units": 5.87,
+   "main": false
+  },
+  {
+   "bone": "lure_belly_1",
+   "parent": "seg_03",
+   "center": [
+    0.0,
+    -215.02,
+    198.0
+   ],
+   "radius_units": 6.4,
+   "main": false
+  },
+  {
+   "bone": "lure_belly_2",
+   "parent": "seg_03",
+   "center": [
+    -35.74,
+    -197.26,
+    236.87
+   ],
+   "radius_units": 5.87,
+   "main": false
+  },
+  {
+   "bone": "lure_belly_3",
+   "parent": "seg_04",
+   "center": [
+    33.08,
+    -178.56,
+    284.87
+   ],
+   "radius_units": 5.87,
+   "main": false
+  },
+  {
+   "bone": "lure_belly_4",
+   "parent": "seg_04",
+   "center": [
+    0.0,
+    -152.77,
+    331.12
+   ],
+   "radius_units": 5.33,
+   "main": false
+  }
+ ],
+ "lure_note": "光暈（glow_halo のビルボード）の中心。center は静止姿勢の geo 座標で、bone の動き（親の体節・顎・柄の揺れ）に付いて動く。main が主の提灯（額から鼻先の前へ垂れる）",
+ "eye_halos": [
+  {
+   "bone": "head",
+   "side": "l",
+   "center": [
+    126.89,
+    58.71,
+    -10.84
+   ],
+   "radius_units": 22.4
+  },
+  {
+   "bone": "head",
+   "side": "r",
+   "center": [
+    -126.89,
+    58.71,
+    -10.84
+   ],
+   "radius_units": 22.4
+  }
+ ],
+ "animation_signs": {
+  "jaw": "rotation の x が正で口が開く（idle は 3→11 度。噛みつきの大口は 40〜50 度が目安）",
+  "lure_stalk / lure_bulb": "柄は付け根、珠は柄の先が pivot。x と z で小さな楕円を描いて揺れる",
+  "lure_nape_* / lure_chin_* / lure_back_* / lure_belly_*": "付け根が pivot。x と z で揺れる",
+  "fin_l / fin_r": "胸びれ。付け根が pivot。左右で y と z の符号が逆（鏡写し）",
+  "fin_pelvic_l / fin_pelvic_r": "腹びれ（seg_03 の子）。付け根が pivot。左右で y と z の符号が逆",
+  "seg_02_fin..seg_07_fin": "背びれ。pivot は体節の背の中央、z で左右に揺れる",
+  "seg_05_anal..seg_07_anal": "臀びれ。pivot は体節の腹の中央、z で左右に揺れる",
+  "seg_08_fin / seg_09_fin": "尾びれ（上葉と下葉）。pivot は体節の前端の芯、y で左右に煽る"
+ },
+ "bone_rule": "head と seg_01..seg_09 は root 直下。毎フレーム位置と回転を上書きする。seg_k は関節 k-1 と k の中点へ、局所 -Z が関節 k から関節 k-1 を向くように置く。head は関節 0 へ、-Z が関節 1 から関節 0 の向き（さらに先）を向くように置く（seg_01 と同じ向きになるので、頭と seg_01 は常に一体）。子（jaw, teeth_*, lure_*, fin_*, seg_XX_fin, seg_XX_anal）は animation に任せる",
+ "geckolib_conventions": [
+  "描画空間 = geo の X を反転した空間（GeckoLib 4.9.2 BakedModelFactory）。z と y はそのまま",
+  "GeoBone.setPosX/Y/Z は静止姿勢からのずれで、単位は geo と同じ 1/16（MODEL_SCALE を掛ける前）。RenderUtil.translateMatrixToBone が translate(-posX/16, posY/16, posZ/16) なので、geo の座標で書けば pos = 目標の pivot - 静止姿勢の pivot（X も符号そのまま）。描画空間の座標 T で書くなら posX = -T.x - pivot.x, posY = T.y - pivot.y, posZ = T.z - pivot.z",
+  "GeoBone.setRotX/Y/Z はラジアンで描画空間の値。geo / animation の度数 (rx, ry, rz) とは (-rx, -ry, +rz) の関係。頂点へは X→Y→Z の順に効く（行列は Rz・Ry・Rx）",
+  "描画空間で局所 -Z（体節の前）を単位ベクトル d（関節 k から k-1 へ）に向けるには setRotX(asin(d.y))、setRotY(atan2(-d.x, -d.z))、setRotZ(0)。体節と head は静止姿勢の回転が 0 なので、この値をそのまま入れればよい",
+  "子の Bone（jaw, gill_*, fin_*, seg_XX_fin）は animation が回すので、Java からは触らない（触るなら animation の値を上書きしてしまう）"
+ ],
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 4.0,
+   "bones": [
+    "fin_l",
+    "fin_pelvic_l",
+    "fin_pelvic_r",
+    "fin_r",
+    "jaw",
+    "lure_back_1",
+    "lure_back_2",
+    "lure_belly_1",
+    "lure_belly_2",
+    "lure_belly_3",
+    "lure_belly_4",
+    "lure_bulb",
+    "lure_chin_1",
+    "lure_chin_2",
+    "lure_chin_3",
+    "lure_nape_1",
+    "lure_nape_2",
+    "lure_stalk",
+    "seg_05_anal",
+    "seg_05_fin",
+    "seg_06_anal",
+    "seg_06_fin",
+    "seg_07_fin",
+    "seg_08_fin",
+    "seg_09_fin"
+   ]
+  }
+ },
+ "cube_count": 1392,
+ "cube_limit": 1500,
+ "bones": [
+  {
+   "name": "head",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "role": "頭。関節 0 に pivot。-Z が鼻先。殻の後ろ端は関節 1（seg_02 の前端の球面が殻の内側へ入る）"
+  },
+  {
+   "name": "jaw",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    -66.67,
+    66.67
+   ]
+  },
+  {
+   "name": "teeth_lower",
+   "parent": "jaw",
+   "pivot": [
+    0.0,
+    -66.67,
+    66.67
+   ]
+  },
+  {
+   "name": "teeth_upper",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "fin_l",
+   "parent": "head",
+   "pivot": [
+    139.95,
+    -31.88,
+    74.61
+   ]
+  },
+  {
+   "name": "fin_r",
+   "parent": "head",
+   "pivot": [
+    -139.95,
+    -31.88,
+    74.61
+   ]
+  },
+  {
+   "name": "lure_stalk",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    113.6,
+    -48.0
+   ]
+  },
+  {
+   "name": "lure_bulb",
+   "parent": "lure_stalk",
+   "pivot": [
+    0.0,
+    105.6,
+    -187.2
+   ]
+  },
+  {
+   "name": "lure_nape_1",
+   "parent": "head",
+   "pivot": [
+    -26.67,
+    189.36,
+    32.0
+   ]
+  },
+  {
+   "name": "lure_nape_2",
+   "parent": "head",
+   "pivot": [
+    29.33,
+    191.19,
+    69.33
+   ]
+  },
+  {
+   "name": "lure_chin_1",
+   "parent": "jaw",
+   "pivot": [
+    0.0,
+    -122.67,
+    -48.0
+   ]
+  },
+  {
+   "name": "lure_chin_2",
+   "parent": "jaw",
+   "pivot": [
+    -32.0,
+    -159.75,
+    -10.67
+   ]
+  },
+  {
+   "name": "lure_chin_3",
+   "parent": "jaw",
+   "pivot": [
+    32.0,
+    -181.76,
+    26.67
+   ]
+  },
+  {
+   "name": "seg_01",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ],
+   "role": "体節 1: 関節 0（前）〜関節 1（後ろ）。pivot は中心。頭の殻の内側に入るので箱なし（位置だけ合わせる）",
+   "joint_front": 0,
+   "joint_back": 1
+  },
+  {
+   "name": "seg_02",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ],
+   "role": "体節 2: 関節 1（前）〜関節 2（後ろ）。pivot は中心",
+   "joint_front": 1,
+   "joint_back": 2
+  },
+  {
+   "name": "seg_03",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ],
+   "role": "体節 3: 関節 2（前）〜関節 3（後ろ）。pivot は中心",
+   "joint_front": 2,
+   "joint_back": 3
+  },
+  {
+   "name": "fin_pelvic_l",
+   "parent": "seg_03",
+   "pivot": [
+    26.67,
+    -147.64,
+    232.0
+   ]
+  },
+  {
+   "name": "fin_pelvic_r",
+   "parent": "seg_03",
+   "pivot": [
+    -26.67,
+    -147.64,
+    232.0
+   ]
+  },
+  {
+   "name": "lure_back_1",
+   "parent": "seg_03",
+   "pivot": [
+    -16.0,
+    174.26,
+    200.0
+   ]
+  },
+  {
+   "name": "lure_belly_1",
+   "parent": "seg_03",
+   "pivot": [
+    0.0,
+    -169.71,
+    168.0
+   ]
+  },
+  {
+   "name": "lure_belly_2",
+   "parent": "seg_03",
+   "pivot": [
+    -26.67,
+    -156.73,
+    208.0
+   ]
+  },
+  {
+   "name": "seg_04",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    280.0
+   ],
+   "role": "体節 4: 関節 3（前）〜関節 4（後ろ）。pivot は中心",
+   "joint_front": 3,
+   "joint_back": 4
+  },
+  {
+   "name": "lure_back_2",
+   "parent": "seg_04",
+   "pivot": [
+    13.33,
+    139.75,
+    280.0
+   ]
+  },
+  {
+   "name": "lure_belly_3",
+   "parent": "seg_04",
+   "pivot": [
+    24.0,
+    -138.03,
+    256.0
+   ]
+  },
+  {
+   "name": "lure_belly_4",
+   "parent": "seg_04",
+   "pivot": [
+    0.0,
+    -115.09,
+    304.0
+   ]
+  },
+  {
+   "name": "seg_05",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    360.0
+   ],
+   "role": "体節 5: 関節 4（前）〜関節 5（後ろ）。pivot は中心",
+   "joint_front": 4,
+   "joint_back": 5
+  },
+  {
+   "name": "seg_05_fin",
+   "parent": "seg_05",
+   "pivot": [
+    0.0,
+    92.09,
+    360.0
+   ]
+  },
+  {
+   "name": "seg_05_anal",
+   "parent": "seg_05",
+   "pivot": [
+    0.0,
+    -84.33,
+    360.0
+   ]
+  },
+  {
+   "name": "seg_06",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    440.0
+   ],
+   "role": "体節 6: 関節 5（前）〜関節 6（後ろ）。pivot は中心",
+   "joint_front": 5,
+   "joint_back": 6
+  },
+  {
+   "name": "seg_06_fin",
+   "parent": "seg_06",
+   "pivot": [
+    0.0,
+    46.04,
+    440.0
+   ]
+  },
+  {
+   "name": "seg_06_anal",
+   "parent": "seg_06",
+   "pivot": [
+    0.0,
+    -42.94,
+    440.0
+   ]
+  },
+  {
+   "name": "seg_07",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    520.0
+   ],
+   "role": "体節 7: 関節 6（前）〜関節 7（後ろ）。pivot は中心",
+   "joint_front": 6,
+   "joint_back": 7
+  },
+  {
+   "name": "seg_07_fin",
+   "parent": "seg_07",
+   "pivot": [
+    0.0,
+    0.0,
+    480.0
+   ]
+  },
+  {
+   "name": "seg_08",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    600.0
+   ],
+   "role": "体節 8: 関節 7（前）〜関節 8（後ろ）。pivot は中心。体の芯は無く、尾びれ（_fin の子）だけ",
+   "joint_front": 7,
+   "joint_back": 8
+  },
+  {
+   "name": "seg_08_fin",
+   "parent": "seg_08",
+   "pivot": [
+    0.0,
+    0.0,
+    560.0
+   ]
+  },
+  {
+   "name": "seg_09",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    680.0
+   ],
+   "role": "体節 9: 関節 8（前）〜関節 9（後ろ）。pivot は中心。体の芯は無く、尾びれ（_fin の子）だけ",
+   "joint_front": 8,
+   "joint_back": 9
+  },
+  {
+   "name": "seg_09_fin",
+   "parent": "seg_09",
+   "pivot": [
+    0.0,
+    0.0,
+    640.0
+   ]
+  }
+ ]
+}

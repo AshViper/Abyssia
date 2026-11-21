@@ -129,6 +129,27 @@ public class IndustryScreen extends AbstractContainerScreen<IndustryMenu>
                     g.drawString(font, Component.translatableWithFallback("gui.abyssia.excavator." + status, "Excavator status " + status),
                             x, 18, status == AbyssalExcavatorBlockEntity.STATUS_MINING ? TEXT : WARN, false);
             }
+            case HYDROTHERMAL_PRECIPITATOR ->
+            {
+                // the 3x3 output grid starts at x=106: wrap both lines into 74px
+                int ey = 52;
+                for (var line : font.split(energyText(), 74))
+                {
+                    g.drawString(font, line, x, ey, VALUE, false);
+                    ey += 9;
+                }
+                int status = menu.status();
+                if (status > 0)
+                {
+                    int sy = 18;
+                    for (var line : font.split(Component.translatableWithFallback("gui.abyssia.precipitator." + status,
+                            "Precipitator status " + status), 74))
+                    {
+                        g.drawString(font, line, x, sy, status == 7 ? TEXT : WARN, false);
+                        sy += 9;
+                    }
+                }
+            }
             default ->
             {
                 g.drawString(font, energyText(), x, 60, VALUE, false);

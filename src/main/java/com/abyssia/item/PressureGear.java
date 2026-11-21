@@ -23,8 +23,8 @@ import net.neoforged.neoforge.registries.DeferredItem;
  */
 public final class PressureGear
 {
-    /** Lowest safe Y per tier 0..2 (no gear Y 23, entry Y -300, deep Y -800); tier 3 has no limit. */
-    private static final int[] SAFE_Y = {23, -300, -800};
+    /** Lowest safe Y per tier 0..2 (no gear Y 23, entry Y -300, deep Y -450); tier 3 has no limit. */
+    private static final int[] SAFE_Y = {23, -300, -450};
     public static final int MAX_TIER = 3;
     /** Blocks below the safe Y per extra point of damage (1 to 3). */
     private static final int STEP_BLOCKS = 64;
@@ -76,7 +76,7 @@ public final class PressureGear
         if (player.level().isClientSide) return;
         if (player.tickCount % 20 != 0 || !Config.PRESSURE_ENABLED.get()) return;
         if (!player.isUnderWater() || player.isCreative() || player.isSpectator()) return;
-        if (player.getVehicle() instanceof Submarine) return;
+        if (com.abyssia.vehicle.Vehicles.isShielded(player)) return;
         int safe = safeY(wornTier(player));
         if (safe == Integer.MIN_VALUE) return;
         double y = player.getY();

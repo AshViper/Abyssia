@@ -145,10 +145,25 @@ public final class ModEntityRenderers
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
     {
-        event.registerEntityRenderer(ModEntities.ABYSS_SERPENT.get(), com.abyssia.client.boss.AbyssSerpentRenderer::new);
-        event.registerEntityRenderer(ModEntities.TRENCH_WYRM.get(), com.abyssia.client.boss.TrenchWyrmRenderer::new);
-        event.registerEntityRenderer(ModEntities.ABYSS_KRAKEN.get(), com.abyssia.client.boss.AbyssKrakenRenderer::new);
-        event.registerEntityRenderer(ModEntities.ABYSS_MOTHER.get(), com.abyssia.client.boss.AbyssMotherRenderer::new);
+        // -Dabyssia.boss.oldmesh=true: the old procedural body at every range (comparison shots)
+        if (Boolean.getBoolean("abyssia.boss.oldmesh"))
+            event.registerEntityRenderer(ModEntities.ABYSS_SERPENT.get(), com.abyssia.client.boss.AbyssSerpentRenderer::new);
+        else
+            event.registerEntityRenderer(ModEntities.ABYSS_SERPENT.get(), com.abyssia.client.boss.AbyssSerpentGeoRenderer::new);
+        if (Boolean.getBoolean("abyssia.boss.oldmesh"))
+        {
+            event.registerEntityRenderer(ModEntities.TRENCH_WYRM.get(), com.abyssia.client.boss.TrenchWyrmRenderer::new);
+            event.registerEntityRenderer(ModEntities.ABYSS_ANGLER.get(), com.abyssia.client.boss.AbyssAnglerRenderer::new);
+            event.registerEntityRenderer(ModEntities.ABYSS_KRAKEN.get(), com.abyssia.client.boss.AbyssKrakenRenderer::new);
+            event.registerEntityRenderer(ModEntities.ABYSS_MOTHER.get(), com.abyssia.client.boss.AbyssMotherRenderer::new);
+        }
+        else
+        {
+            event.registerEntityRenderer(ModEntities.TRENCH_WYRM.get(), com.abyssia.client.boss.TrenchWyrmGeoRenderer::new);
+            event.registerEntityRenderer(ModEntities.ABYSS_ANGLER.get(), com.abyssia.client.boss.AbyssAnglerGeoRenderer::new);
+            event.registerEntityRenderer(ModEntities.ABYSS_KRAKEN.get(), com.abyssia.client.boss.AbyssKrakenGeoRenderer::new);
+            event.registerEntityRenderer(ModEntities.ABYSS_MOTHER.get(), com.abyssia.client.boss.AbyssMotherGeoRenderer::new);
+        }
         event.registerEntityRenderer(ModEntities.ABYSS_MOTHER_SPAWN.get(), com.abyssia.client.boss.AbyssMotherRenderer.Spawn::new);
         event.registerEntityRenderer(ModEntities.ROCK_SHARD.get(), ctx -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(ctx, 2.5F, true));
         // the esca: bacterial blue-green light that pulses, flickers in the threat display and goes dark when it flees

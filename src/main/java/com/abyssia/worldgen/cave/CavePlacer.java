@@ -1,5 +1,6 @@
 package com.abyssia.worldgen.cave;
 
+import com.abyssia.Config;
 import com.abyssia.block.CaveMossBlock;
 import com.abyssia.block.HangingPlantBlock;
 import com.abyssia.block.SeafloorCarpetBlock;
@@ -26,6 +27,27 @@ import net.minecraft.world.level.block.state.properties.DripstoneThickness;
 final class CavePlacer
 {
     private CavePlacer() {}
+
+    /** The cave vegetation multiplier the density tables were tuned for: config / this = the share of tuned plants kept. */
+    static final double VEG_REF = 0.6;
+
+    /** Share of the tuned cave plants that grow (cave vegetation multiplier relative to {@link #VEG_REF}). */
+    static double vegRatio()
+    {
+        return Config.CAVE_VEGETATION.get() / VEG_REF;
+    }
+
+    /** Independent per-position keep roll for plant sources the tables do not scale themselves (deterministic). */
+    static boolean keep(CaveChunk ctx, int lx, int y, int lz, double ratio)
+    {
+        return ratio >= 1 || ctx.noises.hash(ctx.x0 + lx, y, ctx.z0 + lz, 897) < ratio;
+    }
+
+    /** {@link #plant} that grows only the kept share of positions. */
+    static boolean plantScaled(CaveChunk ctx, int lx, int y, int lz, CaveEnvironment.PlantEntry entry, Direction support, double roll, int heightCap, double ratio)
+    {
+        return keep(ctx, lx, y, lz, ratio) && plant(ctx, lx, y, lz, entry, support, roll, heightCap);
+    }
 
     /**
      * Places {@code entry} at an open block whose support lies in direction {@code support} (DOWN for a floor, UP

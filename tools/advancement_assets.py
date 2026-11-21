@@ -295,10 +295,10 @@ def build_list(biomes_ok, dishes_ok):
       ("無謀な潜行", "耐圧潜水服も潜水艇もなしで深淵に入る"), hidden=True)
     D("abyss_cartographer", "the_abyss", "abyss_chart", "challenge", each(*[biome(b) for b in abyss]),
       ("Abyssal Cartographer", "Visit every abyss cavern biome"), ("深淵の地図職人", "深淵の洞窟バイオームをすべて訪れる"), xp=200)
-    D("hadal", "the_abyss", "pressure_crystal_shard", "goal", dive(y_max=-860),
-      ("Hadal Depths", "Reach Y -860"), ("超深海", "Y -860 に到達する"))
-    D("rock_bottom", "hadal", "abyssal_crystal_shard", "challenge", dive(y_max=-980),
-      ("Rock Bottom", "Reach the very bottom of the ocean (Y -980)"), ("どん底", "海のいちばん底（Y -980）にたどり着く"), xp=100)
+    D("hadal", "the_abyss", "pressure_crystal_shard", "goal", dive(y_max=-522),
+      ("Hadal Depths", "Reach Y -522"), ("超深海", "Y -522 に到達する"))
+    D("rock_bottom", "hadal", "abyssal_crystal_shard", "challenge", dive(y_max=-555),
+      ("Rock Bottom", "Reach the very bottom of the ocean (Y -555)"), ("どん底", "海のいちばん底（Y -555）にたどり着く"), xp=100)
     D("submarine", "first_dive", "submarine", "goal", dive(in_submarine=True),
       ("Dive, Dive, Dive!", "Pilot a submarine"), ("潜航開始！", "潜水艇に乗り込む"))
     D("hull_breach", "submarine", "submarine_upgrade_pressure_hull", "task", event("submarine_crushed"),
@@ -306,8 +306,8 @@ def build_list(biomes_ok, dishes_ok):
     D("fully_loaded", "submarine", "submarine_upgrade_sonar_scanner", "goal", dive(in_submarine=True, upgrades_min=5),
       ("Fully Loaded", "Pilot a submarine with all five upgrade slots filled"),
       ("フル装備", "アップグレード 5 枠すべてを埋めた潜水艇に乗る"))
-    D("captain_of_the_abyss", "fully_loaded", "submarine_upgrade_depth_mk3", "challenge", dive(in_submarine=True, y_max=-860),
-      ("Captain of the Abyss", "Take a submarine below Y -860"), ("深淵の艦長", "潜水艇で Y -860 より深く潜る"), xp=150)
+    D("captain_of_the_abyss", "fully_loaded", "submarine_upgrade_depth_mk3", "challenge", dive(in_submarine=True, y_max=-522),
+      ("Captain of the Abyss", "Take a submarine below Y -522"), ("深淵の艦長", "潜水艇で Y -522 より深く潜る"), xp=150)
 
     # ---- life
     L("root", None, "lidar_scanner", "task", has("lidar_scanner"),
@@ -424,8 +424,8 @@ def build_list(biomes_ok, dishes_ok):
       ("Heavy Industry", "Build an abyssal excavator Mk2"), ("重工業", "深海掘削機 Mk2 を建てる"))
     E("breadcrumbs", "root", "waypoint_beacon", "task", placed("waypoint_beacon"),
       ("Breadcrumbs", "Place a waypoint beacon to find your way home"), ("帰り道の灯", "帰り道の目印にウェイポイントビーコンを置く"))
-    E("lantern_in_the_dark", "breadcrumbs", "waypoint_beacon", "goal", placed("waypoint_beacon", y_max=-860),
-      ("Lantern in the Dark", "Place a waypoint beacon below Y -860"), ("闇の灯台", "Y -860 より深い場所にウェイポイントビーコンを置く"))
+    E("lantern_in_the_dark", "breadcrumbs", "waypoint_beacon", "goal", placed("waypoint_beacon", y_max=-522),
+      ("Lantern in the Dark", "Place a waypoint beacon below Y -522"), ("闇の灯台", "Y -522 より深い場所にウェイポイントビーコンを置く"))
     E("shipwright", "root", "submarine", "task", has("submarine"),
       ("Shipwright", "Build a submarine"), ("造船技師", "潜水艇を造る"))
     E("dry_dock", "shipwright", "submarine", "task", build("submarine_dock"),

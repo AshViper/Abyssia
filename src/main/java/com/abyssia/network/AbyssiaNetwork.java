@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class AbyssiaNetwork
 {
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
-    private static final String PROTOCOL = "9";  // 9: AB05 research payloads. 8: large locker rename. 6: submarine lights / undock (SUB02). 7: WR01 relay links
+    private static final String PROTOCOL = "10";  // 10: propulsion screw. 9: AB05 research payloads. 8: large locker rename. 6: submarine lights / undock (SUB02). 7: WR01 relay links
 
     private AbyssiaNetwork() {}
 
@@ -28,6 +28,13 @@ public final class AbyssiaNetwork
         // SUB02 submarine lights / undock (the vehicle itself moves with vanilla's client-controlled vehicle packets)
         registrar.playToServer(com.abyssia.vehicle.SubmarineLightPacket.TYPE, com.abyssia.vehicle.SubmarineLightPacket.STREAM_CODEC,
                 com.abyssia.vehicle.SubmarineLightPacket::handle);
+        // I04 propulsion screw: thrust on/off (C2S), light toggle (C2S), thrust state of tracked players (S2C)
+        registrar.playToServer(com.abyssia.item.electric.ScrewThrustPacket.TYPE, com.abyssia.item.electric.ScrewThrustPacket.STREAM_CODEC,
+                com.abyssia.item.electric.ScrewThrustPacket::handle);
+        registrar.playToServer(com.abyssia.item.electric.ScrewLightPacket.TYPE, com.abyssia.item.electric.ScrewLightPacket.STREAM_CODEC,
+                com.abyssia.item.electric.ScrewLightPacket::handle);
+        registrar.playToClient(com.abyssia.item.electric.ScrewThrustStatePacket.TYPE, com.abyssia.item.electric.ScrewThrustStatePacket.STREAM_CODEC,
+                com.abyssia.item.electric.ScrewThrustStatePacket::handle);
         // WR01 wireless relay links (S2C)
         registrar.playToClient(com.abyssia.habitat.relay.RelaySyncPacket.TYPE, com.abyssia.habitat.relay.RelaySyncPacket.STREAM_CODEC,
                 com.abyssia.habitat.relay.RelaySyncPacket::handle);

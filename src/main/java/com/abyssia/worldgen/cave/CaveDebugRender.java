@@ -232,18 +232,23 @@ final class CaveDebugRender
             }
         }
         Map<String, Map<String, Long>> result = new java.util.LinkedHashMap<>();
-        for (DepthBand band : DepthBand.values()) result.put(band.label(), new TreeMap<>());
-        result.put("shallow", new TreeMap<>());
-        result.put("other", new TreeMap<>());
+        // Each label is split by the column: under land (deep seabed at the ceiling) or under the ocean.
+        for (String side : new String[] {"/ocean", "/land"})
+        {
+            for (DepthBand band : DepthBand.values()) result.put(band.label() + side, new TreeMap<>());
+            result.put("shallow" + side, new TreeMap<>());
+            result.put("other" + side, new TreeMap<>());
+        }
         for (int x = x0; x <= x1; x += 4)
         {
             for (int z = z0; z <= z1; z += 4)
             {
                 java.util.List<CaveShape> bucket = buckets.get(((long) (x >> 5) << 32) ^ ((z >> 5) & 0xFFFFFFFFL));
+                String side = network.land(x, z) ? "/land" : "/ocean";
                 for (int y = y0; y <= y1; y += 4)
                 {
                     DepthBand band = DepthBand.forY(y);
-                    Map<String, Long> volume = result.get(band != null ? band.label() : y >= DeepLayer.DEEP_BOTTOM_Y ? "shallow" : "other");
+                    Map<String, Long> volume = result.get((band != null ? band.label() : y >= DeepLayer.DEEP_BOTTOM_Y ? "shallow" : "other") + side);
                     volume.merge("total", 64L, Long::sum);
                     if (bucket == null) continue;
                     CaveShape best = null;

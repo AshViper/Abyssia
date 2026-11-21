@@ -47,8 +47,28 @@ import java.util.UUID;
  * | BLOOM (phase 3: the bell opens, exposing the core x2, movement stops, pulse every 8 s).
  * Hitboxes: 4 bell parts (the last is the core under the bell) + 3 per tentacle (40).
  */
-public class AbyssMother extends AbyssBoss
+public class AbyssMother extends AbyssBoss implements software.bernie.geckolib.animatable.GeoEntity
 {
+    /** GeckoLib (near view only): idle (beat) and bloom (stage 3) animations; the renderer places the tentacle and oral arm bones. */
+    private final software.bernie.geckolib.animatable.instance.AnimatableInstanceCache geoCache = software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache(this);
+
+    @Override
+    public void registerControllers(software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar controllers)
+    {
+        controllers.add(new software.bernie.geckolib.animation.AnimationController<AbyssMother>(this, "main", 0,
+                state -> state.setAndContinue(software.bernie.geckolib.animation.RawAnimation.begin().thenLoop("idle"))));
+        // bloom (stage 3): the petals fall open and hold
+        controllers.add(new software.bernie.geckolib.animation.AnimationController<AbyssMother>(this, "bloom", 0,
+                state -> bloom() ? state.setAndContinue(software.bernie.geckolib.animation.RawAnimation.begin().thenPlayAndHold("bloom"))
+                        : software.bernie.geckolib.animation.PlayState.STOP));
+    }
+
+    @Override
+    public software.bernie.geckolib.animatable.instance.AnimatableInstanceCache getAnimatableInstanceCache()
+    {
+        return geoCache;
+    }
+
     public static final int TENTACLES = 12;
     public static final int JOINTS = 28;
     public static final double SPACING = 6.0;
@@ -80,7 +100,6 @@ public class AbyssMother extends AbyssBoss
     private int stateTicks;
     @Nullable
     private LivingEntity target;
-    private int idleTicks;
     private int pulseT = -1;
     private int pulseCd = 200;
     private int broodCd = 300;
@@ -390,13 +409,7 @@ public class AbyssMother extends AbyssBoss
         if (!validTarget(target))
         {
             target = null;
-            if (altarPos == null && ++idleTicks > 1200)
-            {
-                discard(); // /summon only; an altar boss is retreated by its altar
-                return;
-            }
         }
-        else idleTicks = 0;
 
         // drift around the arena centre, leaning toward the target; speeds up with the bell beat; stops in BLOOM
         Vec3 base = center;

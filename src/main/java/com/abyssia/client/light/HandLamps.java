@@ -18,8 +18,8 @@ import java.util.function.Consumer;
 @EventBusSubscriber(modid = Abyssia.MODID, value = Dist.CLIENT)
 public final class HandLamps
 {
-    private static final float RANGE = 24.0f;
-    private static final float HALF_ANGLE = 20.0f * Mth.DEG_TO_RAD;
+    private static final float RANGE = 50.0f;
+    private static final float HALF_ANGLE = 50.0f * Mth.DEG_TO_RAD;
     private static final int COLOR = 0xFFF0D0;
     private static final float BEAM_LENGTH = 12.0f;
     private static final float BEAM_RADIUS = 0.07f;
@@ -45,7 +45,7 @@ public final class HandLamps
             Vec3 right = direction.cross(new Vec3(0.0, 1.0, 0.0));
             right = right.lengthSqr() < 1.0e-4 ? new Vec3(1.0, 0.0, 0.0) : right.normalize();
             Vec3 origin = player.getEyePosition(partialTick).add(direction.scale(0.6))
-                    .add(right.scale(rightHand ? 0.3 : -0.3)).add(0.0, -0.3, 0.0);
+                    .add(right.scale(rightHand ? 0.33 : -0.33)).add(0.0, -0.25, 0.0);
             out.accept(new Spotlight(origin, direction, RANGE, HALF_ANGLE, COLOR, 0.9f, BEAM_LENGTH, BEAM_RADIUS, player));
         }
     }

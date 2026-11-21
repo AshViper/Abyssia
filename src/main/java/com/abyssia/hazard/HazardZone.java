@@ -157,7 +157,7 @@ public final class HazardZone
         if (!Config.HAZARD_ENABLED.get() || level.dimension() != Level.OVERWORLD
                 || !DeepLayer.isAbyss(player.getY()) || !DeepLayer.hasDeepLayer(level.dimensionType().effectsLocation())
                 || player.isCreative() || player.isSpectator() || !player.isAlive()
-                || player.getVehicle() instanceof Submarine
+                || com.abyssia.vehicle.Vehicles.isShielded(player)
                 || HabitatBases.get(level).moduleAt(player.blockPosition().above()) >= 0)
         {
             STATES.remove(player.getUUID());

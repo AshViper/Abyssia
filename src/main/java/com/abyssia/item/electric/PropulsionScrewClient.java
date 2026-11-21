@@ -83,16 +83,44 @@ public final class PropulsionScrewClient
 
     private PropulsionScrewClient() {}
 
-    /** Thrusting = using the screw with the eyes in water. */
+    /** Other players' thrust state (S2C ScrewThrustStatePacket), by entity id. */
+    private static final java.util.Set<Integer> REMOTE_THRUSTING = new java.util.HashSet<>();
+
+    public static void setRemoteThrusting(int entityId, boolean on)
+    {
+        if (on) REMOTE_THRUSTING.add(entityId); else REMOTE_THRUSTING.remove(entityId);
+    }
+
+    @SubscribeEvent
+    public static void loggingOut(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event)
+    {
+        REMOTE_THRUSTING.clear();
+    }
+
+    @SubscribeEvent
+    public static void levelUnload(net.neoforged.neoforge.event.level.LevelEvent.Unload event)
+    {
+        if (event.getLevel().isClientSide()) REMOTE_THRUSTING.clear();
+    }
+
+    @SubscribeEvent
+    public static void leaveLevel(net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent event)
+    {
+        if (event.getLevel().isClientSide()) REMOTE_THRUSTING.remove(event.getEntity().getId());
+    }
+
+    /** Thrusting = left-click held with the screw in water: the local player's own flag, for others the server's broadcast. */
     public static boolean thrusting(LivingEntity entity)
     {
-        return entity.isUsingItem() && entity.getUseItem().getItem() instanceof PropulsionScrewItem && entity.isEyeInFluid(net.minecraft.tags.FluidTags.WATER);
+        if (entity == Minecraft.getInstance().player) return PropulsionScrewInput.localThrusting();
+        return REMOTE_THRUSTING.contains(entity.getId());
     }
 
     /** Lays the model flat like vanilla swimming (PlayerRenderer.setupRotations) while thrusting. */
-    @SubscribeEvent
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
     public static void renderPlayerPre(RenderPlayerEvent.Pre event)
     {
+        if (event.isCanceled()) return;
         AbstractClientPlayer player = (AbstractClientPlayer) event.getEntity();
         if (!thrusting(player) || player.isVisuallySwimming()) return;
         float partial = event.getPartialTick();

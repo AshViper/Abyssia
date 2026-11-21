@@ -17,7 +17,15 @@
           },
           "argument2": "abyssia:planet/deep_seabed_offset"
         },
-        "argument2": "abyssia:deep_caves"
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": "abyssia:deep_caves",
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": 4.0,
+            "argument2": "abyssia:planet/deep_land"
+          }
+        }
       },
       "argument2": {
         "type": "minecraft:range_choice",

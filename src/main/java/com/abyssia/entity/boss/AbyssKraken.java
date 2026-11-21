@@ -40,8 +40,24 @@ import javax.annotation.Nullable;
  * Hitboxes: 3 body parts + 4 per tentacle (35). Each tentacle has durability (6% of design health); damage on it also hits the
  * body at 0.5x; at 0 it is severed (only the 4 root joints stay, the body takes 5%), 4+ severed = slow.
  */
-public class AbyssKraken extends AbyssBoss
+public class AbyssKraken extends AbyssBoss implements software.bernie.geckolib.animatable.GeoEntity
 {
+    /** GeckoLib (near view only): the idle animation drives the mantle parts; the renderer places the arm bones. */
+    private final software.bernie.geckolib.animatable.instance.AnimatableInstanceCache geoCache = software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache(this);
+
+    @Override
+    public void registerControllers(software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar controllers)
+    {
+        controllers.add(new software.bernie.geckolib.animation.AnimationController<AbyssKraken>(this, "main", 0,
+                state -> state.setAndContinue(software.bernie.geckolib.animation.RawAnimation.begin().thenLoop("idle"))));
+    }
+
+    @Override
+    public software.bernie.geckolib.animatable.instance.AnimatableInstanceCache getAnimatableInstanceCache()
+    {
+        return geoCache;
+    }
+
     public static final int TENTACLES = 8;
     public static final int JOINTS = 16;
     public static final double SPACING = 5.5;
@@ -81,7 +97,6 @@ public class AbyssKraken extends AbyssBoss
     private int stateLength = 80;
     @Nullable
     private LivingEntity target;
-    private int idleTicks;
     private int inkCooldown = 200;
     private Vec3 inkCenter = Vec3.ZERO;
     private boolean pendingFrenzy;
@@ -397,14 +412,8 @@ public class AbyssKraken extends AbyssBoss
         if (!validTarget(target))
         {
             target = null;
-            if (altarPos == null && ++idleTicks > 1200)
-            {
-                discard(); // /summon only; an altar boss is retreated by its altar
-                return;
-            }
             if (state != State.IDLE_SWAY && state != State.INK) abortAttacks();
         }
-        else idleTicks = 0;
         double mul = speedMul();
         // float around the arena centre, leaning a little toward the target
         Vec3 base = center;

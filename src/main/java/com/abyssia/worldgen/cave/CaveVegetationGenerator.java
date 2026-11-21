@@ -32,6 +32,7 @@ final class CaveVegetationGenerator
         CaveNoises noises = ctx.noises;
         double vegetation = Config.CAVE_VEGETATION.get();
         if (vegetation <= 0) return;
+        double ratio = vegetation / CavePlacer.VEG_REF;
         for (int lz = 0; lz < 16; lz++)
         {
             for (int lx = 0; lx < 16; lx++)
@@ -51,8 +52,8 @@ final class CaveVegetationGenerator
                     boolean forest = space.landmark == CaveLandmark.GIANT_KELP_CAVERN || space.landmark == CaveLandmark.DEEP_CAVE_FOREST;
                     double roll = noises.hash(x, y, z, 31);
                     // Cheap cut: the zone multiplier never exceeds 3.2, so a roll above the 3.21 bound fails below too (same result).
-                    if (roll >= giant * 3.21 * vegetation * (forest ? 2.5 : 1.0)) continue;
-                    double chance = giant * noises.vegetationZone(x, y, z) * vegetation * (forest ? 2.5 : 1.0);
+                    if (roll >= Math.min(1.0, giant * 3.21 * CavePlacer.VEG_REF * (forest ? 2.5 : 1.0)) * ratio) continue;
+                    double chance = Math.min(1.0, giant * noises.vegetationZone(x, y, z) * CavePlacer.VEG_REF * (forest ? 2.5 : 1.0)) * ratio;
                     if (roll >= chance) continue;
                     int free = CaveDecorationGenerator.free(ctx, lx, y, lz, Direction.UP, 255);
                     if (free < 4) continue;
@@ -79,6 +80,7 @@ final class CaveVegetationGenerator
         CaveNoises noises = ctx.noises;
         double vegetation = Config.CAVE_VEGETATION.get(), glowScale = Config.CAVE_GLOW.get();
         if (vegetation <= 0) return;
+        double ratio = vegetation / CavePlacer.VEG_REF;
         CaveMossBlock moss = (CaveMossBlock) ModBlocks.CAVE_MOSS.get();
         // Only blocks that are carved and touch a solid block can grow anything here: walk those (same order as a full y, z, x scan).
         for (int ci = ctx.nextCandidate(ctx.candidateIndex(ctx.yMin + 1), ctx.yMax); ci >= 0; ci = ctx.nextCandidate(ci + 1, ctx.yMax))
@@ -100,17 +102,18 @@ final class CaveVegetationGenerator
             }
             // Cheap cut before the support scan: both rolls fail even at their upper-bound odds (same result as below).
             if (space.cavern == null && flora.moss() * vegetation * thin < 1.0 && noises.hash(x, y, z, 23) >= flora.moss() * vegetation * thin
-                    && noises.hash(x, y, z, 21) >= flora.density() * vegetation * 0.6 * space.vegetationBoost * thin * noises.vegetationZone(x, y, z))
+                    && noises.hash(x, y, z, 21) >= Math.min(1.0, flora.density() * CavePlacer.VEG_REF * 0.6 * space.vegetationBoost * thin * noises.vegetationZone(x, y, z)) * ratio)
                 continue;
             Direction support = support(ctx, lx, y, lz);
             if (support == null) continue;
             double zone = noises.vegetationZone(x, y, z);
             double patch = noises.patch(x, y, z, 0);
             double orientation = support == Direction.DOWN ? 0.6 : support == Direction.UP ? 0.4 : 0.25;
-            double chance = flora.density() * zone * vegetation * (0.08 + 0.92 * patch) * orientation * space.vegetationBoost * thin;
+            double chance = flora.density() * zone * CavePlacer.VEG_REF * (0.08 + 0.92 * patch) * orientation * space.vegetationBoost * thin;
             // In a cavern: by ecology patch, entrance-to-deep gradient and height.
             if (space.cavern != null) chance *= space.cavern.vegetationFactor(ctx.patchAt(space.cavern, lx, lz), x + 0.5, y + 0.5, z + 0.5);
-            if (noises.hash(x, y, z, 21) < chance)
+            // The odds are capped at 1 as tuned, then the configured share is kept (linear in the multiplier).
+            if (noises.hash(x, y, z, 21) < Math.min(1.0, chance) * ratio)
             {
                 Palette<CaveEnvironment.PlantEntry> normal = support == Direction.DOWN ? env.floorPlants : support == Direction.UP ? env.ceilingPlants : env.wallPlants;
                 double tier = noises.hash(x, y, z, 22);

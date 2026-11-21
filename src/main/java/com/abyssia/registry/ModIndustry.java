@@ -97,6 +97,8 @@ public final class ModIndustry
     public static final DeferredBlock<Block> HIGH_TEMP_FURNACE = machine(MachineKind.HIGH_TEMP_FURNACE);
     /** I02 (inbox/specs/I02-selective-leaching-separator.md) */
     public static final DeferredBlock<Block> SELECTIVE_LEACHING_SEPARATOR = machine(MachineKind.SELECTIVE_LEACHING_SEPARATOR);
+    /** PRC01: raw metal from a live vent next to it */
+    public static final DeferredBlock<Block> HYDROTHERMAL_PRECIPITATOR = machine(MachineKind.HYDROTHERMAL_PRECIPITATOR);
     /** Excavator Mk1 (deep-sea mining platform); built with the habitat constructor (ExcavatorEntry): no block item, no drops */
     public static final DeferredBlock<Block> ABYSSAL_EXCAVATOR = BLOCKS.register("abyssal_excavator", () ->
             new AbyssalExcavatorBlock(excavatorProps().lightLevel(s -> s.getValue(BlockStateProperties.LIT) ? 7 : 0)));
@@ -124,6 +126,8 @@ public final class ModIndustry
             () -> BlockEntityType.Builder.of(AbyssalExcavatorBlockEntity::new, ABYSSAL_EXCAVATOR.get(), ABYSSAL_EXCAVATOR_MK2.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.abyssia.industry.blockentity.ExcavatorPartBlockEntity>> EXCAVATOR_PART_ENTITY = BLOCK_ENTITIES.register("excavator_part",
             () -> BlockEntityType.Builder.of(com.abyssia.industry.blockentity.ExcavatorPartBlockEntity::new, EXCAVATOR_PART.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.abyssia.industry.blockentity.PrecipitatorBlockEntity>> PRECIPITATOR_ENTITY = BLOCK_ENTITIES.register("hydrothermal_precipitator",
+            () -> BlockEntityType.Builder.of(com.abyssia.industry.blockentity.PrecipitatorBlockEntity::new, HYDROTHERMAL_PRECIPITATOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeneratorBlockEntity>> GENERATOR_ENTITY = BLOCK_ENTITIES.register("industrial_generator",
             () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, HYDROTHERMAL_GENERATOR.get(), AUXILIARY_GENERATOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyDeviceBlockEntity>> ENERGY_DEVICE_ENTITY = BLOCK_ENTITIES.register("energy_device",
@@ -146,7 +150,7 @@ public final class ModIndustry
     /** NeoForge block capabilities (Forge: BlockEntity#getCapability): FE on every side, sided item handlers. */
     private static void registerCapabilities(RegisterCapabilitiesEvent event)
     {
-        for (BlockEntityType<? extends IndustryBlockEntity> type : List.of(MACHINE_ENTITY.get(), EXCAVATOR_ENTITY.get(), GENERATOR_ENTITY.get(), ENERGY_DEVICE_ENTITY.get()))
+        for (BlockEntityType<? extends IndustryBlockEntity> type : List.of(MACHINE_ENTITY.get(), EXCAVATOR_ENTITY.get(), PRECIPITATOR_ENTITY.get(), GENERATOR_ENTITY.get(), ENERGY_DEVICE_ENTITY.get()))
         {
             event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, type, IndustryBlockEntity::energyStorage);
             event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type, IndustryBlockEntity::itemHandler);

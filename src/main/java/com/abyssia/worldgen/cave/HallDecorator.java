@@ -149,6 +149,7 @@ final class HallDecorator
     static void life(CaveChunk ctx)
     {
         CaveNoises noises = ctx.noises;
+        double ratio = CavePlacer.vegRatio();
         // Only blocks that are carved and touch a solid block can grow anything here: walk those (same order as a full y, z, x scan).
         for (int ci = ctx.nextCandidate(ctx.candidateIndex(ctx.yMin + 1), ctx.yMax); ci >= 0; ci = ctx.nextCandidate(ci + 1, ctx.yMax))
         {
@@ -168,7 +169,7 @@ final class HallDecorator
                 {
                     patch = 0.15 + 1.7 * noises.patch(x, y, z, 31.7);
                     if (roll < life.floorDensity() * patch
-                            && CavePlacer.plant(ctx, lx, y, lz, env.hallFloorPlants.pick(noises.species(x + 7, y, z)), Direction.DOWN, noises.hash(x, y, z, 602), 12)) continue;
+                            && CavePlacer.plantScaled(ctx, lx, y, lz, env.hallFloorPlants.pick(noises.species(x + 7, y, z)), Direction.DOWN, noises.hash(x, y, z, 602), 12, ratio)) continue;
                 }
             }
             else if (!env.hallCeilingPlants.isEmpty() && ctx.sturdy(lx, y + 1, lz, Direction.DOWN))
@@ -178,7 +179,7 @@ final class HallDecorator
                 {
                     patch = 0.15 + 1.7 * noises.patch(x, y, z, 31.7);
                     if (roll < life.ceilingDensity() * patch
-                            && CavePlacer.plant(ctx, lx, y, lz, env.hallCeilingPlants.pick(noises.species(x + 11, y, z)), Direction.UP, noises.hash(x, y, z, 604), 16)) continue;
+                            && CavePlacer.plantScaled(ctx, lx, y, lz, env.hallCeilingPlants.pick(noises.species(x + 11, y, z)), Direction.UP, noises.hash(x, y, z, 604), 16, ratio)) continue;
                 }
             }
             if (env.hallWallPlants.isEmpty()) continue;
@@ -191,7 +192,7 @@ final class HallDecorator
             {
                 Direction d = HORIZONTAL[(start + i) & 3];
                 if (!ctx.sturdy(lx + d.getStepX(), y, lz + d.getStepZ(), d.getOpposite())) continue;
-                if (CavePlacer.plant(ctx, lx, y, lz, env.hallWallPlants.pick(noises.species(x + 13, y, z)), d, noises.hash(x, y, z, 607), 4)) break;
+                if (CavePlacer.plantScaled(ctx, lx, y, lz, env.hallWallPlants.pick(noises.species(x + 13, y, z)), d, noises.hash(x, y, z, 607), 4, ratio)) break;
             }
         }
     }

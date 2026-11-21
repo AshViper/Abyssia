@@ -26,6 +26,8 @@ public final class BossFarClient
         final int kind;
         double[] prev, cur;
         long curAt, lastRecv;
+        /** Client-only stand-in entity (never added to the level) that carries the model while the real one is not synced. */
+        com.abyssia.entity.boss.AbyssBoss dummy;
 
         Far(int id, int kind, double[] pts, long now)
         {

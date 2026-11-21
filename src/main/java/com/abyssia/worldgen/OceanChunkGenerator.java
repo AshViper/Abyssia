@@ -13,7 +13,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.HashCommon;
 import it.unimi.dsi.fastutil.shorts.ShortList;
+import javax.annotation.Nullable;
 import net.minecraft.Util;
+import net.minecraft.SharedConstants;
+import net.minecraft.core.QuartPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -210,8 +217,9 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
      */
     private ChunkAccess primeNoiseChunk(ChunkAccess chunk, RandomState randomState, StructureManager structureManager, Blender blender)
     {
-        chunk.getOrCreateNoiseChunk(c -> NoiseChunk.forChunk(c, randomState, BandedBeardifier.forStructuresInChunk(structureManager, c.getPos()),
+        NoiseChunk noiseChunk = chunk.getOrCreateNoiseChunk(c -> NoiseChunk.forChunk(c, randomState, BandedBeardifier.forStructuresInChunk(structureManager, c.getPos()),
                 generatorSettings().value(), globalFluidPicker.get(), blender));
+        if (vanillaFluids && DeepLayer.PERF06 && generatorSettings().value().isAquifersEnabled()) DeepAquifer.install(noiseChunk, globalFluidPicker.get());
         return chunk;
     }
 
@@ -338,22 +346,93 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
         bindFluidZone(randomState);
         if (chunk.getMinBuildHeight() >= DeepLayer.TOP_Y)
         {
-            super.buildSurface(region, structureManager, randomState, chunk);
+            surfaceRules(region, structureManager, randomState, chunk);
             return;
         }
         crustToRock(chunk, randomState);
+        boolean[] buried = DeepLayer.PERF04 ? buriedStone(chunk) : new boolean[chunk.getSections().length];
+        deepStoneToRock(chunk, randomState, buried);
         int[] tops = hideDeepWater(chunk);
-        LevelChunkSection[] crust = hideCrust(chunk);
+        LevelChunkSection[] crust = hideCrust(chunk, buried, DeepLayer.PERF04 ? openWater(chunk, tops) : new boolean[buried.length]);
         try
         {
-            super.buildSurface(region, structureManager, randomState, chunk);
+            surfaceRules(region, structureManager, randomState, chunk);
         }
         finally
         {
             restoreCrust(chunk, crust);
             restoreDeepWater(chunk, tops);
         }
-        deepStoneToRock(chunk, randomState);
+        deepStoneToRock(chunk, randomState, null);
+    }
+
+    /**
+     * PERF04: deep layer sections of nothing but stone whose neighbours above and below are all stone too (the rock under
+     * land, DL01). No surface rule reaches a block buried at least 16 deep on both sides, so these become rock before the
+     * rules run; {@link #hideCrust} then swaps out the ones that keep a converted section on both sides.
+     */
+    private static boolean[] buriedStone(ChunkAccess chunk)
+    {
+        LevelChunkSection[] sections = chunk.getSections();
+        int minY = chunk.getMinBuildHeight();
+        int deepSections = Math.min(sections.length, (DeepLayer.TOP_Y - minY) >> 4);
+        boolean[] stone = new boolean[deepSections];
+        BlockState rock = ModBlocks.ABYSSAL_ROCK.get().defaultBlockState();
+        for (int s = 0; s < deepSections; s++)
+        {
+            LevelChunkSection section = sections[s];
+            // The crust's top section (already rock, never hidden) counts as solid cover for the section above it.
+            stone[s] = !section.hasOnlyAir() && only(section, minY + (s << 4) + 15 >= DeepLayer.ABYSS_TOP_Y - 8 ? STONE : rock);
+        }
+        boolean[] buried = new boolean[sections.length];
+        for (int s = 1; s + 1 < deepSections; s++)
+            buried[s] = minY + (s << 4) + 15 >= DeepLayer.ABYSS_TOP_Y - 8 && stone[s - 1] && stone[s] && stone[s + 1];
+        return buried;
+    }
+
+    /**
+     * PERF03: vanilla's {@code buildSurface(WorldGenRegion, ...)} with the region's biome lookups served from the last chunk read
+     * (the same chunk the region would hand out, at the same status) instead of one holder lookup per surface-rule biome test.
+     */
+    private void surfaceRules(WorldGenRegion region, StructureManager structureManager, RandomState randomState, ChunkAccess chunk)
+    {
+        if (SharedConstants.debugVoidTerrain(chunk.getPos())) return;
+        buildSurface(chunk, new WorldGenerationContext(this, region), randomState, structureManager,
+                region.getBiomeManager().withDifferentSource(new RegionBiomes(region)), region.registryAccess().registryOrThrow(Registries.BIOME), Blender.of(region));
+    }
+
+    private static final class RegionBiomes implements BiomeManager.NoiseBiomeSource
+    {
+        private final WorldGenRegion region;
+        private int sectionX, sectionZ;
+        private ChunkAccess chunk;
+        private int lastX, lastY, lastZ;
+        private Holder<Biome> last;
+
+        RegionBiomes(WorldGenRegion region)
+        {
+            this.region = region;
+        }
+
+        @Override
+        public Holder<Biome> getNoiseBiome(int x, int y, int z)
+        {
+            if (last != null && x == lastX && y == lastY && z == lastZ) return last;
+            int sx = QuartPos.toSection(x), sz = QuartPos.toSection(z);
+            if (chunk == null || sx != sectionX || sz != sectionZ)
+            {
+                chunk = region.getChunk(sx, sz, ChunkStatus.BIOMES, false);
+                // As LevelReader.getNoiseBiome: a chunk the region does not hold falls back to the uncached biome.
+                if (chunk == null) return region.getUncachedNoiseBiome(x, y, z);
+                sectionX = sx;
+                sectionZ = sz;
+            }
+            last = chunk.getNoiseBiome(x, y, z);
+            lastX = x;
+            lastY = y;
+            lastZ = z;
+            return last;
+        }
     }
 
     /**
@@ -377,6 +456,13 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
             if (sectionY + 15 >= top) break;
             LevelChunkSection section = sections[s];
             if (section.hasOnlyAir() || !section.maybeHas(state -> state == STONE)) continue;
+            // PERF03: a section of nothing but stone clear of the bedrock band becomes one uniform rock section at once.
+            if (sectionY >= DeepLayer.MIN_Y + 5 && onlyStone(section))
+            {
+                sections[s] = uniform(section, rock);
+                continue;
+            }
+            PalettedContainer<BlockState> states = section.getStates();
             for (int ly = 0; ly < 16; ly++)
             {
                 int y = sectionY + ly;
@@ -387,9 +473,10 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
                 {
                     for (int x = 0; x < 16; x++)
                     {
-                        if (section.getBlockState(x, ly, z) != STONE) continue;
+                        if (states.get(x, ly, z) != STONE) continue;
                         boolean b = bedrockLayer && (y <= DeepLayer.MIN_Y || floor.at(baseX + x, y, baseZ + z).nextFloat() < chance);
-                        section.setBlockState(x, ly, z, b ? bedrock : rock, false);
+                        // Stone, rock and bedrock are all solid, non-ticking, fluid-free: the section's block counts do not change.
+                        states.getAndSetUnchecked(x, ly, z, b ? bedrock : rock);
                     }
                 }
             }
@@ -403,17 +490,62 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
      * section is kept under the sections the rules work on, so their ceiling test (stone below, offset 0) sees the same
      * rock under them. Returns the originals (null where nothing was swapped).
      */
-    private static LevelChunkSection[] hideCrust(ChunkAccess chunk)
+    /**
+     * PERF05: deep layer sections of nothing but water that every column enters straight from the top of its first water
+     * run (the block {@link #hideDeepWater} turned to air), with no rock ledge in between. The rules only walk through
+     * such water with a stone depth of 0, exactly as they walk through air, so these sections can be hidden from them.
+     * A column that passed a ledge carries its stone depth through the water below; nothing under one is hidden.
+     */
+    private static boolean[] openWater(ChunkAccess chunk, int[] tops)
+    {
+        LevelChunkSection[] sections = chunk.getSections();
+        int minY = chunk.getMinBuildHeight();
+        boolean[] hide = new boolean[sections.length];
+        boolean[] run = new boolean[256];
+        int running = 0;
+        for (int s = (DeepLayer.TOP_Y - 1 - minY) >> 4; s >= 0 && minY + (s << 4) >= DeepLayer.ABYSS_TOP_Y; s--)
+        {
+            LevelChunkSection section = sections[s];
+            int sectionY = minY + (s << 4);
+            if (section.hasOnlyAir()) return hide;
+            if (only(section, WATER))
+            {
+                if (running < 256) return hide;
+                hide[s] = true;
+                continue;
+            }
+            for (int i = 0; i < 256; i++)
+            {
+                for (int ly = 15; ly >= 0; ly--)
+                {
+                    if (sectionY + ly == tops[i])
+                    {
+                        run[i] = true;
+                        running++;
+                    }
+                    else if (run[i] && section.getBlockState(i & 15, ly, i >> 4) != WATER) return hide;
+                }
+            }
+        }
+        return hide;
+    }
+
+    private static LevelChunkSection[] hideCrust(ChunkAccess chunk, boolean[] buried, boolean[] water)
     {
         LevelChunkSection[] sections = chunk.getSections();
         int minY = chunk.getMinBuildHeight(), top = DeepLayer.ABYSS_TOP_Y - 8;
         int converted = 0;
         while (converted < sections.length && minY + (converted << 4) + 15 < top) converted++;
-        LevelChunkSection[] originals = new LevelChunkSection[Math.max(0, converted - 1)];
+        LevelChunkSection[] originals = new LevelChunkSection[sections.length];
         for (int s = 0; s < originals.length; s++)
         {
+            // The crust (all but its top section), and buried deep rock under three converted sections and over one: the
+            // rules that count stone depth from the last air above reach more than one section down.
+            // PERF05: and the open water sections of openWater.
             LevelChunkSection section = sections[s];
             if (section.hasOnlyAir()) continue;
+            boolean rock = s < converted - 1 || (s > 0 && s + 3 < buried.length && buried[s - 1] && buried[s] && buried[s + 1] && buried[s + 2] && buried[s + 3]);
+            if (!rock && !water[s]) continue;
             originals[s] = section;
             sections[s] = new LevelChunkSection(new PalettedContainer<>(Block.BLOCK_STATE_REGISTRY, AIR, PalettedContainer.Strategy.SECTION_STATES), section.getBiomes());
         }
@@ -427,6 +559,28 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
         {
             if (originals[s] != null) sections[s] = originals[s];
         }
+    }
+
+    /** Whether every block of the section is stone (counted from the storage: unused palette entries do not matter). */
+    private static boolean onlyStone(LevelChunkSection section)
+    {
+        return only(section, STONE);
+    }
+
+    private static boolean only(LevelChunkSection section, BlockState block)
+    {
+        boolean[] other = new boolean[1];
+        section.getStates().count((state, n) ->
+        {
+            if (state != block) other[0] = true;
+        });
+        return !other[0];
+    }
+
+    /** A section of one block state everywhere, keeping the section's biomes. */
+    private static LevelChunkSection uniform(LevelChunkSection section, BlockState state)
+    {
+        return new LevelChunkSection(new PalettedContainer<>(Block.BLOCK_STATE_REGISTRY, state, PalettedContainer.Strategy.SECTION_STATES), section.getBiomes());
     }
 
     private static final BlockState WATER = Blocks.WATER.defaultBlockState();
@@ -495,7 +649,7 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
     private static final int ABYSSAL_FALSE_AT_AND_ABOVE = (int) DeepLayer.fromDeepY(110);
 
     /** The deep layer's stone (sections below the bedrock band) to abyssal / deep sea rock, unlocked, in place. */
-    private static void deepStoneToRock(ChunkAccess chunk, RandomState randomState)
+    private static void deepStoneToRock(ChunkAccess chunk, RandomState randomState, @Nullable boolean[] only)
     {
         LevelChunkSection[] sections = chunk.getSections();
         int minY = chunk.getMinBuildHeight(), baseX = chunk.getPos().getMinBlockX(), baseZ = chunk.getPos().getMinBlockZ();
@@ -505,9 +659,20 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
         int deepSections = Math.min(sections.length, (DeepLayer.TOP_Y - minY) >> 4);
         for (int s = 0; s < deepSections; s++)
         {
+            if (only != null && !only[s]) continue;
             LevelChunkSection section = sections[s];
             if (section.hasOnlyAir() || !section.maybeHas(state -> state == STONE)) continue;
             int sectionY = minY + (s << 4);
+            // PERF03: a section of nothing but stone that lies wholly in one rock's range becomes one uniform section at once.
+            if (sectionY + 15 <= ABYSSAL_TRUE_AT_AND_BELOW || sectionY >= ABYSSAL_FALSE_AT_AND_ABOVE)
+            {
+                if (onlyStone(section))
+                {
+                    sections[s] = uniform(section, sectionY + 15 <= ABYSSAL_TRUE_AT_AND_BELOW ? abyssalRock : deepRock);
+                    continue;
+                }
+            }
+            PalettedContainer<BlockState> states = section.getStates();
             for (int ly = 0; ly < 16; ly++)
             {
                 int y = sectionY + ly;
@@ -519,9 +684,9 @@ public class OceanChunkGenerator extends NoiseBasedChunkGenerator
                 {
                     for (int x = 0; x < 16; x++)
                     {
-                        if (section.getBlockState(x, ly, z) != STONE) continue;
+                        if (states.get(x, ly, z) != STONE) continue;
                         BlockState state = mixed && gradient.at(baseX + x, y, baseZ + z).nextFloat() < chance ? abyssalRock : rock;
-                        section.setBlockState(x, ly, z, state, false);
+                        states.getAndSetUnchecked(x, ly, z, state);
                     }
                 }
             }

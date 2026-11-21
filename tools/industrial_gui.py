@@ -32,6 +32,9 @@ LAYOUTS = {
                      reagent=(36, 41), rares=[(126, 17), (126, 35), (126, 53)]),
     # Excavator: no inputs, output slot, arrow, energy bar only
     "excavator": dict(inputs=[], output=(116, 53), arrow=(80, 34), flame=None),
+    # PRC01 precipitator: no inputs, no arrow, 3x3 grid of plain output slots (main output first)
+    "precipitator": dict(inputs=[], output=(106, 17), arrow=None, flame=None, grid=True,
+                         rares=[(124, 17), (142, 17), (106, 35), (124, 35), (142, 35), (106, 53), (124, 53), (142, 53)]),
 }
 
 # palette: ui_kit (UI01).  Functional colours (amber, flame) stay.
@@ -184,12 +187,16 @@ def build(layout):
         rx, ry = spec["reagent"]
         slot(img, rx, ry)
         droplet(img, rx - 11, ry + 3)
-    if spec.get("rares"):
-        branch(img, spec["output"], spec["rares"])
-        for x, y in spec["rares"]:
-            rare_slot(img, x, y)
-    if spec["output"]:
-        big_slot(img, *spec["output"])
+    if spec.get("grid"):
+        for x, y in [spec["output"]] + spec["rares"]:
+            slot(img, x, y)
+    else:
+        if spec.get("rares"):
+            branch(img, spec["output"], spec["rares"])
+            for x, y in spec["rares"]:
+                rare_slot(img, x, y)
+        if spec["output"]:
+            big_slot(img, *spec["output"])
     if spec["arrow"]:
         ax, ay = spec["arrow"]
         gear(img, ax + 12, ay + 8, 9)

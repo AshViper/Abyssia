@@ -11,10 +11,11 @@ import javax.annotation.Nullable;
 public enum DepthBand
 {
     /** B' in the design notes: the crust right under the deep layer, with the hadal shafts reaching its upper part. */
-    B("b", DeepLayer.BAND_C_TOP_Y, DeepLayer.ABYSS_TOP_Y - 4),
-    C("c", DeepLayer.BAND_D_TOP_Y, DeepLayer.BAND_C_TOP_Y),
-    D("d", DeepLayer.BAND_E_TOP_Y, DeepLayer.BAND_D_TOP_Y),
-    E("e", DeepLayer.CRUST_BOTTOM_Y, DeepLayer.BAND_E_TOP_Y);
+    B("b", DeepLayer.CAVE_WINDOW_B_BOTTOM_Y, DeepLayer.ABYSS_TOP_Y - 4),
+    C("c", DeepLayer.CRUST_BOTTOM_Y, DeepLayer.CAVE_WINDOW_B_BOTTOM_Y),
+    // The world is only ~190 blocks of crust deep: D and E have no cave systems (zero height, CaveNetwork skips windows under 64 blocks).
+    D("d", DeepLayer.CRUST_BOTTOM_Y, DeepLayer.CRUST_BOTTOM_Y),
+    E("e", DeepLayer.CRUST_BOTTOM_Y, DeepLayer.CRUST_BOTTOM_Y);
 
     /** Blocks by which a vertical link reaches into the window above. */
     public static final int OVERLAP = 40;

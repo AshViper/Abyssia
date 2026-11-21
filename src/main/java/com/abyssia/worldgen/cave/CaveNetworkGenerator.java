@@ -71,7 +71,8 @@ final class CaveNetworkGenerator
         int az = cellZ * cell + margin + rng.nextInt(cell - 2 * margin);
         CaveProfile profile = net.profile(ax, az);
         if (profile == null || rng.nextFloat() >= profile.systemChance * Config.CAVE_SYSTEM_CHANCE.get()) return null;
-        if (net.seabed(ax, az) < net.minY() + 28) return null;
+        int seabedHere = net.seabed(ax, az);
+        if (seabedHere < net.minY() + 28 || seabedHere > net.maxEntranceY()) return null;  // under land the deep layer is rock: no sealed tunnels
 
         CaveLandmark landmark = null;
         if (!profile.landmarks.isEmpty() && rng.nextFloat() < profile.landmarkChance * Config.LANDMARK_CHANCE.get())
@@ -198,6 +199,7 @@ final class CaveNetworkGenerator
         if (type == CaveType.MEGA_CAVERN) radius = Mth.clamp(radius, type.minRadius, type.maxRadius);
         double vertical = landmark != null ? landmark.vertical : type.vertical;
         double x = ax + (rng.nextDouble() - 0.5) * cell * 0.15, z = az + (rng.nextDouble() - 0.5) * cell * 0.15;
+        if (net.land(x, z)) return null;  // the crust under land stays solid rock (parts reaching under a coast are dropped in CaveBuilder)
         if (AbyssCavity.suppresses(net, x, z)) return null;  // AB06: no ordinary hub inside a cavity or its 60 block rim
         boolean hall = landmark == null && CaveChamberGenerator.hallType(type);
         double hallFactor = hall ? 0.9 + 0.2 * rng.nextDouble() : 1;
@@ -399,7 +401,8 @@ final class CaveNetworkGenerator
             ex = p.x() + Math.cos(angle) * d;
             ez = p.z() + Math.sin(angle) * d;
             sy = root.seabed(ex, ez);
-            found = sy <= root.maxEntranceY() && sy >= root.minY() + 12;
+            // The way up must not pass under land either: the stretch past the cavity's rim (3/4 of the way out) is the part that could.
+            found = sy <= root.maxEntranceY() && sy >= root.minY() + 12 && !root.land(p.x() + (ex - p.x()) * 0.75, p.z() + (ez - p.z()) * 0.75);
         }
         if (!found)
         {

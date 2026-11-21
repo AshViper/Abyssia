@@ -1,0 +1,77 @@
+{
+  "category": "landmark",
+  "tier": "medium",
+  "footprint_radius": 40,
+  "max_height": 18,
+  "formation": {
+    "type": "fossil_graveyard",
+    "count": [
+      1,
+      4
+    ],
+    "spread": 10,
+    "skeleton": {
+      "type": "skeleton",
+      "length": [
+        20,
+        45
+      ],
+      "rib": [
+        4,
+        7
+      ],
+      "rib_gap": 0.2,
+      "bend": 4,
+      "bone": [
+        {
+          "data": {
+            "Name": "minecraft:bone_block"
+          },
+          "weight": 8
+        },
+        {
+          "data": {
+            "Name": "abyssia:fossil_rock"
+          },
+          "weight": 1
+        }
+      ],
+      "accent": [
+        {
+          "data": {
+            "Name": "abyssia:fossil_rock"
+          },
+          "weight": 1
+        }
+      ]
+    },
+    "ground": [
+      {
+        "data": {
+          "Name": "abyssia:bone_sediment"
+        },
+        "weight": 5
+      },
+      {
+        "data": {
+          "Name": "abyssia:fossil_rock"
+        },
+        "weight": 2
+      }
+    ],
+    "ground_radius": [
+      12,
+      20
+    ],
+    "scatter": [
+      4,
+      10
+    ]
+  },
+  "conditions": {
+    "max_slope": 0.8,
+    "min_y": -340,
+    "max_y": -80,
+    "max_top_y": -92
+  }
+}

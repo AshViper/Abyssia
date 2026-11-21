@@ -257,6 +257,7 @@ def lang():
         keep = {k: v for k, v in old.items() if not k.startswith(("entity.abyssia.", "subtitles.abyssia.entity."))
                 and not (k.startswith("item.abyssia.") and k.endswith(".dropped_by"))}
         keep["entity.abyssia.abyss_serpent"] = ("Abyssal Serpent", "深淵の大海蛇")[idx]  # BOSS01 boss, not a species
+        keep["entity.abyssia.abyss_angler"] = ("Abyss Angler", "アビスアングラー")[idx]  # BOSS03 boss, not a species
         for s in species():
             name = sid(s)
             keep["entity.abyssia." + name] = s.INFO["names"][idx]

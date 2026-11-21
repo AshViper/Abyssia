@@ -68,7 +68,7 @@ def model(on):
             faces[d] = {"texture": "#" + t}
         element = {"name": part["name"], "from": part["from"], "to": part["to"], "faces": faces}
         if on and part.get("emissive_on"):
-            element["forge_data"] = {"block_light": 15, "sky_light": 15}
+            element["neoforge_data"] = {"block_light": 15, "sky_light": 15}
         elements.append(element)
     out = {"textures": textures, "elements": elements, "display": spec["display"]}
     if not on:

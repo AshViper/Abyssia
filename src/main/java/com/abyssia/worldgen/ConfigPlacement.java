@@ -25,7 +25,8 @@ public class ConfigPlacement extends PlacementModifier
             opt("vegetation", () -> Config.VEGETATION_ENABLED.get() ? Config.VEGETATION_DENSITY.get() : 0),
             opt("giant_plants", () -> Config.VEGETATION_ENABLED.get() ? Config.GIANT_PLANT_CHANCE.get() / 0.1 : 0),
             opt("glowing_plants", () -> Config.VEGETATION_ENABLED.get() ? Config.GLOWING_PLANT_CHANCE.get() / 0.03 : 0),
-            opt("abyssal_forests", () -> Config.VEGETATION_ENABLED.get() && Config.ABYSSAL_FORESTS.get() ? 1 : 0),
+            opt("abyssal_forests", () -> Config.VEGETATION_ENABLED.get() && Config.ABYSSAL_FORESTS.get() ? 0.4 : 0),
+            opt("tree_plants", () -> Config.VEGETATION_ENABLED.get() ? 0.4 : 0),
             opt("crystals", () -> Config.CRYSTAL_FIELDS.get() ? 1 : 0),
             opt("thermal_vents", () -> Config.THERMAL_VENTS.get() ? 1 : 0),
             // AB02 crust ores: the tier multiplier times the global crust density (0 disables)

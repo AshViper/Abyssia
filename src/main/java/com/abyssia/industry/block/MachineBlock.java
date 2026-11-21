@@ -49,6 +49,7 @@ public class MachineBlock extends IndustryEntityBlock
         return switch (kind())
         {
             case HYDROTHERMAL_GENERATOR, AUXILIARY_GENERATOR -> new GeneratorBlockEntity(pos, state);
+            case HYDROTHERMAL_PRECIPITATOR -> new com.abyssia.industry.blockentity.PrecipitatorBlockEntity(pos, state);
             default -> new ProcessingMachineBlockEntity(pos, state);
         };
     }

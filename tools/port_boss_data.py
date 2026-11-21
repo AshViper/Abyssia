@@ -3,14 +3,14 @@ NEO = 'F:/Java/Abyssia-NeoForge'; FORGE = 'F:/Java/Abyssia'
 sys.path.insert(0, NEO + '/tools')
 import mc_format as m
 R = 'src/main/resources/'
-names = ['abyssal_altar','abyss_serpent','trench_wyrm','abyss_kraken','abyss_mother','abyss_heart','kraken_beak','kraken_ink_sac','mother_bell_gel']
+names = ['abyss_serpent','trench_wyrm','abyss_kraken','abyss_mother','abyss_heart','kraken_beak','kraken_ink_sac','mother_bell_gel']
 files = []
-for pat in ['assets/abyssia/blockstates/abyssal_altar.json','assets/abyssia/models/block/abyssal_altar.json','assets/abyssia/models/item/*.json',
-            'assets/abyssia/textures/block/abyssal_altar.png','assets/abyssia/textures/entity/*.png','assets/abyssia/textures/item/*.png',
-            'data/abyssia/loot_table/blocks/abyssal_altar.json','data/abyssia/loot_table/entities/*.json','data/abyssia/recipe/*.json','data/abyssia/technologies/abyss_summoning.json']:
+for pat in ['assets/abyssia/models/item/*.json',
+            'assets/abyssia/textures/entity/*.png','assets/abyssia/textures/item/*.png',
+            'data/abyssia/loot_table/entities/*.json','data/abyssia/recipe/*.json']:
     for f in glob.glob(NEO + '/' + R + pat):
         b = os.path.basename(f)
-        if 'technologies' in f or any(b.startswith(n) for n in names): files.append(os.path.relpath(f, NEO + '/' + R).replace(os.sep, '/'))
+        if any(b.startswith(n) for n in names): files.append(os.path.relpath(f, NEO + '/' + R).replace(os.sep, '/'))
 dry = '--dry' in sys.argv
 for rel in sorted(files):
     src = NEO + '/' + R + rel
@@ -32,7 +32,7 @@ for lang in ['en_us', 'ja_jp']:
     n = json.load(open(f'{NEO}/{R}assets/abyssia/lang/{lang}.json', encoding='utf-8'))
     fp = f'{FORGE}/{R}assets/abyssia/lang/{lang}.json'
     fo = json.load(open(fp, encoding='utf-8'))
-    add = {k: v for k, v in n.items() if k not in fo and any(x in k for x in names + ['altar', 'lure', 'boss', 'abyss_summoning', 'serpent', 'wyrm', 'kraken', 'mother', 'rock_shard'])}
+    add = {k: v for k, v in n.items() if k not in fo and any(x in k for x in names + ['boss', 'serpent', 'wyrm', 'kraken', 'mother', 'rock_shard'])}
     print(lang, 'add', len(add), sorted(add)[:40])
     if not dry and add:
         fo.update(add); open(fp, 'w', encoding='utf-8', newline='\n').write(json.dumps(fo, indent=2, ensure_ascii=False) + '\n')

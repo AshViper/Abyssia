@@ -21,8 +21,8 @@ public final class SubmarineLamps
     // lamp faces in mesh space (centres of the LAMPS quads, a little in front of the face)
     private static final float LAMP_X = 1.188f, LAMP_Y = 1.242f, LAMP_Z = -0.80f;
     private static final float TILT_DOWN = 6.0f * Mth.DEG_TO_RAD;
-    private static final float RANGE = 36.0f;
-    private static final float HALF_ANGLE = 24.0f * Mth.DEG_TO_RAD;
+    private static final float RANGE = 50.0f;
+    private static final float HALF_ANGLE = 50.0f * Mth.DEG_TO_RAD;
     // a cold, slightly blue white
     private static final int COLOR = 0xE4F0FF;
     private static final float BEAM_LENGTH = 18.0f;

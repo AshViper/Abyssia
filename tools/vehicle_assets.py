@@ -8,10 +8,14 @@ import os
 
 MOD = "abyssia"
 SUBMARINE = "submarine"
+EXOSUIT = "exosuit"
 DOCK = "submarine_dock"
 GANGWAY = "submarine_dock_gangway"   # SUB04 invisible helper blocks under the dock gangway
 
 RECIPES = {
+    # walking exosuit: alloy frame, propulsion screws as thrusters, pressure shell cockpit, iron plate legs
+    EXOSUIT: (["PSP", "ACA", "I I"], {"P": "abyssia:pressure_shell", "S": "abyssia:propulsion_screw", "A": "abyssia:abyssal_alloy_ingot",
+                                       "C": "abyssia:conductive_alloy_ingot", "I": "abyssia:iron_plate"}),
     # two propulsion screws (I04), alloy hull, marine resin seal, conductive wiring, glass canopy
     SUBMARINE: (["GGG", "AMA", "SCS"], {"G": "minecraft:glass", "A": "abyssia:abyssal_alloy_ingot", "M": "abyssia:marine_resin",
                                          "S": "abyssia:propulsion_screw", "C": "abyssia:conductive_alloy_ingot"}),
@@ -68,32 +72,32 @@ UPGRADES = {
         "推進の消費は移動中 8 → 12 FE/tick。無人の潜水艦をスニーク + 右クリックで装着画面。"),
     "submarine_upgrade_depth_mk1": (
         "Depth Hull Mk1", "深度船体 Mk1",
-        "Crush depth Y -300 -> Y -500", "耐圧深度 Y -300 → Y -500",
+        "Crush depth Y -300 -> Y -380", "耐圧深度 Y -300 → Y -380",
         "Below it the hull takes crush damage", "超えると船体に圧壊ダメージ",
-        "Submarine upgrade (depth slot). Lowers the crush depth from Y -300 to Y -500. Below that height the hull takes "
+        "Submarine upgrade (depth slot). Lowers the crush depth from Y -300 to Y -380. Below that height the hull takes "
         "crush damage every second (4 plus 1 per 200 blocks deeper; the hull breaks at 40, or 70 with the Pressure Hull), so surface or "
         "fit a deeper hull in time. Install with Sneak + right-click on an unmanned submarine.",
-        "潜水艦アップグレード (深度スロット)。耐圧深度を Y -300 から Y -500 に下げる。その高さより下では毎秒船体に圧壊ダメージ "
+        "潜水艦アップグレード (深度スロット)。耐圧深度を Y -300 から Y -380 に下げる。その高さより下では毎秒船体に圧壊ダメージ "
         "(4 + 200 ブロック深くなるごとに 1、船体は 40 で壊れる。耐圧船体があれば 70) を受けるので、早めに浮上するかより深い船体に換えること。"
         "無人の潜水艦をスニーク + 右クリックで装着画面。"),
     "submarine_upgrade_depth_mk2": (
         "Depth Hull Mk2", "深度船体 Mk2",
-        "Crush depth Y -300 -> Y -800", "耐圧深度 Y -300 → Y -800",
+        "Crush depth Y -300 -> Y -450", "耐圧深度 Y -300 → Y -450",
         "Below it the hull takes crush damage", "超えると船体に圧壊ダメージ",
-        "Submarine upgrade (depth slot). Lowers the crush depth from Y -300 to Y -800. Below that height the hull takes "
+        "Submarine upgrade (depth slot). Lowers the crush depth from Y -300 to Y -450. Below that height the hull takes "
         "crush damage every second (4 plus 1 per 200 blocks deeper; the hull breaks at 40, or 70 with the Pressure Hull), so surface or "
         "fit a deeper hull in time. Install with Sneak + right-click on an unmanned submarine.",
-        "潜水艦アップグレード (深度スロット)。耐圧深度を Y -300 から Y -800 に下げる。その高さより下では毎秒船体に圧壊ダメージ "
+        "潜水艦アップグレード (深度スロット)。耐圧深度を Y -300 から Y -450 に下げる。その高さより下では毎秒船体に圧壊ダメージ "
         "(4 + 200 ブロック深くなるごとに 1、船体は 40 で壊れる。耐圧船体があれば 70) を受けるので、早めに浮上するかより深い船体に換えること。"
         "無人の潜水艦をスニーク + 右クリックで装着画面。"),
     "submarine_upgrade_depth_mk3": (
         "Depth Hull Mk3", "深度船体 Mk3",
-        "Crush depth Y -300 -> Y -1000", "耐圧深度 Y -300 → Y -1000",
+        "Crush depth Y -300 -> Y -566", "耐圧深度 Y -300 → Y -566",
         "Below it the hull takes crush damage", "超えると船体に圧壊ダメージ",
-        "Submarine upgrade (depth slot). Lowers the crush depth from Y -300 to Y -1000. Below that height the hull takes "
+        "Submarine upgrade (depth slot). Lowers the crush depth from Y -300 to Y -566. Below that height the hull takes "
         "crush damage every second (4 plus 1 per 200 blocks deeper; the hull breaks at 40, or 70 with the Pressure Hull), so surface or "
         "fit a deeper hull in time. Install with Sneak + right-click on an unmanned submarine.",
-        "潜水艦アップグレード (深度スロット)。耐圧深度を Y -300 から Y -1000 に下げる。その高さより下では毎秒船体に圧壊ダメージ "
+        "潜水艦アップグレード (深度スロット)。耐圧深度を Y -300 から Y -566 に下げる。その高さより下では毎秒船体に圧壊ダメージ "
         "(4 + 200 ブロック深くなるごとに 1、船体は 40 で壊れる。耐圧船体があれば 70) を受けるので、早めに浮上するかより深い船体に換えること。"
         "無人の潜水艦をスニーク + 右クリックで装着画面。"),
     "submarine_upgrade_sonar_scanner": (
@@ -110,6 +114,13 @@ UPGRADES = {
 
 # key -> (English, Japanese)
 LANG = {
+    f"entity.{MOD}.exosuit": ("Exosuit", "潜水歩行スーツ"),
+    f"item.{MOD}.exosuit": ("Exosuit", "潜水歩行スーツ"),
+    f"item.{MOD}.exosuit.source": (
+        "A one-seat walking suit for the seabed. Right-click to place it, right-click it to board. W/S/A/D walk, Space fires the thrusters (limited, recharge on the ground), Shift to get out. "
+        "Its arm mines like an iron pickaxe and hits harder than a bare fist.",
+        "海底を歩く一人乗りのスーツ。右クリックで設置し、もう一度右クリックで乗り込む。W/S/A/D で歩行、Space でスラスター噴射（時間制限あり、地面で回復）、Shift で降りる。"
+        "腕は鉄のツルハシ並みに掘れ、素手より強く殴れる。"),
     f"entity.{MOD}.submarine": ("Submarine", "潜水艦"),
     f"item.{MOD}.submarine": ("Submarine", "潜水艦"),
     f"item.{MOD}.submarine.source": (
@@ -128,7 +139,7 @@ LANG = {
     f"message.{MOD}.habitat.dock_exists": ("This Moon Pool already has a dock", "このムーンプールにはもうドックがあります"),
     f"container.{MOD}.submarine.pod_right": ("Submarine Right Storage", "潜水艦の右収納"),
     f"container.{MOD}.submarine.pod_left": ("Submarine Left Storage", "潜水艦の左収納"),
-    f"key.{MOD}.submarine_light":("Submarine Lights", "潜水艦ライト"),
+    f"key.{MOD}.submarine_light":("Light (submarine / propulsion screw)", "ライト（潜水艦・推進スクリュー）"),
     f"message.{MOD}.submarine.hud": ("⚡ %s%%  ❤ %s%%", "⚡ %s%%  ❤ %s%%"),
     f"message.{MOD}.submarine.docked": ("  Docked - Ctrl to release", "  ドック中 — Ctrl で切り離し"),
     f"message.{MOD}.submarine_dock.status": ("Dock buffer %s / %s FE - submarine %s%%", "ドックのバッファ %s / %s FE ・ 潜水艦 %s%%"),
@@ -198,6 +209,7 @@ def pickaxe_blocks():
 
 def generate(write, bs, bm, im, data_dir):
     write(im(SUBMARINE), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{SUBMARINE}"}})
+    write(im(EXOSUIT), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{EXOSUIT}"}})
     for upgrade in UPGRADES:   # icons by ChatGPT, locked in tools/texture_locks
         write(im(upgrade), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{upgrade}"}})
     write(bm(DOCK), dock_model())
