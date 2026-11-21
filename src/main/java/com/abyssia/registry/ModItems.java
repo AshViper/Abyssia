@@ -282,6 +282,18 @@ public final class ModItems
     public static final DeferredItem<Item> HELMET_JELLY_SPAWN_EGG = spawnEgg("helmet_jelly_spawn_egg", ModEntities.HELMET_JELLY, 0x5A1E30, 0x4FE0BF);
     public static final DeferredItem<Item> GIANT_PHANTOM_JELLY_SPAWN_EGG = spawnEgg("giant_phantom_jelly_spawn_egg", ModEntities.GIANT_PHANTOM_JELLY, 0x4A121C, 0x9A3040);
 
+    // EGG01: eggs for the bosses and the GNT01 giants (colours unused: the models carry their own textures)
+    public static final DeferredItem<Item> ABYSS_SERPENT_SPAWN_EGG = spawnEgg("abyss_serpent_spawn_egg", ModEntities.ABYSS_SERPENT, 0xFFFFFF, 0xFFFFFF);
+    public static final DeferredItem<Item> TRENCH_WYRM_SPAWN_EGG = spawnEgg("trench_wyrm_spawn_egg", ModEntities.TRENCH_WYRM, 0xFFFFFF, 0xFFFFFF);
+    public static final DeferredItem<Item> ABYSS_ANGLER_SPAWN_EGG = spawnEgg("abyss_angler_spawn_egg", ModEntities.ABYSS_ANGLER, 0xFFFFFF, 0xFFFFFF);
+    public static final DeferredItem<Item> ABYSS_KRAKEN_SPAWN_EGG = spawnEgg("abyss_kraken_spawn_egg", ModEntities.ABYSS_KRAKEN, 0xFFFFFF, 0xFFFFFF);
+    public static final DeferredItem<Item> ABYSS_MOTHER_SPAWN_EGG = spawnEgg("abyss_mother_spawn_egg", ModEntities.ABYSS_MOTHER, 0xFFFFFF, 0xFFFFFF);
+    static
+    {
+        for (com.abyssia.registry.ModGiants.Species giant : com.abyssia.registry.ModGiants.all())
+            spawnEgg(giant.id() + "_spawn_egg", giant.type(), 0xFFFFFF, 0xFFFFFF);
+    }
+
     // OL01 cultivated oil kelp: the sac is smelted into bio_oil; the seed plants the (item-less) oil_kelp block
     public static final DeferredItem<Item> OIL_SAC = item("oil_sac");
     public static final DeferredItem<Item> OIL_KELP_SEED = tabItem("oil_kelp_seed", AbyssiaTab.NATURE, () -> new net.minecraft.world.item.ItemNameBlockItem(ModBlocks.OIL_KELP.get(), new Item.Properties()));
@@ -409,9 +421,10 @@ public final class ModItems
         return item;
     }
 
-    static DeferredItem<Item> spawnEgg(String name, DeferredHolder<EntityType<?>, ? extends EntityType<? extends Mob>> type, int background, int highlight)
+    // EGG01: background/highlight are intentionally unused (neutral 0xFFFFFF) because every egg has its own texture; kept only for the generated call sites.
+    static DeferredItem<Item> spawnEgg(String name, Supplier<? extends EntityType<? extends Mob>> type, int background, int highlight)
     {
-        DeferredItem<Item> item = ITEMS.register(name, () -> new DeferredSpawnEggItem(type, background, highlight, new Item.Properties()));
+        DeferredItem<Item> item = ITEMS.register(name, () -> new DeferredSpawnEggItem(type, 0xFFFFFF, 0xFFFFFF, new Item.Properties()));  // EGG01: neutral tint, the item model draws its own texture
         AbyssiaTab.NATURE.items().add(item);
         return item;
     }

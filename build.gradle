@@ -89,8 +89,12 @@ neoForge {
             systemProperty 'abyssia.contentshot', '1'
         }
 
+        // Dev-only: devtest/EggShot checks the spawn eggs in a singleplayer world and screenshots them (results in run/eggshot.txt).
+        eggShot {
             client()
             gameDirectory = project.file('run')
+            programArguments.addAll '--quickPlaySingleplayer', 'EggShot'
+            systemProperty 'abyssia.eggshot', '1'
         }
 
         // Dev-only: devtest/LangShot screenshots the text-heavy screens in each language (-PlangShot=zh_cn,ru_ru; log lines "LANGSHOT ...").
