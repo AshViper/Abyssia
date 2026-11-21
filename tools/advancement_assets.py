@@ -199,6 +199,7 @@ def hurt_by(entity):
                  {"damage": {"source_entity": {"type": f"{NS}:{entity}"}}}, [("entity", entity)])
 
 
+GIANT_PREY = ("lancejaw", "hush_whale", "slateback", "rift_lamprey", "shroud_ray", "glassback", "crestfin", "duskmaw")
 BOSSES = ("abyss_serpent", "trench_wyrm", "abyss_kraken", "abyss_mother", "abyss_angler")
 
 
@@ -334,6 +335,15 @@ def build_list(biomes_ok, dishes_ok):
       ("Living Encyclopedia", "Record every deep-sea creature"), ("生きた百科事典", "深海生物をすべて記録する"), xp=300)
     L("kraken", "neighbours", "giant_squid_spawn_egg", "goal", scan(target="fauna_giant_squid"),
       ("Release the Kraken", "Scan a giant squid"), ("クラーケン現る", "ダイオウイカをスキャンする"))
+    # GNT01 giant wild animals (scan targets giant_<id>; materials in tools/gnt01_assets.py).
+    L("giant_sighting", "neighbours", "minecraft:spyglass", "task", scan(group="giant_", count=1),
+      ("Something Big Passed", "Scan a giant wild animal"), ("何か大きなものが", "巨大な野生生物をスキャンする"))
+    L("giant_felled", "giant_sighting", "minecraft:trident", "goal", any_(*[killed(g) for g in GIANT_PREY]),
+      ("Giant Killer", "Defeat a giant wild animal"), ("巨獣ハンター", "巨大な野生生物を倒す"), noname=True)
+    L("giant_census", "giant_sighting", "minecraft:heart_of_the_sea", "challenge", scan(group="giant_", complete=True),
+      ("Census of Giants", "Scan all ten giant wild animals"), ("巨獣の国勢調査", "巨大な野生生物 10 種をすべてスキャンする"), xp=200)
+    L("giant_shear", "giant_sighting", "lumen_filament", "task", has("lumen_filament"),
+      ("Shear the Lantern", "Shear glowing filaments from a lantern-winged giant"), ("灯翼を刈る", "灯翼の巨獣から光る糸を刈り取る"))
     L("living_fossils", "neighbours", "frilled_shark_spawn_egg", "goal",
       each(*[scan(target="fauna_" + f) for f in ("frilled_shark", "goblin_shark", "chimaera", "sea_lily")]),
       ("Living Fossils", "Scan a frilled shark, a goblin shark, a chimaera and a sea lily"),

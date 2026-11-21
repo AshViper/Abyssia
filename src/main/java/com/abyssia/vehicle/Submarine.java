@@ -69,6 +69,9 @@ public class Submarine extends Entity
 {
     private static final EntityDataAccessor<Integer> DATA_ENERGY = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_DAMAGE = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.FLOAT);
+    /** GNT01 effects of giants on this hull, as bits: 1 = speed halved, 2 = headlights dimmed (clients read them). */
+    private static final EntityDataAccessor<Integer> DATA_GIANT_FX = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<org.joml.Vector3f> DATA_GIANT_PULL = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Boolean> DATA_LIGHTS = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_DOCK = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     /** SUB03 installed upgrades, {@link SubmarineUpgrades.Kind#bit} mask (the pilot's client reads it for the speeds) */
@@ -125,6 +128,8 @@ public class Submarine extends Entity
     // server
     private int dockCooldown;
     private Vec3 lastServerPos;
+    /** GNT01 (server): game time until which a giant slows the hull, dims the lamps, or jams the sonar and HUD */
+    private long giantSlowUntil, giantDimUntil, giantJamUntil, giantPullUntil;
     private boolean movingUp;
     private final List<BlockPos> placedLights = new ArrayList<>();
     private final Set<UUID> sonarSeen = new HashSet<>();
@@ -162,6 +167,8 @@ public class Submarine extends Entity
         entityData.define(DATA_ENERGY, 0);
         entityData.define(DATA_DAMAGE, 0.0f);
         entityData.define(DATA_LIGHTS, false);
+        entityData.define(DATA_GIANT_FX, 0);
+        entityData.define(DATA_GIANT_PULL, new org.joml.Vector3f());
         entityData.define(DATA_DOCK, Optional.empty());
         entityData.define(DATA_UPGRADES, 0);
     }
@@ -175,6 +182,32 @@ public class Submarine extends Entity
     public void setDamage(float damage) { entityData.set(DATA_DAMAGE, Math.max(0.0f, damage)); }
 
     public boolean lights() { return entityData.get(DATA_LIGHTS); }
+
+    /** GNT01: a giant (lamprey, duskmaw) holds the hull; speeds are halved while this is set. Server side, call every tick of the effect. */
+    public void giantSlow(long until) { giantSlowUntil = Math.max(giantSlowUntil, until); }
+
+    /** GNT01: a shroud ray darkens the headlights until this game time. */
+    public void giantDim(long until) { giantDimUntil = Math.max(giantDimUntil, until); }
+
+    /** GNT01: a hush whale's click stops the sonar and the HUD until this game time. */
+    public void giantJam(long until) { giantJamUntil = Math.max(giantJamUntil, until); }
+
+    /** GNT01: a duskmaw tethers the hull; this displacement per tick (not stored in the velocity) is added to the move on the controlling side. Server side, every tick. */
+    public void giantPull(Vec3 v)
+    {
+        giantPullUntil = level().getGameTime() + 3;
+        org.joml.Vector3f f = new org.joml.Vector3f((float) v.x, (float) v.y, (float) v.z);
+        if (!f.equals(entityData.get(DATA_GIANT_PULL))) entityData.set(DATA_GIANT_PULL, f);
+    }
+
+    private Vec3 pullVec() { org.joml.Vector3f f = entityData.get(DATA_GIANT_PULL); return new Vec3(f.x, f.y, f.z); }
+
+    public boolean giantJammed() { return level().getGameTime() < giantJamUntil; }
+
+    public boolean giantSlowed() { return (entityData.get(DATA_GIANT_FX) & 1) != 0; }
+
+    /** Share of the lamp strength (1 = normal, 0.3 = dimmed by a shroud ray). */
+    public float lampStrength() { return (entityData.get(DATA_GIANT_FX) & 2) != 0 ? 0.3f : 1.0f; }
 
     public void setLights(boolean on) { entityData.set(DATA_LIGHTS, on); }
 
@@ -256,7 +289,7 @@ public class Submarine extends Entity
                 }
                 drive();
             }
-            move(MoverType.SELF, getDeltaMovement());
+            move(MoverType.SELF, getDeltaMovement().add(pullVec()));
         }
         else
         {
@@ -336,6 +369,7 @@ public class Submarine extends Entity
         if (wet > 0.0)
         {
             double[] sp = speeds();
+            if (giantSlowed()) sp = new double[]{sp[0] * 0.5, sp[1] * 0.5, sp[2] * 0.5, sp[3], sp[4] * 0.5};
             Vec3 n = noseVector();
             Vec3 l = new Vec3(Mth.cos(yaw), 0.0, Mth.sin(yaw));
             Vec3 h = n.cross(l);   // hull up: straight up at pitch 0, leans toward the nose when the nose points down
@@ -467,7 +501,11 @@ public class Submarine extends Entity
             energy -= Config.SUBMARINE_LIGHT_FE.get();
             if (energy <= 0 || rider == null) setLights(false);
         }
-        boolean sonar = rider != null && has(SubmarineUpgrades.Kind.UTILITY) && energy > 0;
+        long gameTime = level().getGameTime();
+        int fx = (gameTime < giantSlowUntil ? 1 : 0) | (gameTime < giantDimUntil ? 2 : 0);
+        if (fx != entityData.get(DATA_GIANT_FX)) entityData.set(DATA_GIANT_FX, fx);
+        if (gameTime >= giantPullUntil && entityData.get(DATA_GIANT_PULL).lengthSquared() > 0) entityData.set(DATA_GIANT_PULL, new org.joml.Vector3f());
+        boolean sonar = rider != null && has(SubmarineUpgrades.Kind.UTILITY) && energy > 0 && gameTime >= giantJamUntil;
         if (sonar) energy -= Config.SUBMARINE_SONAR_FE.get();
         setEnergy(energy);
         if (tickCount % 2 == 0 || !lights()) updateLights();
@@ -482,7 +520,8 @@ public class Submarine extends Entity
         if (rider instanceof Player player)
         {
             player.setAirSupply(player.getMaxAirSupply());
-            if (tickCount % 10 == 0) player.displayClientMessage(hud(), true);
+            if (tickCount % 10 == 0)
+                player.displayClientMessage(giantJammed() ? Component.translatable("message." + Abyssia.MODID + ".submarine.jammed").withStyle(ChatFormatting.RED) : hud(), true);
         }
     }
 

@@ -43,6 +43,10 @@ public final class BossShot
             if (t == 24000) { log("idle done"); mc.stop(); }
             return;
         }
+        if ("giant".equals(System.getProperty("abyssia.bossshot"))) { giantScenes(mc); return; }
+        if ("gallery".equals(System.getProperty("abyssia.bossshot"))) { galleryScenes(mc); return; }
+        if ("abilities".equals(System.getProperty("abyssia.bossshot"))) { abilityScenes(mc); return; }
+        if ("latch".equals(System.getProperty("abyssia.bossshot"))) { latchScenes(mc); return; }
         if ("smoke".equals(System.getProperty("abyssia.bossshot"))) { smokeScenes(mc); return; }
         if ("studio".equals(System.getProperty("abyssia.bossshot"))) { studioScenes(mc); return; }
         if ("serpent".equals(System.getProperty("abyssia.bossshot"))) { serpentScenes(mc); return; }
@@ -200,6 +204,440 @@ public final class BossShot
                 }
             }
         }
+    }
+
+    private static final String[] GALLERY = System.getProperty("abyssia.giantshot.id") != null ? System.getProperty("abyssia.giantshot.id").split(",")
+            : new String[] {"lancejaw", "lumenwing", "lantern_grazer", "hush_whale", "slateback", "rift_lamprey", "shroud_ray", "glassback", "crestfin", "duskmaw"};
+    private static final int GALLERY_PERIOD = 330;
+
+    /**
+     * -PbossShot=gallery (GNT01): each giant in turn in open water at SX -200 SZ, creative + night vision. Spawned,
+     * left to swim 120 ticks, then the game is frozen and two shots are taken: gallery_<id>_side (beside the middle of
+     * the body at about 0.9 x its length) and gallery_<id>_near (15 blocks off the head, 30 degrees ahead).
+     */
+    private static void galleryScenes(Minecraft mc)
+    {
+        if (t == 60) { cmd(mc, "gamemode creative"); cmd(mc, "effect give @s minecraft:night_vision 99999 0 true"); cmd(mc, "tick unfreeze"); cmd(mc, "tp @s " + SX + " -200 " + SZ); mc.options.hideGui = true; }
+        if (t < 200) return;
+        int b = (t - 200) / GALLERY_PERIOD, d = (t - 200) % GALLERY_PERIOD;
+        if (b >= GALLERY.length) { if (d == 0) { cmd(mc, "tick unfreeze"); log("gallery done"); mc.stop(); } return; }
+        String id = GALLERY[b];
+        switch (d)
+        {
+            case 0 -> { for (String k : GALLERY) cmd(mc, "kill @e[type=abyssia:" + k + "]"); cmd(mc, "tick unfreeze"); cmd(mc, "tp @s " + SX + " -200 " + SZ); }
+            case 20, 30, 40, 50, 60, 70, 80, 90 -> cmd(mc, "execute unless entity @e[type=abyssia:" + id + "] run abyssia giants spawn " + id);
+            case 140 -> cmd(mc, "tick freeze");
+            case 150, 210, 270 -> {
+                var gs = mc.level.getEntitiesOfClass(com.abyssia.entity.giant.GiantFauna.class, mc.player.getBoundingBox().inflate(300));
+                if (gs.isEmpty()) { log("gallery " + id + " not found on the client"); return; }
+                var g = gs.get(0);
+                var ch = g.chain();
+                int n = ch.size();
+                Vec3 head = new Vec3(ch.x(0), ch.y(0), ch.z(0)), tail = new Vec3(ch.x(n - 1), ch.y(n - 1), ch.z(n - 1));
+                Vec3 mid = head.add(tail).scale(0.5), dir = tail.subtract(head);
+                double len = dir.length();
+                dir = len < 1e-3 ? new Vec3(1, 0, 0) : dir.normalize();
+                Vec3 side = new Vec3(-dir.z, 0, dir.x);
+                side = side.lengthSqr() < 1e-4 ? new Vec3(1, 0, 0) : side.normalize();
+                if (d == 150) tpFacing(mc, mid.add(side.scale(len * 0.9)).add(0, len * 0.25, 0), mid);
+                else if (d == 270) tpFacing(mc, head.add(side.scale(100)), head);
+                else tpFacing(mc, head.add(side.scale(13)).subtract(dir.scale(8)).add(0, 5, 0), head.add(dir.scale(4)));
+                log("gallery " + id + " length " + String.format("%.1f", len) + " joints " + n);
+            }
+            case 175 -> shot(mc, "gallery_" + id + "_side");
+            case 235 -> shot(mc, "gallery_" + id + "_near");
+            case 295 -> shot(mc, "gallery_" + id + "_far");
+            default -> {}
+        }
+    }
+
+    /** Y of the natural-spawn wait in {@link #giantScenes} (set over RCON with -Dabyssia.giantshot.y, default -300). */
+    private static final int GIANT_WAIT_Y = Integer.getInteger("abyssia.giantshot.y", -280);
+    /** Species of the giant scene (-Dabyssia.giantshot.id, default lancejaw). */
+    private static final String GIANT_ID = System.getProperty("abyssia.giantshot.id", "lancejaw");
+    private static final String GIANT = "@e[type=abyssia:" + GIANT_ID + ",limit=1,sort=nearest]";
+
+    /**
+     * -PbossShot=giant (GNT01): one giant species (-Dabyssia.giantshot.id, default lancejaw). Part 1 (t 100-1000): spawned 40-80 blocks off a survival
+     * player at SX -200 SZ; shots from the player (facing it) and from 30 blocks beside its head, the player's health
+     * logged so the hostile AI shows up as damage. Part 2 (t 1100-7300): the giants are killed, the player waits at
+     * Y {@link #GIANT_WAIT_Y} with creative flight, and the natural spawner is counted every 600 ticks.
+     */
+    private static void giantScenes(Minecraft mc)
+    {
+        var p = mc.player;
+        switch (t)
+        {
+            case 60 -> { cmd(mc, "gamemode survival"); cmd(mc, "clear @s"); cmd(mc, "effect clear @s");
+                         cmd(mc, "effect give @s minecraft:water_breathing 99999 0 true"); cmd(mc, "effect give @s minecraft:night_vision 99999 0 true");
+                         cmd(mc, "effect give @s minecraft:regeneration 99999 2 true"); cmd(mc, "effect give @s minecraft:resistance 99999 2 true");
+                         cmd(mc, "kill @e[type=abyssia:" + GIANT_ID + "]"); cmd(mc, "tp @s " + SX + " -200 " + SZ); mc.options.hideGui = true; }
+            case 100 -> cmd(mc, "abyssia giants spawn " + GIANT_ID);
+            case 1000 -> { cmd(mc, "kill @e[type=abyssia:" + GIANT_ID + "]"); cmd(mc, "gamemode creative"); }
+            case 1100 -> { cmd(mc, "tp @s " + (SX + 600) + " " + GIANT_WAIT_Y + " " + SZ); log("giant wait start y=" + GIANT_WAIT_Y); }
+            case 7300 -> { log("giant done"); mc.stop(); }
+            default -> {}
+        }
+        if (t > 100 && t < 1000)
+        {
+            if (t % 20 == 0) giantState(mc, "near");
+            if (t == 200 || t == 400 || t == 600 || t == 800) cmd(mc, "tp @s ~ ~ ~ facing entity " + GIANT);
+            if (t == 210 || t == 410 || t == 610 || t == 810) shot(mc, "giant_" + GIANT_ID + "_player_" + (t / 200));
+            if (t == 300 || t == 700)
+            {
+                var gs = mc.level.getEntitiesOfClass(com.abyssia.entity.giant.GiantFauna.class, p.getBoundingBox().inflate(200));
+                if (!gs.isEmpty())
+                {
+                    Vec3 h = gs.get(0).position();
+                    tpFacing(mc, h.add(30, 6, 8), h);
+                }
+            }
+            if (t == 320 || t == 720) shot(mc, "giant_" + GIANT_ID + "_side_" + (t / 300));
+        }
+        if (t >= 1100 && (t - 1100) % 600 == 0) { giantState(mc, "wait"); cmd(mc, "abyssia giants list"); cmd(mc, "abyssia giants stats"); }
+    }
+
+    // ------------------------------------------------------------------ latch (GNT01): peel / pull / release checks
+    private static final int LA0 = 100, LALEN = 700;
+    private static final String[][] LA_SCENES = {{"rift_lamprey", "hit"}, {"duskmaw", "hit"}, {"duskmaw", "lights"}, {"duskmaw", "pull"}, {"rift_lamprey", "killgiant"}, {"duskmaw", "killsub"}};
+    private static int laHoldT, laHits, laNextHit;
+    private static boolean laHeld, laReleased;
+    private static Vec3 laSub0 = Vec3.ZERO, laHead0 = Vec3.ZERO;
+
+    /** -PbossShot=latch: a survival rider on a submarine; per scene a giant takes hold and the rider peels / the hold is cut. Logged as [BossShot] latch. */
+    private static void latchScenes(Minecraft mc)
+    {
+        var p = mc.player;
+        int end = LA0 + LALEN * LA_SCENES.length;
+        if (t >= end) { if (t == end) { log("latch all done"); mc.stop(); } return; }
+        if (t < LA0) return;
+        int u = (t - LA0) % LALEN;
+        String id = LA_SCENES[(t - LA0) / LALEN][0], mode = LA_SCENES[(t - LA0) / LALEN][1];
+        String tag = "latch " + id + "/" + mode + " u=" + u + " ";
+        switch (u)
+        {
+            case 0 -> { resetPlayer(mc, false); laHeld = laReleased = false; laHits = 0; laNextHit = 0; log(tag + "begin"); }
+            case 3 -> { cmd(mc, "clear @s"); cmd(mc, "give @s minecraft:stone_sword"); cmd(mc, "attribute @s minecraft:player.entity_interaction_range base set 12"); }
+            case 10 -> cmd(mc, "summon abyssia:submarine " + SX + " -200 " + SZ);
+            case 20 -> cmd(mc, "ride @s mount @e[type=abyssia:submarine,limit=1,sort=nearest]");
+            case 30 -> cmd(mc, "data merge entity @e[type=abyssia:submarine,limit=1,sort=nearest] {Energy:1000000,Lights:1b}");
+            case 45 -> { p.getInventory().selected = 0; log(tag + "mounted=" + (p.getVehicle() instanceof com.abyssia.vehicle.Submarine) + " " + subState(firstSub(mc))); }
+            case 50 -> cmd(mc, "abyssia giants spawn " + id);
+            case 80 ->
+            {
+                var g = firstGiant(mc);
+                if (g == null) { log(tag + "giant not on client"); return; }
+                Vec3 h = new Vec3(g.chain().x(0), g.chain().y(0), g.chain().z(0));
+                cmd(mc, String.format(java.util.Locale.ROOT, "tp @e[type=abyssia:submarine,limit=1,sort=nearest] %.1f %.1f %.1f", h.x + 30, h.y, h.z));
+            }
+            default -> {}
+        }
+        if (t - LA0 < LALEN && u == 97)
+        {
+            var fg = firstGiant(mc);
+            if (fg != null)
+            {
+                Vec3 h = new Vec3(fg.chain().x(0), fg.chain().y(0), fg.chain().z(0));
+                cmd(mc, "ride @s dismount");
+                tpFacing(mc, h.add(100, 0, 0), h);
+                log(tag + "far shot: player 100 blocks from head " + h);
+            }
+        }
+        if (t - LA0 < LALEN && u == 130) shot(mc, "abilities_far");
+        if (u == LALEN - 5) { log(tag + "end held="+ laHeld + " released=" + laReleased + " hits=" + laHits); return; }
+        if (u < 95) return;
+        var g = firstGiant(mc);
+        var s = firstSub(mc);
+        Vec3 head = g == null ? Vec3.ZERO : new Vec3(g.chain().x(0), g.chain().y(0), g.chain().z(0));
+        boolean slowed = s != null && s.giantSlowed();
+        if (!laHeld && !laReleased && slowed)
+        {
+            laHeld = true; laHoldT = u; laHits = 0; laNextHit = u + 10; laSub0 = s.position(); laHead0 = head;
+            log(tag + "HOLD start sub=" + s.position() + " head=" + head + " lights=" + s.lights());
+        }
+        if (!laHeld) { if (u % 40 == 15) log(tag + "waiting headToSub=" + (g == null || s == null ? -1 : String.format("%.1f", head.distanceTo(s.position()))) + " " + subState(s)); return; }
+        int k = u - laHoldT;
+        if (!laReleased && !slowed && k > 2)
+        {
+            laReleased = true;
+            log(tag + "RELEASED k=" + k + " hits=" + laHits + " giantHp=" + (g == null ? "gone" : g.getHealth()) + " " + subState(s) + " subMoved=" + (s == null ? "-" : String.format("%.1f", s.position().distanceTo(laSub0))));
+        }
+        switch (mode)
+        {
+            case "hit" ->
+            {
+                if (!laReleased && g != null && u >= laNextHit)
+                {
+                    var best = g.getParts()[0];
+                    for (var pt : g.getParts()) if (pt.position().distanceToSqr(p.getEyePosition()) < best.position().distanceToSqr(p.getEyePosition())) best = pt;
+                    float before = g.getHealth();
+                    mc.gameMode.attack(p, best);
+                    p.swing(InteractionHand.MAIN_HAND);
+                    laHits++; laNextHit = u + 14;
+                    log(tag + "attack #" + laHits + " partDist=" + String.format("%.1f", Math.sqrt(best.position().distanceToSqr(p.getEyePosition()))) + " hpBefore=" + before + " slowed=" + slowed);
+                }
+            }
+            case "lights" ->
+            {
+                if (k == 10) { cmd(mc, "data merge entity @e[type=abyssia:submarine,limit=1,sort=nearest] {Lights:0b}"); log(tag + "lights off sent"); }
+                if (k > 10 && k % 5 == 0 && k < 60 && !laReleased) log(tag + "k=" + k + " slowed=" + slowed + " " + subState(s));
+            }
+            case "pull" ->
+            {
+                if (!laReleased && k % 20 == 0 && s != null)
+                {
+                    Vec3 hd = head.subtract(laHead0);
+                    double along = hd.lengthSqr() < 1e-4 ? 0 : s.position().subtract(laSub0).dot(hd.normalize());
+                    log(tag + "pull k=" + k + " sub=" + s.position() + " subMoved=" + String.format("%.1f", s.position().distanceTo(laSub0)) + " headMoved=" + String.format("%.1f", hd.length())
+                            + " headToSub=" + String.format("%.1f", head.distanceTo(s.position())) + " subAlongHeadMove=" + String.format("%.1f", along));
+                }
+            }
+            case "killgiant" ->
+            {
+                if (k == 20) { cmd(mc, "kill @e[type=abyssia:" + id + "]"); log(tag + "kill giant sent " + subState(s)); }
+                if (k > 20 && k <= 80 && k % 10 == 0) log(tag + "k=" + k + " giants=" + mc.level.getEntitiesOfClass(com.abyssia.entity.giant.GiantFauna.class, p.getBoundingBox().inflate(300)).size() + " " + subState(s));
+            }
+            case "killsub" ->
+            {
+                if (k == 20) { laHead0 = head; cmd(mc, "kill @e[type=abyssia:submarine]"); log(tag + "kill sub sent head=" + head); }
+                if (k > 20 && k <= 220 && k % 20 == 0) log(tag + "k=" + k + " giantAlive=" + (g != null) + " head=" + head + " headMoved=" + String.format("%.1f", head.distanceTo(laHead0)) + " subs=" + mc.level.getEntitiesOfClass(com.abyssia.vehicle.Submarine.class, p.getBoundingBox().inflate(300)).size());
+            }
+            default -> {}
+        }
+    }
+
+    // ------------------------------------------------------------------ abilities (GNT01)
+    private static long lastJam = -1, lastOverlayT = -1;
+    private static String lastOverlay = "";
+    private static boolean sawDark, sawPoison, shotTaken;
+    private static double minD, maxD;
+    private static float lastDmg;
+    private static final int AB_SUB0 = 900, AB_SUBLEN = 800, AB_DROP0 = 3800, AB_NAT0 = 5850;
+    private static final String[] AB_SUBS = {"hush_whale", "duskmaw", "lantern_grazer"};
+    private static final String[] AB_DROPS = {"lancejaw", "hush_whale", "slateback", "rift_lamprey", "shroud_ray", "glassback", "crestfin", "duskmaw"};
+
+    @SubscribeEvent
+    public static void chat(net.minecraftforge.client.event.ClientChatReceivedEvent.System e)
+    {
+        if (!"abilities".equals(System.getProperty("abyssia.bossshot")) || t < 0) return;
+        String s = e.getMessage().getString();
+        if (e.isOverlay())
+        {
+            String key = e.getMessage().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents tc ? tc.getKey() : "";
+            if (key.endsWith("submarine.jammed")) lastJam = t;
+            if (key.endsWith("giant.shear_wait")) { lastOverlay = s; lastOverlayT = t; }
+            return;
+        }
+        var mc = Minecraft.getInstance();
+        log("chat t=" + t + ": " + s);
+        var m = java.util.regex.Pattern.compile("^(\\w+) #\\d+ .* @ (-?\\d+) (-?\\d+) (-?\\d+)").matcher(s);
+        if (m.find() && mc.player != null)
+        {
+            double d = Math.sqrt(mc.player.distanceToSqr(Integer.parseInt(m.group(2)) + 0.5, Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)) + 0.5));
+            String temper = "?";
+            for (var sp : com.abyssia.entity.giant.GiantSpecies.SPECS) if (sp.id().equals(m.group(1))) temper = sp.temper().toString();
+            log("natural t=" + t + " " + m.group(1) + " " + temper + " dist=" + String.format("%.0f", d));
+        }
+    }
+
+    private static String effects(Minecraft mc)
+    {
+        StringBuilder b = new StringBuilder();
+        for (var ei : mc.player.getActiveEffects()) b.append(net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.getKey(ei.getEffect()).getPath()).append(ei.getAmplifier()).append(':').append(ei.getDuration()).append(' ');
+        return b.toString().trim();
+    }
+
+    private static com.abyssia.entity.giant.GiantFauna firstGiant(Minecraft mc)
+    {
+        var gs = mc.level.getEntitiesOfClass(com.abyssia.entity.giant.GiantFauna.class, mc.player.getBoundingBox().inflate(300));
+        return gs.isEmpty() ? null : gs.get(0);
+    }
+
+    private static com.abyssia.vehicle.Submarine firstSub(Minecraft mc)
+    {
+        var ss = mc.level.getEntitiesOfClass(com.abyssia.vehicle.Submarine.class, mc.player.getBoundingBox().inflate(300));
+        return ss.isEmpty() ? null : ss.get(0);
+    }
+
+    private static int count(Minecraft mc, String item)
+    {
+        int n = 0;
+        for (var st : mc.player.getInventory().items) if (net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(st.getItem()).getPath().equals(item)) n += st.getCount();
+        for (var ie : mc.level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, mc.player.getBoundingBox().inflate(40)))
+            if (net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ie.getItem().getItem()).getPath().equals(item)) n += ie.getItem().getCount();
+        return n;
+    }
+
+    private static void resetPlayer(Minecraft mc, boolean nightVision)
+    {
+        cmd(mc, "gamemode survival"); cmd(mc, "effect clear @s");
+        cmd(mc, "effect give @s minecraft:water_breathing 99999 0 true"); cmd(mc, "effect give @s minecraft:resistance 99999 3 true");
+        cmd(mc, "effect give @s minecraft:regeneration 99999 2 true");
+        if (nightVision) cmd(mc, "effect give @s minecraft:night_vision 99999 0 true");
+        cmd(mc, "kill @e[type=item]");
+        for (var sp : com.abyssia.entity.giant.GiantSpecies.SPECS) cmd(mc, "kill @e[type=abyssia:" + sp.id() + "]");
+        cmd(mc, "kill @e[type=abyssia:submarine]");
+        cmd(mc, "tp @s " + SX + " -200 " + SZ);
+    }
+
+    /**
+     * -PbossShot=abilities (GNT01): player-dependent checks. A shears harvest of the lumenwing (60-145), a shroud ray
+     * (250-880), submarine scenes with a hush whale / duskmaw / lantern grazer (AB_SUB0, 800 ticks each, the sub is
+     * tp'd 30 blocks from the giant at +80), drops of eight giants killed by the player (AB_DROP0, 250 each) and the
+     * natural spawner counted from AB_NAT0 on at Y -280 (6000 ticks, list+stats every 600). Everything is logged as [BossShot].
+     */
+    private static void abilityScenes(Minecraft mc)
+    {
+        var p = mc.player;
+        if (t == 60) { resetPlayer(mc, true); cmd(mc, "clear @s"); cmd(mc, "give @s minecraft:shears"); mc.options.hideGui = true; }
+        // ---- 1: lumenwing shears
+        if (t == 100) cmd(mc, "abyssia giants spawn lumenwing");
+        if (t == 140)
+        {
+            var g = firstGiant(mc);
+            if (g == null) { log("shear: no lumenwing on client"); return; }
+            var parts = g.getParts();
+            var part = parts[Math.min(2, parts.length - 1)];
+            tpFacing(mc, part.position(), part.position().add(1, 0, 0));
+            p.getInventory().selected = 0;
+        }
+        if (t == 150)
+        {
+            var g = firstGiant(mc);
+            if (g == null) return;
+            shearBase = count(mc, "lumen_filament");
+            var parts = g.getParts();
+            var r = mc.gameMode.interact(p, parts[Math.min(2, parts.length - 1)], InteractionHand.MAIN_HAND);
+            log("shear #1 part-interact result=" + r + " held=" + p.getMainHandItem().getItem() + " filament before=" + shearBase + " partsOnClient=" + parts.length);
+        }
+        if (t == 160) log("shear #1 filament after=" + count(mc, "lumen_filament") + " (delta " + (count(mc, "lumen_filament") - shearBase) + ")");
+        if (t == 165)
+        {
+            var g = firstGiant(mc);
+            if (g == null) return;
+            shearBase = count(mc, "lumen_filament");
+            var r = mc.gameMode.interact(p, g.getParts()[Math.min(2, g.getParts().length - 1)], InteractionHand.MAIN_HAND);
+            log("shear #2 part-interact result=" + r + " filament before=" + shearBase);
+        }
+        if (t == 175) log("shear #2 filament after=" + count(mc, "lumen_filament") + " (delta " + (count(mc, "lumen_filament") - shearBase) + ") overlay=\"" + lastOverlay + "\" at t=" + lastOverlayT);
+        if (t == 185)
+        {
+            var g = firstGiant(mc);
+            if (g != null)
+            {
+                var ch = g.chain();
+                int n = ch.size();
+                Vec3 head = new Vec3(ch.x(0), ch.y(0), ch.z(0)), tail = new Vec3(ch.x(n - 1), ch.y(n - 1), ch.z(n - 1));
+                Vec3 mid = head.add(tail).scale(0.5), dir = tail.subtract(head);
+                dir = dir.lengthSqr() < 1e-3 ? new Vec3(1, 0, 0) : dir.normalize();
+                Vec3 side = new Vec3(-dir.z, 0, dir.x);
+                side = side.lengthSqr() < 1e-4 ? new Vec3(1, 0, 0) : side.normalize();
+                tpFacing(mc, mid.add(side.scale(55)).add(0, 14, 0), mid);
+            }
+        }
+        if (t == 205) shot(mc, "abilities_shear");
+        // ---- 2: shroud ray on a survival player
+        if (t == 250) { resetPlayer(mc, false); sawDark = sawPoison = shotTaken = false; minD = 1e9; lastDmg = p.getHealth(); }
+        if (t == 270) cmd(mc, "abyssia giants spawn shroud_ray");
+        if (t == 290)
+        {
+            var g = firstGiant(mc);
+            if (g != null) cmd(mc, String.format(java.util.Locale.ROOT, "tp @s %.1f %.1f %.1f", g.chain().x(0) + 30, g.chain().y(0), g.chain().z(0)));
+        }
+        if (t >= 280 && t <= 900 && t % 20 == 0)
+        {
+            var g = firstGiant(mc);
+            double d = g == null ? -1 : Math.sqrt(new Vec3(g.chain().x(0), g.chain().y(0), g.chain().z(0)).distanceToSqr(p.position()));
+            if (d >= 0) minD = Math.min(minD, d);
+            boolean dk = p.hasEffect(net.minecraft.world.effect.MobEffects.DARKNESS), po = p.hasEffect(net.minecraft.world.effect.MobEffects.POISON);
+            sawDark |= dk; sawPoison |= po;
+            log("shroud t=" + t + " headDist=" + String.format("%.1f", d) + " hp=" + p.getHealth() + " effects=[" + effects(mc) + "]");
+            if (dk && !shotTaken) { shotTaken = true; shot(mc, "abilities_shroud"); }
+        }
+        if (t == 905) log("shroud summary sawDarkness=" + sawDark + " sawPoison=" + sawPoison + " minHeadDist=" + String.format("%.1f", minD));
+        // ---- 3: submarine scenes
+        if (t >= AB_SUB0 && t < AB_SUB0 + AB_SUBLEN * AB_SUBS.length) subScene(mc, AB_SUBS[(t - AB_SUB0) / AB_SUBLEN], (t - AB_SUB0) % AB_SUBLEN);
+        // ---- 4: drops
+        if (t >= AB_DROP0 && t < AB_DROP0 + 250 * AB_DROPS.length)
+        {
+            String id = AB_DROPS[(t - AB_DROP0) / 250];
+            int d = (t - AB_DROP0) % 250;
+            if (d == 0) resetPlayer(mc, true);
+            if (d == 20) cmd(mc, "abyssia giants spawn " + id);
+            if (d == 60) { var g = firstGiant(mc); log("drop " + id + " before kill: giantOnClient=" + (g != null)); cmd(mc, "damage @e[type=abyssia:" + id + ",limit=1,sort=nearest] 9999 minecraft:player_attack by @p"); }
+            if (d == 160)
+            {
+                var sums = new java.util.TreeMap<String, Integer>();
+                for (var ie : mc.level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, p.getBoundingBox().inflate(400)))
+                    sums.merge(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(ie.getItem().getItem()).getPath(), ie.getItem().getCount(), Integer::sum);
+                log("drop " + id + " items=" + sums + " giantsLeft=" + mc.level.getEntitiesOfClass(com.abyssia.entity.giant.GiantFauna.class, p.getBoundingBox().inflate(300)).size());
+            }
+        }
+        // ---- 5: natural spawn
+        if (t == 215 && System.getenv("ABY_AB_NAT_ONLY") != null) t = AB_NAT0 - 1; // run only the shear + natural-spawn parts
+        // survival with resistance: the natural spawner skips creative / spectator players
+        if (t == AB_NAT0) { resetPlayer(mc, false); cmd(mc, "tp @s 10000 -280 6200"); log("natural start"); }
+        if (t > AB_NAT0 && t % 50 == 0 && t <= AB_NAT0 + 6000) cmd(mc, "tp @s 10000 -280 6200");
+        if (t > AB_NAT0 && t <= AB_NAT0 + 6000 && (t - AB_NAT0) % 100 == 0)
+        {
+            var gs = mc.level.getEntitiesOfClass(com.abyssia.entity.giant.GiantFauna.class, p.getBoundingBox().inflate(300));
+            StringBuilder b = new StringBuilder();
+            for (var g : gs) b.append(g.spec().id()).append('/').append(g.spec().temper()).append('@').append(String.format("%.0f", Math.sqrt(g.distanceToSqr(p)))).append(' ');
+            log("natural client t=" + (t - AB_NAT0) + " giants=" + gs.size() + " [" + b.toString().trim() + "] pos=" + p.blockPosition());
+        }
+        if (t > AB_NAT0 && (t - AB_NAT0) % 600 == 0 && t <= AB_NAT0 + 6000) { cmd(mc, "abyssia giants list"); }
+        if (t > AB_NAT0 && (t - AB_NAT0) % 600 == 5 && t <= AB_NAT0 + 6000) { cmd(mc, "abyssia giants stats"); }
+        if (t == AB_NAT0 + 6100) { log("abilities done"); mc.stop(); }
+    }
+
+    private static int shearBase;
+
+    private static void subScene(Minecraft mc, String id, int u)
+    {
+        var p = mc.player;
+        boolean graze = id.equals("lantern_grazer");
+        switch (u)
+        {
+            case 0 -> { resetPlayer(mc, false); log("subscene " + id + " begin"); sawDark = shotTaken = false; minD = 1e9; maxD = 0; lastDmg = 0; }
+            case 10 -> cmd(mc, "summon abyssia:submarine " + SX + " -200 " + SZ);
+            case 20 -> cmd(mc, "ride @s mount @e[type=abyssia:submarine,limit=1,sort=nearest]");
+            case 30 -> cmd(mc, "data merge entity @e[type=abyssia:submarine,limit=1,sort=nearest] {Energy:" + (id.equals("duskmaw") ? 2500 : 1000000) + ",Lights:1b}");
+            case 45 -> { var s = firstSub(mc); log(id + " mounted=" + (p.getVehicle() instanceof com.abyssia.vehicle.Submarine) + " " + subState(s)); }
+            case 50 -> cmd(mc, "abyssia giants spawn " + id);
+            case 80 ->
+            {
+                var g = firstGiant(mc);
+                if (g == null) { log(id + " giant not on client"); return; }
+                Vec3 h = new Vec3(g.chain().x(0), g.chain().y(0), g.chain().z(0));
+                log(id + " giant head=" + h + " tp sub to 30 blocks off");
+                cmd(mc, String.format(java.util.Locale.ROOT, "tp @e[type=abyssia:submarine,limit=1,sort=nearest] %.1f %.1f %.1f", h.x + 30, h.y, h.z));
+            }
+            default -> {}
+        }
+        if (u >= 95 && u % 20 == 15)
+        {
+            var g = firstGiant(mc);
+            var s = firstSub(mc);
+            double d = g == null || s == null ? -1 : Math.sqrt(new Vec3(g.chain().x(0), g.chain().y(0), g.chain().z(0)).distanceToSqr(s.position()));
+            if (d >= 0) { minD = Math.min(minD, d); if (!graze || u > 300) maxD = Math.max(maxD, d); }
+            log(id + " u=" + u + " headToSub=" + String.format("%.1f", d) + " " + subState(s) + " jamAt=" + lastJam + " vehicle=" + (p.getVehicle() != null) + " effects=[" + effects(mc) + "]");
+            if (id.equals("duskmaw") && d >= 0 && d < 12 && !shotTaken) { shotTaken = true; shot(mc, "abilities_duskmaw"); }
+            if (s != null && s.getDamage() > lastDmg + 0.01f) { log(id + " hull damage rose " + lastDmg + " -> " + s.getDamage()); lastDmg = s.getDamage(); }
+        }
+        if (u == AB_SUBLEN - 10) log(id + " summary minHeadToSub=" + String.format("%.1f", minD) + (graze ? " maxAfter300=" + String.format("%.1f", maxD) : "") + " jamAt=" + lastJam);
+    }
+
+    private static String subState(com.abyssia.vehicle.Submarine s)
+    {
+        if (s == null) return "sub=none";
+        return "energy=" + s.getEnergy() + "/" + s.maxEnergy() + " damage=" + s.getDamage() + " hull%=" + s.hullPercent() + " lights=" + s.lights() + " slowed=" + s.giantSlowed() + " lamp=" + s.lampStrength();
+    }
+
+    private static void giantState(Minecraft mc, String tag)
+    {
+        var gs = mc.level.getEntitiesOfClass(com.abyssia.entity.giant.GiantFauna.class, mc.player.getBoundingBox().inflate(200));
+        String d = gs.isEmpty() ? "none" : String.format("%.1f", Math.sqrt(gs.get(0).distanceToSqr(mc.player)));
+        log("giant " + tag + " t=" + t + " pos=" + mc.player.blockPosition() + " giants=" + gs.size() + " dist=" + d + " hp=" + mc.player.getHealth());
     }
 
     private static final String DUMMY = "summon minecraft:pig ~ ~ ~ {NoAI:1b,NoGravity:1b,Invulnerable:1b,Tags:[\"abyssia_boss_dummy\",\"shotdummy\"]}";

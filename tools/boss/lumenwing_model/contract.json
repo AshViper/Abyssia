@@ -1,0 +1,88 @@
+{
+ "entity": "lumenwing",
+ "generator": "tools/boss/lumenwing_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/lumenwing.geo.json",
+ "animation": "assets/abyssia/animations/entity/lumenwing.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/lumenwing_geo.png",
+ "texture_glow": "assets/abyssia/textures/entity/boss/lumenwing_geo_glow.png",
+ "texture_size": [
+  256,
+  256
+ ],
+ "texel": "外皮・ひれは 1 テクセル 0.5 ブロック、器官・糸・目は 0.25 ブロック",
+ "model_scale": 2.0,
+ "segment_length_units": 16.0,
+ "segment_length_blocks": 2.0,
+ "joints": 31,
+ "segments": 30,
+ "rest_pose": "頭から尾まで一直線。関節 j は geo の (0, 0, 16j)。頭は -Z を向く。体の芯は y = 0",
+ "head_pivot": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, 16 * (k - 0.5))",
+ "extent_units": {
+  "snout_z": -14.0,
+  "tail_z": 466.0,
+  "total_length_blocks": 60.0,
+  "fin_tip_x": 228.0,
+  "wingspan_blocks": 57.0,
+  "max_top_y": 28.3,
+  "min_bottom_y": -28.3
+ },
+ "bone_rule": "head と seg_01..seg_30 は root 直下（親なし）。seg_01 は箱なし（頭と一体）。子の Bone は Java から触らない",
+ "translucent": {
+  "rule": "名前が _skin で終わる Bone の箱だけ半透明（テクスチャのアルファ 40〜65%）。それ以外の Bone の箱は不透明",
+  "bones": [
+   "head_skin",
+   "seg_02_skin",
+   "seg_03_skin",
+   "seg_04_skin",
+   "seg_05_skin",
+   "heart_skin",
+   "seg_06_skin",
+   "fin_l_skin",
+   "fin_l_mid_skin",
+   "fin_l_tip_skin",
+   "fin_r_skin",
+   "fin_r_mid_skin",
+   "fin_r_tip_skin",
+   "seg_07_skin",
+   "seg_08_skin",
+   "seg_09_skin",
+   "seg_10_skin",
+   "seg_11_skin",
+   "seg_12_skin",
+   "seg_13_skin",
+   "seg_14_skin",
+   "seg_15_skin",
+   "seg_16_skin",
+   "seg_17_skin",
+   "seg_18_skin",
+   "seg_19_skin",
+   "seg_20_skin",
+   "seg_21_skin",
+   "seg_22_skin",
+   "seg_23_skin",
+   "seg_24_skin"
+  ],
+  "draw_order": "geo の Bone 順で、各体節は 不透明の中身（神経索・血管・心臓の核・顔の板・目）→ 半透明の外皮 の順に並んでいる。外皮が深度を書くと、後から描く発光層の中身が隠れる。①_skin 以外を先に（地＋発光）描き、②_skin を半透明で描く 2 段にするのが確実"
+ },
+ "glow": "発光層は _geo_glow.png。神経索と節・心臓の核と暈・血管・顔の板・目・ひれの葉脈と後縁の粒・尾の糸と先の粒",
+ "children": {
+  "head_skin": "頭の外皮（3 箱）",
+  "seg_NN_skin": "体節の外皮（seg_02..seg_24、各 1 箱）。seg_25..seg_30 は尾の糸だけ",
+  "heart / heart_skin": "seg_06 の子。心臓の核（不透明）と暈（半透明）。idle で heart を scale 1→1.18 に脈打たせる",
+  "fin_l_skin → fin_l_mid_skin → fin_l_tip_skin（右は _r_）": "seg_06 の子。pivot は体軸に平行な蝶番。rotation z で羽ばたく（左は負で先が上がる、右は逆符号）"
+ },
+ "animations": {
+  "idle": "8.0 秒ループ。ひれの 3 節が位相を遅らせて波打つ（±9 / ±13 / ±17 度）、心臓が 2 秒ごとに脈打つ"
+ },
+ "counts": {
+  "cubes": 117,
+  "translucent_cubes": 45,
+  "opaque_cubes": 72,
+  "bones": 63
+ }
+}

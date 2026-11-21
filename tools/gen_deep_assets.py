@@ -1477,3 +1477,5 @@ if __name__ == "__main__":
     habitat_upkeep_assets.main()
     import qol01_assets  # QOL01
     qol01_assets.main()
+    import gnt01_assets   # GNT01 giant materials, lantern, recipes, loot, research
+    gnt01_assets.main()

@@ -1,0 +1,806 @@
+{
+ "entity": "crestfin",
+ "generator": "tools/boss/crestfin_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/crestfin.geo.json",
+ "animation": "assets/abyssia/animations/entity/crestfin.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/crestfin_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/crestfin_geo_glow.png",
+ "glow_note": "光らない画素は (0,0,0,0)。光るのは赤い目と、棘の各段の最上段（明るい赤）",
+ "texture_size": [
+  128,
+  128
+ ],
+ "texel": "1 テクセル = 2 単位 = 0.25 ブロック",
+ "model_scale": 2.0,
+ "segment_length_units": 16.0,
+ "segment_length_blocks": 2.0,
+ "joints": 22,
+ "segments": 21,
+ "rest_pose": "一直線。関節 j は (0, 0, 16j)、頭は -Z。芯は y = 0",
+ "head_pivot": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, 16 (k - 0.5))",
+ "extent_units": {
+  "snout_z": -28.0,
+  "tail_z": 320.0,
+  "total_length_blocks": 43.5,
+  "max_half_width": 33.0,
+  "max_top_y": 39.0,
+  "min_bottom_y": -36.0
+ },
+ "bone_rule": "head と seg_01..seg_21 は root 直下で、Java が毎フレーム位置と回転を上書きする。head の殻は関節 1 まで（seg_01 は空）、箱は子の body_02..body_19 にあり、尾びれは body_19 の子（seg_20 / seg_21 は空）。idle の尾の振りは body_k の position x と rotation y。Java は子の骨に触らない",
+ "crest": {
+  "bones": [
+   "crest_h1",
+   "crest_h2",
+   "crest_02",
+   "crest_03",
+   "crest_04",
+   "crest_05",
+   "crest_06",
+   "crest_07",
+   "crest_08",
+   "crest_09",
+   "crest_10",
+   "crest_11",
+   "crest_12",
+   "crest_13",
+   "crest_14",
+   "crest_15",
+   "crest_16",
+   "crest_17"
+  ],
+  "rule": "棘は crest_h1 / crest_h2（head の子）と crest_02..crest_17（body_k の子）。pivot は根元。rotation x 正で前へ起きる。crest_up は 26 度と scale y/z 1.3"
+ },
+ "animation_signs": {
+  "jaw": "rotation x 正で口が開く（attack は 42 度）。pivot は顎関節 (0, -7, 12)",
+  "fin_l / fin_r / fin_pelvic_l / fin_pelvic_r": "付け根が pivot。静止姿勢で z に垂らしてある（左右で符号が逆）",
+  "tail_fin": "rotation y で左右に振る"
+ },
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 4.0,
+   "bones": [
+    "body_07",
+    "body_08",
+    "body_09",
+    "body_10",
+    "body_11",
+    "body_12",
+    "body_13",
+    "body_14",
+    "body_15",
+    "body_16",
+    "body_17",
+    "body_18",
+    "body_19",
+    "crest_02",
+    "crest_03",
+    "crest_04",
+    "crest_05",
+    "crest_06",
+    "crest_07",
+    "crest_08",
+    "crest_09",
+    "crest_10",
+    "crest_11",
+    "crest_12",
+    "crest_13",
+    "crest_14",
+    "crest_15",
+    "crest_16",
+    "crest_17",
+    "crest_h1",
+    "crest_h2",
+    "fin_l",
+    "fin_pelvic_l",
+    "fin_pelvic_r",
+    "fin_r",
+    "jaw",
+    "tail_fin"
+   ]
+  },
+  "attack": {
+   "loop": false,
+   "length": 1.0,
+   "bones": [
+    "crest_02",
+    "crest_03",
+    "crest_04",
+    "crest_05",
+    "crest_06",
+    "crest_07",
+    "crest_08",
+    "crest_09",
+    "crest_10",
+    "crest_11",
+    "crest_12",
+    "crest_13",
+    "crest_14",
+    "crest_15",
+    "crest_16",
+    "crest_17",
+    "crest_h1",
+    "crest_h2",
+    "jaw"
+   ]
+  },
+  "crest_up": {
+   "loop": "hold_on_last_frame",
+   "length": 0.4,
+   "bones": [
+    "crest_02",
+    "crest_03",
+    "crest_04",
+    "crest_05",
+    "crest_06",
+    "crest_07",
+    "crest_08",
+    "crest_09",
+    "crest_10",
+    "crest_11",
+    "crest_12",
+    "crest_13",
+    "crest_14",
+    "crest_15",
+    "crest_16",
+    "crest_17",
+    "crest_h1",
+    "crest_h2",
+    "jaw"
+   ]
+  }
+ },
+ "animation_notes": {
+  "idle": "後ろ半分だけの尾の振り（最大 0.5 ブロック）、ひれ・尾びれ・顎・棘の小さな揺れ",
+  "attack": "口を 42 度開けて噛む 1 回。当たりは 0.5 秒。棘が半分立つ",
+  "crest_up": "頭から順に冠を立てて保持（hold_on_last_frame）。口を少し開く"
+ },
+ "cube_count": 138,
+ "bones": [
+  {
+   "name": "head",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "cubes": 24
+  },
+  {
+   "name": "jaw",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    -7.0,
+    12.0
+   ],
+   "cubes": 10
+  },
+  {
+   "name": "crest_h1",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    9.0,
+    -6.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "crest_h2",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    15.0,
+    6.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_01",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    8.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "seg_02",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    24.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_02",
+   "parent": "seg_02",
+   "pivot": [
+    0.0,
+    0.0,
+    24.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_02",
+   "parent": "body_02",
+   "pivot": [
+    0.0,
+    13.0,
+    23.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_03",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_03",
+   "parent": "seg_03",
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_03",
+   "parent": "body_03",
+   "pivot": [
+    0.0,
+    13.0,
+    39.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_04",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    56.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_04",
+   "parent": "seg_04",
+   "pivot": [
+    0.0,
+    0.0,
+    56.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_04",
+   "parent": "body_04",
+   "pivot": [
+    0.0,
+    13.0,
+    55.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_05",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    72.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_05",
+   "parent": "seg_05",
+   "pivot": [
+    0.0,
+    0.0,
+    72.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_05",
+   "parent": "body_05",
+   "pivot": [
+    0.0,
+    12.0,
+    71.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_06",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    88.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_06",
+   "parent": "seg_06",
+   "pivot": [
+    0.0,
+    0.0,
+    88.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_06",
+   "parent": "body_06",
+   "pivot": [
+    0.0,
+    12.0,
+    87.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_07",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    104.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_07",
+   "parent": "seg_07",
+   "pivot": [
+    0.0,
+    0.0,
+    104.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_07",
+   "parent": "body_07",
+   "pivot": [
+    0.0,
+    12.0,
+    103.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_08",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_08",
+   "parent": "seg_08",
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_08",
+   "parent": "body_08",
+   "pivot": [
+    0.0,
+    11.0,
+    119.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_09",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    136.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_09",
+   "parent": "seg_09",
+   "pivot": [
+    0.0,
+    0.0,
+    136.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_09",
+   "parent": "body_09",
+   "pivot": [
+    0.0,
+    11.0,
+    135.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_10",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    152.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_10",
+   "parent": "seg_10",
+   "pivot": [
+    0.0,
+    0.0,
+    152.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_10",
+   "parent": "body_10",
+   "pivot": [
+    0.0,
+    10.0,
+    151.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_11",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    168.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_11",
+   "parent": "seg_11",
+   "pivot": [
+    0.0,
+    0.0,
+    168.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_11",
+   "parent": "body_11",
+   "pivot": [
+    0.0,
+    10.0,
+    167.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "seg_12",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    184.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_12",
+   "parent": "seg_12",
+   "pivot": [
+    0.0,
+    0.0,
+    184.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_12",
+   "parent": "body_12",
+   "pivot": [
+    0.0,
+    9.0,
+    183.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_13",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_13",
+   "parent": "seg_13",
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_13",
+   "parent": "body_13",
+   "pivot": [
+    0.0,
+    9.0,
+    199.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_14",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    216.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_14",
+   "parent": "seg_14",
+   "pivot": [
+    0.0,
+    0.0,
+    216.0
+   ],
+   "cubes": 4
+  },
+  {
+   "name": "crest_14",
+   "parent": "body_14",
+   "pivot": [
+    0.0,
+    8.0,
+    215.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_15",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    232.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_15",
+   "parent": "seg_15",
+   "pivot": [
+    0.0,
+    0.0,
+    232.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_15",
+   "parent": "body_15",
+   "pivot": [
+    0.0,
+    7.0,
+    231.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_16",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    248.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_16",
+   "parent": "seg_16",
+   "pivot": [
+    0.0,
+    0.0,
+    248.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_16",
+   "parent": "body_16",
+   "pivot": [
+    0.0,
+    6.0,
+    247.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_17",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    264.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_17",
+   "parent": "seg_17",
+   "pivot": [
+    0.0,
+    0.0,
+    264.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "crest_17",
+   "parent": "body_17",
+   "pivot": [
+    0.0,
+    5.0,
+    263.0
+   ],
+   "cubes": 1
+  },
+  {
+   "name": "seg_18",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    280.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_18",
+   "parent": "seg_18",
+   "pivot": [
+    0.0,
+    0.0,
+    280.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_19",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    296.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "body_19",
+   "parent": "seg_19",
+   "pivot": [
+    0.0,
+    0.0,
+    296.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "seg_20",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    312.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "seg_21",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    328.0
+   ],
+   "cubes": 0
+  },
+  {
+   "name": "fin_l",
+   "parent": "body_03",
+   "pivot": [
+    10.0,
+    -7.0,
+    36.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "fin_r",
+   "parent": "body_03",
+   "pivot": [
+    -10.0,
+    -7.0,
+    36.0
+   ],
+   "cubes": 3
+  },
+  {
+   "name": "fin_pelvic_l",
+   "parent": "body_09",
+   "pivot": [
+    8.0,
+    -5.0,
+    132.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "fin_pelvic_r",
+   "parent": "body_09",
+   "pivot": [
+    -8.0,
+    -5.0,
+    132.0
+   ],
+   "cubes": 2
+  },
+  {
+   "name": "tail_fin",
+   "parent": "body_19",
+   "pivot": [
+    0.0,
+    0.0,
+    284.0
+   ],
+   "cubes": 9
+  }
+ ]
+}

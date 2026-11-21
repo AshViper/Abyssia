@@ -1,0 +1,41 @@
+{
+ "entity": "hush_whale",
+ "generator": "tools/boss/hush_whale_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/hush_whale.geo.json",
+ "animation": "assets/abyssia/animations/entity/hush_whale.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/hush_whale_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/hush_whale_geo_glow.png",
+ "glow_note": "光らない画素は (0,0,0,0)。頭の両側の輪・頭と体側の点・背の点。地の画像にも同じ色で入っている",
+ "texture_size": [
+  256,
+  256
+ ],
+ "texel": "1 テクセル = 0.25 ブロック（geo 2 単位）",
+ "model_scale": 2.0,
+ "segment_length_units": 16.0,
+ "joints": 25,
+ "segments": 24,
+ "rest_pose": "頭は -Z。関節 j = (0,0,16j)、seg_k の pivot = (0,0,16(k-0.5))。装甲の先は関節 0 の 1.25 ブロック前、尾の先は 48.5",
+ "cubes": 61,
+ "child_bones": {
+  "ram_00 / ram_02..ram_10": "head と seg_02..10 の子。頭の箱をすべて持つ。pivot は共通で首の背 (0,34,160)。同じ rotation x を入れると頭全体がひとかたまりで下がる（正で下がる）",
+  "fin_l / fin_r": "胸びれ（seg_11 の子）。rotation z で上下、y で前後",
+  "tail": "尾びれ（seg_23 の子、pivot は s=44）。rotation y で左右"
+ },
+ "ring": {
+  "centre_units": [
+   0,
+   4.0,
+   128.0
+  ],
+  "outer_radius_blocks": 2.5,
+  "half_width_units": 32.0,
+  "note": "輪は頭の両側面（x = ±32 単位 = ±4 ブロック）に描いてある。seg_07〜10 の ram にまたがる"
+ },
+ "animations": {
+  "idle": "6 秒ループ",
+  "attack": "1.6 秒・1 回（溜め 0.72 秒、打撃 0.92 秒）",
+  "charge": "0.5 秒・hold_on_last_frame（構えを保持）"
+ },
+ "renderer": "GiantRenderer.registerGeo(\"hush_whale\", \"hush_whale\", \"textures/entity/boss/hush_whale_geo.png\", 2.0F, 24)。発光層（_geo_glow.png）は未実装なら追加が要る"
+}

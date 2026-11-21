@@ -1,0 +1,141 @@
+{
+  "parent": "abyssia:life/giant_sighting",
+  "display": {
+    "icon": {
+      "item": "minecraft:trident"
+    },
+    "title": {
+      "translate": "advancements.abyssia.life.giant_felled.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.life.giant_felled.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "lancejaw": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:lancejaw"
+            }
+          }
+        ]
+      }
+    },
+    "hush_whale": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:hush_whale"
+            }
+          }
+        ]
+      }
+    },
+    "slateback": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:slateback"
+            }
+          }
+        ]
+      }
+    },
+    "rift_lamprey": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:rift_lamprey"
+            }
+          }
+        ]
+      }
+    },
+    "shroud_ray": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:shroud_ray"
+            }
+          }
+        ]
+      }
+    },
+    "glassback": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:glassback"
+            }
+          }
+        ]
+      }
+    },
+    "crestfin": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:crestfin"
+            }
+          }
+        ]
+      }
+    },
+    "duskmaw": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:duskmaw"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "lancejaw",
+      "hush_whale",
+      "slateback",
+      "rift_lamprey",
+      "shroud_ray",
+      "glassback",
+      "crestfin",
+      "duskmaw"
+    ]
+  ]
+}

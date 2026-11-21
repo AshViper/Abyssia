@@ -1,0 +1,463 @@
+{
+ "entity": "colossal_goblin_shark",
+ "generator": "tools/boss/goblin_shark_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/colossal_goblin_shark.geo.json",
+ "animation": "assets/abyssia/animations/entity/colossal_goblin_shark.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/colossal_goblin_shark_geo.png",
+ "texture_note": "仮テクスチャ（atlas.py の領域に沿って塗っただけ）。発光は無いので _glow.png は無い",
+ "texture_size": [
+  256,
+  256
+ ],
+ "model_scale": 2.0,
+ "units": "geo の 1 単位 = 1/16 ブロック。描画で MODEL_SCALE 倍するので、ゲーム内では MODEL_SCALE/16 ブロック",
+ "segment_length_units": 16.0,
+ "segment_length_blocks": 2.0,
+ "joints": 17,
+ "segments": 16,
+ "rest_pose": "頭から尾まで一直線。関節 j は geo の (0, 0, segment_length_units * j)。頭は -Z を向く。体の芯（関節の線）は y = 0",
+ "head_pivot": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, segment_length_units * (k - 0.5))",
+ "extent_units": {
+  "snout_z": -14.0,
+  "tail_z": 242.0,
+  "total_length_blocks": 32.0,
+  "max_half_width": 13.44,
+  "max_top_y": 16.0,
+  "min_bottom_y": -15.6
+ },
+ "jaw": {
+  "bones": "jaw（head の子: 上顎・歯・口蓋）→ jaw_lower（下顎）・jaw_sling（喉の膜）",
+  "hinge": [
+   0.0,
+   -4.96,
+   27.6
+  ],
+  "protrusion_units": [
+   0.0,
+   -19.2,
+   -44.0
+  ],
+  "protrusion_blocks": 6.001,
+  "rest_jaw_tip_z": 13.6,
+  "full_jaw_tip": [
+   0.0,
+   -22.24,
+   -30.4
+  ],
+  "tilt_deg": 12.0,
+  "sling_rule": "jaw / jaw_lower / jaw_sling の pivot はどれも顎関節。jaw_sling は静止で長さ 1 ブロック。突き出し量 f のとき jaw は position = f × protrusion_units、rotation x = 12f 度。jaw_sling は rotation x = atan2(2.4f, 1 + 5.5f) - 12f 度、scale z = hypot(2.4f, 1 + 5.5f)。f=1 で 8.27 度・6.929 倍。3 つを同じ時刻に入れる（animation はそうしてある）"
+ },
+ "animation_signs": {
+  "jaw": "position（geo 座標、単位）と rotation x（正で前下へ傾く）。静止 (0,0,0)、突き出し (0, -19.2, -44) と 12 度",
+  "jaw_lower": "rotation の x が正で口が開く（idle は 0→4 度、attack は 52 度まで開いて噛む）",
+  "jaw_sling": "rotation x と scale z。jaw の突き出しに合わせて伸びる（上の sling_rule）",
+  "fin_l / fin_r": "胸びれ（seg_04 の子）。付け根が pivot。左右で y と z の符号が逆",
+  "fin_pelvic_l / fin_pelvic_r": "腹びれ（seg_07 の子）。付け根が pivot。左右で y と z の符号が逆",
+  "seg_06_fin / seg_09_fin": "第1・第2背びれ。pivot は付け根の中央、z で左右に揺れる",
+  "seg_10_anal": "臀びれ。pivot は付け根の中央、z で左右に揺れる",
+  "seg_11_fin..seg_16_fin": "尾びれの下葉の膜（体節ごと）。pivot は体節の前端の腹、y で左右に煽る"
+ },
+ "bone_rule": "head と seg_01..seg_16 は root 直下。毎フレーム位置と回転を上書きする。seg_k は関節 k-1 と k の中点へ、局所 -Z が関節 k から関節 k-1 を向くように置く。head は関節 0 へ、-Z が関節 1 から関節 0 の向き（さらに先）を向くように置く（seg_01 と同じ向きになるので、頭と seg_01 は常に一体）。子（jaw, jaw_lower, jaw_sling, fin_*, seg_XX_fin, seg_XX_anal）は animation に任せる",
+ "geckolib_conventions": [
+  "描画空間 = geo の X を反転した空間（GeckoLib 4.9.2 BakedModelFactory）。z と y はそのまま",
+  "GeoBone.setPosX/Y/Z は静止姿勢からのずれで、単位は geo と同じ 1/16（MODEL_SCALE を掛ける前）。RenderUtil.translateMatrixToBone が translate(-posX/16, posY/16, posZ/16) なので、geo の座標で書けば pos = 目標の pivot - 静止姿勢の pivot（X も符号そのまま）",
+  "GeoBone.setRotX/Y/Z はラジアンで描画空間の値。geo / animation の度数 (rx, ry, rz) とは (-rx, -ry, +rz) の関係。頂点へは X→Y→Z の順に効く（行列は Rz・Ry・Rx）",
+  "描画空間で局所 -Z（体節の前）を単位ベクトル d（関節 k から k-1 へ）に向けるには setRotX(asin(d.y))、setRotY(atan2(-d.x, -d.z))、setRotZ(0)。体節と head は静止姿勢の回転が 0 なので、この値をそのまま入れればよい",
+  "子の Bone は animation が回すので、Java からは触らない（触るなら animation の値を上書きしてしまう）"
+ ],
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 3.0,
+   "bones": [
+    "fin_l",
+    "fin_pelvic_l",
+    "fin_pelvic_r",
+    "fin_r",
+    "jaw_lower",
+    "seg_06_fin",
+    "seg_09_fin",
+    "seg_10_anal",
+    "seg_11_fin",
+    "seg_12_fin",
+    "seg_13_fin",
+    "seg_14_fin",
+    "seg_15_fin",
+    "seg_16_fin"
+   ]
+  },
+  "attack": {
+   "loop": false,
+   "length": 1.4,
+   "bones": [
+    "jaw",
+    "jaw_lower",
+    "jaw_sling"
+   ]
+  },
+  "jaw_out": {
+   "loop": "hold_on_last_frame",
+   "length": 0.3,
+   "bones": [
+    "jaw",
+    "jaw_lower",
+    "jaw_sling"
+   ]
+  }
+ },
+ "cube_count": 968,
+ "cube_limit": 1328,
+ "bones": [
+  {
+   "name": "head",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "role": "頭。関節 0 に pivot。-Z が吻端（関節 0 の 1.75 ブロック前）。殻の後ろ端は関節 1"
+  },
+  {
+   "name": "jaw",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    -4.96,
+    27.6
+   ]
+  },
+  {
+   "name": "jaw_lower",
+   "parent": "jaw",
+   "pivot": [
+    0.0,
+    -4.96,
+    27.6
+   ]
+  },
+  {
+   "name": "jaw_sling",
+   "parent": "jaw",
+   "pivot": [
+    0.0,
+    -4.96,
+    27.6
+   ]
+  },
+  {
+   "name": "seg_01",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    8.0
+   ],
+   "role": "体節 1: 関節 0（前）〜関節 1（後ろ）。pivot は中心。頭の殻の内側に入るので箱なし（位置だけ合わせる）",
+   "joint_front": 0,
+   "joint_back": 1
+  },
+  {
+   "name": "seg_02",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    24.0
+   ],
+   "role": "体節 2: 関節 1（前）〜関節 2（後ろ）。pivot は中心",
+   "joint_front": 1,
+   "joint_back": 2
+  },
+  {
+   "name": "seg_03",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ],
+   "role": "体節 3: 関節 2（前）〜関節 3（後ろ）。pivot は中心",
+   "joint_front": 2,
+   "joint_back": 3
+  },
+  {
+   "name": "seg_04",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    56.0
+   ],
+   "role": "体節 4: 関節 3（前）〜関節 4（後ろ）。pivot は中心",
+   "joint_front": 3,
+   "joint_back": 4
+  },
+  {
+   "name": "fin_l",
+   "parent": "seg_04",
+   "pivot": [
+    10.98,
+    -5.71,
+    45.6
+   ]
+  },
+  {
+   "name": "fin_r",
+   "parent": "seg_04",
+   "pivot": [
+    -10.98,
+    -5.71,
+    45.6
+   ]
+  },
+  {
+   "name": "seg_05",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    72.0
+   ],
+   "role": "体節 5: 関節 4（前）〜関節 5（後ろ）。pivot は中心",
+   "joint_front": 4,
+   "joint_back": 5
+  },
+  {
+   "name": "seg_06",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    88.0
+   ],
+   "role": "体節 6: 関節 5（前）〜関節 6（後ろ）。pivot は中心",
+   "joint_front": 5,
+   "joint_back": 6
+  },
+  {
+   "name": "seg_06_fin",
+   "parent": "seg_06",
+   "pivot": [
+    0.0,
+    15.44,
+    88.2
+   ]
+  },
+  {
+   "name": "seg_07",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    104.0
+   ],
+   "role": "体節 7: 関節 6（前）〜関節 7（後ろ）。pivot は中心",
+   "joint_front": 6,
+   "joint_back": 7
+  },
+  {
+   "name": "fin_pelvic_l",
+   "parent": "seg_07",
+   "pivot": [
+    6.49,
+    -13.46,
+    98.4
+   ]
+  },
+  {
+   "name": "fin_pelvic_r",
+   "parent": "seg_07",
+   "pivot": [
+    -6.49,
+    -13.46,
+    98.4
+   ]
+  },
+  {
+   "name": "seg_08",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ],
+   "role": "体節 8: 関節 7（前）〜関節 8（後ろ）。pivot は中心",
+   "joint_front": 7,
+   "joint_back": 8
+  },
+  {
+   "name": "seg_09",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    136.0
+   ],
+   "role": "体節 9: 関節 8（前）〜関節 9（後ろ）。pivot は中心",
+   "joint_front": 8,
+   "joint_back": 9
+  },
+  {
+   "name": "seg_09_fin",
+   "parent": "seg_09",
+   "pivot": [
+    0.0,
+    10.92,
+    136.2
+   ]
+  },
+  {
+   "name": "seg_10",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    152.0
+   ],
+   "role": "体節 10: 関節 9（前）〜関節 10（後ろ）。pivot は中心",
+   "joint_front": 9,
+   "joint_back": 10
+  },
+  {
+   "name": "seg_10_anal",
+   "parent": "seg_10",
+   "pivot": [
+    0.0,
+    -6.62,
+    152.4
+   ]
+  },
+  {
+   "name": "seg_11",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    168.0
+   ],
+   "role": "体節 11: 関節 10（前）〜関節 11（後ろ）。pivot は中心",
+   "joint_front": 10,
+   "joint_back": 11
+  },
+  {
+   "name": "seg_11_fin",
+   "parent": "seg_11",
+   "pivot": [
+    0.0,
+    -5.12,
+    160.0
+   ]
+  },
+  {
+   "name": "seg_12",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    184.0
+   ],
+   "role": "体節 12: 関節 11（前）〜関節 12（後ろ）。pivot は中心",
+   "joint_front": 11,
+   "joint_back": 12
+  },
+  {
+   "name": "seg_12_fin",
+   "parent": "seg_12",
+   "pivot": [
+    0.0,
+    -2.24,
+    176.0
+   ]
+  },
+  {
+   "name": "seg_13",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ],
+   "role": "体節 13: 関節 12（前）〜関節 13（後ろ）。pivot は中心",
+   "joint_front": 12,
+   "joint_back": 13
+  },
+  {
+   "name": "seg_13_fin",
+   "parent": "seg_13",
+   "pivot": [
+    0.0,
+    -0.32,
+    192.0
+   ]
+  },
+  {
+   "name": "seg_14",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    216.0
+   ],
+   "role": "体節 14: 関節 13（前）〜関節 14（後ろ）。pivot は中心",
+   "joint_front": 13,
+   "joint_back": 14
+  },
+  {
+   "name": "seg_14_fin",
+   "parent": "seg_14",
+   "pivot": [
+    0.0,
+    1.44,
+    208.0
+   ]
+  },
+  {
+   "name": "seg_15",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    232.0
+   ],
+   "role": "体節 15: 関節 14（前）〜関節 15（後ろ）。pivot は中心",
+   "joint_front": 14,
+   "joint_back": 15
+  },
+  {
+   "name": "seg_15_fin",
+   "parent": "seg_15",
+   "pivot": [
+    0.0,
+    3.2,
+    224.0
+   ]
+  },
+  {
+   "name": "seg_16",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    248.0
+   ],
+   "role": "体節 16: 関節 15（前）〜関節 16（後ろ）。pivot は中心",
+   "joint_front": 15,
+   "joint_back": 16
+  },
+  {
+   "name": "seg_16_fin",
+   "parent": "seg_16",
+   "pivot": [
+    0.0,
+    4.77,
+    240.0
+   ]
+  }
+ ]
+}

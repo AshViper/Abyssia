@@ -1,0 +1,719 @@
+{
+ "entity": "shroud_ray",
+ "generator": "tools/boss/shroud_ray_model/build.py（出力は手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/shroud_ray.geo.json",
+ "animation": "assets/abyssia/animations/entity/shroud_ray.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/shroud_ray_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/shroud_ray_geo_glow.png",
+ "texture_size": [
+  256,
+  256
+ ],
+ "texel_blocks": 0.25,
+ "model_scale": 2.0,
+ "segment_length_units": 16,
+ "segment_length_blocks": 2.0,
+ "joints": 17,
+ "segments": 16,
+ "rest_pose": "頭から尾まで一直線。関節 j は geo の (0, 0, 16j)。頭が -Z。体の芯は y = 0",
+ "head_pivot": [
+  0,
+  0,
+  0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, 16 * (k - 0.5))",
+ "extent_units": {
+  "front_z": -28,
+  "tail_z": 256,
+  "half_span": 160,
+  "total_length_blocks": 35.5,
+  "wingspan_blocks": 40
+ },
+ "bone_rule": "head と seg_01..seg_16 は root 直下で、体節鎖が毎フレーム上書きする。seg_01 と seg_09..seg_16 は箱なし。子の骨（wing_*, tail_*）は animation だけが動かす",
+ "child_bones": {
+  "wing_l_k / wing_r_k (k=1..8)": "翼の帯の内半分。k=1 は head、k=2..8 は seg_k の子。pivot は付け根。l が geo の +X",
+  "wing_l_k_tip / wing_r_k_tip": "帯の外半分。pivot は帯の中ほど",
+  "tail_01..tail_08": "尾の鎖（seg_08 の子、前の節の子）。pivot は各節の前端。tail_08 の先に光る棘"
+ },
+ "animation_signs": {
+  "wing_l_*": "rotation z 正で下がる（r は負で下がる）。静止で 6 度ずつ下げてある",
+  "tail_*": "rotation x 正で上へ（前へ）巻く。y で左右"
+ },
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 4.0,
+   "bones": 40
+  },
+  "attack": {
+   "loop": false,
+   "length": 1.2,
+   "bones": 24
+  },
+  "shroud": {
+   "loop": "hold_on_last_frame",
+   "length": 0.8,
+   "bones": 32
+  }
+ },
+ "tail_note": "尾は体節鎖（seg_09..16）ではなく seg_08 の子の鎖。実行時の鎖の曲がりは尾には出ない（attack で振り上げるため）",
+ "cube_count": 58,
+ "bones": [
+  {
+   "name": "head",
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "seg_01",
+   "pivot": [
+    0.0,
+    0.0,
+    8.0
+   ]
+  },
+  {
+   "name": "seg_02",
+   "pivot": [
+    0.0,
+    0.0,
+    24.0
+   ]
+  },
+  {
+   "name": "seg_03",
+   "pivot": [
+    0.0,
+    0.0,
+    40.0
+   ]
+  },
+  {
+   "name": "seg_04",
+   "pivot": [
+    0.0,
+    0.0,
+    56.0
+   ]
+  },
+  {
+   "name": "seg_05",
+   "pivot": [
+    0.0,
+    0.0,
+    72.0
+   ]
+  },
+  {
+   "name": "seg_06",
+   "pivot": [
+    0.0,
+    0.0,
+    88.0
+   ]
+  },
+  {
+   "name": "seg_07",
+   "pivot": [
+    0.0,
+    0.0,
+    104.0
+   ]
+  },
+  {
+   "name": "seg_08",
+   "pivot": [
+    0.0,
+    0.0,
+    120.0
+   ]
+  },
+  {
+   "name": "seg_09",
+   "pivot": [
+    0.0,
+    0.0,
+    136.0
+   ]
+  },
+  {
+   "name": "seg_10",
+   "pivot": [
+    0.0,
+    0.0,
+    152.0
+   ]
+  },
+  {
+   "name": "seg_11",
+   "pivot": [
+    0.0,
+    0.0,
+    168.0
+   ]
+  },
+  {
+   "name": "seg_12",
+   "pivot": [
+    0.0,
+    0.0,
+    184.0
+   ]
+  },
+  {
+   "name": "seg_13",
+   "pivot": [
+    0.0,
+    0.0,
+    200.0
+   ]
+  },
+  {
+   "name": "seg_14",
+   "pivot": [
+    0.0,
+    0.0,
+    216.0
+   ]
+  },
+  {
+   "name": "seg_15",
+   "pivot": [
+    0.0,
+    0.0,
+    232.0
+   ]
+  },
+  {
+   "name": "seg_16",
+   "pivot": [
+    0.0,
+    0.0,
+    248.0
+   ]
+  },
+  {
+   "name": "wing_l_1",
+   "pivot": [
+    20.0,
+    2.0,
+    8.0
+   ],
+   "parent": "head",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_l_1_tip",
+   "pivot": [
+    44.0,
+    2.0,
+    8.0
+   ],
+   "parent": "wing_l_1",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_r_1",
+   "pivot": [
+    -20.0,
+    2.0,
+    8.0
+   ],
+   "parent": "head",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_r_1_tip",
+   "pivot": [
+    -44.0,
+    2.0,
+    8.0
+   ],
+   "parent": "wing_r_1",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_l_2",
+   "pivot": [
+    20.0,
+    2.0,
+    24.0
+   ],
+   "parent": "seg_02",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_l_2_tip",
+   "pivot": [
+    60.0,
+    2.0,
+    24.0
+   ],
+   "parent": "wing_l_2",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_r_2",
+   "pivot": [
+    -20.0,
+    2.0,
+    24.0
+   ],
+   "parent": "seg_02",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_r_2_tip",
+   "pivot": [
+    -60.0,
+    2.0,
+    24.0
+   ],
+   "parent": "wing_r_2",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_l_3",
+   "pivot": [
+    20.0,
+    2.0,
+    40.0
+   ],
+   "parent": "seg_03",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_l_3_tip",
+   "pivot": [
+    76.0,
+    2.0,
+    40.0
+   ],
+   "parent": "wing_l_3",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_r_3",
+   "pivot": [
+    -20.0,
+    2.0,
+    40.0
+   ],
+   "parent": "seg_03",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_r_3_tip",
+   "pivot": [
+    -76.0,
+    2.0,
+    40.0
+   ],
+   "parent": "wing_r_3",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_l_4",
+   "pivot": [
+    20.0,
+    2.0,
+    56.0
+   ],
+   "parent": "seg_04",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_l_4_tip",
+   "pivot": [
+    88.0,
+    2.0,
+    56.0
+   ],
+   "parent": "wing_l_4",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_r_4",
+   "pivot": [
+    -20.0,
+    2.0,
+    56.0
+   ],
+   "parent": "seg_04",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_r_4_tip",
+   "pivot": [
+    -88.0,
+    2.0,
+    56.0
+   ],
+   "parent": "wing_r_4",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_l_5",
+   "pivot": [
+    20.0,
+    2.0,
+    72.0
+   ],
+   "parent": "seg_05",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_l_5_tip",
+   "pivot": [
+    92.0,
+    2.0,
+    72.0
+   ],
+   "parent": "wing_l_5",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_r_5",
+   "pivot": [
+    -20.0,
+    2.0,
+    72.0
+   ],
+   "parent": "seg_05",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_r_5_tip",
+   "pivot": [
+    -92.0,
+    2.0,
+    72.0
+   ],
+   "parent": "wing_r_5",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_l_6",
+   "pivot": [
+    16.0,
+    2.0,
+    88.0
+   ],
+   "parent": "seg_06",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_l_6_tip",
+   "pivot": [
+    76.0,
+    2.0,
+    88.0
+   ],
+   "parent": "wing_l_6",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_r_6",
+   "pivot": [
+    -16.0,
+    2.0,
+    88.0
+   ],
+   "parent": "seg_06",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_r_6_tip",
+   "pivot": [
+    -76.0,
+    2.0,
+    88.0
+   ],
+   "parent": "wing_r_6",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_l_7",
+   "pivot": [
+    12.0,
+    2.0,
+    104.0
+   ],
+   "parent": "seg_07",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_l_7_tip",
+   "pivot": [
+    52.0,
+    2.0,
+    104.0
+   ],
+   "parent": "wing_l_7",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_r_7",
+   "pivot": [
+    -12.0,
+    2.0,
+    104.0
+   ],
+   "parent": "seg_07",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_r_7_tip",
+   "pivot": [
+    -52.0,
+    2.0,
+    104.0
+   ],
+   "parent": "wing_r_7",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_l_8",
+   "pivot": [
+    8.0,
+    2.0,
+    120.0
+   ],
+   "parent": "seg_08",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_l_8_tip",
+   "pivot": [
+    28.0,
+    2.0,
+    120.0
+   ],
+   "parent": "wing_l_8",
+   "rotation": [
+    0.0,
+    0.0,
+    6.0
+   ]
+  },
+  {
+   "name": "wing_r_8",
+   "pivot": [
+    -8.0,
+    2.0,
+    120.0
+   ],
+   "parent": "seg_08",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "wing_r_8_tip",
+   "pivot": [
+    -28.0,
+    2.0,
+    120.0
+   ],
+   "parent": "wing_r_8",
+   "rotation": [
+    0.0,
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "name": "tail_01",
+   "pivot": [
+    0.0,
+    0.0,
+    128.0
+   ],
+   "parent": "seg_08"
+  },
+  {
+   "name": "tail_02",
+   "pivot": [
+    0.0,
+    0.0,
+    144.0
+   ],
+   "parent": "tail_01"
+  },
+  {
+   "name": "tail_03",
+   "pivot": [
+    0.0,
+    0.0,
+    160.0
+   ],
+   "parent": "tail_02"
+  },
+  {
+   "name": "tail_04",
+   "pivot": [
+    0.0,
+    0.0,
+    176.0
+   ],
+   "parent": "tail_03"
+  },
+  {
+   "name": "tail_05",
+   "pivot": [
+    0.0,
+    0.0,
+    192.0
+   ],
+   "parent": "tail_04"
+  },
+  {
+   "name": "tail_06",
+   "pivot": [
+    0.0,
+    0.0,
+    208.0
+   ],
+   "parent": "tail_05"
+  },
+  {
+   "name": "tail_07",
+   "pivot": [
+    0.0,
+    0.0,
+    224.0
+   ],
+   "parent": "tail_06"
+  },
+  {
+   "name": "tail_08",
+   "pivot": [
+    0.0,
+    0.0,
+    240.0
+   ],
+   "parent": "tail_07"
+  }
+ ]
+}
