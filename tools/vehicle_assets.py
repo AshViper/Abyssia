@@ -36,6 +36,39 @@ RECIPES = {
     "submarine_upgrade_sonar_scanner": (["LPL", "KOK", "RAR"], {"L": "minecraft:sea_lantern", "P": "abyssia:pressure_shell",
                                                                 "K": "minecraft:copper_ingot", "O": "abyssia:bio_oil",
                                                                 "R": "minecraft:redstone", "A": "abyssia:abyssal_alloy_ingot"}),
+    # TRP01 boss-material upgrades: Mk2 of the hull / battery / thruster / sonar slots (SubmarineUpgrades.ADV_IDS), each built on its Mk1
+    "submarine_upgrade_serpent_scale_hull": (["SSS", "SUS", "ASA"], {"S": "abyssia:abyss_serpent_scale", "U": "abyssia:submarine_upgrade_pressure_hull",
+                                                                    "A": "abyssia:abyssal_alloy_ingot"}),
+    "submarine_upgrade_jet_thruster": (["IKI", "IUI", "IKI"], {"I": "abyssia:kraken_ink_sac", "K": "abyssia:kraken_beak",
+                                                              "U": "abyssia:submarine_upgrade_maneuver_thruster"}),
+    "submarine_upgrade_abyss_heart_cell": (["GHG", "GUG"], {"G": "abyssia:mother_bell_gel", "H": "abyssia:abyss_heart",
+                                                           "U": "abyssia:submarine_upgrade_high_capacity_battery"}),
+    "submarine_upgrade_lure_sonar": (["LCL", "LUL", "LCL"], {"L": "abyssia:angler_lure", "C": "abyssia:luminous_crystal",
+                                                            "U": "abyssia:submarine_upgrade_sonar_scanner"}),
+    # TRP01 boss-material gear (MaterialTools.HEART_TANK / FANG_DRILL)
+    "heart_tank": (["GHG", "GTG"], {"G": "abyssia:mother_bell_gel", "H": "abyssia:abyss_heart", "T": "abyssia:pressure_dive_tank"}),
+    "fang_drill": (["FCF", " D ", "C F"], {"F": "abyssia:trench_wyrm_fang", "C": "abyssia:pressure_crystal_shard", "D": "abyssia:abyssal_drill"}),
+}
+
+# TRP01: Mk2 upgrade -> the Mk1 item whose icon it reuses (no new texture; the enchantment glint tells them apart)
+ADV_ICON = {}   # Mk2 icons now have their own textures; kept empty as an override hook
+
+# BOSS01 boss materials: plain generated item models (textures by ChatGPT, locked in tools/texture_locks).
+BOSS_ITEMS = ["abyss_serpent_scale", "trench_wyrm_fang", "kraken_beak", "kraken_ink_sac", "mother_bell_gel", "abyss_heart", "angler_lure"]
+
+# TRP01 gear items: id -> (English, Japanese, model parent, texture reused, JEI source en, ja)
+TRP01_ITEMS = {
+    "heart_tank": (
+        "Heart Tank", "心臓タンク", "minecraft:item/generated", "heart_tank",
+        "Chest dive tank, pressure tier 4: 1,800 s of oxygen, durability 800, no depth limit; also heat, cold and toxic proof. "
+        "Built from an Abyss Heart, 4 Mother Bell Gel and a Pressure Dive Tank.",
+        "胸装備のダイブタンク (耐圧ティア 4)。酸素 1,800 秒、耐久 800、水深制限なし。耐熱・耐寒・耐毒つき。"
+        "深淵の核 1・母の傘ゲル 4・耐圧ダイブタンク 1 で作る。"),
+    "fang_drill": (
+        "Fang Drill", "牙のドリル", "minecraft:item/handheld", "fang_drill",
+        "A drill with a Trench Wyrm fang bit: mining speed 16, durability 4,000. Built from 3 Trench Wyrm Fangs, an Abyssal Drill "
+        "and 2 Pressure Crystal Shards.",
+        "大ワームの牙を刃にしたドリル。採掘速度 16、耐久 4,000。大ワームの牙 3・深海ドリル 1・水圧結晶の欠片 2 で作る。"),
 }
 
 # SUB03 upgrade items (ids / slot order: com.abyssia.vehicle.SubmarineUpgrades)
@@ -107,6 +140,42 @@ UPGRADES = {
         "Install with Sneak + right-click on an unmanned submarine.",
         "潜水艦アップグレード (補助スロット)。操縦中、半径 16 の海の生物の数と最寄りの距離、船体位置の海流 (矢印は進行方向基準、矢印が多いほど強い)、"
         "半径 32 以内の最寄りの潜水艦ドックを HUD に追加表示し、新しく見つけた生物は小さな音で知らせる。4 FE/tick。無人の潜水艦をスニーク + 右クリックで装着画面。"),
+    # TRP01 Mk2 (boss materials): same slot as the Mk1 item, never together with it
+    "submarine_upgrade_serpent_scale_hull": (
+        "Serpent-Scale Hull", "大海蛇鱗の船体",
+        "Hull 110, 35% damage at Y -64 and below", "船体耐久 110、深層 (Y -64 以下) で被ダメージ 35%",
+        "No speed penalty", "速度低下なし",
+        "Submarine upgrade (hull slot, Mk2 of the Pressure Hull). Raises the hull's break threshold to 110, cuts the damage taken at "
+        "Y -64 and below to 35% (rounded up) and costs no speed. Replaces the Pressure Hull in the same slot. Install with "
+        "Sneak + right-click on an unmanned submarine.",
+        "潜水艦アップグレード (船体スロット、耐圧船体の Mk2)。船体の破壊しきい値を 110 に上げ、Y -64 以下の被ダメージを 35% (切り上げ) にし、速度も落ちない。"
+        "耐圧船体と同じスロットに入る。無人の潜水艦をスニーク + 右クリックで装着画面。"),
+    "submarine_upgrade_jet_thruster": (
+        "Jet Thruster", "噴流推進器",
+        "Forward 0.68, side 0.60, up / down 0.58 b/t", "前進 0.68、横 0.60、上下 0.58 b/t",
+        "Thrust 14 FE/t", "推進 14 FE/t",
+        "Submarine upgrade (propulsion slot, Mk2 of the Maneuver Thruster). Top speeds forward 0.68, sideways 0.60, up / down 0.58 "
+        "blocks per tick, acceleration 0.040. Thrust costs 14 FE per moving tick. Replaces the Maneuver Thruster in the same slot. "
+        "Install with Sneak + right-click on an unmanned submarine.",
+        "潜水艦アップグレード (推進スロット、高出力推進器の Mk2)。最高速度 前進 0.68、横 0.60、上下 0.58 ブロック/tick、加速 0.040。"
+        "推進の消費は移動中 14 FE/tick。高出力推進器と同じスロットに入る。無人の潜水艦をスニーク + 右クリックで装着画面。"),
+    "submarine_upgrade_abyss_heart_cell": (
+        "Abyss Heart Cell", "深淵心臓セル",
+        "Battery 60,000 -> 400,000 FE", "容量 60,000 → 400,000 FE",
+        "Up / down speed x0.95 as the battery", "上下速度は大容量バッテリーと同じ ×0.95",
+        "Submarine upgrade (power slot, Mk2 of the High-Capacity Battery). Battery 400,000 FE; removing it keeps the charge only "
+        "up to the base size. Replaces the High-Capacity Battery in the same slot. Install with Sneak + right-click on an unmanned submarine.",
+        "潜水艦アップグレード (電源スロット、大容量バッテリーの Mk2)。バッテリー容量 400,000 FE。取り外すと基本容量を超えた分の残量は失われる。"
+        "大容量バッテリーと同じスロットに入る。無人の潜水艦をスニーク + 右クリックで装着画面。"),
+    "submarine_upgrade_lure_sonar": (
+        "Lure Sonar", "誘光ソナー",
+        "HUD: creatures (48 m), current, docks (96 m)", "HUD に生物 (48m)・海流・ドック (96m) を表示",
+        "4 FE/t while someone is aboard", "乗員がいる間 4 FE/t",
+        "Submarine upgrade (utility slot, Mk2 of the Deep-Sea Sonar). The sonar HUD reaches 48 blocks for sea creatures and 96 "
+        "blocks for the nearest Submarine Dock. 4 FE per tick. Replaces the Deep-Sea Sonar in the same slot. Install with "
+        "Sneak + right-click on an unmanned submarine.",
+        "潜水艦アップグレード (補助スロット、深海ソナーの Mk2)。ソナー HUD の探知が生物は半径 48、ドックは半径 96 に伸びる。4 FE/tick。"
+        "深海ソナーと同じスロットに入る。無人の潜水艦をスニーク + 右クリックで装着画面。"),
 }
 
 # key -> (English, Japanese)
@@ -167,6 +236,9 @@ for _id, (_en, _ja, _effect_en, _effect_ja, _cost_en, _cost_ja, _src_en, _src_ja
     LANG[f"item.{MOD}.{_id}.source"] = (_src_en, _src_ja)
     LANG[f"tooltip.{MOD}.{_id}.effect"] = (_effect_en, _effect_ja)
     LANG[f"tooltip.{MOD}.{_id}.cost"] = (_cost_en, _cost_ja)
+for _id, (_en, _ja, _parent, _tex, _src_en, _src_ja) in TRP01_ITEMS.items():
+    LANG[f"item.{MOD}.{_id}"] = (_en, _ja)
+    LANG[f"item.{MOD}.{_id}.source"] = (_src_en, _src_ja)
 
 FRAME = f"{MOD}:block/habitat_door_frame"
 LAMP = f"{MOD}:block/habitat_light"
@@ -200,7 +272,11 @@ def pickaxe_blocks():
 def generate(write, bs, bm, im, data_dir):
     write(im(SUBMARINE), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{SUBMARINE}"}})
     for upgrade in UPGRADES:   # icons by ChatGPT, locked in tools/texture_locks
-        write(im(upgrade), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{upgrade}"}})
+        write(im(upgrade), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{ADV_ICON.get(upgrade, upgrade)}"}})
+    for item, (_en, _ja, parent, tex, _src_en, _src_ja) in TRP01_ITEMS.items():   # TRP01: reuse an existing texture
+        write(im(item), {"parent": parent, "textures": {"layer0": f"{MOD}:item/{tex}"}})
+    for item in BOSS_ITEMS:
+        write(im(item), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{item}"}})
     write(bm(DOCK), dock_model())
     write(bs(DOCK), {"variants": {f"facing={d}": {"model": f"{MOD}:block/{DOCK}", "y": y}
                                   for d, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270))}})

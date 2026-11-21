@@ -23,8 +23,24 @@ import java.util.UUID;
  * (body about 18 blocks across, head about 24 wide and 36 long), head + 28 joints of 14 blocks (about 400 blocks).
  * Dev load test: start the game with {@code -Dabyssia.boss.joints=360} to give every serpent a 360 joint chain.
  */
-public class AbyssSerpent extends AbyssBoss
+public class AbyssSerpent extends AbyssBoss implements software.bernie.geckolib.animatable.GeoEntity
 {
+    /** GeckoLib (near view only): the idle animation drives the jaw, gills and fins; the renderer places the spine bones. */
+    private final software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache geoCache = software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache(this);
+
+    @Override
+    public void registerControllers(software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar controllers)
+    {
+        controllers.add(new software.bernie.geckolib.core.animation.AnimationController<AbyssSerpent>(this, "main", 0,
+                state -> state.setAndContinue(software.bernie.geckolib.core.animation.RawAnimation.begin().thenLoop("idle"))));
+    }
+
+    @Override
+    public software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache getAnimatableInstanceCache()
+    {
+        return geoCache;
+    }
+
     /** Cross-section scale against the original model (shared with the renderer and the far silhouette). */
     public static final double SIZE = 4.0;
     /** Swim speeds against the original (a bigger body covers more water per tick, the jaw cue follows it). */

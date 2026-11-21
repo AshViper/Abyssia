@@ -33,8 +33,24 @@ import java.util.UUID;
  * -> [SWEEP, phase 2+: a lateral sweep around the target] -> DIVE (back into the floor) -> BURROW.
  * Floor and wall checks are single block samples, no searches.
  */
-public class TrenchWyrm extends AbyssBoss
+public class TrenchWyrm extends AbyssBoss implements software.bernie.geckolib.animatable.GeoEntity
 {
+    /** GeckoLib (near view only): the idle animation drives the bristles; the renderer places the spine bones and opens the mandibles. */
+    private final software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache geoCache = software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache(this);
+
+    @Override
+    public void registerControllers(software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar controllers)
+    {
+        controllers.add(new software.bernie.geckolib.core.animation.AnimationController<TrenchWyrm>(this, "main", 0,
+                state -> state.setAndContinue(software.bernie.geckolib.core.animation.RawAnimation.begin().thenLoop("idle"))));
+    }
+
+    @Override
+    public software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache getAnimatableInstanceCache()
+    {
+        return geoCache;
+    }
+
     /** Cross-section scale against the original model (shared with the renderer and the far silhouette). */
     public static final double SIZE = 3.0;
     /** Swim speeds against the original. */

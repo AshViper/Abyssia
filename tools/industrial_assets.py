@@ -51,13 +51,13 @@ LIT_MACHINES = {
     "selective_leaching_separator": ("Selective Leaching Separator", "選択浸出分離機"),     # I02
     "hydrothermal_precipitator": ("Hydrothermal Precipitator", "熱水析出機"),     # PRC01
 }
-# PRC01: no textures of its own yet, it borrows the separator's
-TEXTURE_ALIAS = {"hydrothermal_precipitator": "selective_leaching_separator"}
+TEXTURE_ALIAS = {}   # machine -> texture name override (PRC01 now has its own textures)
 # ORE01 abyssal excavator Mk1 / Mk2: multiblock drawn by industry/client/ExcavatorRenderer; blockstates + chunk models come from
 # tools/bt01/excavator_assets.py; built with the habitat constructor (no item)
 EXCAVATORS = {
     "abyssal_excavator": ("Abyssal Excavator Mk1", "深海採掘機 Mk1"),
     "abyssal_excavator_mk2": ("Abyssal Excavator Mk2", "深海採掘機 Mk2"),
+    "abyssal_excavator_mk3": ("Abyssal Excavator Mk3", "深海採掘機 Mk3"),   # TRP01: drawn with the Mk2 models
 }
 # its invisible collision cells (lang: tools/lang_parts/ore01.json; blockstate: excavator_assets.py): no loot, pickaxe, stone tool
 EXCAVATOR_PART = "excavator_part"

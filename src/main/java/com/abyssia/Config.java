@@ -449,6 +449,9 @@ public class Config
     public static final ForgeConfigSpec.IntValue TANK_PRESSURE_SECONDS = BUILDER
             .comment("Seconds of oxygen in a pressure dive tank")
             .defineInRange("tank_pressure_seconds", 720, 15, 7200);
+    public static final ForgeConfigSpec.IntValue TANK_ABYSS_SECONDS = BUILDER
+            .comment("TRP01 Seconds of oxygen in a heart tank")
+            .defineInRange("tank_abyss_seconds", 1800, 15, 7200);
     public static final ForgeConfigSpec.IntValue TANK_REFILL_SECONDS = BUILDER
             .comment("Seconds above water to refill an empty tank")
             .defineInRange("tank_refill_seconds", 5, 1, 600);
@@ -541,12 +544,24 @@ public class Config
     public static final ForgeConfigSpec.DoubleValue SUBMARINE_HULL_SPEED_MULT = BUILDER
             .comment("Pressure Hull: multiplier on every top speed")
             .defineInRange("hull_speed_mult", 0.92, 0.05, 2.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_HULL2_MAX_DAMAGE = BUILDER
+            .comment("TRP01 Serpent-Scale Hull (Mk2 hull): breaking threshold of the hull")
+            .defineInRange("hull2_max_damage", 110.0, 1.0, 10_000.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_HULL2_DEEP_REDUCTION = BUILDER
+            .comment("TRP01 Serpent-Scale Hull: damage multiplier at or below Y -64 (rounded up, so 1 stays 1)")
+            .defineInRange("hull2_deep_reduction", 0.35, 0.0, 1.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_HULL2_SPEED_MULT = BUILDER
+            .comment("TRP01 Serpent-Scale Hull: multiplier of every top speed")
+            .defineInRange("hull2_speed_mult", 1.0, 0.1, 2.0);
     public static final ForgeConfigSpec.IntValue SUBMARINE_BATTERY_CAPACITY = BUILDER
             .comment("High-Capacity Battery: battery size in FE (replaces energy_capacity)")
             .defineInRange("battery_capacity", 150_000, 1_000, 10_000_000);
     public static final ForgeConfigSpec.DoubleValue SUBMARINE_BATTERY_VERTICAL_MULT = BUILDER
             .comment("High-Capacity Battery: multiplier on the up / down top speed")
             .defineInRange("battery_vertical_mult", 0.95, 0.05, 2.0);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_CELL2_CAPACITY = BUILDER
+            .comment("TRP01 Abyss Heart Cell (Mk2 battery): battery size in FE")
+            .defineInRange("cell2_capacity", 400_000, 1_000, 10_000_000);
     public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER_FORWARD = BUILDER
             .comment("Maneuver Thruster: top forward speed in blocks per tick (replaces max_speed)")
             .defineInRange("thruster_forward", 0.56, 0.05, 2.0);
@@ -562,6 +577,21 @@ public class Config
     public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER_ACCEL = BUILDER
             .comment("Maneuver Thruster: acceleration in blocks per tick^2 (without it 0.025)")
             .defineInRange("thruster_accel", 0.032, 0.001, 1.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER2_FORWARD = BUILDER
+            .comment("TRP01 Jet Thruster (Mk2 thruster): top forward speed (blocks per tick)")
+            .defineInRange("thruster2_forward", 0.68, 0.05, 2.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER2_SIDE = BUILDER
+            .comment("TRP01 Jet Thruster: top sideways speed")
+            .defineInRange("thruster2_side", 0.60, 0.05, 2.0);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER2_VERTICAL = BUILDER
+            .comment("TRP01 Jet Thruster: top up / down speed")
+            .defineInRange("thruster2_vertical", 0.58, 0.05, 2.0);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_THRUSTER2_FE = BUILDER
+            .comment("TRP01 Jet Thruster: FE per tick while moving under power")
+            .defineInRange("thruster2_fe_per_tick", 14, 0, 10_000);
+    public static final ForgeConfigSpec.DoubleValue SUBMARINE_THRUSTER2_ACCEL = BUILDER
+            .comment("TRP01 Jet Thruster: acceleration in blocks per tick^2")
+            .defineInRange("thruster2_accel", 0.040, 0.005, 1.0);
     public static final ForgeConfigSpec.IntValue SUBMARINE_RATED_Y_BASE = BUILDER
             .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine without a Depth Hull takes crush damage")
             .defineInRange("rated_y_base", -300, -4096, 4096);
@@ -592,6 +622,12 @@ public class Config
     public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR_DOCK_RANGE = BUILDER
             .comment("Deep-Sea Sonar: submarine dock search radius in blocks")
             .defineInRange("sonar_dock_range", 32, 1, 128);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR2_RANGE = BUILDER
+            .comment("TRP01 Lure Sonar (Mk2 sonar): scan radius for sea life and currents (blocks)")
+            .defineInRange("sonar2_range", 48, 1, 64);
+    public static final ForgeConfigSpec.IntValue SUBMARINE_SONAR2_DOCK_RANGE = BUILDER
+            .comment("TRP01 Lure Sonar: reach of the submarine dock search (blocks)")
+            .defineInRange("sonar2_dock_range", 96, 1, 128);
 
     static {
         BUILDER.pop();

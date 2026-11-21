@@ -55,7 +55,7 @@ public final class ExcavatorEntry implements BuildEntry
     public ExcavatorEntry(ExcavatorTier tier)
     {
         this.tier = tier;
-        this.id = tier == ExcavatorTier.MK2 ? "abyssal_excavator_mk2" : "abyssal_excavator";
+        this.id = tier == ExcavatorTier.MK3 ? "abyssal_excavator_mk3" : tier == ExcavatorTier.MK2 ? "abyssal_excavator_mk2" : "abyssal_excavator";
     }
 
     public record Placement(BlockPos pos, Direction facing, Block block) implements BuildPlacement
@@ -103,7 +103,8 @@ public final class ExcavatorEntry implements BuildEntry
 
     private Block block()
     {
-        return (tier == ExcavatorTier.MK2 ? ModIndustry.ABYSSAL_EXCAVATOR_MK2 : ModIndustry.ABYSSAL_EXCAVATOR).get();
+        return (tier == ExcavatorTier.MK3 ? ModIndustry.ABYSSAL_EXCAVATOR_MK3 : tier == ExcavatorTier.MK2 ? ModIndustry.ABYSSAL_EXCAVATOR_MK2
+                : ModIndustry.ABYSSAL_EXCAVATOR).get();
     }
 
     @Override
@@ -128,13 +129,19 @@ public final class ExcavatorEntry implements BuildEntry
     @Override
     public ResourceLocation icon()
     {
-        return ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "textures/item/" + id + ".png");
+        // Mk3 has no icon of its own (TRP01): the Mk2 one
+        return ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "textures/item/" + (tier == ExcavatorTier.MK3 ? "abyssal_excavator_mk2" : id) + ".png");
     }
 
     /** the removed crafting recipes' materials (Mk2 = the Mk1 materials + its own ring, the Mk1 item is no longer a part) */
     @Override
     public List<ItemStack> cost()
     {
+        if (tier == ExcavatorTier.MK3)
+            // the Mk2 has no item to consume, so Mk3 = the Mk2 materials + the boss fangs, tungsten and hadal plating
+            return List.of(mod("trench_wyrm_fang", 6), mod("tungsten_ingot", 4), mod("hadal_plating", 2),
+                    mod("iron_plate", 4), mod("iron_gear", 2), mod("copper_wire", 4), mod("machine_frame", 2),
+                    mod("iron_rod", 2), mod("manganese_ingot", 1), mod("nickel_ingot", 2));
         if (tier == ExcavatorTier.MK2)
             return List.of(mod("iron_plate", 4), mod("iron_gear", 2), mod("copper_wire", 4), mod("machine_frame", 2),
                     mod("iron_rod", 2), mod("manganese_ingot", 1), mod("nickel_ingot", 2));

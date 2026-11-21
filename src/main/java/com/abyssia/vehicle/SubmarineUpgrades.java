@@ -49,6 +49,13 @@ public final class SubmarineUpgrades
     /** bits 5-6 of the synced mask hold the Depth Hull tier (0 none, 1..3 = Mk1..Mk3) */
     public static final int DEPTH_SHIFT = 5;
     public static final int DEPTH_TIERS = 3;
+    /**
+     * TRP01 Mk2 upgrades (boss materials): bits 7-10 = Mk2 of slot 0-3 (hull, battery, thruster, sonar). A Mk2 sets bit(i) as
+     * well, so "the slot is filled" checks keep working; Mk1 and Mk2 never share a slot.
+     */
+    public static final int ADV_SHIFT = 7;
+    public static final String[] ADV_IDS = {"submarine_upgrade_serpent_scale_hull", "submarine_upgrade_abyss_heart_cell",
+            "submarine_upgrade_jet_thruster", "submarine_upgrade_lure_sonar"};
 
     public enum Kind
     {
@@ -88,6 +95,23 @@ public final class SubmarineUpgrades
 
     private SubmarineUpgrades() {}
 
+    public static int bit(int slot)
+    {
+        return 1 << slot;
+    }
+
+    /** true for a TRP01 Mk2 upgrade stack */
+    public static boolean isAdvanced(ItemStack stack)
+    {
+        return stack.getItem() instanceof AdvancedItem;
+    }
+
+    /** the slot (0-3) of a mask holds the Mk2 upgrade */
+    public static boolean advanced(int mask, Kind kind)
+    {
+        return kind.ordinal() < ADV_IDS.length && (mask & bit(ADV_SHIFT + kind.ordinal())) != 0;
+    }
+
     /** the kind of an upgrade item, or null */
     @Nullable
     public static Kind kindOf(ItemStack stack)
@@ -106,7 +130,12 @@ public final class SubmarineUpgrades
     {
         int mask = 0;
         for (Kind kind : Kind.values())
-            if (!upgrades.getItem(kind.slot()).isEmpty()) mask |= kind.bit;
+        {
+            ItemStack stack = upgrades.getItem(kind.slot());
+            if (stack.isEmpty()) continue;
+            mask |= kind.bit;
+            if (kind.ordinal() < ADV_IDS.length && isAdvanced(stack)) mask |= bit(ADV_SHIFT + kind.ordinal());
+        }
         if (upgrades.getItem(Kind.DEPTH.slot()).getItem() instanceof DepthItem depth) mask |= depth.tier << DEPTH_SHIFT;
         return mask;
     }
@@ -144,7 +173,12 @@ public final class SubmarineUpgrades
     {
         int mask = 0;
         for (Kind kind : Kind.values())
-            if (tag.contains(kind.key)) mask |= kind.bit;
+        {
+            if (!tag.contains(kind.key)) continue;
+            mask |= kind.bit;
+            if (kind.ordinal() < ADV_IDS.length && tag.getString(kind.key).equals(Abyssia.MODID + ":" + ADV_IDS[kind.ordinal()]))
+                mask |= bit(ADV_SHIFT + kind.ordinal());
+        }
         if (tag.contains(Kind.DEPTH.key)) mask |= DepthItem.tierOf(tag.getString(Kind.DEPTH.key)) << DEPTH_SHIFT;
         return mask;
     }
@@ -153,6 +187,7 @@ public final class SubmarineUpgrades
 
     public static int capacity(int mask)
     {
+        if (advanced(mask, Kind.BATTERY)) return Math.max(Config.SUBMARINE_BATTERY_CAPACITY.get(), Config.SUBMARINE_CELL2_CAPACITY.get());
         return Kind.BATTERY.in(mask) ? Config.SUBMARINE_BATTERY_CAPACITY.get() : Submarine.capacity();
     }
 
@@ -176,38 +211,55 @@ public final class SubmarineUpgrades
 
     public static float maxDamage(int mask)
     {
+        if (advanced(mask, Kind.HULL)) return Config.SUBMARINE_HULL2_MAX_DAMAGE.get().floatValue();
         return Kind.HULL.in(mask) ? Config.SUBMARINE_HULL_MAX_DAMAGE.get().floatValue() : Submarine.MAX_DAMAGE;
+    }
+
+    /** TRP01: damage multiplier of the hull in the deep layer (1.0 without a hull upgrade) */
+    public static double hullDeepReduction(int mask)
+    {
+        if (advanced(mask, Kind.HULL)) return Config.SUBMARINE_HULL2_DEEP_REDUCTION.get();
+        return Kind.HULL.in(mask) ? Config.SUBMARINE_HULL_DEEP_REDUCTION.get() : 1.0;
     }
 
     private static double hull(int mask)
     {
+        if (advanced(mask, Kind.HULL)) return Config.SUBMARINE_HULL2_SPEED_MULT.get();
         return Kind.HULL.in(mask) ? Config.SUBMARINE_HULL_SPEED_MULT.get() : 1.0;
     }
 
     public static double forwardSpeed(int mask)
     {
-        return (Kind.THRUSTER.in(mask) ? Config.SUBMARINE_THRUSTER_FORWARD.get() : Config.SUBMARINE_MAX_SPEED.get()) * hull(mask);
+        double base = advanced(mask, Kind.THRUSTER) ? Config.SUBMARINE_THRUSTER2_FORWARD.get()
+                : Kind.THRUSTER.in(mask) ? Config.SUBMARINE_THRUSTER_FORWARD.get() : Config.SUBMARINE_MAX_SPEED.get();
+        return base * hull(mask);
     }
 
     /** reverse and sideways */
     public static double sideSpeed(int mask)
     {
-        return (Kind.THRUSTER.in(mask) ? Config.SUBMARINE_THRUSTER_SIDE.get() : Submarine.SIDE_SPEED) * hull(mask);
+        double base = advanced(mask, Kind.THRUSTER) ? Config.SUBMARINE_THRUSTER2_SIDE.get()
+                : Kind.THRUSTER.in(mask) ? Config.SUBMARINE_THRUSTER_SIDE.get() : Submarine.SIDE_SPEED;
+        return base * hull(mask);
     }
 
     public static double verticalSpeed(int mask)
     {
-        double v = (Kind.THRUSTER.in(mask) ? Config.SUBMARINE_THRUSTER_VERTICAL.get() : Submarine.VERTICAL_SPEED) * hull(mask);
+        double base = advanced(mask, Kind.THRUSTER) ? Config.SUBMARINE_THRUSTER2_VERTICAL.get()
+                : Kind.THRUSTER.in(mask) ? Config.SUBMARINE_THRUSTER_VERTICAL.get() : Submarine.VERTICAL_SPEED;
+        double v = base * hull(mask);
         return Kind.BATTERY.in(mask) ? v * Config.SUBMARINE_BATTERY_VERTICAL_MULT.get() : v;
     }
 
     public static double accel(int mask)
     {
+        if (advanced(mask, Kind.THRUSTER)) return Config.SUBMARINE_THRUSTER2_ACCEL.get();
         return Kind.THRUSTER.in(mask) ? Config.SUBMARINE_THRUSTER_ACCEL.get() : Submarine.ACCEL;
     }
 
     public static int thrustFe(int mask)
     {
+        if (advanced(mask, Kind.THRUSTER)) return Config.SUBMARINE_THRUSTER2_FE.get();
         return Kind.THRUSTER.in(mask) ? Config.SUBMARINE_THRUSTER_FE.get() : Config.SUBMARINE_THRUST_FE.get();
     }
 
@@ -231,6 +283,21 @@ public final class SubmarineUpgrades
             String base = "tooltip." + Abyssia.MODID + "." + (key == null ? kind.id : key.getPath());
             lines.add(Component.translatable(base + ".effect").withStyle(ChatFormatting.AQUA));
             lines.add(Component.translatable(base + ".cost").withStyle(ChatFormatting.RED));
+        }
+    }
+
+    /** TRP01 Mk2 upgrade: same behaviour as UpgradeItem, always shows the enchantment glint (1.20.1 has no glint-override component). */
+    public static class AdvancedItem extends UpgradeItem
+    {
+        public AdvancedItem(Kind kind, Properties properties)
+        {
+            super(kind, properties);
+        }
+
+        @Override
+        public boolean isFoil(ItemStack stack)
+        {
+            return true;
         }
     }
 

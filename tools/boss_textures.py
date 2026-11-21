@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Skin and glow textures of the four abyss bosses (BOSS03 smooth mesh models, client/boss/BossMesh).
+"""Skin and glow textures of the abyss bosses (BOSS03 smooth mesh models, client/boss/BossMesh).
 
-    python tools/boss_textures.py [--out DIR] [--only serpent|wyrm|kraken|mother] [--dry-run]
+    python tools/boss_textures.py [--out DIR] [--only angler|kraken|mother|serpent|wyrm] [--dry-run]
 
 Writes <name>.png (cutout skin) and <name>_glow.png (additive glow, black = none) for abyss_serpent, trench_wyrm,
-abyss_kraken, abyss_mother into src/main/resources/assets/abyssia/textures/entity/ (or --out). Deterministic. All four
-share one 256x256 layout, the regions of BossMesh.java (keep both in step):
+abyss_kraken, abyss_mother, abyss_angler into src/main/resources/assets/abyssia/textures/entity/ (or --out).
+Deterministic. All share one 256x256 layout, the regions of BossMesh.java (keep both in step):
 
     SKIN     0,0    128x64   body wrap: u around (right side at 0, back at 1/4, left at 1/2, belly at 3/4), v tiles per joint
     SKIN2    128,0  128x64   second wrap (jaw / arm / tentacle), same convention
@@ -13,6 +13,9 @@ share one 256x256 layout, the regions of BossMesh.java (keep both in step):
     MEMBRANE 128,64 64x64    fins and frills: u along the fin, v from the root (0) to the free edge (1), ragged alpha edge
     TOOTH 192,64  GLOW 208,64  EYE 224,64  FLESH 240,64  HORN 192,80   (16x16 swatches)
     INNER    0,128  128x64   mouth lining / under-bell wrap
+    FIN      128,128 128x64  angler only (AnglerMesh.FIN): dorsal / anal / caudal membrane, u along the body, v root to edge
+
+The angler's membranes (MEMBRANE, FIN) carry partial alpha: they are drawn translucent (RenderType.entityTranslucent).
 """
 import argparse
 import math
@@ -25,6 +28,7 @@ W = 256
 SKIN, SKIN2, HEAD, INNER = (0, 0, 128, 64), (128, 0, 128, 64), (0, 64, 128, 64), (0, 128, 128, 64)
 MEMBRANE = (128, 64, 64, 64)
 TOOTH, GLOW, EYE, FLESH, HORN = (192, 64, 16, 16), (208, 64, 16, 16), (224, 64, 16, 16), (240, 64, 16, 16), (192, 80, 16, 16)
+FIN = (128, 128, 128, 64)
 
 
 def rgb(h):
@@ -298,8 +302,148 @@ def mother():
     return s
 
 
+# ---------------------------------------------------------------- abyss angler: navy-black dragonfish, lures and ragged fins
+def angler():
+    s = Sheet(71)
+    hide = [rgb(c) for c in ("#03060d", "#071020", "#0c1830", "#122442", "#1a3256", "#26446c")]
+    belly = [rgb(c) for c in ("#0c0f22", "#141a34", "#1e2646", "#2a3458")]
+    violet = [rgb(c) for c in ("#160c34", "#241852", "#342672", "#463494", "#5c48b6", "#7c68d4")]
+    film = [rgb(c) for c in ("#1a1f5c", "#22337a", "#2a4a98", "#3466b4", "#4486cc", "#62a8e2")]
+    cyan, pale, dim = rgb("#4cc8ff"), rgb("#a8e8ff"), rgb("#1a6a9a")
+    lining, lining_hi = rgb("#140c30"), rgb("#251a58")
+
+    def spot(u, py, rows=((0.40, 0), (0.27, 8)), period=16, w=0.032, h=4.2):
+        """Photophore rows along the flanks: 2 = core, 1 = rim, 0 = none."""
+        b = back(u)
+        for bc, off in rows:
+            d = math.hypot((b - bc) / w, (((py + off) % period) - (period - 1) / 2) / h)
+            if d < 0.6:
+                return 2
+            if d < 1.0:
+                return 1
+        return 0
+
+    def skin(u, v, px, py):
+        b = back(u)
+        sp = spot(u, py)
+        if sp:
+            return pale if sp == 2 else dim
+        if b < 0.2:                                    # belly: dark violet-navy, finer scales
+            return ramp(belly, 0.2 + 0.5 * scales(u, v, px, py, 6) + 0.2 * (b / 0.2), px, py)
+        t = 0.10 + 0.45 * scales(u, v, px, py) + 0.25 * (1 - b)
+        if b > 0.92:
+            t *= 0.5                                   # dark ridge under the dorsal fin
+        if hashf(px, py, 17) > 0.985 and 0.45 < b < 0.85:
+            t += 0.3                                   # scattered pale scale tips
+        return ramp(hide, t, px, py)
+
+    def skin_glow(u, v, px, py):
+        sp = spot(u, py)
+        if sp:
+            return cyan if sp == 2 else rgb("#0e3c5a")
+        return None
+
+    def ridges(v, n=60):
+        return 0.5 + 0.5 * math.sin(v * n)
+
+    def head(u, v, px, py):                            # skull: v runs from the gill (0) to the snout (1)
+        b = back(u)
+        if b < 0.2:                                    # palate: blue-violet, ridged across
+            return ramp(violet, 0.2 + 0.35 * ridges(v) + 0.25 * (1 - b / 0.2), px, py)
+        if b < 0.25:
+            return ramp(violet, 0.05, px, py)          # lip line
+        t = 0.10 + 0.40 * scales(u, v, px, py, 6) + 0.2 * (1 - b)
+        if v < 0.05:
+            t = 0.02                                   # gill opening
+        elif v < 0.12 and abs(((u * 24) % 1) - 0.5) < 0.12:
+            t += 0.15                                  # operculum ribs
+        if 0.33 < b < 0.39 and 0.35 < v < 0.8 and py % 5 == 2:
+            return dim                                 # suborbital photophores
+        return ramp(hide, t, px, py)
+
+    def head_glow(u, v, px, py):
+        b = back(u)
+        if b < 0.2:
+            return lining_hi if ridges(v) > 0.75 else lining
+        if 0.33 < b < 0.39 and 0.35 < v < 0.8 and py % 5 == 2:
+            return rgb("#2a8ac0")
+        return None
+
+    def jaw(u, v, px, py):
+        b = back(u)
+        if b > 0.8:                                    # floor of the mouth
+            return ramp(violet, 0.2 + 0.35 * ridges(v, 50) + 0.25 * ((b - 0.8) / 0.2), px, py)
+        if b > 0.74:
+            return ramp(violet, 0.05, px, py)          # gum
+        if b < 0.3:
+            if abs(b - 0.2) < 0.02 and py % 6 < 2:
+                return dim                             # photophores under the jaw line
+            return ramp(belly, 0.25 + 0.45 * scales(u, v, px, py, 6), px, py)
+        return ramp(hide, 0.12 + 0.42 * scales(u, v, px, py, 6) + 0.15 * (1 - b), px, py)
+
+    def jaw_glow(u, v, px, py):
+        b = back(u)
+        if b > 0.8:
+            return lining_hi if ridges(v, 50) > 0.75 else lining
+        if b < 0.3 and abs(b - 0.2) < 0.02 and py % 6 < 2:
+            return rgb("#2a8ac0")
+        return None
+
+    def throat(u, v, px, py):
+        r = 0.5 + 0.5 * math.sin(v * 36 + 1.5 * math.sin(u * math.tau * 3))
+        return ramp(violet, 0.15 + 0.5 * r + 0.15 * hashf(px // 2, py // 2, 5), px, py)
+
+    def membrane_fn(rays, edge_lo, seed, along_v_holes=True):
+        """Ragged translucent film: rays along v, torn free edge, holes; partial alpha (drawn translucent)."""
+        def fn(u, v, px, py):
+            col = int(u * rays * 4)
+            ragged = edge_lo + (0.95 - edge_lo) * hashf(col, seed) ** 0.6
+            if hashf(col // 2, seed + 1) > 0.82:
+                ragged -= 0.25                         # deep tear between two rays
+            if v > ragged:
+                return None
+            ray = abs(((u * rays) % 1.0) - 0.5) > 0.42
+            hx, hy = (px // 3, py // 9) if along_v_holes else (px // 6, py // 4)
+            if not ray and v > 0.18 and hashf(hx, hy, seed + 2) > 0.86:
+                return None                            # holes
+            t = 0.25 + 0.55 * v + 0.12 * hashf(px // 2, py // 3, seed + 3)
+            if v > ragged - 0.05:
+                return ramp(film, 0.95, px, py) + (210,)   # brighter frayed rim
+            if ray:
+                return ramp(film, t - 0.2, px, py, 0.03) + (235,)
+            return ramp(film, t, px, py) + (int(120 + 70 * (1 - v)),)
+        return fn
+
+    s.fill(SKIN, skin, skin_glow)
+    s.fill(HEAD, head, head_glow)
+    s.fill(SKIN2, jaw, jaw_glow)
+    s.fill(INNER, throat, lambda u, v, px, py: lining_hi if math.sin(v * 36 + 1.5 * math.sin(u * math.tau * 3)) > 0.6 else lining)
+    s.fill(MEMBRANE, membrane_fn(4, 0.62, 31))
+    s.fill(FIN, membrane_fn(8, 0.66, 47))
+    swatches(s, [rgb(c) for c in ("#8a8068", "#b8ae92", "#e0d8bc", "#f6f1e0")], pale,
+             [rgb(c) for c in ("#0a0f24", "#141c3c", "#202a58")], [rgb(c) for c in ("#2a2620", "#5c5444", "#9a8e72", "#d4c8a8")])
+    # lure bulbs: pale skin, the glow brightening from the neck (v = 0) to the round end
+    bulb = [rgb(c) for c in ("#2a8ac8", "#4cc8ff", "#8cdcff", "#c8f2ff")]
+    s.fill(GLOW, lambda u, v, px, py: ramp(bulb, 0.5 + 0.5 * v, px, py, 0.03),
+           lambda u, v, px, py: ramp(bulb, 0.15 + 0.85 * min(1.0, v * 1.6), px, py, 0.03))
+    iris = [rgb(c) for c in ("#1a5a8c", "#3aa8e0", "#7cd8ff", "#d4f6ff")]
+
+    def eye_fn(u, v, px, py):
+        d = math.hypot(u - 0.5, v - 0.5)
+        if d > 0.5:
+            return None
+        if d < 0.13:
+            return rgb("#03070e")                      # pupil
+        if d > 0.44:
+            return rgb("#0a1a2c")                      # dark rim
+        return ramp(iris, 1.0 - (d - 0.13) * 2.4, px, py, 0.04)
+    s.fill(EYE, eye_fn, lambda u, v, px, py: (ramp(iris, 1.0 - (math.hypot(u - 0.5, v - 0.5) - 0.13) * 2.4, px, py, 0.04)
+                                              if 0.13 <= math.hypot(u - 0.5, v - 0.5) <= 0.44 else None))
+    return s
+
+
 BOSSES = {"serpent": ("abyss_serpent", serpent), "wyrm": ("trench_wyrm", wyrm), "kraken": ("abyss_kraken", kraken),
-          "mother": ("abyss_mother", mother)}
+          "mother": ("abyss_mother", mother), "angler": ("abyss_angler", angler)}
 
 
 def main():

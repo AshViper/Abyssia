@@ -1,0 +1,813 @@
+{
+ "entity": "abyss_mother",
+ "generator": "tools/boss/mother_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/abyss_mother.geo.json",
+ "animation": "assets/abyssia/animations/entity/abyss_mother.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/abyss_mother_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/abyss_mother_geo_glow.png",
+ "glow_note": "光らない画素は (0,0,0,0)。RenderType.eyes（加算）でも GeckoLib の自動発光層でも使える",
+ "texture_size": [
+  256,
+  256
+ ],
+ "model_scale": 4.0,
+ "units": "geo の 1 単位 = 1/16 ブロック。描画で MODEL_SCALE 倍するので、ゲーム内では MODEL_SCALE/16 ブロック（4 単位 = 1 ブロック）",
+ "bell": {
+  "bone": "bell",
+  "pivot": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "pivot_is": "AbyssMother.headPos()（傘の中心。旧描画の bell space の原点）",
+  "rest_extent_units": {
+   "apex_y": 32.0,
+   "rim_y": -25.6,
+   "rim_radius": 67.6,
+   "max_radius": 72.8,
+   "heart_centre_y": -16.0,
+   "heart_radius": 13.6
+  },
+  "columns": 24,
+  "petals": 12,
+  "note": "傘の向きは AbyssMother.anchor() と同じ軸に揃えてある（anchor は yaw で回らない）。bell の回転は 0 のまま置くか、回すなら触手の付け根の位置（anchor）も同じだけ回っている前提で描く"
+ },
+ "tentacles": {
+  "count": 12,
+  "joints": 28,
+  "segments_per_tentacle": 27,
+  "bone": "tent_T_SS。T = 1..12 は Java の tentacle(T-1)、SS = 01..27 は関節 SS-1（付け根側）〜関節 SS（先端側）",
+  "segment_length_units": 24.0,
+  "segment_length_blocks": 6.0,
+  "root": "関節 0 = AbyssMother.anchor(T-1) - headPos() = 描画空間で (15 cos a, -3, 15 sin a) ブロック、a = (T-1) * 30 度",
+  "rest_pose": "付け根からまっすぐ下（-Y）。関節 j は geo の (root.x, root.y - segment_length_units * j, root.z)",
+  "segment_pivot": "tent_T_SS の pivot = (root.x, root.y - segment_length_units * (SS - 0.5), root.z)（体節の中心）",
+  "radius_blocks": [
+   0.6,
+   0.14
+  ],
+  "section": "一辺 1.6r の四角い棒 2 本を 45 度ずらして重ねた星形（八角に見える）",
+  "sleeve": "SS = 01..12 は先端側の関節に一回り太い数珠（袖）を被せる。それより先は、太い前の体節が関節を越えて次の体節の差し込みに被さる（細る先が下に入る）",
+  "roots": [
+   {
+    "T": 1,
+    "java_index": 0,
+    "render_angle_deg": 0.0,
+    "root_geo_units": [
+     -60.0,
+     -12.0,
+     0.0
+    ],
+    "rest_outward_render": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "T": 2,
+    "java_index": 1,
+    "render_angle_deg": 30.0,
+    "root_geo_units": [
+     -51.96,
+     -12.0,
+     30.0
+    ],
+    "rest_outward_render": [
+     0.866,
+     0.0,
+     0.5
+    ]
+   },
+   {
+    "T": 3,
+    "java_index": 2,
+    "render_angle_deg": 60.0,
+    "root_geo_units": [
+     -30.0,
+     -12.0,
+     51.96
+    ],
+    "rest_outward_render": [
+     0.5,
+     0.0,
+     0.866
+    ]
+   },
+   {
+    "T": 4,
+    "java_index": 3,
+    "render_angle_deg": 90.0,
+    "root_geo_units": [
+     0.0,
+     -12.0,
+     60.0
+    ],
+    "rest_outward_render": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   {
+    "T": 5,
+    "java_index": 4,
+    "render_angle_deg": 120.0,
+    "root_geo_units": [
+     30.0,
+     -12.0,
+     51.96
+    ],
+    "rest_outward_render": [
+     -0.5,
+     0.0,
+     0.866
+    ]
+   },
+   {
+    "T": 6,
+    "java_index": 5,
+    "render_angle_deg": 150.0,
+    "root_geo_units": [
+     51.96,
+     -12.0,
+     30.0
+    ],
+    "rest_outward_render": [
+     -0.866,
+     0.0,
+     0.5
+    ]
+   },
+   {
+    "T": 7,
+    "java_index": 6,
+    "render_angle_deg": 180.0,
+    "root_geo_units": [
+     60.0,
+     -12.0,
+     0.0
+    ],
+    "rest_outward_render": [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "T": 8,
+    "java_index": 7,
+    "render_angle_deg": 210.0,
+    "root_geo_units": [
+     51.96,
+     -12.0,
+     -30.0
+    ],
+    "rest_outward_render": [
+     -0.866,
+     0.0,
+     -0.5
+    ]
+   },
+   {
+    "T": 9,
+    "java_index": 8,
+    "render_angle_deg": 240.0,
+    "root_geo_units": [
+     30.0,
+     -12.0,
+     -51.96
+    ],
+    "rest_outward_render": [
+     -0.5,
+     0.0,
+     -0.866
+    ]
+   },
+   {
+    "T": 10,
+    "java_index": 9,
+    "render_angle_deg": 270.0,
+    "root_geo_units": [
+     0.0,
+     -12.0,
+     -60.0
+    ],
+    "rest_outward_render": [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   },
+   {
+    "T": 11,
+    "java_index": 10,
+    "render_angle_deg": 300.0,
+    "root_geo_units": [
+     -30.0,
+     -12.0,
+     -51.96
+    ],
+    "rest_outward_render": [
+     0.5,
+     0.0,
+     -0.866
+    ]
+   },
+   {
+    "T": 12,
+    "java_index": 11,
+    "render_angle_deg": 330.0,
+    "root_geo_units": [
+     -51.96,
+     -12.0,
+     -30.0
+    ],
+    "rest_outward_render": [
+     0.866,
+     0.0,
+     -0.5
+    ]
+   }
+  ]
+ },
+ "oral_arms": {
+  "count": 5,
+  "segments_per_arm": 9,
+  "bone": "oral_O_SS。O = 1..5 は旧描画の arm (O-1)、SS = 01..09 は点 SS-1〜SS",
+  "segment_length_units": 13.5,
+  "segment_length_blocks": 3.375,
+  "root": "描画空間で (2.2 cos a, -6, 2.2 sin a) ブロック、a = (O-1) * 72 度 + 0.3 rad（旧描画と同じ）",
+  "rest_pose": "付け根からまっすぐ下（-Y）。点 j は geo の (root.x, root.y - segment_length_units * j, root.z)",
+  "segment_pivot": "oral_O_SS の pivot = (root.x, root.y - segment_length_units * (SS - 0.5), root.z)",
+  "frills": "芯の両側に厚み 0 のフリル 2 枚。外向き（rest_outward）から左右へ 40 度、体節ごとに ±14 度ずつ互い違い（襞）",
+  "points_note": "Java が作る口腕の点は segment_length_blocks（3.375）おきに置く。間隔が違うと継ぎ目が開く（または潜る）。旧描画の点（30 ブロックを 9 等分）とほぼ同じ長さ",
+  "roots": [
+   {
+    "O": 1,
+    "render_angle_deg": 17.189,
+    "root_geo_units": [
+     -8.41,
+     -24.0,
+     2.6
+    ],
+    "rest_outward_render": [
+     0.9553,
+     0.0,
+     0.2955
+    ]
+   },
+   {
+    "O": 2,
+    "render_angle_deg": 89.189,
+    "root_geo_units": [
+     -0.12,
+     -24.0,
+     8.8
+    ],
+    "rest_outward_render": [
+     0.0142,
+     0.0,
+     0.9999
+    ]
+   },
+   {
+    "O": 3,
+    "render_angle_deg": 161.189,
+    "root_geo_units": [
+     8.33,
+     -24.0,
+     2.84
+    ],
+    "rest_outward_render": [
+     -0.9466,
+     0.0,
+     0.3225
+    ]
+   },
+   {
+    "O": 4,
+    "render_angle_deg": 233.189,
+    "root_geo_units": [
+     5.27,
+     -24.0,
+     -7.05
+    ],
+    "rest_outward_render": [
+     -0.5992,
+     0.0,
+     -0.8006
+    ]
+   },
+   {
+    "O": 5,
+    "render_angle_deg": 305.189,
+    "root_geo_units": [
+     -5.07,
+     -24.0,
+     -7.19
+    ],
+    "rest_outward_render": [
+     0.5763,
+     0.0,
+     -0.8173
+    ]
+   }
+  ]
+ },
+ "segment_axis": "tent_* と oral_* の体節は局所 +Y が付け根側（関節 SS-1）を向く。静止姿勢では真下に垂れ、+Y は真上。回転 0 が静止姿勢",
+ "java_orientation": [
+  "描画空間（X 反転後）で、d = unit(J[SS-1] - J[SS])（先端側の関節から付け根側へ）、o = その触手・口腕の rest_outward（水平の単位ベクトル、roots の表）",
+  "p は付け根から順に運ぶ: p = o から始め、体節ごとに p = unit(p - d (p·d))（前の体節の p を今の d に直交化。ねじれも急な裏返りも出ない）",
+  "回転行列 R = [p, d, p×d] · [o, (0,1,0), o×(0,1,0)]^T（どちらも列に並べた正規直交基底。静止姿勢の向きを今の向きへ運ぶ）",
+  "setRotX(atan2(R[2][1], R[2][2]))、setRotY(-asin(R[2][0]))、setRotZ(atan2(R[1][0], R[0][0]))（R = Rz・Ry・Rx の分解。geckolib_conventions と同じ回転の約束）",
+  "位置: T = 体節の中点 (J[SS-1] + J[SS]) / 2 を、傘の中心からの描画空間の geo 単位（ブロック × 16 / MODEL_SCALE = × 4）で。setPosX(-T.x - pivot.x)、setPosY(T.y - pivot.y)、setPosZ(T.z - pivot.z)。pivot は segment_pivot（geo）",
+  "検算: tools/boss/mother_model/preview.py の bent はこの式（同じ写し）で骨を置いて描いている"
+ ],
+ "translucent_bones": {
+  "bones": "bell_petal_1..12、bell_skirt_1..12、bell_frill_1..12（とその箱だけ）",
+  "alpha": "画素の alpha で持つ。傘 158〜220（縁と放射管が濃い）、下傘 140〜230（生殖腺が濃い）、フリル 190〜230、台形の外と厚みの面は 0",
+  "render_type": "1 パスで描くなら RenderType.entityTranslucent（不透明の骨の画素は alpha 255 か 0）。傘を cull 付き（entityTranslucentCull）で描くと板の表裏が重ならず、旧描画（alpha 0.62 の1枚）に近い濃さになる。no-cull だと外の面と内の面（厚み 0.4 単位）が二重になって濃く見える"
+ },
+ "opaque_bones": "bell（口柄・管・付け根の球）、heart_core、tent_*、oral_*（alpha は 255 か切り抜きの 0）",
+ "fullbright_bones": [
+  "heart_core"
+ ],
+ "glow_parts": "傘のかすかな発光・放射管・縁の灯り（氷色）・下傘の生殖腺・触手の帯・数珠・付け根の球・管・フリルの斑点・心臓の全面",
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 2.5,
+   "bones": [
+    "bell_frill_1",
+    "bell_frill_10",
+    "bell_frill_11",
+    "bell_frill_12",
+    "bell_frill_2",
+    "bell_frill_3",
+    "bell_frill_4",
+    "bell_frill_5",
+    "bell_frill_6",
+    "bell_frill_7",
+    "bell_frill_8",
+    "bell_frill_9",
+    "bell_skirt_1",
+    "bell_skirt_10",
+    "bell_skirt_11",
+    "bell_skirt_12",
+    "bell_skirt_2",
+    "bell_skirt_3",
+    "bell_skirt_4",
+    "bell_skirt_5",
+    "bell_skirt_6",
+    "bell_skirt_7",
+    "bell_skirt_8",
+    "bell_skirt_9",
+    "heart_core"
+   ]
+  },
+  "bloom": {
+   "loop": "hold_on_last_frame",
+   "length": 3.0,
+   "bones": [
+    "bell_petal_1",
+    "bell_petal_10",
+    "bell_petal_11",
+    "bell_petal_12",
+    "bell_petal_2",
+    "bell_petal_3",
+    "bell_petal_4",
+    "bell_petal_5",
+    "bell_petal_6",
+    "bell_petal_7",
+    "bell_petal_8",
+    "bell_petal_9",
+    "heart"
+   ]
+  }
+ },
+ "animation_notes": [
+  "idle と bloom は別のコントローラで同時に流す。触る骨が分かれている（idle = bell_skirt_* / bell_frill_* / heart_core、bloom = bell_petal_* / heart）",
+  "idle の長さ 2.5 秒 = AbyssMother.beat の周期（50 tick）。0 秒が縮み始め（beat の山の少し前）",
+  "bloom は hold_on_last_frame。AbyssMother.bloom() が真になったら流し、3 秒で花弁 38 度・心臓 1.35 倍まで開いて止まる（第 3 段階は戻らない。読み込み直後も bloom() なら流す）"
+ ],
+ "animation_signs": {
+  "bell_petal_k": "花弁の接線（radial × up）まわりの回転。正で外へ倒れて開く。キーは軸まわりの回転を (rx, ry, rz) に解いた値",
+  "bell_skirt_k": "同じ軸。負で内へ縮む（拍動）",
+  "bell_frill_k": "同じ軸。正で外へ反る",
+  "heart / heart_core": "scale だけ"
+ },
+ "bone_rule": "bell・tent_T_SS・oral_O_SS は root 直下。毎フレーム位置と回転を上書きする。tent / oral の体節は関節 SS-1 と SS の中点へ、局所 +Y が関節 SS から SS-1 を向くように置く（java_orientation）。bell は headPos() へ。子（bell_petal_*, bell_skirt_*, bell_frill_*, heart, heart_core）は animation に任せる",
+ "geckolib_conventions": [
+  "描画空間 = geo の X を反転した空間（GeckoLib 4.9.2 BakedModelFactory）。z と y はそのまま",
+  "GeoBone.setPosX/Y/Z は静止姿勢からのずれで、単位は geo と同じ 1/16（MODEL_SCALE を掛ける前）。RenderUtil.translateMatrixToBone が translate(-posX/16, posY/16, posZ/16) なので、geo の座標で書けば pos = 目標の pivot - 静止姿勢の pivot（X も符号そのまま）。描画空間の座標 T で書くなら posX = -T.x - pivot.x, posY = T.y - pivot.y, posZ = T.z - pivot.z",
+  "GeoBone.setRotX/Y/Z はラジアンで描画空間の値。geo / animation の度数 (rx, ry, rz) とは (-rx, -ry, +rz) の関係。頂点へは X→Y→Z の順に効く（行列は Rz・Ry・Rx）",
+  "描画空間で局所 -Z（体節の前）を単位ベクトル d（関節 k から k-1 へ）に向けるには setRotX(asin(d.y))、setRotY(atan2(-d.x, -d.z))、setRotZ(0)。体節と head は静止姿勢の回転が 0 なので、この値をそのまま入れればよい",
+  "子の Bone（bell_petal_*, bell_skirt_*, bell_frill_*, heart, heart_core）は animation が回すので、Java からは触らない（触るなら animation の値を上書きしてしまう）"
+ ],
+ "geckolib_conventions_note": "上の 5 項は大海蛇（serpent_model/contract.json）と同じ約束。4 項目の -Z の式は大海蛇の体節用で、母の体節は +Y が付け根側なので java_orientation の式を使う",
+ "render_notes": [
+  "旧描画の心臓の光輪（billboard）と、発光パルスの予告の縁の光の粒はモデルに入れていない（Java 側に残す）",
+  "触手・口腕の骨は root 直下なので bell を動かしても付いて来ない。毎フレーム全部を置く",
+  "第 3 段階の開花では、花弁が頂点を軸に外へ倒れ、放射管と環状管（bell の箱）が傘の骨のように残る。触手は環状管の付け根の球から垂れるので、付け根（anchor）が動かなくても宙に浮かない"
+ ],
+ "cube_count": 1359,
+ "cube_breakdown": {
+  "bell_translucent": 288,
+  "bell_organs": 144,
+  "tentacles": 792,
+  "oral_arms": 135
+ },
+ "bones": [
+  {
+   "name": "bell",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "role": "傘の本体。pivot = AbyssMother.headPos()（傘の中心）。口柄・放射管・環状管・触手の付け根の球（不透明）"
+  },
+  {
+   "name": "heart",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    -16.0,
+    0.0
+   ],
+   "role": "開花で 1.35 倍（bloom の scale）。中身は無い"
+  },
+  {
+   "name": "heart_core",
+   "parent": "heart",
+   "pivot": [
+    0.0,
+    -16.0,
+    0.0
+   ],
+   "role": "心臓の球（不透明・フルブライト・全面が発光）。idle の scale で二度打つ"
+  },
+  {
+   "name": "bell_petal_1",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 1（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_1 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_1",
+   "parent": "bell_petal_1",
+   "pivot": [
+    -68.0,
+    2.0,
+    0.0
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_1",
+   "parent": "bell_skirt_1",
+   "pivot": [
+    -67.6,
+    -25.6,
+    0.0
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_2",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 2（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_2 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_2",
+   "parent": "bell_petal_2",
+   "pivot": [
+    -58.89,
+    2.0,
+    34.0
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_2",
+   "parent": "bell_skirt_2",
+   "pivot": [
+    -58.54,
+    -25.6,
+    33.8
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_3",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 3（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_3 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_3",
+   "parent": "bell_petal_3",
+   "pivot": [
+    -34.0,
+    2.0,
+    58.89
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_3",
+   "parent": "bell_skirt_3",
+   "pivot": [
+    -33.8,
+    -25.6,
+    58.54
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_4",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 4（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_4 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_4",
+   "parent": "bell_petal_4",
+   "pivot": [
+    0.0,
+    2.0,
+    68.0
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_4",
+   "parent": "bell_skirt_4",
+   "pivot": [
+    0.0,
+    -25.6,
+    67.6
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_5",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 5（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_5 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_5",
+   "parent": "bell_petal_5",
+   "pivot": [
+    34.0,
+    2.0,
+    58.89
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_5",
+   "parent": "bell_skirt_5",
+   "pivot": [
+    33.8,
+    -25.6,
+    58.54
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_6",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 6（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_6 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_6",
+   "parent": "bell_petal_6",
+   "pivot": [
+    58.89,
+    2.0,
+    34.0
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_6",
+   "parent": "bell_skirt_6",
+   "pivot": [
+    58.54,
+    -25.6,
+    33.8
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_7",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 7（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_7 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_7",
+   "parent": "bell_petal_7",
+   "pivot": [
+    68.0,
+    2.0,
+    0.0
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_7",
+   "parent": "bell_skirt_7",
+   "pivot": [
+    67.6,
+    -25.6,
+    0.0
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_8",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 8（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_8 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_8",
+   "parent": "bell_petal_8",
+   "pivot": [
+    58.89,
+    2.0,
+    -34.0
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_8",
+   "parent": "bell_skirt_8",
+   "pivot": [
+    58.54,
+    -25.6,
+    -33.8
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_9",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 9（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_9 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_9",
+   "parent": "bell_petal_9",
+   "pivot": [
+    34.0,
+    2.0,
+    -58.89
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_9",
+   "parent": "bell_skirt_9",
+   "pivot": [
+    33.8,
+    -25.6,
+    -58.54
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_10",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 10（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_10 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_10",
+   "parent": "bell_petal_10",
+   "pivot": [
+    0.0,
+    2.0,
+    -68.0
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_10",
+   "parent": "bell_skirt_10",
+   "pivot": [
+    0.0,
+    -25.6,
+    -67.6
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_11",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 11（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_11 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_11",
+   "parent": "bell_petal_11",
+   "pivot": [
+    -34.0,
+    2.0,
+    -58.89
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_11",
+   "parent": "bell_skirt_11",
+   "pivot": [
+    -33.8,
+    -25.6,
+    -58.54
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  },
+  {
+   "name": "bell_petal_12",
+   "parent": "bell",
+   "pivot": [
+    0.0,
+    32.0,
+    0.0
+   ],
+   "role": "花弁 12（2 列）。pivot は頂点。外面の区間 0-3 と下傘の区間 0-2（半透明）。中心は tent_12 の付け根の真上"
+  },
+  {
+   "name": "bell_skirt_12",
+   "parent": "bell_petal_12",
+   "pivot": [
+    -58.89,
+    2.0,
+    -34.0
+   ],
+   "role": "裾。pivot は肩（外面の (0.5, 17)）。外面の区間 4-6 と下傘の縁の区間（半透明）"
+  },
+  {
+   "name": "bell_frill_12",
+   "parent": "bell_skirt_12",
+   "pivot": [
+    -58.54,
+    -25.6,
+    -33.8
+   ],
+   "role": "縁のフリル 2 枚。pivot は縁（半透明）"
+  }
+ ]
+}

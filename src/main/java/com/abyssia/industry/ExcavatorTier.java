@@ -9,7 +9,9 @@ public enum ExcavatorTier
 {
     //   tier  energyCapacity                  energyReceive                 FE/t  cycle ore  radius
     MK1(1, MachineKind.MACHINE_CAPACITY, MachineKind.MACHINE_RECEIVE, 20, 40, 1, 32),
-    MK2(2, MachineKind.MACHINE_CAPACITY, MachineKind.MACHINE_RECEIVE, 40, 30, 2, 48);
+    MK2(2, MachineKind.MACHINE_CAPACITY, MachineKind.MACHINE_RECEIVE, 40, 30, 2, 48),
+    // TRP01: boss-material upgrade of Mk2 (reuses the Mk2 look); mines everything Mk2 can
+    MK3(3, MachineKind.MACHINE_CAPACITY, MachineKind.MACHINE_RECEIVE, 60, 24, 3, 64);
 
     public final int tier;
     public final int energyCapacity;

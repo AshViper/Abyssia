@@ -19,6 +19,8 @@ EXTRA = {
     "intro": [{"type": "item", "id": "intro.book", "chapter": "intro", "item": "abyssia:abyss_guide_book",
                "description": "guide.abyssia.intro.book.desc", "obtaining": "guide.abyssia.intro.book.obtaining",
                "recipe": "abyssia:abyss_guide_book"}],
+    "creatures": [{"type": "text", "id": "creatures.boss_materials", "chapter": "creatures",
+                   "title": "guide.abyssia.creatures.boss_materials.title", "text": "guide.abyssia.creatures.boss_materials.text"}],
     "waypoints": [{"type": "text", "id": "waypoints.deep_maps", "chapter": "waypoints",
                    "title": "guide.abyssia.waypoints.deep_maps.title", "text": "guide.abyssia.waypoints.deep_maps.text"}],
     "encyclopedia": [{"type": "recipe", "id": "encyclopedia.guide_recipe", "chapter": "encyclopedia",
@@ -29,6 +31,24 @@ EXTRA_LANG = {
     "guide.abyssia.waypoints.deep_maps.title": ("深海の地図", "Deep Sea Maps"),
     "guide.abyssia.waypoints.deep_maps.text": ("深海層を探索するときは「深海の白地図」を使いましょう。深海層で使用すると、地上では見ることのできない海底の地形が地図に記録されます。水深や海底の高低差も陰影で確認できます。深海への入口を探すときは「深海への海図」が便利です。使用すると、近くの深海への入口を探して地図に示します。入口が見つからない場合、海図は消費されません。白地図は技術「深海図」、海図は技術「深淵図」を研究すると作れます。",
                                                "Use a Deep Sea Map when exploring the deep sea. When used in the deep sea layer, it records the seafloor that cannot be seen on ordinary maps. Water depth and changes in seafloor elevation are shown through map shading. When looking for a way into the deep sea, use an Abyss Chart. It searches for a nearby entrance and marks its location on the map. If no entrance can be found, the chart is not consumed. The map is unlocked by the Deep Sea Map technology and the chart by the Abyss Chart technology."),
+    "guide.abyssia.creatures.boss_materials.title": ("ボス素材の使い道", "Uses of Boss Materials"),
+    "guide.abyssia.creatures.boss_materials.text": (
+        "深淵のボスが落とす素材で、既存の装備の上位品が作れます。研究「ボス素材の応用」(深度船体 Mk3・深層採掘の次) が必要です。\n"
+        "・大海蛇鱗の船体: 大海蛇の鱗 6 + 耐圧船体 + 深海合金インゴット 2\n"
+        "・噴流推進器: クラーケンの嘴 2 + クラーケンの墨袋 6 + 高出力推進器\n"
+        "・深淵心臓セル: 深淵の核 1 + 母の傘ゲル 4 + 大容量バッテリー\n"
+        "・誘光ソナー: アングラーの提灯 6 + 深海ソナー + 発光結晶 2\n"
+        "・心臓タンク: 深淵の核 1 + 母の傘ゲル 4 + 耐圧ダイブタンク\n"
+        "・深海採掘機 Mk3: 大ワームの牙 6 + タングステンインゴット 4 + 超深海殻板 2 + 採掘機 Mk2 の材料 (ハビタット建設ツール)\n"
+        "・牙のドリル: 大ワームの牙 3 + 深海ドリル + 水圧結晶の欠片 2",
+        "Abyss boss materials make upgraded versions of existing gear. Needs the research \"Boss Material Applications\" (after Depth Mk3 and Deep Excavation).\n"
+        "- Serpent-Scale Hull: 6 Abyssal Serpent Scales + Pressure Hull + 2 Abyssal Alloy Ingots\n"
+        "- Jet Thruster: 2 Kraken Beaks + 6 Kraken Ink Sacs + Maneuver Thruster\n"
+        "- Abyss Heart Cell: 1 Abyss Heart + 4 Mother Bell Gel + High-Capacity Battery\n"
+        "- Lure Sonar: 6 Angler Lures + Deep-Sea Sonar + 2 Luminous Crystals\n"
+        "- Heart Tank: 1 Abyss Heart + 4 Mother Bell Gel + Pressure Dive Tank\n"
+        "- Abyssal Excavator Mk3: 6 Trench Wyrm Fangs + 4 Tungsten Ingots + 2 Hadal Plating + the Mk2 materials (Habitat Constructor)\n"
+        "- Fang Drill: 3 Trench Wyrm Fangs + Abyssal Drill + 2 Pressure Crystal Shards"),
     "guide.abyssia.ui.contents": ("目次", "Contents"),
     "guide.abyssia.ui.obtaining": ("入手方法", "Obtaining"),
     "guide.abyssia.ui.prev": ("前のページ", "Previous page"),

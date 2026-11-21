@@ -91,6 +91,7 @@ minecraft {
                 // Dev-only: devtest/BossShot joins the local test server and stages the boss scenes (BOSS01).
                 // `gradlew runClient -PbossShot=1` (parent-based runs would also inherit autoshot and its quickPlay args).
                 property 'abyssia.bossshot', project.findProperty('bossShot') ?: '1'
+                if (project.findProperty('bossOldMesh') == 'true') property 'abyssia.boss.oldmesh', 'true'   // old procedural bodies instead of GeckoLib
                 args '--quickPlayMultiplayer', 'localhost:25641'
             }
             else if (project.hasProperty('prcGuiShot'))
@@ -112,6 +113,8 @@ minecraft {
         server {
             // Dev-only: `gradlew runServer -Pprc01Test=1` runs devtest/Prc01Test (PRC01 checks, log lines "PRC01 ...") and halts.
             if (project.hasProperty('prc01Test')) property 'abyssia.prc01test', '1'
+            // Dev-only: `gradlew runServer -Ptrp01Test=1` runs devtest/Trp01Test (TRP01 boss-material gear checks, log lines "TRP01 ...") and halts.
+            if (project.hasProperty('trp01Test')) property 'abyssia.trp01test', '1'
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
         }
@@ -145,6 +148,12 @@ repositories {
     flatDir {
         dir 'libs'
     }
+    // GeckoLib (boss animations)
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content { includeGroup 'software.bernie.geckolib' }
+    }
     // JEI (optional integration, see com.abyssia.compat.jei)
     maven {
         name = 'BlameJared'
@@ -160,6 +169,9 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // GeckoLib
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

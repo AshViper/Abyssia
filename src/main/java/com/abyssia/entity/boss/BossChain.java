@@ -249,6 +249,34 @@ public final class BossChain
         relFresh = true;
     }
 
+    /**
+     * Client LOD only: fills every joint (current and previous alike) from sparse samples with a Catmull-Rom curve.
+     * Sample k is joint {@code idx[k]} (ascending, first 0, last n-1), its x y z at {@code p[off + 3k]}.
+     */
+    public void fillSampled(int[] idx, double[] p, int off)
+    {
+        int m = idx.length;
+        if (m < 2 || idx[0] != 0 || idx[m - 1] != n - 1) return;
+        int s = 0;
+        for (int i = 0; i < n; i++)
+        {
+            while (s < m - 2 && i > idx[s + 1]) s++;
+            double t = (i - idx[s]) / (double) (idx[s + 1] - idx[s]);
+            double t2 = t * t, t3 = t2 * t;
+            int a = Math.max(s - 1, 0), d = Math.min(s + 2, m - 1);
+            double[] out = new double[3];
+            for (int c = 0; c < 3; c++)
+            {
+                double p0 = p[off + 3 * a + c], p1 = p[off + 3 * s + c], p2 = p[off + 3 * (s + 1) + c], p3 = p[off + 3 * d + c];
+                out[c] = 0.5 * (2 * p1 + (p2 - p0) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (3 * p1 - p0 - 3 * p2 + p3) * t3);
+            }
+            x[i] = ox[i] = out[0];
+            y[i] = oy[i] = out[1];
+            z[i] = oz[i] = out[2];
+        }
+        init = true;
+    }
+
     /** Squared distance from a point to the nearest segment of the chain. */
     public double distanceSqr(double px, double py, double pz)
     {

@@ -46,8 +46,28 @@ import java.util.UUID;
  * | BLOOM (phase 3: the bell opens, exposing the core x2, movement stops, pulse every 8 s).
  * Hitboxes: 4 bell parts (the last is the core under the bell) + 3 per tentacle (40).
  */
-public class AbyssMother extends AbyssBoss
+public class AbyssMother extends AbyssBoss implements software.bernie.geckolib.animatable.GeoEntity
 {
+    /** GeckoLib (near view only): idle (beat) and bloom (stage 3) animations; the renderer places the tentacle and oral arm bones. */
+    private final software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache geoCache = software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache(this);
+
+    @Override
+    public void registerControllers(software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar controllers)
+    {
+        controllers.add(new software.bernie.geckolib.core.animation.AnimationController<AbyssMother>(this, "main", 0,
+                state -> state.setAndContinue(software.bernie.geckolib.core.animation.RawAnimation.begin().thenLoop("idle"))));
+        // bloom (stage 3): the petals fall open and hold
+        controllers.add(new software.bernie.geckolib.core.animation.AnimationController<AbyssMother>(this, "bloom", 0,
+                state -> bloom() ? state.setAndContinue(software.bernie.geckolib.core.animation.RawAnimation.begin().thenPlayAndHold("bloom"))
+                        : software.bernie.geckolib.core.object.PlayState.STOP));
+    }
+
+    @Override
+    public software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache getAnimatableInstanceCache()
+    {
+        return geoCache;
+    }
+
     public static final int TENTACLES = 12;
     public static final int JOINTS = 28;
     public static final double SPACING = 6.0;

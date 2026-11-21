@@ -92,6 +92,9 @@ public final class ModEntities
     public static final RegistryObject<EntityType<com.abyssia.entity.boss.TrenchWyrm>> TRENCH_WYRM = ENTITIES.register("trench_wyrm",
             () -> EntityType.Builder.of(com.abyssia.entity.boss.TrenchWyrm::new, MobCategory.MONSTER).sized(16.5F, 16.5F).fireImmune()
                     .clientTrackingRange(16).updateInterval(1).build("trench_wyrm"));
+    public static final RegistryObject<EntityType<com.abyssia.entity.boss.AbyssAngler>> ABYSS_ANGLER = ENTITIES.register("abyss_angler",
+            () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssAngler::new, MobCategory.MONSTER).sized(30.0F, 42.0F).fireImmune()
+                    .clientTrackingRange(16).updateInterval(1).build("abyss_angler"));
     public static final RegistryObject<EntityType<com.abyssia.entity.boss.AbyssKraken>> ABYSS_KRAKEN = ENTITIES.register("abyss_kraken",
             () -> EntityType.Builder.of(com.abyssia.entity.boss.AbyssKraken::new, MobCategory.MONSTER).sized(6.0F, 6.0F).fireImmune()
                     .clientTrackingRange(16).updateInterval(1).build("abyss_kraken"));
@@ -128,6 +131,7 @@ public final class ModEntities
         event.put(TRENCH_WYRM.get(), com.abyssia.entity.boss.TrenchWyrm.createAttributes().build());
         event.put(ABYSS_KRAKEN.get(), com.abyssia.entity.boss.AbyssKraken.createAttributes().build());
         event.put(ABYSS_MOTHER.get(), com.abyssia.entity.boss.AbyssMother.createAttributes().build());
+        event.put(ABYSS_ANGLER.get(), com.abyssia.entity.boss.AbyssAngler.createAttributes().build());
         event.put(ABYSS_MOTHER_SPAWN.get(), com.abyssia.entity.boss.AbyssMotherSpawn.createAttributes().build());
         event.put(ANGLERFISH.get(), Anglerfish.createAttributes().build());
         event.put(GIANT_ISOPOD.get(), GiantIsopod.createAttributes().build());

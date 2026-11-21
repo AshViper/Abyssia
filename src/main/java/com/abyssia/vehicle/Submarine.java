@@ -72,7 +72,7 @@ public class Submarine extends Entity
     private static final EntityDataAccessor<Boolean> DATA_LIGHTS = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_DOCK = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     /** SUB03 installed upgrades, {@link SubmarineUpgrades.Kind#bit} mask (the pilot's client reads it for the speeds) */
-    private static final EntityDataAccessor<Byte> DATA_UPGRADES = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Integer> DATA_UPGRADES = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.INT);
 
     /** break threshold without the Pressure Hull ({@link #maxDamage()} with upgrades) */
     public static final float MAX_DAMAGE = 40.0f;
@@ -147,6 +147,9 @@ public class Submarine extends Entity
 
     public boolean has(SubmarineUpgrades.Kind kind) { return kind.in(upgradeMask()); }
 
+    /** TRP01: the slot (0-3) holds the Mk2 upgrade */
+    public boolean isAdvanced(int slot) { return (upgradeMask() & SubmarineUpgrades.bit(SubmarineUpgrades.ADV_SHIFT + slot)) != 0; }
+
     public int maxEnergy() { return SubmarineUpgrades.capacity(upgradeMask()); }
 
     public float maxDamage() { return SubmarineUpgrades.maxDamage(upgradeMask()); }
@@ -160,7 +163,7 @@ public class Submarine extends Entity
         entityData.define(DATA_DAMAGE, 0.0f);
         entityData.define(DATA_LIGHTS, false);
         entityData.define(DATA_DOCK, Optional.empty());
-        entityData.define(DATA_UPGRADES, (byte) 0);
+        entityData.define(DATA_UPGRADES, 0);
     }
 
     public int getEnergy() { return entityData.get(DATA_ENERGY); }
@@ -841,7 +844,7 @@ public class Submarine extends Entity
         {
             super.setChanged();
             if (level().isClientSide) return;
-            entityData.set(DATA_UPGRADES, (byte) SubmarineUpgrades.maskOf(this));
+            entityData.set(DATA_UPGRADES, SubmarineUpgrades.maskOf(this));
             // battery taken out: anything above the plain capacity is lost
             setEnergy(getEnergy());
         }
@@ -905,7 +908,7 @@ public class Submarine extends Entity
         float damage = amount * 10.0f;
         // SUB03 Pressure Hull: less damage in the deep layer (rounded up, so a hit never becomes 0)
         if (has(SubmarineUpgrades.Kind.HULL) && getY() <= DeepLayer.TOP_Y)
-            damage = (float) Math.ceil(damage * Config.SUBMARINE_HULL_DEEP_REDUCTION.get());
+            damage = (float) Math.ceil(damage * SubmarineUpgrades.hullDeepReduction(upgradeMask()));
         setDamage(getDamage() + damage);
         markHurt();
         gameEvent(GameEvent.ENTITY_DAMAGE, attacker);

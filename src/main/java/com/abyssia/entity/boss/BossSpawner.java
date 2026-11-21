@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 public final class BossSpawner
 {
     /** Boss names by {@link BossContent} KIND index; also the {@code boss_spawn/<name>} tag names. */
-    public static final String[] NAMES = {"abyss_serpent", "trench_wyrm", "abyss_kraken", "abyss_mother"};
+    public static final String[] NAMES = {"abyss_serpent", "trench_wyrm", "abyss_kraken", "abyss_mother", "abyss_angler"};
     private static final String COOLDOWN_KEY = "abyssia_boss_cd";
     private static final int INTERVAL = 200, COOLDOWN = 36000, ARENA_RADIUS = 110, ATTEMPTS = 24;
     private static final double CHANCE = 0.05, OPEN_RATIO = 0.85;
@@ -118,6 +118,7 @@ public final class BossSpawner
     {
         AbyssBoss boss = kind == BossContent.KIND_WYRM ? ModEntities.TRENCH_WYRM.get().create(level)
                 : kind == BossContent.KIND_MOTHER ? ModEntities.ABYSS_MOTHER.get().create(level)
+                : kind == BossContent.KIND_ANGLER ? ModEntities.ABYSS_ANGLER.get().create(level)
                 : kind == BossContent.KIND_KRAKEN ? ModEntities.ABYSS_KRAKEN.get().create(level) : ModEntities.ABYSS_SERPENT.get().create(level);
         if (boss == null) return null;
         boolean wyrm = kind == BossContent.KIND_WYRM;

@@ -42,12 +42,26 @@ public final class SubmarineSonar
 
     private SubmarineSonar() {}
 
+    /** TRP01: sea-life scan radius of an upgrade mask (Lure Sonar = Mk2 of the utility slot) */
+    public static int range(int mask)
+    {
+        return SubmarineUpgrades.advanced(mask, SubmarineUpgrades.Kind.UTILITY)
+                ? Config.SUBMARINE_SONAR2_RANGE.get() : Config.SUBMARINE_SONAR_RANGE.get();
+    }
+
+    /** TRP01: dock search reach of an upgrade mask */
+    public static int dockRange(int mask)
+    {
+        return SubmarineUpgrades.advanced(mask, SubmarineUpgrades.Kind.UTILITY)
+                ? Config.SUBMARINE_SONAR2_DOCK_RANGE.get() : Config.SUBMARINE_SONAR_DOCK_RANGE.get();
+    }
+
     /** scans around {@code sub}, updates {@code seen} (UUIDs detected last scan) and returns the HUD suffix */
     public static Component scan(Submarine sub, Set<UUID> seen)
     {
         ServerLevel level = (ServerLevel) sub.level();
         Vec3 c = sub.getBoundingBox().getCenter();
-        double range = Config.SUBMARINE_SONAR_RANGE.get();
+        double range = range(sub.upgradeMask());
         List<LivingEntity> found = level.getEntitiesOfClass(LivingEntity.class, sub.getBoundingBox().inflate(range),
                 e -> e.isAlive() && !(e instanceof Player) && aquatic(e) && e.distanceToSqr(c) <= range * range);
         Set<UUID> now = new HashSet<>();
@@ -85,7 +99,7 @@ public final class SubmarineSonar
 
         if (sub.getDock().isEmpty())
         {
-            BlockPos dock = nearestDock(level, c, Config.SUBMARINE_SONAR_DOCK_RANGE.get());
+            BlockPos dock = nearestDock(level, c, dockRange(sub.upgradeMask()));
             if (dock != null)
             {
                 double dx = dock.getX() + 0.5 - c.x, dz = dock.getZ() + 0.5 - c.z;

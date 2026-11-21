@@ -27,8 +27,10 @@ public final class BossContent
     public static final RegistryObject<Item> MOTHER_BELL_GEL = ITEMS.register("mother_bell_gel", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> ABYSS_HEART = ITEMS.register("abyss_heart", () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
 
+    public static final RegistryObject<Item> ANGLER_LURE = ITEMS.register("angler_lure", () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+
     /** Boss kinds, in the order of the {@code boss_spawn/<name>} biome tags. */
-    public static final int KIND_SERPENT = 0, KIND_WYRM = 1, KIND_KRAKEN = 2, KIND_MOTHER = 3, KINDS = 4;
+    public static final int KIND_SERPENT = 0, KIND_WYRM = 1, KIND_KRAKEN = 2, KIND_MOTHER = 3, KIND_ANGLER = 4, KINDS = 5;
 
     private BossContent() {}
 
@@ -42,5 +44,6 @@ public final class BossContent
         AbyssiaTab.MATERIALS.items().add(KRAKEN_INK_SAC);
         AbyssiaTab.MATERIALS.items().add(MOTHER_BELL_GEL);
         AbyssiaTab.MATERIALS.items().add(ABYSS_HEART);
+        AbyssiaTab.MATERIALS.items().add(ANGLER_LURE);
     }
 }

@@ -1,0 +1,27 @@
+{
+  "id": "abyssia:technology/abyss_trophies",
+  "type": "recipe",
+  "title": "technology.abyssia.abyss_trophies",
+  "tier": "mk2",
+  "depth_band": "E",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/fauna_mariana_snailfish",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/submarine_depth_mk3",
+    "abyssia:technology/deep_excavation"
+  ],
+  "unlocks": [
+    "abyssia:recipe/submarine_upgrade_serpent_scale_hull",
+    "abyssia:recipe/submarine_upgrade_jet_thruster",
+    "abyssia:recipe/submarine_upgrade_abyss_heart_cell",
+    "abyssia:recipe/submarine_upgrade_lure_sonar",
+    "abyssia:recipe/heart_tank",
+    "abyssia:recipe/fang_drill",
+    "abyssia:building/abyssal_excavator_mk3"
+  ],
+  "icon": "abyssia:abyss_heart"
+}

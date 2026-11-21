@@ -54,6 +54,7 @@ final class BossMesh
     private PoseStack.Pose last;
     private int light;
     private float cr = 1, cg = 1, cb = 1, ca = 1;
+    private boolean outward;
     private final float[] sec = new float[4];
 
     BossMesh(VertexConsumer vc, PoseStack pose, int light)
@@ -79,6 +80,16 @@ final class BossMesh
     BossMesh color(float r, float g, float b, float a)
     {
         cr = r; cg = g; cb = b; ca = a;
+        return this;
+    }
+
+    /**
+     * Tube (and loft) quads wind inward by default, which only a no-cull type ignores; on, they are emitted in reverse
+     * order so their front faces look out (for a back-face-culled pass such as {@code RenderType.eyes}). Default off.
+     */
+    BossMesh outward(boolean on)
+    {
+        outward = on;
         return this;
     }
 
@@ -276,6 +287,14 @@ final class BossMesh
                 {
                     int a = j * 6, b = a + 6;
                     float u0 = tu(uv, j / (float) sides), u1 = tu(uv, (j + 1) / (float) sides);
+                    if (outward)
+                    {
+                        v(prev[a], prev[a + 1], prev[a + 2], u0, tv0, prev[a + 3], prev[a + 4], prev[a + 5], l0);
+                        v(prev[b], prev[b + 1], prev[b + 2], u1, tv0, prev[b + 3], prev[b + 4], prev[b + 5], l0);
+                        v(cur[b], cur[b + 1], cur[b + 2], u1, tv1, cur[b + 3], cur[b + 4], cur[b + 5], l1);
+                        v(cur[a], cur[a + 1], cur[a + 2], u0, tv1, cur[a + 3], cur[a + 4], cur[a + 5], l1);
+                        continue;
+                    }
                     v(prev[a], prev[a + 1], prev[a + 2], u0, tv0, prev[a + 3], prev[a + 4], prev[a + 5], l0);
                     v(cur[a], cur[a + 1], cur[a + 2], u0, tv1, cur[a + 3], cur[a + 4], cur[a + 5], l1);
                     v(cur[b], cur[b + 1], cur[b + 2], u1, tv1, cur[b + 3], cur[b + 4], cur[b + 5], l1);

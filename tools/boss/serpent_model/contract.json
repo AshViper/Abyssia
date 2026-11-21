@@ -1,0 +1,782 @@
+{
+ "entity": "abyss_serpent",
+ "generator": "tools/boss/serpent_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/abyss_serpent.geo.json",
+ "animation": "assets/abyssia/animations/entity/abyss_serpent.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/abyss_serpent_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/abyss_serpent_geo_glow.png",
+ "glow_note": "光らない画素は (0,0,0,0)。RenderType.eyes（加算）でも GeckoLib の自動発光層でも使える",
+ "texture_size": [
+  256,
+  256
+ ],
+ "model_scale": 4.0,
+ "units": "geo の 1 単位 = 1/16 ブロック。描画で MODEL_SCALE 倍するので、ゲーム内では MODEL_SCALE/16 ブロック",
+ "segment_length_units": 56.0,
+ "segment_length_blocks": 14.0,
+ "body_radius_units": 36.0,
+ "joints": 29,
+ "segments": 28,
+ "rest_pose": "頭から尾まで一直線。関節 j は geo の (0, 0, segment_length_units * j)。頭は -Z を向く。体の芯は y = 0",
+ "head_pivot": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "segment_pivot": "seg_k の pivot = (0, 0, segment_length_units * (k - 0.5))",
+ "jaw_hinge": [
+  0.0,
+  -6.0,
+  12.0
+ ],
+ "rest_head_extent_units": {
+  "snout_z": -129.0,
+  "collar_z": 18.0,
+  "half_width": 47.0
+ },
+ "rest_body_section": {
+  "half_width": 0.88,
+  "up": 1.08,
+  "down": 0.95,
+  "note": "体の半径 × この比。半径は関節 0 で body_radius_units、尾へ AbyssSerpentRenderer.bodyScale と同じ式で細る"
+ },
+ "animation_signs": {
+  "jaw": "rotation の x が正で口が開く（idle は 0→6 度）",
+  "gill_l / gill_r": "y が左は正・右は負で外へ開く",
+  "fin_l* / fin_r*": "左右で y と z の符号が逆（鏡写し）",
+  "seg_02_fin..seg_24_fin": "背びれ。pivot は付け根、z で左右に揺れる",
+  "seg_25_fin..seg_28_fin": "尾びれ（上葉と下葉）。pivot は体節の前端の芯、y で左右に煽る"
+ },
+ "bone_rule": "head と seg_01..seg_28 は root 直下。毎フレーム位置と回転を上書きする。seg_k は関節 k-1 と k の中点へ、局所 -Z が関節 k から関節 k-1 を向くように置く。head は関節 0 へ、-Z が関節 1 から関節 0 の向き（さらに先）を向くように置く。子（jaw, teeth_*, horns, gill_*, fin_*, seg_XX_fin）は animation に任せる",
+ "geckolib_conventions": [
+  "描画空間 = geo の X を反転した空間（GeckoLib 4.9.2 BakedModelFactory）。z と y はそのまま",
+  "GeoBone.setPosX/Y/Z は静止姿勢からのずれで、単位は geo と同じ 1/16（MODEL_SCALE を掛ける前）。RenderUtil.translateMatrixToBone が translate(-posX/16, posY/16, posZ/16) なので、geo の座標で書けば pos = 目標の pivot - 静止姿勢の pivot（X も符号そのまま）。描画空間の座標 T で書くなら posX = -T.x - pivot.x, posY = T.y - pivot.y, posZ = T.z - pivot.z",
+  "GeoBone.setRotX/Y/Z はラジアンで描画空間の値。geo / animation の度数 (rx, ry, rz) とは (-rx, -ry, +rz) の関係。頂点へは X→Y→Z の順に効く（行列は Rz・Ry・Rx）",
+  "描画空間で局所 -Z（体節の前）を単位ベクトル d（関節 k から k-1 へ）に向けるには setRotX(asin(d.y))、setRotY(atan2(-d.x, -d.z))、setRotZ(0)。体節と head は静止姿勢の回転が 0 なので、この値をそのまま入れればよい",
+  "子の Bone（jaw, gill_*, fin_*, seg_XX_fin）は animation が回すので、Java からは触らない（触るなら animation の値を上書きしてしまう）"
+ ],
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 4.0,
+   "bones": [
+    "fin_l1",
+    "fin_l2",
+    "fin_r1",
+    "fin_r2",
+    "gill_l",
+    "gill_r",
+    "jaw",
+    "seg_02_fin",
+    "seg_03_fin",
+    "seg_04_fin",
+    "seg_05_fin",
+    "seg_06_fin",
+    "seg_07_fin",
+    "seg_08_fin",
+    "seg_09_fin",
+    "seg_10_fin",
+    "seg_11_fin",
+    "seg_12_fin",
+    "seg_13_fin",
+    "seg_14_fin",
+    "seg_15_fin",
+    "seg_16_fin",
+    "seg_17_fin",
+    "seg_18_fin",
+    "seg_19_fin",
+    "seg_20_fin",
+    "seg_21_fin",
+    "seg_22_fin",
+    "seg_23_fin",
+    "seg_24_fin",
+    "seg_25_fin",
+    "seg_26_fin",
+    "seg_27_fin",
+    "seg_28_fin"
+   ]
+  }
+ },
+ "cube_count": 1328,
+ "bones": [
+  {
+   "name": "head",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "role": "頭。関節 0 に pivot。-Z が鼻先"
+  },
+  {
+   "name": "jaw",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    -6.0,
+    12.0
+   ]
+  },
+  {
+   "name": "teeth_lower",
+   "parent": "jaw",
+   "pivot": [
+    0.0,
+    -6.0,
+    12.0
+   ]
+  },
+  {
+   "name": "teeth_upper",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "horns",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "gill_l",
+   "parent": "head",
+   "pivot": [
+    44.37,
+    9.0,
+    -8.0
+   ]
+  },
+  {
+   "name": "gill_r",
+   "parent": "head",
+   "pivot": [
+    -44.37,
+    9.0,
+    -8.0
+   ]
+  },
+  {
+   "name": "fin_l1",
+   "parent": "head",
+   "pivot": [
+    33.0,
+    -14.0,
+    10.0
+   ]
+  },
+  {
+   "name": "fin_r1",
+   "parent": "head",
+   "pivot": [
+    -33.0,
+    -14.0,
+    10.0
+   ]
+  },
+  {
+   "name": "fin_l2",
+   "parent": "head",
+   "pivot": [
+    22.0,
+    -30.0,
+    16.0
+   ]
+  },
+  {
+   "name": "fin_r2",
+   "parent": "head",
+   "pivot": [
+    -22.0,
+    -30.0,
+    16.0
+   ]
+  },
+  {
+   "name": "seg_01",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    28.0
+   ],
+   "role": "体節 1: 関節 0（前）〜関節 1（後ろ）。pivot は中心",
+   "joint_front": 0,
+   "joint_back": 1
+  },
+  {
+   "name": "seg_02",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    84.0
+   ],
+   "role": "体節 2: 関節 1（前）〜関節 2（後ろ）。pivot は中心",
+   "joint_front": 1,
+   "joint_back": 2
+  },
+  {
+   "name": "seg_02_fin",
+   "parent": "seg_02",
+   "pivot": [
+    0.0,
+    32.48,
+    66.08
+   ]
+  },
+  {
+   "name": "seg_03",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    140.0
+   ],
+   "role": "体節 3: 関節 2（前）〜関節 3（後ろ）。pivot は中心",
+   "joint_front": 2,
+   "joint_back": 3
+  },
+  {
+   "name": "seg_03_fin",
+   "parent": "seg_03",
+   "pivot": [
+    0.0,
+    31.89,
+    122.08
+   ]
+  },
+  {
+   "name": "seg_04",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    196.0
+   ],
+   "role": "体節 4: 関節 3（前）〜関節 4（後ろ）。pivot は中心",
+   "joint_front": 3,
+   "joint_back": 4
+  },
+  {
+   "name": "seg_04_fin",
+   "parent": "seg_04",
+   "pivot": [
+    0.0,
+    31.3,
+    178.08
+   ]
+  },
+  {
+   "name": "seg_05",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    252.0
+   ],
+   "role": "体節 5: 関節 4（前）〜関節 5（後ろ）。pivot は中心",
+   "joint_front": 4,
+   "joint_back": 5
+  },
+  {
+   "name": "seg_05_fin",
+   "parent": "seg_05",
+   "pivot": [
+    0.0,
+    30.71,
+    234.08
+   ]
+  },
+  {
+   "name": "seg_06",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    308.0
+   ],
+   "role": "体節 6: 関節 5（前）〜関節 6（後ろ）。pivot は中心",
+   "joint_front": 5,
+   "joint_back": 6
+  },
+  {
+   "name": "seg_06_fin",
+   "parent": "seg_06",
+   "pivot": [
+    0.0,
+    30.13,
+    290.08
+   ]
+  },
+  {
+   "name": "seg_07",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    364.0
+   ],
+   "role": "体節 7: 関節 6（前）〜関節 7（後ろ）。pivot は中心",
+   "joint_front": 6,
+   "joint_back": 7
+  },
+  {
+   "name": "seg_07_fin",
+   "parent": "seg_07",
+   "pivot": [
+    0.0,
+    29.54,
+    346.08
+   ]
+  },
+  {
+   "name": "seg_08",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    420.0
+   ],
+   "role": "体節 8: 関節 7（前）〜関節 8（後ろ）。pivot は中心",
+   "joint_front": 7,
+   "joint_back": 8
+  },
+  {
+   "name": "seg_08_fin",
+   "parent": "seg_08",
+   "pivot": [
+    0.0,
+    28.95,
+    402.08
+   ]
+  },
+  {
+   "name": "seg_09",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    476.0
+   ],
+   "role": "体節 9: 関節 8（前）〜関節 9（後ろ）。pivot は中心",
+   "joint_front": 8,
+   "joint_back": 9
+  },
+  {
+   "name": "seg_09_fin",
+   "parent": "seg_09",
+   "pivot": [
+    0.0,
+    28.36,
+    458.08
+   ]
+  },
+  {
+   "name": "seg_10",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    532.0
+   ],
+   "role": "体節 10: 関節 9（前）〜関節 10（後ろ）。pivot は中心",
+   "joint_front": 9,
+   "joint_back": 10
+  },
+  {
+   "name": "seg_10_fin",
+   "parent": "seg_10",
+   "pivot": [
+    0.0,
+    27.78,
+    514.08
+   ]
+  },
+  {
+   "name": "seg_11",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    588.0
+   ],
+   "role": "体節 11: 関節 10（前）〜関節 11（後ろ）。pivot は中心",
+   "joint_front": 10,
+   "joint_back": 11
+  },
+  {
+   "name": "seg_11_fin",
+   "parent": "seg_11",
+   "pivot": [
+    0.0,
+    27.19,
+    570.08
+   ]
+  },
+  {
+   "name": "seg_12",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    644.0
+   ],
+   "role": "体節 12: 関節 11（前）〜関節 12（後ろ）。pivot は中心",
+   "joint_front": 11,
+   "joint_back": 12
+  },
+  {
+   "name": "seg_12_fin",
+   "parent": "seg_12",
+   "pivot": [
+    0.0,
+    26.61,
+    626.08
+   ]
+  },
+  {
+   "name": "seg_13",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    700.0
+   ],
+   "role": "体節 13: 関節 12（前）〜関節 13（後ろ）。pivot は中心",
+   "joint_front": 12,
+   "joint_back": 13
+  },
+  {
+   "name": "seg_13_fin",
+   "parent": "seg_13",
+   "pivot": [
+    0.0,
+    26.02,
+    682.08
+   ]
+  },
+  {
+   "name": "seg_14",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    756.0
+   ],
+   "role": "体節 14: 関節 13（前）〜関節 14（後ろ）。pivot は中心",
+   "joint_front": 13,
+   "joint_back": 14
+  },
+  {
+   "name": "seg_14_fin",
+   "parent": "seg_14",
+   "pivot": [
+    0.0,
+    25.44,
+    738.08
+   ]
+  },
+  {
+   "name": "seg_15",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    812.0
+   ],
+   "role": "体節 15: 関節 14（前）〜関節 15（後ろ）。pivot は中心",
+   "joint_front": 14,
+   "joint_back": 15
+  },
+  {
+   "name": "seg_15_fin",
+   "parent": "seg_15",
+   "pivot": [
+    0.0,
+    24.85,
+    794.08
+   ]
+  },
+  {
+   "name": "seg_16",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    868.0
+   ],
+   "role": "体節 16: 関節 15（前）〜関節 16（後ろ）。pivot は中心",
+   "joint_front": 15,
+   "joint_back": 16
+  },
+  {
+   "name": "seg_16_fin",
+   "parent": "seg_16",
+   "pivot": [
+    0.0,
+    24.27,
+    850.08
+   ]
+  },
+  {
+   "name": "seg_17",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    924.0
+   ],
+   "role": "体節 17: 関節 16（前）〜関節 17（後ろ）。pivot は中心",
+   "joint_front": 16,
+   "joint_back": 17
+  },
+  {
+   "name": "seg_17_fin",
+   "parent": "seg_17",
+   "pivot": [
+    0.0,
+    23.68,
+    906.08
+   ]
+  },
+  {
+   "name": "seg_18",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    980.0
+   ],
+   "role": "体節 18: 関節 17（前）〜関節 18（後ろ）。pivot は中心",
+   "joint_front": 17,
+   "joint_back": 18
+  },
+  {
+   "name": "seg_18_fin",
+   "parent": "seg_18",
+   "pivot": [
+    0.0,
+    23.1,
+    962.08
+   ]
+  },
+  {
+   "name": "seg_19",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1036.0
+   ],
+   "role": "体節 19: 関節 18（前）〜関節 19（後ろ）。pivot は中心",
+   "joint_front": 18,
+   "joint_back": 19
+  },
+  {
+   "name": "seg_19_fin",
+   "parent": "seg_19",
+   "pivot": [
+    0.0,
+    22.52,
+    1018.08
+   ]
+  },
+  {
+   "name": "seg_20",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1092.0
+   ],
+   "role": "体節 20: 関節 19（前）〜関節 20（後ろ）。pivot は中心",
+   "joint_front": 19,
+   "joint_back": 20
+  },
+  {
+   "name": "seg_20_fin",
+   "parent": "seg_20",
+   "pivot": [
+    0.0,
+    21.94,
+    1074.08
+   ]
+  },
+  {
+   "name": "seg_21",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1148.0
+   ],
+   "role": "体節 21: 関節 20（前）〜関節 21（後ろ）。pivot は中心",
+   "joint_front": 20,
+   "joint_back": 21
+  },
+  {
+   "name": "seg_21_fin",
+   "parent": "seg_21",
+   "pivot": [
+    0.0,
+    21.36,
+    1130.08
+   ]
+  },
+  {
+   "name": "seg_22",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1204.0
+   ],
+   "role": "体節 22: 関節 21（前）〜関節 22（後ろ）。pivot は中心",
+   "joint_front": 21,
+   "joint_back": 22
+  },
+  {
+   "name": "seg_22_fin",
+   "parent": "seg_22",
+   "pivot": [
+    0.0,
+    20.77,
+    1186.08
+   ]
+  },
+  {
+   "name": "seg_23",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1260.0
+   ],
+   "role": "体節 23: 関節 22（前）〜関節 23（後ろ）。pivot は中心",
+   "joint_front": 22,
+   "joint_back": 23
+  },
+  {
+   "name": "seg_23_fin",
+   "parent": "seg_23",
+   "pivot": [
+    0.0,
+    20.19,
+    1242.08
+   ]
+  },
+  {
+   "name": "seg_24",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1316.0
+   ],
+   "role": "体節 24: 関節 23（前）〜関節 24（後ろ）。pivot は中心",
+   "joint_front": 23,
+   "joint_back": 24
+  },
+  {
+   "name": "seg_24_fin",
+   "parent": "seg_24",
+   "pivot": [
+    0.0,
+    19.61,
+    1298.08
+   ]
+  },
+  {
+   "name": "seg_25",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1372.0
+   ],
+   "role": "体節 25: 関節 24（前）〜関節 25（後ろ）。pivot は中心",
+   "joint_front": 24,
+   "joint_back": 25
+  },
+  {
+   "name": "seg_25_fin",
+   "parent": "seg_25",
+   "pivot": [
+    0.0,
+    0.0,
+    1344.0
+   ]
+  },
+  {
+   "name": "seg_26",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1428.0
+   ],
+   "role": "体節 26: 関節 25（前）〜関節 26（後ろ）。pivot は中心",
+   "joint_front": 25,
+   "joint_back": 26
+  },
+  {
+   "name": "seg_26_fin",
+   "parent": "seg_26",
+   "pivot": [
+    0.0,
+    0.0,
+    1400.0
+   ]
+  },
+  {
+   "name": "seg_27",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1484.0
+   ],
+   "role": "体節 27: 関節 26（前）〜関節 27（後ろ）。pivot は中心",
+   "joint_front": 26,
+   "joint_back": 27
+  },
+  {
+   "name": "seg_27_fin",
+   "parent": "seg_27",
+   "pivot": [
+    0.0,
+    0.0,
+    1456.0
+   ]
+  },
+  {
+   "name": "seg_28",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    1540.0
+   ],
+   "role": "体節 28: 関節 27（前）〜関節 28（後ろ）。pivot は中心",
+   "joint_front": 27,
+   "joint_back": 28
+  },
+  {
+   "name": "seg_28_fin",
+   "parent": "seg_28",
+   "pivot": [
+    0.0,
+    0.0,
+    1512.0
+   ]
+  }
+ ]
+}

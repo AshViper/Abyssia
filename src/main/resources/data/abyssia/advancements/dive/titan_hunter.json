@@ -1,0 +1,90 @@
+{
+  "parent": "abyssia:dive/titan_slayer",
+  "display": {
+    "icon": {
+      "item": "abyssia:trench_wyrm_fang"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.titan_hunter.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.titan_hunter.description"
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "abyss_serpent": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:abyss_serpent"
+            }
+          }
+        ]
+      }
+    },
+    "trench_wyrm": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:trench_wyrm"
+            }
+          }
+        ]
+      }
+    },
+    "abyss_kraken": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:abyss_kraken"
+            }
+          }
+        ]
+      }
+    },
+    "abyss_mother": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:abyss_mother"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "abyss_serpent"
+    ],
+    [
+      "trench_wyrm"
+    ],
+    [
+      "abyss_kraken"
+    ],
+    [
+      "abyss_mother"
+    ]
+  ],
+  "rewards": {
+    "experience": 300
+  }
+}

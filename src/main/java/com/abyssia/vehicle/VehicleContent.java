@@ -63,6 +63,9 @@ public final class VehicleContent
     /** SUB06 Depth Hull Mk1..Mk3 (index = tier - 1) */
     public static final List<RegistryObject<Item>> DEPTH_ITEMS = new java.util.ArrayList<>();
 
+    /** TRP01 Mk2 upgrade items of slot 0-3 (index = slot, {@link SubmarineUpgrades#ADV_IDS}) */
+    public static final List<RegistryObject<Item>> ADV_UPGRADE_ITEMS = new java.util.ArrayList<>();
+
     private VehicleContent() {}
 
     public static void register(IEventBus bus)
@@ -93,6 +96,14 @@ public final class VehicleContent
             if (kind == SubmarineUpgrades.Kind.DEPTH) continue;   // the three Depth Hull items above
             RegistryObject<Item> item = items.register(kind.id, () -> new SubmarineUpgrades.UpgradeItem(kind, new Item.Properties().stacksTo(1)));
             UPGRADE_ITEMS.put(kind, item);
+            tab.add(item);
+        }
+        for (int i = 0; i < SubmarineUpgrades.ADV_IDS.length; i++)
+        {
+            SubmarineUpgrades.Kind kind = SubmarineUpgrades.Kind.values()[i];
+            RegistryObject<Item> item = items.register(SubmarineUpgrades.ADV_IDS[i],
+                    () -> new SubmarineUpgrades.AdvancedItem(kind, new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
+            ADV_UPGRADE_ITEMS.add(item);
             tab.add(item);
         }
     }

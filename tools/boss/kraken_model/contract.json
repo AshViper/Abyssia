@@ -1,0 +1,1775 @@
+{
+ "entity": "abyss_kraken",
+ "generator": "tools/boss/kraken_model/build.py（手で直さず、生成元を直して流し直す）",
+ "geo": "assets/abyssia/geo/entity/abyss_kraken.geo.json",
+ "animation": "assets/abyssia/animations/entity/abyss_kraken.animation.json",
+ "texture": "assets/abyssia/textures/entity/boss/abyss_kraken_geo.png",
+ "glow_texture": "assets/abyssia/textures/entity/boss/abyss_kraken_geo_glow.png",
+ "glow_note": "光らない画素は (0,0,0,0)。RenderType.eyes（加算）でも GeckoLib の自動発光層でも使える",
+ "texture_size": [
+  256,
+  256
+ ],
+ "model_scale": 4.0,
+ "units": "geo の 1 単位 = 1/16 ブロック。描画で MODEL_SCALE 倍するので、ゲーム内では MODEL_SCALE/16 = 0.25 ブロック。ブロック → geo 単位は × 16 / MODEL_SCALE = × 4",
+ "arms": 8,
+ "joints_per_arm": 16,
+ "segments_per_arm": 15,
+ "segment_length_units": 22.0,
+ "segment_length_blocks": 5.5,
+ "arm_rest_origin": {
+  "1": [
+   -77.0,
+   -64.0,
+   0.0
+  ],
+  "2": [
+   -55.0,
+   -64.0,
+   0.0
+  ],
+  "3": [
+   -33.0,
+   -64.0,
+   0.0
+  ],
+  "4": [
+   -11.0,
+   -64.0,
+   0.0
+  ],
+  "5": [
+   11.0,
+   -64.0,
+   0.0
+  ],
+  "6": [
+   33.0,
+   -64.0,
+   0.0
+  ],
+  "7": [
+   55.0,
+   -64.0,
+   0.0
+  ],
+  "8": [
+   77.0,
+   -64.0,
+   0.0
+  ]
+ },
+ "rest_pose": "本体は原点。外套膜は +Y へ立ち、眼は ±X、漏斗は +Z（腹側）、嘴は真下。腕 A の関節 j は geo の arm_rest_origin[A] + (0, 0, segment_length_units * j)。8 本を X に並べ、どれも +Z（付け根→先端）へ一直線。回転はどの骨も 0",
+ "arm_segment_pivot": "arm_A_SS の pivot = arm_rest_origin[A] + (0, 0, segment_length_units * (SS - 0.5))",
+ "arm_axes": {
+  "-Z": "付け根側（関節 SS-1 の側）",
+  "+Z": "先端側（関節 SS の側）",
+  "+Y": "背（反口側。暗い赤）",
+  "-Y": "吸盤面（口側。クリームの吸盤 2 列と、体節 12〜14 の鉤）。Java が本体の内側へ向ける"
+ },
+ "arm_section": {
+  "half_width": 1.08,
+  "back": 1.0,
+  "sucker_side": 0.92,
+  "note": "腕の半径 × この比。半径（単位）は関節ごとに arm_radius_units（AbyssKrakenRenderer.armRadius × 4）"
+ },
+ "arm_radius_units": [
+  7.2,
+  6.87,
+  6.53,
+  6.2,
+  5.87,
+  5.53,
+  5.2,
+  4.87,
+  4.53,
+  4.2,
+  3.87,
+  3.53,
+  4.34,
+  4.63,
+  3.44,
+  0.35
+ ],
+ "arm_seam": {
+  "tuck": "体節の前端は半径 × 0.9 の細さで、関節より半径 × 0.5 前まで差し込む",
+  "sleeve": "体節の後端は半径 × 1.04 の袖で、関節より半径 × 0.4 後ろまで被さる"
+ },
+ "anchor_ring_units": {
+  "y": -24.0,
+  "radius": 12.0,
+  "note": "AbyssKraken.anchor(t) と同じ輪（ブロックで高さ -6・半径 3）。腕の関節 0 はここ。頭の下半分の中に埋まる"
+ },
+ "mantle_extent_units": {
+  "top_y": 64.0,
+  "collar_y": -10.4,
+  "max_radius": 27.12,
+  "head_bottom_y": -33.2,
+  "beak_tip_y": -43.5,
+  "fin_span_from_axis": 43.2
+ },
+ "bone_rule": "mantle と arm_A_SS（A = 1..8、SS = 01..15）は root 直下。毎フレーム位置と回転を上書きする。腕 A は AbyssKraken.tentacle(A - 1)。arm_A_SS は関節 SS-1 と SS の中点へ、局所 -Z が関節 SS から関節 SS-1 を向き、局所 -Y（吸盤面）が本体の内側を向くように置く（arm_rotation_with_roll）。mantle は頭の位置へ置き、揺れ（旧描画の ±0.04 rad）だけを回転で入れる。子（mantle_shell, fin_*, head, eye_*, beak_*, siphon）は animation に任せる",
+ "arm_rotation_with_roll": [
+  "腕は吸盤面を内へ向けるので、setRotZ(0) の式（geckolib_conventions の 4 番目）では足りない。描画空間で f = 関節 SS-1 から SS への単位ベクトル（先端向き）、b = 背（局所 +Y）の単位ベクトル（f に直交）とし、u = b × f。setRotX(atan2(b.z, f.z))、setRotY(-asin(u.z))、setRotZ(atan2(u.y, u.x))。（M = Rz・Ry・Rx の列が (u, b, f) になる解き方。b が「上」に近いときは 4 番目の式と同じ値になる）",
+  "b の決め方（旧描画 BossMesh.spline と同じ平行移動）: 付け根の体節では、本体の軸から付け根へ向かう水平の単位ベクトル o を f に直交化して b とする（背が外、吸盤が内）。先の体節へは、前の体節の b を新しい f に直交化して受け渡す。直交化した長さが 0.2 未満なら (0, 1, 0) を直交化して使う",
+  "どの体節も静止姿勢の回転は 0 なので、この値をそのまま入れればよい。位置は geckolib_conventions の 2 番目の式"
+ ],
+ "severed": {
+  "rule": "AbyssKraken.severed(t) の腕 A = t + 1 は、liveJoints = 4（関節 0..3）だけを描く: arm_A_01..arm_A_03 を関節 0..3 から置き、arm_A_04..arm_A_15 を setHidden(true)、arm_A_stump を setHidden(false)。切れていない腕は arm_A_04..15 を setHidden(false)、arm_A_stump を setHidden(true)",
+  "hidden": "arm_A_stump は geo で \"neverRender\": true（GeckoLib が焼いた時点で hidden = true）。GeoBone はモデル（同じ geo を使う全個体）で共有されるので、hidden は毎フレーム全部の腕について入れ直す（前に描いた個体の状態が残る）。setHidden は子も隠すが、stump の親 arm_A_03 は隠さないので問題ない",
+  "stump_parent": "arm_A_03（その体節と一緒に動くので、Java は stump の位置・回転を触らない）",
+  "cut_cap": "体節 3 の袖の端（関節 3 から半径 × 0.4 先）を肉の扇 8 枚で塞ぎ、中央に生肉が盛り上がる"
+ },
+ "geckolib_conventions": [
+  "描画空間 = geo の X を反転した空間（GeckoLib 4.9.2 BakedModelFactory）。z と y はそのまま",
+  "GeoBone.setPosX/Y/Z は静止姿勢からのずれで、単位は geo と同じ 1/16（MODEL_SCALE を掛ける前）。RenderUtil.translateMatrixToBone が translate(-posX/16, posY/16, posZ/16) なので、geo の座標で書けば pos = 目標の pivot - 静止姿勢の pivot（X も符号そのまま）。描画空間の座標 T で書くなら posX = -T.x - pivot.x, posY = T.y - pivot.y, posZ = T.z - pivot.z",
+  "GeoBone.setRotX/Y/Z はラジアンで描画空間の値。geo / animation の度数 (rx, ry, rz) とは (-rx, -ry, +rz) の関係。頂点へは X→Y→Z の順に効く（行列は Rz・Ry・Rx）",
+  "描画空間で局所 -Z（体節の前）を単位ベクトル d（関節 k から k-1 へ）に向けるには setRotX(asin(d.y))、setRotY(atan2(-d.x, -d.z))、setRotZ(0)。体節と head は静止姿勢の回転が 0 なので、この値をそのまま入れればよい",
+  "子の Bone（mantle_shell, fin_*, head, eye_*, beak_*, siphon, arm_A_stump）は animation か Java の hidden だけで動かすので、Java からは位置・回転を触らない（触るなら animation の値を上書きしてしまう）"
+ ],
+ "animation_signs": {
+  "mantle_shell": "scale の x と z が 1 ± 0.035 で呼吸（y は 1 ∓ 0.008）。ひれも一緒に膨らむ",
+  "fin_l / fin_r": "pivot は外套膜の面の蝶番。y で前後へ煽る。左右で y の符号が逆（鏡写し）",
+  "eye_l / eye_r": "x で上下、y で左右を見る。左右で y が逆（両眼が同じ向きを見る）",
+  "beak_upper / beak_lower": "上は rotation の x が正、下は負で開く",
+  "siphon": "x で前後に振れる"
+ },
+ "animations": {
+  "idle": {
+   "loop": true,
+   "length": 6.0,
+   "bones": [
+    "beak_lower",
+    "beak_upper",
+    "eye_l",
+    "eye_r",
+    "fin_l",
+    "fin_r",
+    "mantle_shell",
+    "siphon"
+   ]
+  }
+ },
+ "cube_count": 1467,
+ "bones": [
+  {
+   "name": "mantle",
+   "parent": null,
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "role": "本体。pivot は原点 = AbyssKraken の頭の位置（胴の芯、spine の関節 0）。+Y が外套膜の先"
+  },
+  {
+   "name": "mantle_shell",
+   "parent": "mantle",
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "fin_l",
+   "parent": "mantle_shell",
+   "pivot": [
+    16.5,
+    42.0,
+    0.0
+   ]
+  },
+  {
+   "name": "fin_r",
+   "parent": "mantle_shell",
+   "pivot": [
+    -16.5,
+    42.0,
+    0.0
+   ]
+  },
+  {
+   "name": "head",
+   "parent": "mantle",
+   "pivot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "eye_l",
+   "parent": "head",
+   "pivot": [
+    20.9,
+    -17.5,
+    0.0
+   ]
+  },
+  {
+   "name": "eye_r",
+   "parent": "head",
+   "pivot": [
+    -20.9,
+    -17.5,
+    0.0
+   ]
+  },
+  {
+   "name": "beak_upper",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    -31.0,
+    2.5
+   ]
+  },
+  {
+   "name": "beak_lower",
+   "parent": "head",
+   "pivot": [
+    0.0,
+    -31.0,
+    -2.5
+   ]
+  },
+  {
+   "name": "siphon",
+   "parent": "mantle",
+   "pivot": [
+    0.0,
+    -8.0,
+    18.0
+   ]
+  },
+  {
+   "name": "arm_1_01",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    11.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 1: 関節 0（付け根側）〜関節 1（先端側）。pivot は中心",
+   "joint_root": 0,
+   "joint_tip": 1
+  },
+  {
+   "name": "arm_1_02",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    33.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 2: 関節 1（付け根側）〜関節 2（先端側）。pivot は中心",
+   "joint_root": 1,
+   "joint_tip": 2
+  },
+  {
+   "name": "arm_1_03",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    55.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 3: 関節 2（付け根側）〜関節 3（先端側）。pivot は中心",
+   "joint_root": 2,
+   "joint_tip": 3
+  },
+  {
+   "name": "arm_1_stump",
+   "parent": "arm_1_03",
+   "pivot": [
+    -77.0,
+    -64.0,
+    66.0
+   ],
+   "role": "切断面の蓋。pivot は関節 3。neverRender（普段は隠れている）",
+   "neverRender": true
+  },
+  {
+   "name": "arm_1_04",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    77.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 4: 関節 3（付け根側）〜関節 4（先端側）。pivot は中心",
+   "joint_root": 3,
+   "joint_tip": 4
+  },
+  {
+   "name": "arm_1_05",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    99.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 5: 関節 4（付け根側）〜関節 5（先端側）。pivot は中心",
+   "joint_root": 4,
+   "joint_tip": 5
+  },
+  {
+   "name": "arm_1_06",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    121.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 6: 関節 5（付け根側）〜関節 6（先端側）。pivot は中心",
+   "joint_root": 5,
+   "joint_tip": 6
+  },
+  {
+   "name": "arm_1_07",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    143.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 7: 関節 6（付け根側）〜関節 7（先端側）。pivot は中心",
+   "joint_root": 6,
+   "joint_tip": 7
+  },
+  {
+   "name": "arm_1_08",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    165.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 8: 関節 7（付け根側）〜関節 8（先端側）。pivot は中心",
+   "joint_root": 7,
+   "joint_tip": 8
+  },
+  {
+   "name": "arm_1_09",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    187.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 9: 関節 8（付け根側）〜関節 9（先端側）。pivot は中心",
+   "joint_root": 8,
+   "joint_tip": 9
+  },
+  {
+   "name": "arm_1_10",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    209.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 10: 関節 9（付け根側）〜関節 10（先端側）。pivot は中心",
+   "joint_root": 9,
+   "joint_tip": 10
+  },
+  {
+   "name": "arm_1_11",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    231.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 11: 関節 10（付け根側）〜関節 11（先端側）。pivot は中心",
+   "joint_root": 10,
+   "joint_tip": 11
+  },
+  {
+   "name": "arm_1_12",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    253.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 12: 関節 11（付け根側）〜関節 12（先端側）。pivot は中心",
+   "joint_root": 11,
+   "joint_tip": 12
+  },
+  {
+   "name": "arm_1_13",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    275.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 13: 関節 12（付け根側）〜関節 13（先端側）。pivot は中心",
+   "joint_root": 12,
+   "joint_tip": 13
+  },
+  {
+   "name": "arm_1_14",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    297.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 14: 関節 13（付け根側）〜関節 14（先端側）。pivot は中心",
+   "joint_root": 13,
+   "joint_tip": 14
+  },
+  {
+   "name": "arm_1_15",
+   "parent": null,
+   "pivot": [
+    -77.0,
+    -64.0,
+    319.0
+   ],
+   "role": "腕 1（tentacle 0）の体節 15: 関節 14（付け根側）〜関節 15（先端側）。pivot は中心",
+   "joint_root": 14,
+   "joint_tip": 15
+  },
+  {
+   "name": "arm_2_01",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    11.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 1: 関節 0（付け根側）〜関節 1（先端側）。pivot は中心",
+   "joint_root": 0,
+   "joint_tip": 1
+  },
+  {
+   "name": "arm_2_02",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    33.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 2: 関節 1（付け根側）〜関節 2（先端側）。pivot は中心",
+   "joint_root": 1,
+   "joint_tip": 2
+  },
+  {
+   "name": "arm_2_03",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    55.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 3: 関節 2（付け根側）〜関節 3（先端側）。pivot は中心",
+   "joint_root": 2,
+   "joint_tip": 3
+  },
+  {
+   "name": "arm_2_stump",
+   "parent": "arm_2_03",
+   "pivot": [
+    -55.0,
+    -64.0,
+    66.0
+   ],
+   "role": "切断面の蓋。pivot は関節 3。neverRender（普段は隠れている）",
+   "neverRender": true
+  },
+  {
+   "name": "arm_2_04",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    77.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 4: 関節 3（付け根側）〜関節 4（先端側）。pivot は中心",
+   "joint_root": 3,
+   "joint_tip": 4
+  },
+  {
+   "name": "arm_2_05",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    99.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 5: 関節 4（付け根側）〜関節 5（先端側）。pivot は中心",
+   "joint_root": 4,
+   "joint_tip": 5
+  },
+  {
+   "name": "arm_2_06",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    121.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 6: 関節 5（付け根側）〜関節 6（先端側）。pivot は中心",
+   "joint_root": 5,
+   "joint_tip": 6
+  },
+  {
+   "name": "arm_2_07",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    143.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 7: 関節 6（付け根側）〜関節 7（先端側）。pivot は中心",
+   "joint_root": 6,
+   "joint_tip": 7
+  },
+  {
+   "name": "arm_2_08",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    165.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 8: 関節 7（付け根側）〜関節 8（先端側）。pivot は中心",
+   "joint_root": 7,
+   "joint_tip": 8
+  },
+  {
+   "name": "arm_2_09",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    187.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 9: 関節 8（付け根側）〜関節 9（先端側）。pivot は中心",
+   "joint_root": 8,
+   "joint_tip": 9
+  },
+  {
+   "name": "arm_2_10",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    209.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 10: 関節 9（付け根側）〜関節 10（先端側）。pivot は中心",
+   "joint_root": 9,
+   "joint_tip": 10
+  },
+  {
+   "name": "arm_2_11",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    231.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 11: 関節 10（付け根側）〜関節 11（先端側）。pivot は中心",
+   "joint_root": 10,
+   "joint_tip": 11
+  },
+  {
+   "name": "arm_2_12",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    253.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 12: 関節 11（付け根側）〜関節 12（先端側）。pivot は中心",
+   "joint_root": 11,
+   "joint_tip": 12
+  },
+  {
+   "name": "arm_2_13",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    275.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 13: 関節 12（付け根側）〜関節 13（先端側）。pivot は中心",
+   "joint_root": 12,
+   "joint_tip": 13
+  },
+  {
+   "name": "arm_2_14",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    297.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 14: 関節 13（付け根側）〜関節 14（先端側）。pivot は中心",
+   "joint_root": 13,
+   "joint_tip": 14
+  },
+  {
+   "name": "arm_2_15",
+   "parent": null,
+   "pivot": [
+    -55.0,
+    -64.0,
+    319.0
+   ],
+   "role": "腕 2（tentacle 1）の体節 15: 関節 14（付け根側）〜関節 15（先端側）。pivot は中心",
+   "joint_root": 14,
+   "joint_tip": 15
+  },
+  {
+   "name": "arm_3_01",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    11.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 1: 関節 0（付け根側）〜関節 1（先端側）。pivot は中心",
+   "joint_root": 0,
+   "joint_tip": 1
+  },
+  {
+   "name": "arm_3_02",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    33.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 2: 関節 1（付け根側）〜関節 2（先端側）。pivot は中心",
+   "joint_root": 1,
+   "joint_tip": 2
+  },
+  {
+   "name": "arm_3_03",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    55.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 3: 関節 2（付け根側）〜関節 3（先端側）。pivot は中心",
+   "joint_root": 2,
+   "joint_tip": 3
+  },
+  {
+   "name": "arm_3_stump",
+   "parent": "arm_3_03",
+   "pivot": [
+    -33.0,
+    -64.0,
+    66.0
+   ],
+   "role": "切断面の蓋。pivot は関節 3。neverRender（普段は隠れている）",
+   "neverRender": true
+  },
+  {
+   "name": "arm_3_04",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    77.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 4: 関節 3（付け根側）〜関節 4（先端側）。pivot は中心",
+   "joint_root": 3,
+   "joint_tip": 4
+  },
+  {
+   "name": "arm_3_05",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    99.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 5: 関節 4（付け根側）〜関節 5（先端側）。pivot は中心",
+   "joint_root": 4,
+   "joint_tip": 5
+  },
+  {
+   "name": "arm_3_06",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    121.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 6: 関節 5（付け根側）〜関節 6（先端側）。pivot は中心",
+   "joint_root": 5,
+   "joint_tip": 6
+  },
+  {
+   "name": "arm_3_07",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    143.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 7: 関節 6（付け根側）〜関節 7（先端側）。pivot は中心",
+   "joint_root": 6,
+   "joint_tip": 7
+  },
+  {
+   "name": "arm_3_08",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    165.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 8: 関節 7（付け根側）〜関節 8（先端側）。pivot は中心",
+   "joint_root": 7,
+   "joint_tip": 8
+  },
+  {
+   "name": "arm_3_09",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    187.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 9: 関節 8（付け根側）〜関節 9（先端側）。pivot は中心",
+   "joint_root": 8,
+   "joint_tip": 9
+  },
+  {
+   "name": "arm_3_10",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    209.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 10: 関節 9（付け根側）〜関節 10（先端側）。pivot は中心",
+   "joint_root": 9,
+   "joint_tip": 10
+  },
+  {
+   "name": "arm_3_11",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    231.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 11: 関節 10（付け根側）〜関節 11（先端側）。pivot は中心",
+   "joint_root": 10,
+   "joint_tip": 11
+  },
+  {
+   "name": "arm_3_12",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    253.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 12: 関節 11（付け根側）〜関節 12（先端側）。pivot は中心",
+   "joint_root": 11,
+   "joint_tip": 12
+  },
+  {
+   "name": "arm_3_13",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    275.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 13: 関節 12（付け根側）〜関節 13（先端側）。pivot は中心",
+   "joint_root": 12,
+   "joint_tip": 13
+  },
+  {
+   "name": "arm_3_14",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    297.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 14: 関節 13（付け根側）〜関節 14（先端側）。pivot は中心",
+   "joint_root": 13,
+   "joint_tip": 14
+  },
+  {
+   "name": "arm_3_15",
+   "parent": null,
+   "pivot": [
+    -33.0,
+    -64.0,
+    319.0
+   ],
+   "role": "腕 3（tentacle 2）の体節 15: 関節 14（付け根側）〜関節 15（先端側）。pivot は中心",
+   "joint_root": 14,
+   "joint_tip": 15
+  },
+  {
+   "name": "arm_4_01",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    11.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 1: 関節 0（付け根側）〜関節 1（先端側）。pivot は中心",
+   "joint_root": 0,
+   "joint_tip": 1
+  },
+  {
+   "name": "arm_4_02",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    33.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 2: 関節 1（付け根側）〜関節 2（先端側）。pivot は中心",
+   "joint_root": 1,
+   "joint_tip": 2
+  },
+  {
+   "name": "arm_4_03",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    55.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 3: 関節 2（付け根側）〜関節 3（先端側）。pivot は中心",
+   "joint_root": 2,
+   "joint_tip": 3
+  },
+  {
+   "name": "arm_4_stump",
+   "parent": "arm_4_03",
+   "pivot": [
+    -11.0,
+    -64.0,
+    66.0
+   ],
+   "role": "切断面の蓋。pivot は関節 3。neverRender（普段は隠れている）",
+   "neverRender": true
+  },
+  {
+   "name": "arm_4_04",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    77.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 4: 関節 3（付け根側）〜関節 4（先端側）。pivot は中心",
+   "joint_root": 3,
+   "joint_tip": 4
+  },
+  {
+   "name": "arm_4_05",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    99.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 5: 関節 4（付け根側）〜関節 5（先端側）。pivot は中心",
+   "joint_root": 4,
+   "joint_tip": 5
+  },
+  {
+   "name": "arm_4_06",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    121.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 6: 関節 5（付け根側）〜関節 6（先端側）。pivot は中心",
+   "joint_root": 5,
+   "joint_tip": 6
+  },
+  {
+   "name": "arm_4_07",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    143.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 7: 関節 6（付け根側）〜関節 7（先端側）。pivot は中心",
+   "joint_root": 6,
+   "joint_tip": 7
+  },
+  {
+   "name": "arm_4_08",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    165.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 8: 関節 7（付け根側）〜関節 8（先端側）。pivot は中心",
+   "joint_root": 7,
+   "joint_tip": 8
+  },
+  {
+   "name": "arm_4_09",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    187.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 9: 関節 8（付け根側）〜関節 9（先端側）。pivot は中心",
+   "joint_root": 8,
+   "joint_tip": 9
+  },
+  {
+   "name": "arm_4_10",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    209.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 10: 関節 9（付け根側）〜関節 10（先端側）。pivot は中心",
+   "joint_root": 9,
+   "joint_tip": 10
+  },
+  {
+   "name": "arm_4_11",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    231.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 11: 関節 10（付け根側）〜関節 11（先端側）。pivot は中心",
+   "joint_root": 10,
+   "joint_tip": 11
+  },
+  {
+   "name": "arm_4_12",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    253.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 12: 関節 11（付け根側）〜関節 12（先端側）。pivot は中心",
+   "joint_root": 11,
+   "joint_tip": 12
+  },
+  {
+   "name": "arm_4_13",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    275.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 13: 関節 12（付け根側）〜関節 13（先端側）。pivot は中心",
+   "joint_root": 12,
+   "joint_tip": 13
+  },
+  {
+   "name": "arm_4_14",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    297.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 14: 関節 13（付け根側）〜関節 14（先端側）。pivot は中心",
+   "joint_root": 13,
+   "joint_tip": 14
+  },
+  {
+   "name": "arm_4_15",
+   "parent": null,
+   "pivot": [
+    -11.0,
+    -64.0,
+    319.0
+   ],
+   "role": "腕 4（tentacle 3）の体節 15: 関節 14（付け根側）〜関節 15（先端側）。pivot は中心",
+   "joint_root": 14,
+   "joint_tip": 15
+  },
+  {
+   "name": "arm_5_01",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    11.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 1: 関節 0（付け根側）〜関節 1（先端側）。pivot は中心",
+   "joint_root": 0,
+   "joint_tip": 1
+  },
+  {
+   "name": "arm_5_02",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    33.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 2: 関節 1（付け根側）〜関節 2（先端側）。pivot は中心",
+   "joint_root": 1,
+   "joint_tip": 2
+  },
+  {
+   "name": "arm_5_03",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    55.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 3: 関節 2（付け根側）〜関節 3（先端側）。pivot は中心",
+   "joint_root": 2,
+   "joint_tip": 3
+  },
+  {
+   "name": "arm_5_stump",
+   "parent": "arm_5_03",
+   "pivot": [
+    11.0,
+    -64.0,
+    66.0
+   ],
+   "role": "切断面の蓋。pivot は関節 3。neverRender（普段は隠れている）",
+   "neverRender": true
+  },
+  {
+   "name": "arm_5_04",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    77.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 4: 関節 3（付け根側）〜関節 4（先端側）。pivot は中心",
+   "joint_root": 3,
+   "joint_tip": 4
+  },
+  {
+   "name": "arm_5_05",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    99.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 5: 関節 4（付け根側）〜関節 5（先端側）。pivot は中心",
+   "joint_root": 4,
+   "joint_tip": 5
+  },
+  {
+   "name": "arm_5_06",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    121.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 6: 関節 5（付け根側）〜関節 6（先端側）。pivot は中心",
+   "joint_root": 5,
+   "joint_tip": 6
+  },
+  {
+   "name": "arm_5_07",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    143.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 7: 関節 6（付け根側）〜関節 7（先端側）。pivot は中心",
+   "joint_root": 6,
+   "joint_tip": 7
+  },
+  {
+   "name": "arm_5_08",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    165.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 8: 関節 7（付け根側）〜関節 8（先端側）。pivot は中心",
+   "joint_root": 7,
+   "joint_tip": 8
+  },
+  {
+   "name": "arm_5_09",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    187.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 9: 関節 8（付け根側）〜関節 9（先端側）。pivot は中心",
+   "joint_root": 8,
+   "joint_tip": 9
+  },
+  {
+   "name": "arm_5_10",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    209.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 10: 関節 9（付け根側）〜関節 10（先端側）。pivot は中心",
+   "joint_root": 9,
+   "joint_tip": 10
+  },
+  {
+   "name": "arm_5_11",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    231.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 11: 関節 10（付け根側）〜関節 11（先端側）。pivot は中心",
+   "joint_root": 10,
+   "joint_tip": 11
+  },
+  {
+   "name": "arm_5_12",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    253.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 12: 関節 11（付け根側）〜関節 12（先端側）。pivot は中心",
+   "joint_root": 11,
+   "joint_tip": 12
+  },
+  {
+   "name": "arm_5_13",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    275.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 13: 関節 12（付け根側）〜関節 13（先端側）。pivot は中心",
+   "joint_root": 12,
+   "joint_tip": 13
+  },
+  {
+   "name": "arm_5_14",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    297.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 14: 関節 13（付け根側）〜関節 14（先端側）。pivot は中心",
+   "joint_root": 13,
+   "joint_tip": 14
+  },
+  {
+   "name": "arm_5_15",
+   "parent": null,
+   "pivot": [
+    11.0,
+    -64.0,
+    319.0
+   ],
+   "role": "腕 5（tentacle 4）の体節 15: 関節 14（付け根側）〜関節 15（先端側）。pivot は中心",
+   "joint_root": 14,
+   "joint_tip": 15
+  },
+  {
+   "name": "arm_6_01",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    11.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 1: 関節 0（付け根側）〜関節 1（先端側）。pivot は中心",
+   "joint_root": 0,
+   "joint_tip": 1
+  },
+  {
+   "name": "arm_6_02",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    33.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 2: 関節 1（付け根側）〜関節 2（先端側）。pivot は中心",
+   "joint_root": 1,
+   "joint_tip": 2
+  },
+  {
+   "name": "arm_6_03",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    55.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 3: 関節 2（付け根側）〜関節 3（先端側）。pivot は中心",
+   "joint_root": 2,
+   "joint_tip": 3
+  },
+  {
+   "name": "arm_6_stump",
+   "parent": "arm_6_03",
+   "pivot": [
+    33.0,
+    -64.0,
+    66.0
+   ],
+   "role": "切断面の蓋。pivot は関節 3。neverRender（普段は隠れている）",
+   "neverRender": true
+  },
+  {
+   "name": "arm_6_04",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    77.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 4: 関節 3（付け根側）〜関節 4（先端側）。pivot は中心",
+   "joint_root": 3,
+   "joint_tip": 4
+  },
+  {
+   "name": "arm_6_05",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    99.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 5: 関節 4（付け根側）〜関節 5（先端側）。pivot は中心",
+   "joint_root": 4,
+   "joint_tip": 5
+  },
+  {
+   "name": "arm_6_06",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    121.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 6: 関節 5（付け根側）〜関節 6（先端側）。pivot は中心",
+   "joint_root": 5,
+   "joint_tip": 6
+  },
+  {
+   "name": "arm_6_07",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    143.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 7: 関節 6（付け根側）〜関節 7（先端側）。pivot は中心",
+   "joint_root": 6,
+   "joint_tip": 7
+  },
+  {
+   "name": "arm_6_08",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    165.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 8: 関節 7（付け根側）〜関節 8（先端側）。pivot は中心",
+   "joint_root": 7,
+   "joint_tip": 8
+  },
+  {
+   "name": "arm_6_09",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    187.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 9: 関節 8（付け根側）〜関節 9（先端側）。pivot は中心",
+   "joint_root": 8,
+   "joint_tip": 9
+  },
+  {
+   "name": "arm_6_10",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    209.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 10: 関節 9（付け根側）〜関節 10（先端側）。pivot は中心",
+   "joint_root": 9,
+   "joint_tip": 10
+  },
+  {
+   "name": "arm_6_11",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    231.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 11: 関節 10（付け根側）〜関節 11（先端側）。pivot は中心",
+   "joint_root": 10,
+   "joint_tip": 11
+  },
+  {
+   "name": "arm_6_12",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    253.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 12: 関節 11（付け根側）〜関節 12（先端側）。pivot は中心",
+   "joint_root": 11,
+   "joint_tip": 12
+  },
+  {
+   "name": "arm_6_13",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    275.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 13: 関節 12（付け根側）〜関節 13（先端側）。pivot は中心",
+   "joint_root": 12,
+   "joint_tip": 13
+  },
+  {
+   "name": "arm_6_14",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    297.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 14: 関節 13（付け根側）〜関節 14（先端側）。pivot は中心",
+   "joint_root": 13,
+   "joint_tip": 14
+  },
+  {
+   "name": "arm_6_15",
+   "parent": null,
+   "pivot": [
+    33.0,
+    -64.0,
+    319.0
+   ],
+   "role": "腕 6（tentacle 5）の体節 15: 関節 14（付け根側）〜関節 15（先端側）。pivot は中心",
+   "joint_root": 14,
+   "joint_tip": 15
+  },
+  {
+   "name": "arm_7_01",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    11.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 1: 関節 0（付け根側）〜関節 1（先端側）。pivot は中心",
+   "joint_root": 0,
+   "joint_tip": 1
+  },
+  {
+   "name": "arm_7_02",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    33.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 2: 関節 1（付け根側）〜関節 2（先端側）。pivot は中心",
+   "joint_root": 1,
+   "joint_tip": 2
+  },
+  {
+   "name": "arm_7_03",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    55.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 3: 関節 2（付け根側）〜関節 3（先端側）。pivot は中心",
+   "joint_root": 2,
+   "joint_tip": 3
+  },
+  {
+   "name": "arm_7_stump",
+   "parent": "arm_7_03",
+   "pivot": [
+    55.0,
+    -64.0,
+    66.0
+   ],
+   "role": "切断面の蓋。pivot は関節 3。neverRender（普段は隠れている）",
+   "neverRender": true
+  },
+  {
+   "name": "arm_7_04",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    77.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 4: 関節 3（付け根側）〜関節 4（先端側）。pivot は中心",
+   "joint_root": 3,
+   "joint_tip": 4
+  },
+  {
+   "name": "arm_7_05",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    99.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 5: 関節 4（付け根側）〜関節 5（先端側）。pivot は中心",
+   "joint_root": 4,
+   "joint_tip": 5
+  },
+  {
+   "name": "arm_7_06",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    121.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 6: 関節 5（付け根側）〜関節 6（先端側）。pivot は中心",
+   "joint_root": 5,
+   "joint_tip": 6
+  },
+  {
+   "name": "arm_7_07",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    143.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 7: 関節 6（付け根側）〜関節 7（先端側）。pivot は中心",
+   "joint_root": 6,
+   "joint_tip": 7
+  },
+  {
+   "name": "arm_7_08",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    165.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 8: 関節 7（付け根側）〜関節 8（先端側）。pivot は中心",
+   "joint_root": 7,
+   "joint_tip": 8
+  },
+  {
+   "name": "arm_7_09",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    187.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 9: 関節 8（付け根側）〜関節 9（先端側）。pivot は中心",
+   "joint_root": 8,
+   "joint_tip": 9
+  },
+  {
+   "name": "arm_7_10",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    209.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 10: 関節 9（付け根側）〜関節 10（先端側）。pivot は中心",
+   "joint_root": 9,
+   "joint_tip": 10
+  },
+  {
+   "name": "arm_7_11",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    231.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 11: 関節 10（付け根側）〜関節 11（先端側）。pivot は中心",
+   "joint_root": 10,
+   "joint_tip": 11
+  },
+  {
+   "name": "arm_7_12",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    253.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 12: 関節 11（付け根側）〜関節 12（先端側）。pivot は中心",
+   "joint_root": 11,
+   "joint_tip": 12
+  },
+  {
+   "name": "arm_7_13",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    275.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 13: 関節 12（付け根側）〜関節 13（先端側）。pivot は中心",
+   "joint_root": 12,
+   "joint_tip": 13
+  },
+  {
+   "name": "arm_7_14",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    297.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 14: 関節 13（付け根側）〜関節 14（先端側）。pivot は中心",
+   "joint_root": 13,
+   "joint_tip": 14
+  },
+  {
+   "name": "arm_7_15",
+   "parent": null,
+   "pivot": [
+    55.0,
+    -64.0,
+    319.0
+   ],
+   "role": "腕 7（tentacle 6）の体節 15: 関節 14（付け根側）〜関節 15（先端側）。pivot は中心",
+   "joint_root": 14,
+   "joint_tip": 15
+  },
+  {
+   "name": "arm_8_01",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    11.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 1: 関節 0（付け根側）〜関節 1（先端側）。pivot は中心",
+   "joint_root": 0,
+   "joint_tip": 1
+  },
+  {
+   "name": "arm_8_02",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    33.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 2: 関節 1（付け根側）〜関節 2（先端側）。pivot は中心",
+   "joint_root": 1,
+   "joint_tip": 2
+  },
+  {
+   "name": "arm_8_03",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    55.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 3: 関節 2（付け根側）〜関節 3（先端側）。pivot は中心",
+   "joint_root": 2,
+   "joint_tip": 3
+  },
+  {
+   "name": "arm_8_stump",
+   "parent": "arm_8_03",
+   "pivot": [
+    77.0,
+    -64.0,
+    66.0
+   ],
+   "role": "切断面の蓋。pivot は関節 3。neverRender（普段は隠れている）",
+   "neverRender": true
+  },
+  {
+   "name": "arm_8_04",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    77.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 4: 関節 3（付け根側）〜関節 4（先端側）。pivot は中心",
+   "joint_root": 3,
+   "joint_tip": 4
+  },
+  {
+   "name": "arm_8_05",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    99.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 5: 関節 4（付け根側）〜関節 5（先端側）。pivot は中心",
+   "joint_root": 4,
+   "joint_tip": 5
+  },
+  {
+   "name": "arm_8_06",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    121.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 6: 関節 5（付け根側）〜関節 6（先端側）。pivot は中心",
+   "joint_root": 5,
+   "joint_tip": 6
+  },
+  {
+   "name": "arm_8_07",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    143.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 7: 関節 6（付け根側）〜関節 7（先端側）。pivot は中心",
+   "joint_root": 6,
+   "joint_tip": 7
+  },
+  {
+   "name": "arm_8_08",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    165.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 8: 関節 7（付け根側）〜関節 8（先端側）。pivot は中心",
+   "joint_root": 7,
+   "joint_tip": 8
+  },
+  {
+   "name": "arm_8_09",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    187.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 9: 関節 8（付け根側）〜関節 9（先端側）。pivot は中心",
+   "joint_root": 8,
+   "joint_tip": 9
+  },
+  {
+   "name": "arm_8_10",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    209.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 10: 関節 9（付け根側）〜関節 10（先端側）。pivot は中心",
+   "joint_root": 9,
+   "joint_tip": 10
+  },
+  {
+   "name": "arm_8_11",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    231.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 11: 関節 10（付け根側）〜関節 11（先端側）。pivot は中心",
+   "joint_root": 10,
+   "joint_tip": 11
+  },
+  {
+   "name": "arm_8_12",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    253.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 12: 関節 11（付け根側）〜関節 12（先端側）。pivot は中心",
+   "joint_root": 11,
+   "joint_tip": 12
+  },
+  {
+   "name": "arm_8_13",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    275.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 13: 関節 12（付け根側）〜関節 13（先端側）。pivot は中心",
+   "joint_root": 12,
+   "joint_tip": 13
+  },
+  {
+   "name": "arm_8_14",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    297.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 14: 関節 13（付け根側）〜関節 14（先端側）。pivot は中心",
+   "joint_root": 13,
+   "joint_tip": 14
+  },
+  {
+   "name": "arm_8_15",
+   "parent": null,
+   "pivot": [
+    77.0,
+    -64.0,
+    319.0
+   ],
+   "role": "腕 8（tentacle 7）の体節 15: 関節 14（付け根側）〜関節 15（先端側）。pivot は中心",
+   "joint_root": 14,
+   "joint_tip": 15
+  }
+ ]
+}
