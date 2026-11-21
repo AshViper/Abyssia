@@ -6,6 +6,7 @@ Sources (imported from the ChatGPT sheets EXC1 / EXC1I through tools/agentflow/s
 Writes:
   textures/block/exc2_<name>.png        Mk2 tiles
   textures/item/abyssal_excavator_mk2.png   Mk2 icon
+  textures/block/exc3_<name>.png, textures/item/abyssal_excavator_mk3.png   Mk3 (bone body, violet glow / hazard)
 A missing source is skipped with a message; a file is only rewritten when its pixels change. The textures folders are
 never wiped by the generators, so the derived files need no entry in tools/texture_locks.
 Run: python tools/excavator_textures.py"""
@@ -36,11 +37,35 @@ def recolor(img, shift):
     return out
 
 
-def derive(src_path, dst_path):
-    """returns 'written' / 'same' / 'missing'"""
+MK3_HUE = {"glow": 0.76, "hazard": 0.68}   # violet glow / deep blue-violet hazard (Mk1 and Mk2 are on the warm / cyan side)
+
+
+def recolor_mk3(img, name):
+    """Mk3 (wyrm fang tier): body tiles -> desaturated bone / grey-white, glow and hazard -> violet."""
+    out = img.copy()
+    px = out.load()
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            if a == 0:
+                continue
+            h, s, v = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+            if name in MK3_HUE:
+                if s > 0.15:
+                    h = MK3_HUE[name]
+            else:
+                h, s, v = 0.12, s * 0.25, min(1.0, v * 1.1 + 0.12)
+            r2, g2, b2 = colorsys.hsv_to_rgb(h, s, v)
+            px[x, y] = (round(r2 * 255), round(g2 * 255), round(b2 * 255), a)
+    return out
+
+
+def derive(src_path, dst_path, name=None):
+    """returns 'written' / 'same' / 'missing'; name given -> the Mk3 recolour, else the Mk2 hue shift"""
     if not os.path.exists(src_path):
         return "missing"
-    mk2 = recolor(Image.open(src_path).convert("RGBA"), HUE_SHIFT)
+    src = Image.open(src_path).convert("RGBA")
+    mk2 = recolor_mk3(src, name) if name else recolor(src, HUE_SHIFT)
     if os.path.exists(dst_path):
         old = Image.open(dst_path).convert("RGBA")
         if old.size == mk2.size and ImageChops.difference(old, mk2).getbbox() is None:
@@ -53,12 +78,17 @@ def derive(src_path, dst_path):
 def main():
     jobs = [(os.path.join(TEX, "block", f"exc_{n}.png"), os.path.join(TEX, "block", f"exc2_{n}.png")) for n in NAMES]
     jobs.append((os.path.join(TEX, "item", "abyssal_excavator.png"), os.path.join(TEX, "item", "abyssal_excavator_mk2.png")))
+    mk3 = [(os.path.join(TEX, "block", f"exc_{n}.png"), os.path.join(TEX, "block", f"exc3_{n}.png"), n) for n in NAMES]
+    mk3.append((os.path.join(TEX, "item", "abyssal_excavator.png"), os.path.join(TEX, "item", "abyssal_excavator_mk3.png"), "icon"))
     counts = {"written": 0, "same": 0, "missing": 0}
     for src, dst in jobs:
         result = derive(src, dst)
         counts[result] += 1
         if result == "missing":
             print("skipped (source missing, import the ChatGPT sheet EXC1 / EXC1I first):", os.path.relpath(src, TEX))
+    for src, dst, n in mk3:
+        result = derive(src, dst, n)
+        counts[result] += 1
     print(f"excavator textures: {counts['written']} written, {counts['same']} unchanged, {counts['missing']} skipped")
 
 

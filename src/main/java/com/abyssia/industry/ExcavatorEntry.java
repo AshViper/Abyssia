@@ -129,8 +129,8 @@ public final class ExcavatorEntry implements BuildEntry
     @Override
     public ResourceLocation icon()
     {
-        // Mk3 has no icon of its own (TRP01): the Mk2 one
-        return ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "textures/item/" + (tier == ExcavatorTier.MK3 ? "abyssal_excavator_mk2" : id) + ".png");
+        // one icon per tier: textures/item/<id>.png (Mk3 has its own since the recoloured exc3 set)
+        return ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "textures/item/" + id + ".png");
     }
 
     /** the removed crafting recipes' materials (Mk2 = the Mk1 materials + its own ring, the Mk1 item is no longer a part) */

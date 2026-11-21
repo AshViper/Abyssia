@@ -13,10 +13,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -225,6 +227,211 @@ public final class Bas01Test
         x2.add(new Case("wear_x2", 2000, 0, a(60), a(full), r(false), false, c ->
                 expect(c, near(full - c.integ(0), 1600, 40), "Y60=-" + (full - c.integ(0)))));
         PHASES.add(x2);
+
+        // 10. natural quake lottery (wear off, quake_frequency 10): chance table, flow, two bases
+        List<Case> chance = new ArrayList<>();
+        chance.add(new Case("quake_chance", 1, 0, a(60), a(full), r(false), false, Bas01Test::checkChance));
+        PHASES.add(chance);
+        List<Case> flow = new ArrayList<>();
+        flow.add(new Case("quake_natural_flow", 1, 0, a(-500), a(full), r(false), false, Bas01Test::checkNaturalFlow));
+        PHASES.add(flow);
+        List<Case> two = new ArrayList<>();
+        two.add(new Case("quake_two_bases", 1, 0, a(60, -500), a(full, full), r(false, false), false, Bas01Test::checkTwoBases));
+        PHASES.add(two);
+    }
+
+    /** a random source whose nextDouble always returns v (the lottery draws exactly that) */
+    private static final class Fixed extends LegacyRandomSource
+    {
+        double v;
+
+        Fixed(double v)
+        {
+            super(0L);
+            this.v = v;
+        }
+
+        @Override
+        public double nextDouble()
+        {
+            return v;
+        }
+    }
+
+    private static void run(HabitatUpkeep data, RandomSource rnd, long from, long toInclusive)
+    {
+        for (long u = from; u <= toInclusive; u++) data.tick(level, u, rnd);
+    }
+
+    private static String checkChance(Case c)
+    {
+        var data = HabitatUpkeep.get(level);
+        double[][] cfg = {{1, 1}, {3, 1}, {1, 2}, {3, 2}};
+        StringBuilder sb = new StringBuilder();
+        boolean ok = true;
+        int n = 60_000;
+        for (int i = 0; i < cfg.length; i++)
+        {
+            RandomSource rnd = RandomSource.create(20_241_121L + i);
+            int wins = 0;
+            for (int k = 0; k < n; k++) if (HabitatUpkeep.lottery(rnd, cfg[i][0], cfg[i][1])) wins++;
+            double expected = cfg[i][0] * cfg[i][1] / 60.0, rate = wins / (double) n;
+            boolean in = Math.abs(rate - expected) / expected <= 0.10;
+            ok &= in;
+            sb.append("[depth").append(cfg[i][0]).append(" freq").append(cfg[i][1]).append(" rate=").append(String.format("%.4f", rate))
+                    .append(" expected=").append(String.format("%.4f", expected)).append(in ? "" : " OUT").append("] ");
+        }
+        double f0 = Config.UPKEEP_QUAKE_FREQUENCY.get();
+        boolean enabledGate = data.canRollQuake(level, c.base(0), 1_000_000L);
+        int zeroFreq = 0, disabled = 0;
+        try
+        {
+            Config.UPKEEP_QUAKE_FREQUENCY.set(0.0);
+            RandomSource rnd = RandomSource.create(7L);
+            for (int k = 0; k < n; k++) if (HabitatUpkeep.lottery(rnd, 3.0, Config.UPKEEP_QUAKE_FREQUENCY.get())) zeroFreq++;
+            Config.UPKEEP_QUAKE_FREQUENCY.set(10.0);
+            Config.UPKEEP_QUAKES_ENABLED.set(false);
+            rnd = RandomSource.create(8L);
+            for (int k = 0; k < n; k++)
+                if (data.canRollQuake(level, c.base(0), 1_000_000L + k) && HabitatUpkeep.lottery(rnd, 3.0, Config.UPKEEP_QUAKE_FREQUENCY.get())) disabled++;
+        }
+        finally
+        {
+            Config.UPKEEP_QUAKE_FREQUENCY.set(f0);
+            Config.UPKEEP_QUAKES_ENABLED.set(true);
+        }
+        ok &= enabledGate && zeroFreq == 0 && disabled == 0;
+        sb.append("freq0 wins=").append(zeroFreq).append(" quakes_disabled wins=").append(disabled).append(" gateWhenEnabled=").append(enabledGate);
+        return expect(c, ok, sb.toString());
+    }
+
+    private static String checkNaturalFlow(Case c)
+    {
+        var data = HabitatUpkeep.get(level);
+        int base = c.base(0);
+        var player = FakePlayerFactory.getMinecraft(level);
+        Vec3 ctr = Vec3.atCenterOf(c.box(0).getCenter());
+        StringBuilder sb = new StringBuilder();
+        boolean ok = true;
+        try
+        {
+            data.setPlayersOverride(List.of(player));
+            if (data.startTick() < 0) data.tick(level, level.getGameTime(), new Fixed(1.0));
+            long s = data.startTick();
+            Fixed always = new Fixed(0.0);
+            player.setPos(ctr.x + 10, ctr.y, ctr.z);
+            // a) before 6000 ticks after start-up: a certain win (random 0.0) still must not start a quake
+            long t = (s / 1200 + 1) * 1200;
+            int early = 0;
+            for (; t - s < 6000; t += 1200, early++) data.tick(level, t, always);
+            boolean a = data.warnMessages(base) == 0;
+            // b) player 150 blocks away: no quake
+            player.setPos(ctr.x + 150, ctr.y, ctr.z);
+            for (int k = 0; k < 3; k++) data.tick(level, t + 1200L * k, always);
+            boolean b = data.warnMessages(base) == 0;
+            // c) quakes_enabled=false: no quake
+            player.setPos(ctr.x + 10, ctr.y, ctr.z);
+            Config.UPKEEP_QUAKES_ENABLED.set(false);
+            for (int k = 0; k < 3; k++) data.tick(level, t + 1200L * k, always);
+            Config.UPKEEP_QUAKES_ENABLED.set(true);
+            boolean cc = data.warnMessages(base) == 0;
+            sb.append("[startup rolls=").append(early).append(" none=").append(a).append("] [far none=").append(b).append("] [disabled none=").append(cc).append("] ");
+            ok &= a && b && cc;
+            // d) natural win with a seeded random (0.5 per roll), up to 20 rolls
+            RandomSource rnd = RandomSource.create(77L);
+            long winAt = -1;
+            int rolls = 0;
+            for (int k = 0; k < 20 && winAt < 0; k++)
+            {
+                long tk = t + 1200L * k;
+                data.tick(level, tk, rnd);
+                rolls++;
+                if (data.warnMessages(base) > 0) winAt = tk;
+            }
+            if (winAt < 0)
+            {
+                sb.append("no win in 20 rolls");
+                return expect(c, false, sb.toString());
+            }
+            int msgAtWin = data.warnMessages(base);
+            int before = c.integ(0);
+            run(data, rnd, winAt + 1, winAt + 600);
+            int drop = before - c.integ(0);
+            long landed = data.lastQuakeTick(base);
+            int msgs = data.warnMessages(base);
+            double dmg = Config.UPKEEP_QUAKE_DAMAGE.get();
+            int expectedDrop = (int) Math.round(Math.min(30_000.0, 15_000.0 * 3.0 * dmg));
+            boolean d = msgAtWin == 1 && landed == winAt + 600 && msgs == 6 && near(drop, expectedDrop, 1) && winAt % 1200 == 0 && winAt - s >= 6000;
+            sb.append("[win after ").append(rolls).append(" rolls at +").append(winAt - t).append(" warn1=").append(msgAtWin).append(" landed=").append(landed - winAt)
+                    .append(" msgs=").append(msgs).append(" drop=").append(drop).append("/").append(expectedDrop).append("] ");
+            ok &= d;
+            // e) the next 24000 ticks: a certain win (0.0) must not start a quake; then it can again
+            run(data, always, winAt + 601, landed + 23_999);
+            boolean e1 = data.warnMessages(base) == 6 && data.lastQuakeTick(base) == landed && !data.canRollQuake(level, base, landed + 23_999)
+                    && data.canRollQuake(level, base, landed + 24_000);
+            // the first roll tick at or after the cooldown end
+            long next = (landed + 24_000 + 1199) / 1200 * 1200;
+            run(data, always, landed + 24_000, next);
+            boolean e2 = data.warnMessages(base) == 1;
+            run(data, always, next + 1, next + 600);
+            sb.append("[cooldown none for 24000=").append(e1).append(" wins again at +").append(next - landed).append("=").append(e2).append(" integrity=").append(c.integ(0)).append("]");
+            ok &= e1 && e2;
+        }
+        finally
+        {
+            data.setPlayersOverride(null);
+            Config.UPKEEP_QUAKES_ENABLED.set(true);
+        }
+        return expect(c, ok, sb.toString());
+    }
+
+    private static String checkTwoBases(Case c)
+    {
+        var data = HabitatUpkeep.get(level);
+        int a = c.base(0), b = c.base(1);
+        // the two bases are ~560 blocks apart vertically: one player cannot be near both, so one player each
+        var player = FakePlayerFactory.getMinecraft(level);
+        var player2 = FakePlayerFactory.get(level, new com.mojang.authlib.GameProfile(java.util.UUID.fromString("00000000-0000-0000-0000-00000000ba02"), "[Bas01Two]"));
+        Vec3 ctr = Vec3.atCenterOf(c.box(0).getCenter());
+        Vec3 ctr2 = Vec3.atCenterOf(c.box(1).getCenter());
+        StringBuilder sb = new StringBuilder();
+        boolean ok = a != b;
+        try
+        {
+            data.setPlayersOverride(List.of(player, player2));
+            player.setPos(ctr.x + 10, ctr.y, ctr.z);
+            player2.setPos(ctr2.x + 10, ctr2.y, ctr2.z);
+            if (data.startTick() < 0) data.tick(level, level.getGameTime(), new Fixed(1.0));
+            long s = data.startTick();
+            // A = Y60 (chance 1/6 per roll), B = Y-500 (0.5): 0.3 wins only for B, 0.1 wins for both
+            Fixed rnd = new Fixed(0.3);
+            long t0 = (s + 6000 + 1199) / 1200 * 1200;
+            run(data, rnd, t0, t0 + 600);
+            long tB = data.lastQuakeTick(b);
+            boolean s1 = tB == t0 + 600 && data.lastQuakeTick(a) == -1 && data.warnMessages(a) == 0 && data.canRollQuake(level, a, tB) && !data.canRollQuake(level, b, tB);
+            rnd.v = 0.1;
+            long t1 = t0 + 1200;
+            run(data, rnd, t0 + 601, t1 + 600);
+            long tA = data.lastQuakeTick(a);
+            boolean s2 = tA == t1 + 600 && data.lastQuakeTick(b) == tB && data.warnMessages(b) == 6 && data.warnMessages(a) == 6;
+            boolean s3 = !data.canRollQuake(level, b, tB + 23_999) && data.canRollQuake(level, b, tB + 24_000)
+                    && !data.canRollQuake(level, a, tA + 23_999) && data.canRollQuake(level, a, tA + 24_000);
+            // B's cooldown ends first: B can win again while A is still cooling down
+            long nb = (tB + 24_000 + 1199) / 1200 * 1200;
+            run(data, rnd, t1 + 601, nb);
+            boolean s4 = data.warnMessages(b) == 1 && data.lastQuakeTick(a) == tA && data.warnMessages(a) == 6;
+            run(data, rnd, nb + 1, nb + 600);
+            boolean s5 = data.lastQuakeTick(a) == tA && data.canRollQuake(level, a, tA + 24_000);
+            sb.append("[B first: landed=+").append(tB - t0).append(" A untouched=").append(s1).append("] [A later: landed=+").append(tA - t0)
+                    .append(" B unchanged=").append(s2).append("] [own cooldowns exact=").append(s3).append("] [B again at +").append(nb - t0)
+                    .append(" while A cools=").append(s4).append(" A cooldown unaffected=").append(s5).append("]");
+            ok &= s1 && s2 && s3 && s4 && s5;
+        }
+        finally
+        {
+            data.setPlayersOverride(null);
+        }
+        return expect(c, ok, sb.toString());
     }
 
     private static String checkItems(Case c)
@@ -360,7 +567,8 @@ public final class Bas01Test
     private static void setConfig(int index)
     {
         Config.UPKEEP_ENABLED.set(index != 2);
-        Config.UPKEEP_WEAR_MULTIPLIER.set(index == 1 ? 0.0 : index == 3 ? 2.0 : 1.0);
+        Config.UPKEEP_WEAR_MULTIPLIER.set(index == 1 || index >= 4 ? 0.0 : index == 3 ? 2.0 : 1.0);
+        Config.UPKEEP_QUAKE_FREQUENCY.set(index >= 4 ? 10.0 : 1.0);
     }
 
     private static void resetConfig()
@@ -368,6 +576,7 @@ public final class Bas01Test
         Config.UPKEEP_ENABLED.set(true);
         Config.UPKEEP_WEAR_MULTIPLIER.set(1.0);
         Config.UPKEEP_QUAKES_ENABLED.set(true);
+        Config.UPKEEP_QUAKE_FREQUENCY.set(1.0);
     }
 
     /** returns false while the chunks are still loading */

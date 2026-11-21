@@ -45,6 +45,7 @@ public final class BossShot
         }
         if ("studio".equals(System.getProperty("abyssia.bossshot"))) { studioScenes(mc); return; }
         if ("scale".equals(System.getProperty("abyssia.bossshot"))) { scaleScenes(mc); return; }
+        if ("far".equals(System.getProperty("abyssia.bossshot"))) { farScenes(mc); return; }
         if ("sever".equals(System.getProperty("abyssia.bossshot")) && t == 70) t = 745; // skip to the kraken scenes
         if ("mother".equals(System.getProperty("abyssia.bossshot")) && t == 70) t = 1225; // skip to the mother scenes
         if ("model".equals(System.getProperty("abyssia.bossshot")) || "sever".equals(System.getProperty("abyssia.bossshot")) || "mother".equals(System.getProperty("abyssia.bossshot"))) { modelScenes(mc); return; }
@@ -410,6 +411,83 @@ public final class BossShot
         }
         log(String.format(java.util.Locale.ROOT, "column joint %d at %.0f %.0f %.0f, camera %d %.0f %d, distance %.0f", k, c.x(k), c.y(k), c.z(k), sx, y, sz,
                 Math.sqrt((c.x(k) - sx) * (c.x(k) - sx) + (c.y(k) - y) * (c.y(k) - y) + (c.z(k) - sz) * (c.z(k) - sz))));
+    }
+
+    // ---- far: LOD beyond the fog (same logic as the Forge 1.20.1 BossShot, to compare the two loaders)
+
+    private static boolean farOk;
+    private static int farY;
+
+    private static String counts(Minecraft mc)
+    {
+        int n = mc.level.getEntitiesOfClass(AbyssBoss.class, mc.player.getBoundingBox().inflate(900)).size();
+        return "clientEntities=" + n + " far=" + BossFarClient.count() + " inCombat=" + BossFarClient.inCombat();
+    }
+
+    private static void farLog(Minecraft mc, String id, int off, Vec3 head)
+    {
+        Vec3 eye = mc.player.getEyePosition();
+        log("far " + id + " off=" + off + " cam=" + mc.player.blockPosition() + " camBlock=" + mc.level.getBlockState(BlockPos.containing(eye)).getBlock()
+                + " camInWater=" + water(mc, eye) + " actual=" + String.format("%.0f", mc.player.position().distanceTo(head)) + " "
+                + counts(mc) + " BossFarClient.count()=" + BossFarClient.count() + " fogEnd=" + String.format("%.0f", com.mojang.blaze3d.systems.RenderSystem.getShaderFogEnd()));
+    }
+
+    /** -PbossShot=far: kraken / mother / angler (NoAI) looked at from the air above the sea at +30 / +180 / +300 blocks (far_<boss>_1..3), and from 110 blocks underwater (_0). */
+    private static void farScenes(Minecraft mc)
+    {
+        String[] ids = {"abyss_kraken", "abyss_mother", "abyss_angler"};
+        int[] offs = {30, 180, 300};
+        if (t == 60)
+        {
+            cmd(mc, "gamemode creative"); cmd(mc, "effect give @s minecraft:water_breathing 99999 0 true");
+            cmd(mc, "effect give @s minecraft:night_vision 99999 0 true");
+            for (String k : STUDIO_IDS) cmd(mc, "kill @e[type=abyssia:" + k + "]");
+            cmd(mc, "kill @e[tag=shotdummy]");
+            mc.options.renderDistance().set(32); // devtest only: the far shots are not capped by the render distance
+            mc.options.hideGui = true;
+            cmd(mc, "tp @s " + SX + " -200 " + SZ);
+        }
+        if (t < 100) return;
+        int b = (t - 100) / 570, d = (t - 100) % 570;
+        if (b >= ids.length) { if (d == 0) { log("far done"); mc.stop(); } return; }
+        String id = ids[b];
+        Vec3 head = new Vec3(SX + 0.5, -200, SZ + 0.5);
+        if (d == 0) { for (String k : STUDIO_IDS) cmd(mc, "kill @e[type=abyssia:" + k + "]"); cmd(mc, "tp @s " + (SX + 30) + " -200 " + SZ + " facing " + SX + " -200 " + SZ); }
+        if (d == 20) cmd(mc, "summon abyssia:" + id + " " + SX + ".5 -200 " + SZ + ".5 {NoAI:1b,Tags:[\"bossshot\"]}");
+        for (int j = 0; j < offs.length; j++)
+        {
+            int s = 60 + j * 120;
+            double cx = SX + 0.5 + offs[j];
+            // load the chunks at the camera column first, then find the sea surface on the client level (camera = first air above it + 3)
+            if (d == s) { farOk = false; cmd(mc, String.format(java.util.Locale.ROOT, "tp @s %.1f -200 %.1f", cx, SZ + 0.5)); }
+            if (d == s + 60)
+            {
+                farOk = false;
+                int bx = (int) Math.floor(cx), bz = SZ;
+                if (mc.level.getChunkSource().hasChunk(bx >> 4, bz >> 4))
+                {
+                    for (int y = 150; y >= -200; y--)
+                        if (mc.level.getBlockState(new BlockPos(bx, y, bz)).getBlock() == net.minecraft.world.level.block.Blocks.WATER) { farY = y + 1 + 3; farOk = true; break; }
+                }
+                if (farOk) tpFacing(mc, new Vec3(cx, farY, SZ + 0.5), head);
+                else log("far " + id + " off=" + offs[j] + " SKIP no sea surface");
+            }
+            if (d == s + 70 && farOk) tpFacing(mc, new Vec3(cx, farY, SZ + 0.5), head);
+            if (d == s + 85 && farOk)
+            {
+                farLog(mc, id, offs[j], head);
+                shot(mc, "far_" + id.replace("abyss_", "") + "_" + (j + 1));
+            }
+        }
+        // far_<boss>_0: 110 blocks from the head at the head's depth (underwater)
+        if (d == 440) cmd(mc, String.format(java.util.Locale.ROOT, "tp @s %.1f -200 %.1f", SX + 0.5 + 110, SZ + 0.5));
+        if (d == 480 || d == 490) tpFacing(mc, new Vec3(SX + 0.5 + 110, -200, SZ + 0.5), head);
+        if (d == 500)
+        {
+            farLog(mc, id, 110, head);
+            shot(mc, "far_" + id.replace("abyss_", "") + "_0");
+        }
+        if (d == 550) cmd(mc, "kill @e[type=abyssia:" + id + "]");
     }
 
     private static boolean water(Minecraft mc, Vec3 v)

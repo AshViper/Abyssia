@@ -161,8 +161,12 @@ public abstract class AbyssBoss extends PathfinderMob
             }
             bossEvent.setProgress(Math.max(0, ratio));
             if (tickCount % 10 == 0) updateBarPlayers();
-            aiTick();
-            applyMovement();
+            // NoAI (e.g. /summon ... {NoAI:1b}, devtest BossShot): the boss stays where it is, the body lies straight behind the head
+            if (!isNoAi())
+            {
+                aiTick();
+                applyMovement();
+            }
         }
         tickChain();
         if (!isDeadOrDying() && tickCount % 2 == 0 && contactActive()) contactDamage();
