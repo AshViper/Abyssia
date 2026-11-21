@@ -80,6 +80,9 @@ def tint(img, rgb):
 
 def icon_for_item(item_id, egg=None):
     if egg:
+        ns, path = split_id(item_id)
+        own = texture_image(f"{ns}:item/{path}")   # EGG01: each egg has its own texture
+        if own: return own
         base, over = texture_image("minecraft:item/spawn_egg"), texture_image("minecraft:item/spawn_egg_overlay")
         if base and over:
             img = tint(base, egg[0]); img.alpha_composite(tint(over, egg[1])); return img
@@ -264,6 +267,8 @@ def build():
     materials, eggs = parse_registry()
     model_ids = sorted(os.path.basename(p)[:-5] for p in glob.glob(os.path.join(RES, "assets", NS, "models", "item", "*.json")))
     loot, recipes = parse_loot(), parse_recipes()
+    for n in model_ids:  # eggs registered by loops (GNT01 giants) have no literal spawnEgg() call
+        if n.endswith("_spawn_egg"): eggs.setdefault(n, (0xFFFFFF, 0xFFFFFF))
 
     icons = {}
     def icon(item_id):

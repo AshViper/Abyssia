@@ -109,7 +109,11 @@ minecraft {
                 property 'abyssia.contentshot', '1'
                 args '--quickPlaySingleplayer', 'PrcGuiShot'
             }
+            else if (project.hasProperty('eggShot'))
             {
+                // Dev-only: devtest/EggShot checks the spawn eggs in singleplayer world 'EggShot' (results in run/eggshot.txt).
+                property 'abyssia.eggshot', '1'
+                args '--quickPlaySingleplayer', 'EggShot'
             }
             else if (project.hasProperty('langShot'))
             {

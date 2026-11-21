@@ -73,6 +73,7 @@ GIANT_NAMES = [
     ('duskmaw', 'Duskmaw', '宵喰らい'),
 ]
 
+# EGG01: spawn eggs for the mobs that are not species (bosses, GNT01 giants); GIANT_NAMES is defined above
 _EXTRA_EGG_NAMES = [
     ("abyss_serpent", "Abyssal Serpent", "深淵の大海蛇"), ("trench_wyrm", "Trench Wyrm", "海溝の大ワーム"),
     ("abyss_angler", "Abyss Angler", "アビスアングラー"), ("abyss_kraken", "Great Kraken", "大クラーケン"),
@@ -82,10 +83,13 @@ _GIANT_EGG_IDS = ("lancejaw", "lumenwing", "lantern_grazer", "hush_whale", "slat
                   "rift_lamprey", "shroud_ray", "glassback", "crestfin", "duskmaw")
 
 
+def extra_eggs():
     giants = {g: (e, j) for g, e, j in GIANT_NAMES}
     return _EXTRA_EGG_NAMES + [(g, giants[g][0], giants[g][1]) for g in _GIANT_EGG_IDS]
 
 
+for _id, _en, _ja in extra_eggs():
+    ITEM_NAMES[_id + "_spawn_egg"] = (_en + " Spawn Egg", _ja + "のスポーンエッグ")
 
 
 # "<item>.dropped_by": which species drop an item (from INFO["loot"]), shown as a JEI info page (com.abyssia.compat.jei)
@@ -100,8 +104,11 @@ for _item, _names in _DROPPERS.items():
 
 
 def item_models(write, im):
-        write(im(sid(s) + "_spawn_egg"), {"parent": "minecraft:item/template_spawn_egg"})
+    # EGG01: every egg has its own 16x16 texture (textures/item/<id>_spawn_egg.png, locked, not generated here)
+    ids = [sid(s) for s in species()] + [e[0] for e in extra_eggs()]
     for i in ids:
+        write(im(i + "_spawn_egg"), {"parent": "minecraft:item/generated",
+                                     "textures": {"layer0": "abyssia:item/" + i + "_spawn_egg"}})
 
 
 # ================================================================ models from the generator
