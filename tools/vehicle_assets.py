@@ -8,14 +8,10 @@ import os
 
 MOD = "abyssia"
 SUBMARINE = "submarine"
-EXOSUIT = "exosuit"
 DOCK = "submarine_dock"
 GANGWAY = "submarine_dock_gangway"   # SUB04 invisible helper blocks under the dock gangway
 
 RECIPES = {
-    # walking exosuit: alloy frame, propulsion screws as thrusters, pressure shell cockpit, iron plate legs
-    EXOSUIT: (["PSP", "ACA", "I I"], {"P": "abyssia:pressure_shell", "S": "abyssia:propulsion_screw", "A": "abyssia:abyssal_alloy_ingot",
-                                       "C": "abyssia:conductive_alloy_ingot", "I": "abyssia:iron_plate"}),
     # two propulsion screws (I04), alloy hull, marine resin seal, conductive wiring, glass canopy
     SUBMARINE: (["GGG", "AMA", "SCS"], {"G": "minecraft:glass", "A": "abyssia:abyssal_alloy_ingot", "M": "abyssia:marine_resin",
                                          "S": "abyssia:propulsion_screw", "C": "abyssia:conductive_alloy_ingot"}),
@@ -184,13 +180,6 @@ UPGRADES = {
 
 # key -> (English, Japanese)
 LANG = {
-    f"entity.{MOD}.exosuit": ("Exosuit", "潜水歩行スーツ"),
-    f"item.{MOD}.exosuit": ("Exosuit", "潜水歩行スーツ"),
-    f"item.{MOD}.exosuit.source": (
-        "A one-seat walking suit for the seabed. Right-click to place it, right-click it to board. W/S/A/D walk, Space fires the thrusters (limited, recharge on the ground), Shift to get out. "
-        "Its arm mines like an iron pickaxe and hits harder than a bare fist.",
-        "海底を歩く一人乗りのスーツ。右クリックで設置し、もう一度右クリックで乗り込む。W/S/A/D で歩行、Space でスラスター噴射（時間制限あり、地面で回復）、Shift で降りる。"
-        "腕は鉄のツルハシ並みに掘れ、素手より強く殴れる。"),
     f"entity.{MOD}.submarine": ("Submarine", "潜水艦"),
     f"item.{MOD}.submarine": ("Submarine", "潜水艦"),
     f"item.{MOD}.submarine.source": (
@@ -282,7 +271,6 @@ def pickaxe_blocks():
 
 def generate(write, bs, bm, im, data_dir):
     write(im(SUBMARINE), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{SUBMARINE}"}})
-    write(im(EXOSUIT), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{EXOSUIT}"}})
     for upgrade in UPGRADES:   # icons by ChatGPT, locked in tools/texture_locks
         write(im(upgrade), {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/{ADV_ICON.get(upgrade, upgrade)}"}})
     for item, (_en, _ja, parent, tex, _src_en, _src_ja) in TRP01_ITEMS.items():   # TRP01: reuse an existing texture

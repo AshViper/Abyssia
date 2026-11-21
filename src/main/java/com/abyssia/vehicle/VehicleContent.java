@@ -44,10 +44,6 @@ public final class VehicleContent
             () -> EntityType.Builder.<Submarine>of(Submarine::new, MobCategory.MISC).sized(3.0F, 2.2F)
                     .clientTrackingRange(10).updateInterval(1).build("submarine"));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Exosuit>> EXOSUIT = ENTITIES.register("exosuit",
-            () -> EntityType.Builder.<Exosuit>of(Exosuit::new, MobCategory.MISC).sized(1.4F, 2.6F)
-                    .clientTrackingRange(10).updateInterval(1).build("exosuit"));
-
     public static final DeferredBlock<Block> SUBMARINE_DOCK = BLOCKS.register("submarine_dock",
             () -> new SubmarineDockBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0f, 6.0f)
                     .noLootTable().noOcclusion().sound(SoundType.METAL).lightLevel(s -> 12)));
@@ -59,7 +55,6 @@ public final class VehicleContent
             "submarine_dock", () -> BlockEntityType.Builder.of(SubmarineDockBlockEntity::new, SUBMARINE_DOCK.get()).build(null));
 
     public static DeferredItem<Item> SUBMARINE_ITEM;
-    public static DeferredItem<Item> EXOSUIT_ITEM;
 
     private VehicleContent() {}
 
@@ -79,8 +74,6 @@ public final class VehicleContent
     {
         SUBMARINE_ITEM = items.register("submarine", () -> new SubmarineItem(new Item.Properties().stacksTo(1)));
         tab.add(SUBMARINE_ITEM);
-        EXOSUIT_ITEM = items.register("exosuit", () -> new ExosuitItem(new Item.Properties().stacksTo(1)));
-        tab.add(EXOSUIT_ITEM);
         SubmarineUpgrades.registerItems(items, tab);
     }
 
