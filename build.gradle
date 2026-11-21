@@ -101,6 +101,13 @@ minecraft {
                 property 'abyssia.prcguishot', '1'
                 args '--quickPlaySingleplayer', 'PrcGuiShot'
             }
+            else if (project.hasProperty('langShot'))
+            {
+                // Dev-only: devtest/LangShot enters 'PrcGuiShot' and screenshots the text-heavy screens in each language.
+                // `gradlew runClient -PlangShot=zh_cn,ru_ru`; log lines "LANGSHOT ...", files run/screenshots/lang_<code>_*.png.
+                property 'abyssia.langshot', project.findProperty('langShot')
+                args '--quickPlaySingleplayer', 'PrcGuiShot'
+            }
             else
             {
                 property 'abyssia.autoshot', '1'
