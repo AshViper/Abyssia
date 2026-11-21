@@ -183,27 +183,34 @@ public final class FaunaSpawner
         double total = 0;
         double unbounded = 0;
         double density = Config.FAUNA_DENSITY.get();
+        // QOL01: species a nearby seabed structure prefers weigh more (native fauna only; the external budget is not scaled)
+        double boost = Config.QOL01_STRUCTURE_FAUNA_BOOST.get();
+        java.util.Set<net.minecraft.resources.ResourceLocation> preferred = boost != 1.0 ? StructureFauna.preferredAt(level, site.pos()) : java.util.Set.of();
         for (FaunaSpawnProvider provider : PROVIDERS)
         {
             int first = candidates.size();
             double sum = 0;
+            double baseSum = 0;
             for (FaunaSpawnRule rule : provider.rules(level, site.pos()))
             {
                 if (!rules.test(rule)) continue;
                 BlockPos spot = rule.place(site, random);
                 if (spot == null) continue;
-                double w = rule.weight(site, spot) * density;
+                double base = rule.weight(site, spot) * density;
+                double w = provider.maxShare() >= 1.0 && !preferred.isEmpty()
+                        ? StructureFauna.boosted(base, BuiltInRegistries.ENTITY_TYPE.getKey(rule.entity()), preferred, boost) : base;
                 if (w <= 0) continue;
                 candidates.add(rule);
                 owners.add(provider);
                 spots.add(spot);
                 weights.add(w);
                 sum += w;
+                baseSum += base;
             }
             double share = provider.maxShare();
             if (share >= 1.0)
             {
-                unbounded += sum;
+                unbounded += baseSum;
             }
             else if (sum > 0)
             {

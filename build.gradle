@@ -95,6 +95,38 @@ neoForge {
             systemProperty 'abyssia.prc01test', '1'
         }
 
+        // Dev-only: devtest/Qol01Test runs the QOL01 checks (dish buffs, beacon travel, contracts, structure fauna) and halts (log lines "QOL01 ...").
+        qol01Test {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'abyssia.qol01test', '1'
+        }
+
+        // Dev-only: devtest/Log01Test runs the LOG01 logistics checks on a dedicated server and halts (log lines "LOG01 ...").
+        log01Test {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'abyssia.log01test', '1'
+        }
+
+        // Dev-only: devtest/Bas01Test runs the BAS01 habitat upkeep checks on a dedicated server and halts (log lines "BAS01 ...").
+        bas01Test {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'abyssia.bas01test', '1'
+        }
+
+        // Dev-only: devtest/Trp01Test runs the TRP01 boss-material gear checks on a dedicated server and halts (log lines "TRP01 ...").
+        trp01Test {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'abyssia.trp01test', '1'
+        }
+
         gameTestServer {
             type = "gameTestServer"
             gameDirectory = project.file('run')

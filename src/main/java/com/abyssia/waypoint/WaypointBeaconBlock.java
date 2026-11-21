@@ -54,6 +54,11 @@ public class WaypointBeaconBlock extends IndustrialLightBlock implements EntityB
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit)
     {
+        if (player.isShiftKeyDown() && player.getMainHandItem().isEmpty() && com.abyssia.Config.QOL01_TRAVEL_ENABLED.get())
+        {
+            if (level.isClientSide) WaypointClient.openTravelScreen(pos);
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (player.isShiftKeyDown() || !player.getMainHandItem().isEmpty()) return InteractionResult.PASS;
         if (level.isClientSide)
         {

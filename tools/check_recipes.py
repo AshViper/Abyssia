@@ -48,7 +48,7 @@ VANILLA = {
 
 # Registration helpers whose first string argument is an item id.
 _REG = re.compile(r'\b(?:item|sourcedItem|tabItem|blockItem|doubleHighBlockItem|spawnEgg|add|register|block|'
-                  r'resource|material|plant|ore|crust|rock|soft|simple)\(\s*(?:items,\s*tab,\s*)?"([a-z0-9_/]+)"')
+                  r'resource|material|plant|ore|crust|rock|soft|simple|registerSimpleItem)\(\s*(?:items,\s*tab,\s*)?"([a-z0-9_/]+)"')
 
 
 def java_ids() -> set[str]:

@@ -51,13 +51,13 @@ LIT_MACHINES = {
     "selective_leaching_separator": ("Selective Leaching Separator", "選択浸出分離機"),     # I02
     "hydrothermal_precipitator": ("Hydrothermal Precipitator", "熱水析出機"),     # PRC01
 }
-# PRC01: no textures of its own yet, it borrows the separator's
-TEXTURE_ALIAS = {"hydrothermal_precipitator": "selective_leaching_separator"}
+TEXTURE_ALIAS = {}   # machine -> texture name override (PRC01 now has its own textures)
 # ORE01 abyssal excavator Mk1 / Mk2: multiblock drawn by industry/client/ExcavatorRenderer; blockstates + chunk models come from
 # tools/bt01/excavator_assets.py; built with the habitat constructor (no item)
 EXCAVATORS = {
     "abyssal_excavator": ("Abyssal Excavator Mk1", "深海採掘機 Mk1"),
     "abyssal_excavator_mk2": ("Abyssal Excavator Mk2", "深海採掘機 Mk2"),
+    "abyssal_excavator_mk3": ("Abyssal Excavator Mk3", "深海採掘機 Mk3"),   # TRP01: drawn with the Mk2 models
 }
 # its invisible collision cells (lang: tools/lang_parts/ore01.json; blockstate: excavator_assets.py): no loot, pickaxe, stone tool
 EXCAVATOR_PART = "excavator_part"
@@ -67,6 +67,11 @@ LEACHING_REAGENT_NAME = ("Acidic Leaching Reagent", "酸性浸出試薬")
 ITEM_NAMES = {LEACHING_REAGENT: LEACHING_REAGENT_NAME}   # merged into gen_deep_assets.ITEM_NAMES
 ENERGY_NAME = ("Energy Device", "エネルギー装置")
 MACHINES = {**LIT_MACHINES, ENERGY: ENERGY_NAME}      # everything with a GUI (container.abyssia.<id>)
+
+# LOG01: logistics pump (valve model, own texture) and cargo uplink (cube, own textures cargo_uplink_front / _front_on / _side / _top)
+PUMP = "logistics_pump"
+UPLINK = "cargo_uplink"
+LOG01 = {PUMP: ("Logistics Pump", "物流ポンプ"), UPLINK: ("Cargo Uplink", "貨物転送機")}
 
 # (thickness of the cross-section in 16 units: low, high)
 PIPE_PARTS = {PIPE: (4, 12), CABLE: (6, 10), REINFORCED: (5, 11)}
@@ -87,6 +92,7 @@ NAMES = {
     CABLE: ("Energy Cable", "エネルギーケーブル"),
     REINFORCED: ("Reinforced Energy Cable", "強化エネルギーケーブル"),
     **MACHINES,
+    **LOG01,
     **EXCAVATORS,
 }
 
@@ -425,6 +431,16 @@ def generate(write, bs, bm, im, data_dir):
     write(im(LEACHING_REAGENT), {"parent": "minecraft:item/generated",
                                  "textures": {"layer0": f"{MOD}:item/{LEACHING_REAGENT}"}})
 
+    # ---- LOG01: pump = the valve model with its own texture; uplink = machine cube, front_on while in receive mode
+    write(bm(PUMP), {"parent": rl(VALVE), "textures": {"industrial_valve": rl(PUMP), "t": rl(PUMP), "particle": rl(PUMP)}})
+    write(bs(PUMP), {"variants": _facing_variants(rl(PUMP), DIR_ROT)})
+    write(im(PUMP), {"parent": rl(PUMP)})
+    write(bm(UPLINK), _fallback_machine(UPLINK))
+    write(bm(UPLINK + "_receiver"), {"parent": rl(UPLINK), "textures": {"front": rl(f"{UPLINK}_front_on")}})
+    write(bs(UPLINK), {"variants": {f"facing={facing},receiver={rec}": {"model": rl(UPLINK + ("_receiver" if rec == "true" else "")), **_rot(y)}
+                                    for facing, y in ba.NORTH0.items() for rec in ("false", "true")}})
+    write(im(UPLINK), {"parent": rl(UPLINK)})
+
     loot_tables(write, data_dir)
     recipes(write, data_dir)
     tags(write, data_dir)
@@ -478,6 +494,9 @@ def recipes(write, data_dir):
     shaped(WARNING_LIGHT, ["WLW", "PRP", " R "], {"P": P, "L": "lumen_cell", "R": R, "W": W}, 2, "misc")
     shaped(BEACON, ["IRI", "GWG", "ICI"], {"I": "minecraft:iron_ingot", "R": "minecraft:redstone", "G": "minecraft:glass",
                                            "W": WORK_LIGHT, "C": "minecraft:copper_ingot"}, 1, "misc")
+    # LOG01 (K of the conductive component needs tellurium, which only the Mk2 excavator mines: lumen_cell instead)
+    shaped(PUMP, [" P ", "IVI", " G "], {"P": P, "I": PIPE, "V": "pressure_valve", "G": "iron_gear"}, 1, "misc")
+    shaped(UPLINK, ["PBP", "LFL", "PWP"], {"P": P, "B": BEACON, "L": "lumen_cell", "F": "machine_frame", "W": W}, 1, "misc")
     shaped(CABLE, ["WWW", "WFW", "WWW"], {"W": W, "F": "deep_fiber"}, 8, "redstone")
     shaped(REINFORCED, ["CCC", "WAW", "CCC"], {"C": "conductive_alloy_ingot", "W": W, "A": "abyssal_alloy_ingot"}, 6,
            "redstone")

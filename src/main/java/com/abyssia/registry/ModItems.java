@@ -188,45 +188,55 @@ public final class ModItems
     public static final DeferredItem<Item> GOURD_FLESH = foodMod("gourd_flesh", 2, 0.4f, Rarity.COMMON, false);
     public static final DeferredItem<Item> KELP_LEAF = foodMod("kelp_leaf", 1, 0.2f, Rarity.COMMON, false);
     public static final DeferredItem<Item> FISH_MUSHROOM_SKEWER = foodMod("fish_mushroom_skewer", 6, 0.8f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.1f));
+            buff(ModMobEffects.DEEP_SIGHT, 90, 0));
     public static final DeferredItem<Item> GOURD_FISH_SKEWER = foodMod("gourd_fish_skewer", 7, 0.9f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f));
-    public static final DeferredItem<Item> KELP_FISH_SKEWER = foodMod("kelp_fish_skewer", 5, 0.7f, Rarity.COMMON, false);
+            buff(MobEffects.WATER_BREATHING, 45, 0));
+    public static final DeferredItem<Item> KELP_FISH_SKEWER = foodMod("kelp_fish_skewer", 5, 0.7f, Rarity.COMMON, false,
+            buff(ModMobEffects.ABYSSAL_CURRENT, 90, 0));
     public static final DeferredItem<Item> MUSHROOM_STEW = foodMod("mushroom_stew", 7, 0.8f, Rarity.COMMON, true,
-            new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.15f));
+            buff(ModMobEffects.DEEP_SIGHT, 120, 0));
     public static final DeferredItem<Item> GOURD_SOUP = foodMod("gourd_soup", 6, 0.8f, Rarity.COMMON, true,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.15f));
-    public static final DeferredItem<Item> KELP_SOUP = foodMod("kelp_soup", 5, 0.7f, Rarity.COMMON, true);
+            buff(MobEffects.WATER_BREATHING, 60, 0));
+    public static final DeferredItem<Item> KELP_SOUP = foodMod("kelp_soup", 5, 0.7f, Rarity.COMMON, true,
+            buff(ModMobEffects.ABYSSAL_CURRENT, 120, 0));
     public static final DeferredItem<Item> FISH_SOUP = foodMod("fish_soup", 8, 1.0f, Rarity.COMMON, true,
             new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.15f),
             buff(ModMobEffects.ABYSSAL_CURRENT, 180, 0));
     public static final DeferredItem<Item> MUSHROOM_FISH_STEW = foodMod("mushroom_fish_stew", 9, 1.0f, Rarity.COMMON, true,
+            buff(ModMobEffects.DEEP_SIGHT, 120, 0),
             new FoodEffect(MobEffects.REGENERATION, 10 * 20, 0.05f));
     public static final DeferredItem<Item> GOURD_FISH_STEW = foodMod("gourd_fish_stew", 9, 1.0f, Rarity.COMMON, true,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.2f));
+            buff(MobEffects.WATER_BREATHING, 60, 0));
     public static final DeferredItem<Item> KELP_FISH_STEW = foodMod("kelp_fish_stew", 8, 0.9f, Rarity.COMMON, true,
             buff(ModMobEffects.DEEP_SIGHT, 150, 0));
-    public static final DeferredItem<Item> MUSHROOM_PIE = foodMod("mushroom_pie", 8, 0.8f, Rarity.COMMON, false);
+    public static final DeferredItem<Item> MUSHROOM_PIE = foodMod("mushroom_pie", 8, 0.8f, Rarity.COMMON, false,
+            buff(ModMobEffects.DEEP_SIGHT, 180, 0));
     public static final DeferredItem<Item> GOURD_PIE = foodMod("gourd_pie", 8, 0.9f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.1f));
+            buff(MobEffects.WATER_BREATHING, 90, 0));
     public static final DeferredItem<Item> FISH_PIE = foodMod("fish_pie", 10, 1.0f, Rarity.COMMON, false,
+            buff(MobEffects.DIG_SPEED, 180, 0),
             new FoodEffect(MobEffects.REGENERATION, 10 * 20, 0.05f));
     public static final DeferredItem<Item> MUSHROOM_FISH_PIE = foodMod("mushroom_fish_pie", 10, 1.1f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.15f));
+            buff(ModMobEffects.DEEP_SIGHT, 180, 0));
     public static final DeferredItem<Item> GOURD_FISH_PIE = foodMod("gourd_fish_pie", 10, 1.1f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.15f));
-    public static final DeferredItem<Item> KELP_FISH_PIE = foodMod("kelp_fish_pie", 9, 1.0f, Rarity.COMMON, false);
-    public static final DeferredItem<Item> PRESERVED_FISH = foodMod("preserved_fish", 7, 1.0f, Rarity.COMMON, false);
-    public static final DeferredItem<Item> SMOKED_MUSHROOM = foodMod("smoked_mushroom", 4, 0.7f, Rarity.COMMON, false);
+            buff(MobEffects.WATER_BREATHING, 90, 0));
+    public static final DeferredItem<Item> KELP_FISH_PIE = foodMod("kelp_fish_pie", 9, 1.0f, Rarity.COMMON, false,
+            buff(ModMobEffects.ABYSSAL_CURRENT, 180, 0));
+    public static final DeferredItem<Item> PRESERVED_FISH = foodMod("preserved_fish", 7, 1.0f, Rarity.COMMON, false,
+            buff(MobEffects.DIG_SPEED, 240, 0));
+    public static final DeferredItem<Item> SMOKED_MUSHROOM = foodMod("smoked_mushroom", 4, 0.7f, Rarity.COMMON, false,
+            buff(ModMobEffects.DEEP_SIGHT, 60, 0));
     public static final DeferredItem<Item> SMOKED_GOURD = foodMod("smoked_gourd", 5, 0.8f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.05f));
-    public static final DeferredItem<Item> GRILLED_KELP = foodMod("grilled_kelp", 4, 0.6f, Rarity.COMMON, false);
+            buff(MobEffects.WATER_BREATHING, 30, 0));
+    public static final DeferredItem<Item> GRILLED_KELP = foodMod("grilled_kelp", 4, 0.6f, Rarity.COMMON, false,
+            buff(ModMobEffects.ABYSSAL_CURRENT, 60, 0));
     public static final DeferredItem<Item> MUSHROOM_FISH_GRILL = foodMod("mushroom_fish_grill", 8, 0.9f, Rarity.COMMON, false,
             new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.1f),
             buff(ModMobEffects.ABYSSAL_CURRENT, 60, 1));
     public static final DeferredItem<Item> GOURD_FISH_GRILL = foodMod("gourd_fish_grill", 9, 1.0f, Rarity.COMMON, false,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f));
-    public static final DeferredItem<Item> KELP_FISH_GRILL = foodMod("kelp_fish_grill", 7, 0.8f, Rarity.COMMON, false);
+            buff(MobEffects.WATER_BREATHING, 60, 0));
+    public static final DeferredItem<Item> KELP_FISH_GRILL = foodMod("kelp_fish_grill", 7, 0.8f, Rarity.COMMON, false,
+            buff(ModMobEffects.ABYSSAL_CURRENT, 120, 0));
     public static final DeferredItem<Item> JELLYFISH_SKEWER = foodMod("jellyfish_skewer", 6, 0.8f, Rarity.COMMON, false,
             new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f),
             buff(ModMobEffects.DEEP_SIGHT, 120, 0));
@@ -238,12 +248,16 @@ public final class ModItems
             new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.1f),
             buff(ModMobEffects.DEEP_SIGHT, 90, 0));
     public static final DeferredItem<Item> THERMAL_RATION = foodMod("thermal_ration", 9, 1.1f, Rarity.COMMON, false,
+            buff(MobEffects.FIRE_RESISTANCE, 240, 0),
             new FoodEffect(MobEffects.REGENERATION, 10 * 20, 0.05f));
-    public static final DeferredItem<Item> MUSHROOM_SALAD = foodMod("mushroom_salad", 5, 0.7f, Rarity.COMMON, true);
+    public static final DeferredItem<Item> MUSHROOM_SALAD = foodMod("mushroom_salad", 5, 0.7f, Rarity.COMMON, true,
+            buff(ModMobEffects.DEEP_SIGHT, 90, 0));
     public static final DeferredItem<Item> GOURD_KELP_SALAD = foodMod("gourd_kelp_salad", 5, 0.7f, Rarity.COMMON, true,
-            new FoodEffect(MobEffects.WATER_BREATHING, 15 * 20, 0.05f));
+            buff(MobEffects.WATER_BREATHING, 45, 0));
     public static final DeferredItem<Item> ABYSSAL_VEGETABLE_STEW = foodMod("abyssal_vegetable_stew", 7, 0.9f, Rarity.COMMON, true,
-            new FoodEffect(MobEffects.NIGHT_VISION, 10 * 20, 0.1f));
+            buff(ModMobEffects.DEEP_SIGHT, 90, 0),
+            buff(MobEffects.WATER_BREATHING, 45, 0),
+            buff(ModMobEffects.ABYSSAL_CURRENT, 90, 0));
 
     // Spawn eggs (colours match tools/fauna/<species>.py INFO["egg"])
     public static final DeferredItem<Item> ANGLERFISH_SPAWN_EGG = spawnEgg("anglerfish_spawn_egg", ModEntities.ANGLERFISH, 0x1B2029, 0x8FF0FF);
@@ -273,6 +287,8 @@ public final class ModItems
     public static final DeferredItem<Item> OIL_KELP_SEED = tabItem("oil_kelp_seed", AbyssiaTab.NATURE, () -> new net.minecraft.world.item.ItemNameBlockItem(ModBlocks.OIL_KELP.get(), new Item.Properties()));
     public static final DeferredItem<Item> DEEP_SEA_MAP = tabItem("deep_sea_map", AbyssiaTab.EQUIPMENT, () -> new com.abyssia.map.DeepSeaMapItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> ABYSS_CHART = tabItem("abyss_chart", AbyssiaTab.EQUIPMENT, () -> new com.abyssia.map.AbyssChartItem(new Item.Properties().stacksTo(16)));
+    // QOL01 daily supply contract (client and server derive the request from the day + player uuid; the paper holds no data)
+    public static final DeferredItem<Item> SUPPLY_CONTRACT = tabItem("supply_contract", AbyssiaTab.EQUIPMENT, () -> new com.abyssia.item.SupplyContractItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> NATURE_TAB = tab(AbyssiaTab.NATURE, null,
             () -> ModBlocks.ABYSSAL_BLOOM.get().asItem().getDefaultInstance());

@@ -38,7 +38,7 @@ public final class DiveTank
 
     public static int capacitySeconds(int tier)
     {
-        return tier >= 3 ? Config.TANK_PRESSURE_SECONDS.get() : tier == 2 ? Config.TANK_DEEP_SECONDS.get()
+        return tier >= 4 ? Config.TANK_ABYSS_SECONDS.get() : tier >= 3 ? Config.TANK_PRESSURE_SECONDS.get() : tier == 2 ? Config.TANK_DEEP_SECONDS.get()
                 : tier == 1 ? Config.TANK_ENTRY_SECONDS.get() : 0;
     }
 

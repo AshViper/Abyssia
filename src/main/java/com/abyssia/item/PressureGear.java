@@ -26,6 +26,8 @@ public final class PressureGear
     /** Lowest safe Y per tier 0..2 (no gear Y 23, entry Y -300, deep Y -450); tier 3 has no limit. */
     private static final int[] SAFE_Y = {23, -300, -450};
     public static final int MAX_TIER = 3;
+    /** TRP01 Heart Tank: above the pressure tier, also unlimited depth (MAX_TIER comparisons use >=) */
+    public static final int HEART_TIER = 4;
     /** Blocks below the safe Y per extra point of damage (1 to 3). */
     private static final int STEP_BLOCKS = 64;
 
@@ -45,6 +47,7 @@ public final class PressureGear
     public static int pieceTier(ItemStack stack)
     {
         if (stack.isEmpty()) return 0;
+        if (is(stack, MaterialTools.HEART_TANK)) return HEART_TIER;
         if (is(stack, MaterialTools.PRESSURE_DIVER_HELMET) || is(stack, MaterialTools.PRESSURE_DIVE_TANK)
                 || is(stack, MaterialTools.PRESSURE_SUIT_LEGGINGS) || is(stack, MaterialTools.PRESSURE_FLIPPERS)) return 3;
         if (is(stack, ModTools.DIVER_HELMET) || is(stack, ModTools.FLIPPERS)

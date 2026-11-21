@@ -69,7 +69,7 @@ public class Submarine extends Entity
     private static final EntityDataAccessor<Boolean> DATA_LIGHTS = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_DOCK = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     /** SUB03 installed upgrades (SubmarineUpgrades.bit), set by the server; the pilot's client reads it for the speeds */
-    private static final EntityDataAccessor<Byte> DATA_UPGRADES = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Integer> DATA_UPGRADES = SynchedEntityData.defineId(Submarine.class, EntityDataSerializers.INT);
 
     public static final float MAX_DAMAGE = 40.0f;
     /** acceleration (blocks / tick^2), sideways / vertical top speeds, water drag per tick without input (SUB07 Seamoth ratios: forward 12.7 / sideways 11.5 / vertical 11 / reverse 5 m/s, longer glide) */
@@ -137,7 +137,7 @@ public class Submarine extends Entity
         upgrades.addListener(c ->
         {
             if (level().isClientSide) return;
-            entityData.set(DATA_UPGRADES, (byte) SubmarineUpgrades.mask(upgrades));
+            entityData.set(DATA_UPGRADES, SubmarineUpgrades.mask(upgrades));
             // battery taken out: the charge above the base capacity is lost
             setEnergy(getEnergy());
         });
@@ -158,6 +158,12 @@ public class Submarine extends Entity
     public boolean hasUpgrade(int slot)
     {
         return (entityData.get(DATA_UPGRADES) & SubmarineUpgrades.bit(slot)) != 0;
+    }
+
+    /** TRP01: the slot (0-3) holds the Mk2 upgrade */
+    public boolean isAdvanced(int slot)
+    {
+        return (entityData.get(DATA_UPGRADES) & SubmarineUpgrades.bit(SubmarineUpgrades.ADV_SHIFT + slot)) != 0;
     }
 
     private SimpleContainer newPod()
@@ -208,7 +214,15 @@ public class Submarine extends Entity
     /** battery with the installed upgrades */
     public int maxEnergy()
     {
-        return capacity(hasUpgrade(SubmarineUpgrades.BATTERY));
+        return capacity(upgradeMask());
+    }
+
+    /** TRP01: battery size of an upgrade mask (Mk2 cell > high-capacity battery > base) */
+    public static int capacity(int mask)
+    {
+        if (isAdv(mask, SubmarineUpgrades.BATTERY))
+            return Math.max(capacity(true), Config.SUB_CELL2_CAPACITY.get());
+        return capacity(has(mask, SubmarineUpgrades.BATTERY));
     }
 
     public static int capacity(boolean battery)
@@ -219,7 +233,37 @@ public class Submarine extends Entity
     /** breaking threshold of the hull with the installed upgrades */
     public float maxDamage()
     {
-        return hasUpgrade(SubmarineUpgrades.HULL) ? Config.SUB_HULL_MAX_DAMAGE.get().floatValue() : MAX_DAMAGE;
+        return maxDamage(upgradeMask());
+    }
+
+    public static float maxDamage(int mask)
+    {
+        if (isAdv(mask, SubmarineUpgrades.HULL)) return Config.SUB_HULL2_MAX_DAMAGE.get().floatValue();
+        return has(mask, SubmarineUpgrades.HULL) ? Config.SUB_HULL_MAX_DAMAGE.get().floatValue() : MAX_DAMAGE;
+    }
+
+    /** TRP01: damage multiplier of the hull in the deep layer (1.0 without a hull upgrade) */
+    public static double hullDeepReduction(int mask)
+    {
+        if (isAdv(mask, SubmarineUpgrades.HULL)) return Config.SUB_HULL2_DEEP_REDUCTION.get();
+        return has(mask, SubmarineUpgrades.HULL) ? Config.SUB_HULL_DEEP_REDUCTION.get() : 1.0;
+    }
+
+    /** TRP01: FE per tick while moving under power */
+    public static int thrustFe(int mask)
+    {
+        if (isAdv(mask, SubmarineUpgrades.THRUSTER)) return Config.SUB_THRUSTER2_FE.get();
+        return has(mask, SubmarineUpgrades.THRUSTER) ? Config.SUB_THRUSTER_FE.get() : Config.SUBMARINE_THRUST_FE.get();
+    }
+
+    private static boolean has(int mask, int slot)
+    {
+        return (mask & SubmarineUpgrades.bit(slot)) != 0;
+    }
+
+    private static boolean isAdv(int mask, int slot)
+    {
+        return (mask & SubmarineUpgrades.bit(SubmarineUpgrades.ADV_SHIFT + slot)) != 0;
     }
 
     /**
@@ -228,19 +272,26 @@ public class Submarine extends Entity
      */
     public double[] speeds()
     {
-        boolean thruster = hasUpgrade(SubmarineUpgrades.THRUSTER);
-        double forward = thruster ? Config.SUB_THRUSTER_FORWARD.get() : Config.SUBMARINE_MAX_SPEED.get();
-        double side = thruster ? Config.SUB_THRUSTER_SIDE.get() : SIDE_SPEED;
-        double vertical = thruster ? Config.SUB_THRUSTER_VERTICAL.get() : VERTICAL_SPEED;
-        if (hasUpgrade(SubmarineUpgrades.HULL))
+        return speeds(upgradeMask());
+    }
+
+    /** {@link #speeds()} of an upgrade mask (TRP01: Mk2 thruster / hull values) */
+    public static double[] speeds(int mask)
+    {
+        boolean thruster = has(mask, SubmarineUpgrades.THRUSTER), thruster2 = isAdv(mask, SubmarineUpgrades.THRUSTER);
+        double forward = thruster2 ? Config.SUB_THRUSTER2_FORWARD.get() : thruster ? Config.SUB_THRUSTER_FORWARD.get() : Config.SUBMARINE_MAX_SPEED.get();
+        double side = thruster2 ? Config.SUB_THRUSTER2_SIDE.get() : thruster ? Config.SUB_THRUSTER_SIDE.get() : SIDE_SPEED;
+        double vertical = thruster2 ? Config.SUB_THRUSTER2_VERTICAL.get() : thruster ? Config.SUB_THRUSTER_VERTICAL.get() : VERTICAL_SPEED;
+        if (has(mask, SubmarineUpgrades.HULL))
         {
-            double m = Config.SUB_HULL_SPEED_MULT.get();
+            double m = isAdv(mask, SubmarineUpgrades.HULL) ? Config.SUB_HULL2_SPEED_MULT.get() : Config.SUB_HULL_SPEED_MULT.get();
             forward *= m;
             side *= m;
             vertical *= m;
         }
-        if (hasUpgrade(SubmarineUpgrades.BATTERY)) vertical *= Config.SUB_BATTERY_VERTICAL_MULT.get();
-        return new double[]{forward, side, vertical, thruster ? Config.SUB_THRUSTER_ACCEL.get() : ACCEL, side * REVERSE_RATIO};
+        if (has(mask, SubmarineUpgrades.BATTERY)) vertical *= Config.SUB_BATTERY_VERTICAL_MULT.get();
+        return new double[]{forward, side, vertical, thruster2 ? Config.SUB_THRUSTER2_ACCEL.get() : thruster ? Config.SUB_THRUSTER_ACCEL.get() : ACCEL,
+                side * REVERSE_RATIO};
     }
 
     // ---------------------------------------------------------------- synced data
@@ -252,7 +303,7 @@ public class Submarine extends Entity
         builder.define(DATA_DAMAGE, 0.0f);
         builder.define(DATA_LIGHTS, false);
         builder.define(DATA_DOCK, Optional.empty());
-        builder.define(DATA_UPGRADES, (byte) 0);
+        builder.define(DATA_UPGRADES, 0);
     }
 
     public int getEnergy() { return entityData.get(DATA_ENERGY); }
@@ -558,7 +609,7 @@ public class Submarine extends Entity
             }
         }
         else if (rider != null && moved > 0.01)
-            energy -= hasUpgrade(SubmarineUpgrades.THRUSTER) ? Config.SUB_THRUSTER_FE.get() : Config.SUBMARINE_THRUST_FE.get();
+            energy -= thrustFe(upgradeMask());
         boolean sonar = rider != null && hasUpgrade(SubmarineUpgrades.SONAR) && energy > 0;
         if (sonar)
         {
@@ -867,7 +918,7 @@ public class Submarine extends Entity
         float damage = amount * 10.0f;
         // pressure hull: deep-layer hits reduced (rounded up, a hit never drops to 0)
         if (hasUpgrade(SubmarineUpgrades.HULL) && getY() <= DeepLayer.TOP_Y)
-            damage = (float) Math.ceil(damage * Config.SUB_HULL_DEEP_REDUCTION.get());
+            damage = (float) Math.ceil(damage * hullDeepReduction(upgradeMask()));
         setDamage(getDamage() + damage);
         markHurt();
         gameEvent(GameEvent.ENTITY_DAMAGE, attacker);
@@ -956,7 +1007,7 @@ public class Submarine extends Entity
     {
         // upgrades first: the battery decides how much energy fits
         SubmarineUpgrades.load(tag.getCompound(SubmarineUpgrades.TAG), upgrades);
-        entityData.set(DATA_UPGRADES, (byte) SubmarineUpgrades.mask(upgrades));
+        entityData.set(DATA_UPGRADES, SubmarineUpgrades.mask(upgrades));
         setEnergy(tag.getInt("Energy"));
         setDamage(tag.getFloat("Damage"));
         setLights(tag.getBoolean("Lights"));

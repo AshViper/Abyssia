@@ -1,0 +1,21 @@
+{
+  "id": "abyssia:technology/cargo_logistics",
+  "type": "machine",
+  "title": "technology.abyssia.cargo_logistics",
+  "tier": "mk1",
+  "depth_band": "B",
+  "scan_requirements": [
+    {
+      "target": "abyssia:scan_target/mineral_deposit_nickel",
+      "count": 1
+    }
+  ],
+  "prerequisites": [
+    "abyssia:technology/logistics",
+    "abyssia:technology/power_distribution"
+  ],
+  "unlocks": [
+    "abyssia:machine/cargo_uplink"
+  ],
+  "icon": "abyssia:cargo_uplink"
+}

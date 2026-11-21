@@ -398,6 +398,54 @@ public class Config
 
     static {
         BUILDER.pop();
+        BUILDER.comment("QOL01 long-play conveniences: dish buff tooltip, beacon travel, daily supply contracts, structure fauna").push("qol01");
+        BUILDER.push("food");
+    }
+    public static final ModConfigSpec.BooleanValue QOL01_FOOD_TOOLTIP = BUILDER
+            .comment("List the guaranteed effects of Abyssia dishes in their tooltip")
+            .define("tooltip", true);
+    static {
+        BUILDER.pop();
+        BUILDER.push("beacon_travel");
+    }
+    public static final ModConfigSpec.BooleanValue QOL01_TRAVEL_ENABLED = BUILDER
+            .comment("Sneak + empty-hand click on a waypoint beacon opens a list of your other beacons to travel to")
+            .define("enabled", true);
+    public static final ModConfigSpec.IntValue QOL01_TRAVEL_BASE_COST = BUILDER
+            .comment("FE the departure beacon pays per trip")
+            .defineInRange("base_cost", 2000, 0, 20000);
+    public static final ModConfigSpec.IntValue QOL01_TRAVEL_COST_PER_BLOCK = BUILDER
+            .comment("Extra FE per horizontal block of distance")
+            .defineInRange("cost_per_block", 4, 0, 1000);
+    public static final ModConfigSpec.IntValue QOL01_TRAVEL_DEST_MIN = BUILDER
+            .comment("FE the destination beacon must hold (not consumed)")
+            .defineInRange("dest_min", 1000, 0, 20000);
+    public static final ModConfigSpec.IntValue QOL01_TRAVEL_COOLDOWN = BUILDER
+            .comment("Ticks between two trips of a player")
+            .defineInRange("cooldown", 600, 0, 72000);
+    static {
+        BUILDER.pop();
+        BUILDER.push("contracts");
+    }
+    public static final ModConfigSpec.BooleanValue QOL01_CONTRACTS_ENABLED = BUILDER
+            .comment("Supply contract paper: one delivery request per player per day for a reward")
+            .define("enabled", true);
+    public static final ModConfigSpec.IntValue QOL01_CONTRACT_XP = BUILDER
+            .comment("Experience points on top of the reward")
+            .defineInRange("xp", 50, 0, 10000);
+    static {
+        BUILDER.pop();
+        BUILDER.push("structure_fauna");
+    }
+    public static final ModConfigSpec.DoubleValue QOL01_STRUCTURE_FAUNA_BOOST = BUILDER
+            .comment("Spawn weight multiplier for species a seabed structure prefers (preferred_mobs) around it; 1 = off")
+            .defineInRange("structure_fauna_boost", 3.0, 1.0, 20.0);
+    static {
+        BUILDER.pop();     // leaves "qol01" open; the fauna section's pop() closes it
+    }
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Deep-sea fauna. Which animals live where (depth in metres, habitat, caps) is datapack data: data/<namespace>/fauna_spawns").push("fauna");
     }
 
@@ -445,6 +493,9 @@ public class Config
     public static final ModConfigSpec.IntValue TANK_PRESSURE_SECONDS = BUILDER
             .comment("Seconds of oxygen in a pressure dive tank")
             .defineInRange("tank_pressure_seconds", 720, 15, 7200);
+    public static final ModConfigSpec.IntValue TANK_ABYSS_SECONDS = BUILDER
+            .comment("TRP01 Seconds of oxygen in a heart tank")
+            .defineInRange("tank_abyss_seconds", 1800, 15, 7200);
     public static final ModConfigSpec.IntValue TANK_REFILL_SECONDS = BUILDER
             .comment("Seconds above water to refill an empty tank")
             .defineInRange("tank_refill_seconds", 5, 1, 600);
@@ -483,6 +534,32 @@ public class Config
     public static final ModConfigSpec.IntValue HAZARD_INTENSITY_OVERRIDE = BUILDER
             .comment("0 = intensity follows the depth band (B' 1, C 2, D 3, E 4); 1..4 forces that intensity everywhere")
             .defineInRange("intensity_override", 0, 0, 4);
+    static {
+        BUILDER.pop();
+    }
+
+    static {
+        BUILDER.comment("BAS01 habitat upkeep: shell integrity wear, leaks and seabed quakes (see com.abyssia.habitat.upkeep)").push("habitat_upkeep");
+    }
+
+    public static final ModConfigSpec.BooleanValue UPKEEP_ENABLED = BUILDER
+            .comment("false = no shell wear, no leaks, no quakes")
+            .define("enabled", true);
+    public static final ModConfigSpec.DoubleValue UPKEEP_WEAR_MULTIPLIER = BUILDER
+            .comment("Multiplier of the slow shell wear of loaded habitat modules")
+            .defineInRange("wear_multiplier", 1.0, 0.0, 10.0);
+    public static final ModConfigSpec.IntValue UPKEEP_MIN_INTEGRITY_PERCENT = BUILDER
+            .comment("Wear and quakes never lower a shell below this percentage")
+            .defineInRange("min_integrity_percent", 20, 0, 50);
+    public static final ModConfigSpec.BooleanValue UPKEEP_QUAKES_ENABLED = BUILDER
+            .comment("Seabed quakes near habitats")
+            .define("quakes_enabled", true);
+    public static final ModConfigSpec.DoubleValue UPKEEP_QUAKE_FREQUENCY = BUILDER
+            .comment("Multiplier of the quake chance")
+            .defineInRange("quake_frequency", 1.0, 0.0, 10.0);
+    public static final ModConfigSpec.DoubleValue UPKEEP_QUAKE_DAMAGE = BUILDER
+            .comment("Multiplier of the quake shell damage")
+            .defineInRange("quake_damage", 1.0, 0.0, 5.0);
     static {
         BUILDER.pop();
     }
@@ -536,12 +613,24 @@ public class Config
     public static final ModConfigSpec.DoubleValue SUB_HULL_SPEED_MULT = BUILDER
             .comment("Pressure hull: multiplier of every top speed")
             .defineInRange("hull_speed_mult", 0.92, 0.1, 2.0);
+    public static final ModConfigSpec.DoubleValue SUB_HULL2_MAX_DAMAGE = BUILDER
+            .comment("TRP01 Serpent-Scale Hull (Mk2 hull): breaking threshold of the hull")
+            .defineInRange("hull2_max_damage", 110.0, 1.0, 10_000.0);
+    public static final ModConfigSpec.DoubleValue SUB_HULL2_DEEP_REDUCTION = BUILDER
+            .comment("TRP01 Serpent-Scale Hull: damage multiplier at or below Y -64 (rounded up, so 1 stays 1)")
+            .defineInRange("hull2_deep_reduction", 0.35, 0.0, 1.0);
+    public static final ModConfigSpec.DoubleValue SUB_HULL2_SPEED_MULT = BUILDER
+            .comment("TRP01 Serpent-Scale Hull: multiplier of every top speed")
+            .defineInRange("hull2_speed_mult", 1.0, 0.1, 2.0);
     public static final ModConfigSpec.IntValue SUB_BATTERY_CAPACITY = BUILDER
             .comment("High-capacity battery: battery size in FE")
             .defineInRange("battery_capacity", 150_000, 1_000, 10_000_000);
     public static final ModConfigSpec.DoubleValue SUB_BATTERY_VERTICAL_MULT = BUILDER
             .comment("High-capacity battery: multiplier of the up / down top speed")
             .defineInRange("battery_vertical_mult", 0.95, 0.1, 2.0);
+    public static final ModConfigSpec.IntValue SUB_CELL2_CAPACITY = BUILDER
+            .comment("TRP01 Abyss Heart Cell (Mk2 battery): battery size in FE")
+            .defineInRange("cell2_capacity", 400_000, 1_000, 10_000_000);
     public static final ModConfigSpec.DoubleValue SUB_THRUSTER_FORWARD = BUILDER
             .comment("Maneuver thruster: top forward speed (blocks per tick)")
             .defineInRange("thruster_forward", 0.56, 0.05, 2.0);
@@ -557,6 +646,21 @@ public class Config
     public static final ModConfigSpec.DoubleValue SUB_THRUSTER_ACCEL = BUILDER
             .comment("Maneuver thruster: acceleration in blocks per tick^2 (without it 0.025)")
             .defineInRange("thruster_accel", 0.032, 0.005, 1.0);
+    public static final ModConfigSpec.DoubleValue SUB_THRUSTER2_FORWARD = BUILDER
+            .comment("TRP01 Jet Thruster (Mk2 thruster): top forward speed (blocks per tick)")
+            .defineInRange("thruster2_forward", 0.68, 0.05, 2.0);
+    public static final ModConfigSpec.DoubleValue SUB_THRUSTER2_SIDE = BUILDER
+            .comment("TRP01 Jet Thruster: top sideways speed")
+            .defineInRange("thruster2_side", 0.60, 0.05, 2.0);
+    public static final ModConfigSpec.DoubleValue SUB_THRUSTER2_VERTICAL = BUILDER
+            .comment("TRP01 Jet Thruster: top up / down speed")
+            .defineInRange("thruster2_vertical", 0.58, 0.05, 2.0);
+    public static final ModConfigSpec.IntValue SUB_THRUSTER2_FE = BUILDER
+            .comment("TRP01 Jet Thruster: FE per tick while moving under power")
+            .defineInRange("thruster2_fe_per_tick", 14, 0, 10_000);
+    public static final ModConfigSpec.DoubleValue SUB_THRUSTER2_ACCEL = BUILDER
+            .comment("TRP01 Jet Thruster: acceleration in blocks per tick^2")
+            .defineInRange("thruster2_accel", 0.040, 0.005, 1.0);
     public static final ModConfigSpec.IntValue SUBMARINE_RATED_Y_BASE = BUILDER
             .comment("SUB08 crush depth as a Y coordinate: below this hull-bottom Y a submarine without a Depth Hull takes crush damage")
             .defineInRange("rated_y_base", -300, -4096, 4096);
@@ -587,6 +691,12 @@ public class Config
     public static final ModConfigSpec.IntValue SUB_SONAR_DOCK_RANGE = BUILDER
             .comment("Deep-sea sonar: reach of the submarine dock search (blocks)")
             .defineInRange("sonar_dock_range", 32, 1, 128);
+    public static final ModConfigSpec.IntValue SUB_SONAR2_RANGE = BUILDER
+            .comment("TRP01 Lure Sonar (Mk2 sonar): scan radius for sea life and currents (blocks)")
+            .defineInRange("sonar2_range", 48, 1, 64);
+    public static final ModConfigSpec.IntValue SUB_SONAR2_DOCK_RANGE = BUILDER
+            .comment("TRP01 Lure Sonar: reach of the submarine dock search (blocks)")
+            .defineInRange("sonar2_dock_range", 96, 1, 128);
 
     static {
         BUILDER.pop();
@@ -626,6 +736,36 @@ public class Config
     public static final ModConfigSpec.BooleanValue RESEARCH_JEI_HIDE_LOCKED = BUILDER
             .comment("JEI hides recipes whose result is locked by a technology (abyssia:recipe/<item>) and the recipes of locked machines (display only)")
             .define("jei_hide_locked", true);
+
+    static
+    {
+        BUILDER.pop();
+    }
+
+    static
+    {
+        BUILDER.comment("Logistics (LOG01): logistics pump and cargo uplink").push("logistics");
+    }
+
+    public static final ModConfigSpec.BooleanValue LOGISTICS_ENABLED = BUILDER
+            .comment("false: the logistics pump and the cargo uplink do nothing")
+            .define("logistics_enabled", true);
+
+    public static final ModConfigSpec.IntValue PUMP_ITEMS_PER_OP = BUILDER
+            .comment("Items a logistics pump moves every 10 ticks")
+            .defineInRange("pump_items_per_op", 8, 1, 64);
+
+    public static final ModConfigSpec.IntValue PUMP_MAX_PIPES = BUILDER
+            .comment("Industrial pipes a logistics pump follows from its start")
+            .defineInRange("pump_max_pipes", 128, 1, 1024);
+
+    public static final ModConfigSpec.IntValue CARGO_FE_PER_ITEM = BUILDER
+            .comment("FE a cargo uplink in send mode uses per item")
+            .defineInRange("cargo_fe_per_item", 8, 0, 10000);
+
+    public static final ModConfigSpec.IntValue CARGO_BUFFER_STACKS = BUILDER
+            .comment("Stacks of the cargo buffer each owner has")
+            .defineInRange("cargo_buffer_stacks", 27, 1, 270);
 
     static
     {

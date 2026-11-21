@@ -3,6 +3,7 @@ package com.abyssia.waypoint;
 import com.abyssia.Config;
 import com.abyssia.network.AbyssiaNetwork;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -61,6 +62,13 @@ public class WaypointRegistry extends SavedData
         if (reg.beacons.remove(pos) == null) return;
         reg.setDirty();
         syncLevel(level);
+    }
+
+    /** QOL01: the registered beacon at pos, or null */
+    @Nullable
+    public WaypointEntry entry(BlockPos pos)
+    {
+        return beacons.get(pos);
     }
 
     /** The beacons a player may see: all of them, or with share_beacons off only the ones they placed. */

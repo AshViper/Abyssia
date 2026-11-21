@@ -3,6 +3,7 @@ package com.abyssia.vehicle;
 import com.abyssia.Abyssia;
 import com.abyssia.Config;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -12,6 +13,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
@@ -43,6 +45,13 @@ public final class SubmarineUpgrades
     /** save keys per slot (entity NBT "Upgrades" / item component) */
     public static final String[] KEYS = {"Hull", "Battery", "Thruster", "Utility", "Depth"};
     public static final String TAG = "Upgrades";
+    /**
+     * TRP01 Mk2 upgrades (boss materials): bits 7-10 = Mk2 of slot 0-3 (hull, battery, thruster, sonar). A Mk2 sets bit(i) as
+     * well, so "the slot is filled" checks keep working; Mk1 and Mk2 never share a slot.
+     */
+    public static final int ADV_SHIFT = 7;
+    public static final String[] ADV_IDS = {"submarine_upgrade_serpent_scale_hull", "submarine_upgrade_abyss_heart_cell",
+            "submarine_upgrade_jet_thruster", "submarine_upgrade_lure_sonar"};
 
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, Abyssia.MODID);
     public static final DeferredHolder<MenuType<?>, MenuType<SubmarineUpgradeMenu>> MENU = MENUS.register("submarine_upgrades",
@@ -53,6 +62,10 @@ public final class SubmarineUpgrades
 
     /** Depth Hull Mk1..Mk3 (index = tier - 1) */
     public static final List<DeferredItem<Item>> DEPTH_ITEMS = new ArrayList<>();
+
+    /** TRP01 Mk2 items of slot 0-3 */
+    @SuppressWarnings("unchecked")
+    public static final DeferredItem<Item>[] ADV_ITEMS = new DeferredItem[ADV_IDS.length];
 
     private SubmarineUpgrades() {}
 
@@ -68,6 +81,13 @@ public final class SubmarineUpgrades
             String id = ITEM_IDS[i];
             ITEMS[i] = items.register(id, () -> new UpgradeItem(new Item.Properties().stacksTo(1), id));
             tab.add(ITEMS[i]);
+        }
+        for (int i = 0; i < ADV_IDS.length; i++)
+        {
+            String id = ADV_IDS[i];
+            ADV_ITEMS[i] = items.register(id, () -> new UpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true), id));
+            tab.add(ADV_ITEMS[i]);
         }
         for (int tier = 1; tier <= DEPTH_TIERS; tier++)
         {
@@ -91,7 +111,18 @@ public final class SubmarineUpgrades
         if (stack.getItem() instanceof DepthItem) return DEPTH;
         for (int i = 0; i < DEPTH; i++)
             if (ITEMS[i] != null && stack.is(ITEMS[i].get())) return i;
+        for (int i = 0; i < ADV_IDS.length; i++)
+            if (ADV_ITEMS[i] != null && stack.is(ADV_ITEMS[i].get())) return i;
         return -1;
+    }
+
+    /** true for a TRP01 Mk2 upgrade stack */
+    public static boolean isAdvanced(ItemStack stack)
+    {
+        if (stack.isEmpty()) return false;
+        for (DeferredItem<Item> item : ADV_ITEMS)
+            if (item != null && stack.is(item.get())) return true;
+        return false;
     }
 
     /** bit mask of the installed upgrades */
@@ -99,7 +130,11 @@ public final class SubmarineUpgrades
     {
         int mask = 0;
         for (int i = 0; i < SLOTS; i++)
-            if (slotOf(container.getItem(i)) == i) mask |= bit(i);
+            if (slotOf(container.getItem(i)) == i)
+            {
+                mask |= bit(i);
+                if (i < ADV_IDS.length && isAdvanced(container.getItem(i))) mask |= bit(ADV_SHIFT + i);
+            }
         if (container.getItem(DEPTH).getItem() instanceof DepthItem depth) mask |= depth.tier << DEPTH_SHIFT;
         return mask;
     }
@@ -141,6 +176,8 @@ public final class SubmarineUpgrades
         int mask = 0;
         for (int i = 0; i < DEPTH; i++)
             if (tag.getString(KEYS[i]).equals(Abyssia.MODID + ":" + ITEM_IDS[i])) mask |= bit(i);
+        for (int i = 0; i < ADV_IDS.length; i++)
+            if (tag.getString(KEYS[i]).equals(Abyssia.MODID + ":" + ADV_IDS[i])) mask |= bit(i) | bit(ADV_SHIFT + i);
         int tier = DepthItem.tierOf(tag.getString(KEYS[DEPTH]));
         if (tier > 0) mask |= bit(DEPTH) | tier << DEPTH_SHIFT;
         return mask;

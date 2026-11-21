@@ -108,6 +108,11 @@ public final class ModIndustry
             new AbyssalExcavatorBlock(excavatorProps().lightLevel(s -> s.getValue(BlockStateProperties.LIT) ? 7 : 0),
                     com.abyssia.industry.ExcavatorTier.MK2));
 
+    /** Excavator Mk3 (TRP01): boss-material upgrade of Mk2, 3 ore every 24 ticks within 64 blocks; drawn with the Mk2 models */
+    public static final DeferredBlock<Block> ABYSSAL_EXCAVATOR_MK3 = BLOCKS.register("abyssal_excavator_mk3", () ->
+            new AbyssalExcavatorBlock(excavatorProps().lightLevel(s -> s.getValue(BlockStateProperties.LIT) ? 7 : 0),
+                    com.abyssia.industry.ExcavatorTier.MK3));
+
     /** invisible collision cells of the excavator multiblock (see ExcavatorStructure); no item, no drops */
     public static final DeferredBlock<Block> EXCAVATOR_PART = BLOCKS.register("excavator_part", () ->
             new com.abyssia.industry.block.ExcavatorPartBlock(excavatorProps()));
@@ -123,7 +128,8 @@ public final class ModIndustry
                     CRUSHER.get(), REFINERY_FURNACE.get(), ALLOY_FURNACE.get(), HIGH_TEMP_FURNACE.get(),
                     SELECTIVE_LEACHING_SEPARATOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AbyssalExcavatorBlockEntity>> EXCAVATOR_ENTITY = BLOCK_ENTITIES.register("abyssal_excavator",
-            () -> BlockEntityType.Builder.of(AbyssalExcavatorBlockEntity::new, ABYSSAL_EXCAVATOR.get(), ABYSSAL_EXCAVATOR_MK2.get()).build(null));
+            () -> BlockEntityType.Builder.of(AbyssalExcavatorBlockEntity::new, ABYSSAL_EXCAVATOR.get(), ABYSSAL_EXCAVATOR_MK2.get(),
+                    ABYSSAL_EXCAVATOR_MK3.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.abyssia.industry.blockentity.ExcavatorPartBlockEntity>> EXCAVATOR_PART_ENTITY = BLOCK_ENTITIES.register("excavator_part",
             () -> BlockEntityType.Builder.of(com.abyssia.industry.blockentity.ExcavatorPartBlockEntity::new, EXCAVATOR_PART.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.abyssia.industry.blockentity.PrecipitatorBlockEntity>> PRECIPITATOR_ENTITY = BLOCK_ENTITIES.register("hydrothermal_precipitator",

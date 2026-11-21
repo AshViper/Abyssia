@@ -98,7 +98,7 @@ def model_json(elements, textures, prefix):
 
 def main():
     changed = total = 0
-    for block in ("excavator_part",) + tuple(TIERS):
+    for block in ("excavator_part", "abyssal_excavator_mk3") + tuple(TIERS):   # TRP01: Mk3 is drawn with the Mk2 models
         changed += ga.write(os.path.join(STATE_DIR, block + ".json"), {"variants": {"": {"model": "abyssia:block/excavator/invisible"}}})
         total += 1
     changed += ga.write(os.path.join(MODEL_DIR, "invisible.json"), {"textures": {"particle": tex_map("exc")["frame"]}})

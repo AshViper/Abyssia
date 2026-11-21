@@ -1,7 +1,7 @@
 package com.abyssia.industry;
 
 /**
- * The numbers of each Abyssal Excavator tier, in one place. Mk1 and Mk2 (which minerals each can mine: ExcavatorMinerals); a new tier is a new constant
+ * The numbers of each Abyssal Excavator tier, in one place. Mk1, Mk2 and Mk3 (which minerals each can mine: ExcavatorMinerals); a new tier is a new constant
  * here plus its block registration (the block entity reads everything from the tier of its block).
  * Energy buffer / receive rate follow the processing machines (MachineKind) like every other industrial block.
  */
@@ -9,7 +9,9 @@ public enum ExcavatorTier
 {
     //   tier  energyCapacity                  energyReceive                 FE/t  cycle ore  radius
     MK1(1, MachineKind.MACHINE_CAPACITY, MachineKind.MACHINE_RECEIVE, 20, 40, 1, 32),
-    MK2(2, MachineKind.MACHINE_CAPACITY, MachineKind.MACHINE_RECEIVE, 40, 30, 2, 48);
+    MK2(2, MachineKind.MACHINE_CAPACITY, MachineKind.MACHINE_RECEIVE, 40, 30, 2, 48),
+    // TRP01: boss-material upgrade of Mk2 (reuses the Mk2 look); mines everything Mk2 can
+    MK3(3, MachineKind.MACHINE_CAPACITY, MachineKind.MACHINE_RECEIVE, 60, 24, 3, 64);
 
     public final int tier;
     public final int energyCapacity;
@@ -34,7 +36,7 @@ public enum ExcavatorTier
         this.workingRadius = workingRadius;
     }
 
-    /** FE for one finished cycle (Mk1: 800, Mk2: 1200). */
+    /** FE for one finished cycle (Mk1: 800, Mk2: 1200, Mk3: 1440). */
     public int energyPerCycle()
     {
         return energyPerTick * cycleTicks;

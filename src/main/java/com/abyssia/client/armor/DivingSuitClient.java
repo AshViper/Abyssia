@@ -75,7 +75,7 @@ public final class DivingSuitClient
             event.registerItem(extensions(0), EntryDivingGear.HELMET.get(), EntryDivingGear.TANK.get(), EntryDivingGear.FLIPPERS.get());
             event.registerItem(extensions(1), ModTools.DIVER_HELMET.get(), MaterialTools.DIVE_TANK.get(), ModTools.FLIPPERS.get());
             event.registerItem(extensions(2), MaterialTools.PRESSURE_DIVER_HELMET.get(), MaterialTools.PRESSURE_DIVE_TANK.get(),
-                    MaterialTools.PRESSURE_FLIPPERS.get());
+                    MaterialTools.PRESSURE_FLIPPERS.get(), MaterialTools.HEART_TANK.get());
         }
     }
 }

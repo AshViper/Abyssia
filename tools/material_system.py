@@ -19,9 +19,9 @@ SPEC_PATH = os.path.join(HERE, "material_spec.json")
 NS = "abyssia"
 
 # abyssia:underwater_tools additions (spec section 5: drill, cutter, crystal pickaxe and the cobalt tools).
-UNDERWATER = ["cobalt_pickaxe", "cobalt_shovel", "crystal_pickaxe", "abyssal_drill", "abyssal_cutter"]
+UNDERWATER = ["cobalt_pickaxe", "cobalt_shovel", "crystal_pickaxe", "abyssal_drill", "abyssal_cutter", "fang_drill"]
 # Item tag for the future hadal-pressure exemption (spec armor.pressure_diver_helmet.special).
-PRESSURE_PROOF = ["pressure_diver_helmet", "pressure_dive_tank", "pressure_suit_leggings", "pressure_flippers"]
+PRESSURE_PROOF = ["pressure_diver_helmet", "pressure_dive_tank", "pressure_suit_leggings", "pressure_flippers", "heart_tank"]
 # Rendered like a held tool (the other tools/armor use item/generated).
 _HANDHELD_KINDS = {"pickaxe", "axe", "shovel", "hoe", "sword", "hammer"}
 

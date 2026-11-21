@@ -1,0 +1,99 @@
+{
+  "parent": "abyssia:dive/hadal",
+  "display": {
+    "icon": {
+      "id": "abyssia:abyss_heart"
+    },
+    "title": {
+      "translate": "advancements.abyssia.dive.titan_slayer.title"
+    },
+    "description": {
+      "translate": "advancements.abyssia.dive.titan_slayer.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "abyss_serpent": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:abyss_serpent"
+            }
+          }
+        ]
+      }
+    },
+    "trench_wyrm": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:trench_wyrm"
+            }
+          }
+        ]
+      }
+    },
+    "abyss_kraken": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:abyss_kraken"
+            }
+          }
+        ]
+      }
+    },
+    "abyss_mother": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:abyss_mother"
+            }
+          }
+        ]
+      }
+    },
+    "abyss_angler": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "abyssia:abyss_angler"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "abyss_serpent",
+      "trench_wyrm",
+      "abyss_kraken",
+      "abyss_mother",
+      "abyss_angler"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

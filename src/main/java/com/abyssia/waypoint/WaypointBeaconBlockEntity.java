@@ -1,6 +1,7 @@
 package com.abyssia.waypoint;
 
 import com.abyssia.Config;
+import com.abyssia.industry.energy.IndustryEnergyStorage;
 import com.abyssia.registry.ModIndustry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -19,6 +20,8 @@ import java.util.UUID;
 /** W01: the beacon's name ("" = default) and who placed it. No ticking; the colour lives in the blockstate. */
 public class WaypointBeaconBlockEntity extends BlockEntity
 {
+    /** QOL01 beacon travel: the departure beacon pays from this buffer (FE from cables / HabitatPower) */
+    private final IndustryEnergyStorage energy = new IndustryEnergyStorage(20000, 2000, 0, this::setChanged);
     private String name = "";
     @Nullable
     private UUID owner;
@@ -26,6 +29,11 @@ public class WaypointBeaconBlockEntity extends BlockEntity
     public WaypointBeaconBlockEntity(BlockPos pos, BlockState state)
     {
         super(ModIndustry.WAYPOINT_BEACON_ENTITY.get(), pos, state);
+    }
+
+    public IndustryEnergyStorage energy()
+    {
+        return energy;
     }
 
     public String getName()
@@ -64,6 +72,7 @@ public class WaypointBeaconBlockEntity extends BlockEntity
         super.loadAdditional(tag, registries);
         name = tag.getString("Name");
         owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
+        energy.setEnergy(tag.getInt("Energy"));
     }
 
     @Override
@@ -72,6 +81,7 @@ public class WaypointBeaconBlockEntity extends BlockEntity
         super.saveAdditional(tag, registries);
         tag.putString("Name", name);
         if (owner != null) tag.putUUID("Owner", owner);
+        tag.putInt("Energy", energy.getEnergyStored());
     }
 
     // the client needs the name to fill the settings screen

@@ -55,7 +55,7 @@ public class SubmarineItem extends Item
     /** battery size of this stack (150,000 FE with a high-capacity battery installed) */
     public static int capacity(ItemStack stack)
     {
-        return Submarine.capacity((SubmarineUpgrades.mask(getUpgrades(stack)) & SubmarineUpgrades.bit(SubmarineUpgrades.BATTERY)) != 0);
+        return Submarine.capacity(SubmarineUpgrades.mask(getUpgrades(stack)));
     }
 
     public static void setEnergy(ItemStack stack, int energy)

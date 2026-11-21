@@ -54,6 +54,12 @@ public final class WaypointClient
         if (mc.screen == null) mc.setScreen(new WaypointBeaconScreen(pos.immutable(), name, color));
     }
 
+    public static void openTravelScreen(BlockPos from)
+    {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.screen == null) mc.setScreen(new WaypointTravelScreen(from.immutable()));
+    }
+
     @SubscribeEvent
     public static void onBlockColors(RegisterColorHandlersEvent.Block event)
     {

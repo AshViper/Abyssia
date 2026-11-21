@@ -199,6 +199,9 @@ def hurt_by(entity):
                  {"damage": {"source_entity": {"type": f"{NS}:{entity}"}}}, [("entity", entity)])
 
 
+BOSSES = ("abyss_serpent", "trench_wyrm", "abyss_kraken", "abyss_mother", "abyss_angler")
+
+
 def killed(entity):
     return C.one(entity, "minecraft:player_killed_entity",
                  {"entity": [{"condition": "minecraft:entity_properties", "entity": "this",
@@ -308,6 +311,12 @@ def build_list(biomes_ok, dishes_ok):
       ("フル装備", "アップグレード 5 枠すべてを埋めた潜水艇に乗る"))
     D("captain_of_the_abyss", "fully_loaded", "submarine_upgrade_depth_mk3", "challenge", dive(in_submarine=True, y_max=-522),
       ("Captain of the Abyss", "Take a submarine below Y -522"), ("深淵の艦長", "潜水艇で Y -522 より深く潜る"), xp=150)
+    # TRP01: the five abyss bosses (entity ids as in entity/boss/BossContent); the angler is not part of the hunt
+    D("titan_slayer", "hadal", "abyss_heart", "goal", any_(*[killed(b) for b in BOSSES]),
+      ("Titan Slayer", "Defeat any abyss boss"), ("巨獣殺し", "深淵の大海蛇・海溝の大ワーム・大クラーケン・深淵の母・アビスアングラーのどれか 1 体を倒す"), xp=100)
+    D("titan_hunter", "titan_slayer", "trench_wyrm_fang", "challenge", each(*[killed(b) for b in BOSSES if b != "abyss_angler"]),
+      ("Titan Hunter", "Defeat the Abyssal Serpent, Trench Wyrm, Great Kraken and Abyss Mother"),
+      ("巨獣狩り", "深淵の大海蛇・海溝の大ワーム・大クラーケン・深淵の母をすべて倒す"), xp=300)
 
     # ---- life
     L("root", None, "lidar_scanner", "task", has("lidar_scanner"),

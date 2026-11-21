@@ -45,6 +45,8 @@ public class Abyssia
         // SUB02 submarine + moon pool dock (entity, dock block / block entity; items join ModItems)
         com.abyssia.vehicle.VehicleContent.register(modEventBus);
         com.abyssia.entity.boss.BossContent.register(modEventBus);
+        com.abyssia.logistics.LogisticsContent.register(modEventBus);
+        com.abyssia.habitat.upkeep.UpkeepContent.register(modEventBus);
         com.abyssia.advancement.ModTriggers.register(modEventBus);
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);

@@ -4,6 +4,7 @@ import com.abyssia.registry.ModItems;
 import com.abyssia.registry.ModTags;
 import com.abyssia.Abyssia;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -51,6 +52,7 @@ public final class MaterialTools
     private static final Tier TUNGSTEN = tier(3200, 7.0F, 3.5F, 10, () -> ModItems.TUNGSTEN_ALLOY_INGOT.get());
     private static final Tier CRYSTAL = tier(900, 8.0F, 2.0F, 22, () -> ModItems.CRYSTAL_CORE.get());
     private static final Tier DRILL = tier(2200, 12.0F, 2.0F, 14, () -> ModItems.DRILL_HEAD.get());
+    private static final Tier FANG = tier(4000, 16.0F, 2.5F, 14, () -> ModItems.DRILL_HEAD.get());
     private static final Tier CUTTER = tier(1500, 7.0F, 1.5F, 20, () -> ModItems.TUNGSTEN_TIP.get());
 
     // Durabilities are the spec's per-piece totals.
@@ -63,8 +65,8 @@ public final class MaterialTools
 
 
     public static DeferredItem<Item> CRUSHING_HAMMER, COBALT_PICKAXE, COBALT_SHOVEL, MANGANESE_AXE, MANGANESE_SWORD,
-            MOLYBDENUM_PICKAXE, TUNGSTEN_PICKAXE, TUNGSTEN_AXE, CRYSTAL_PICKAXE, ABYSSAL_DRILL, ABYSSAL_CUTTER,
-            DIVE_TANK, DIVING_SUIT_LEGGINGS, PRESSURE_DIVER_HELMET, PRESSURE_DIVE_TANK, PRESSURE_SUIT_LEGGINGS, PRESSURE_FLIPPERS;
+            MOLYBDENUM_PICKAXE, TUNGSTEN_PICKAXE, TUNGSTEN_AXE, CRYSTAL_PICKAXE, ABYSSAL_DRILL, FANG_DRILL, ABYSSAL_CUTTER,
+            DIVE_TANK, DIVING_SUIT_LEGGINGS, PRESSURE_DIVER_HELMET, PRESSURE_DIVE_TANK, PRESSURE_SUIT_LEGGINGS, PRESSURE_FLIPPERS, HEART_TANK;
 
     private MaterialTools() {}
 
@@ -81,6 +83,9 @@ public final class MaterialTools
         TUNGSTEN_AXE = add(items, tab, "tungsten_axe", () -> new AxeItem(TUNGSTEN, props(Rarity.RARE).attributes(AxeItem.createAttributes(TUNGSTEN, 6.5F, -3.3F))));
         CRYSTAL_PICKAXE = add(items, tab, "crystal_pickaxe", () -> new PickaxeItem(CRYSTAL, props(Rarity.RARE).attributes(PickaxeItem.createAttributes(CRYSTAL, 1, -2.8F))));
         ABYSSAL_DRILL = add(items, tab, "abyssal_drill", () -> new PickaxeItem(DRILL, props(Rarity.EPIC).attributes(PickaxeItem.createAttributes(DRILL, 1, -3.0F))));
+        // TRP01: boss-material upgrade, reuses the abyssal_drill texture and model; the glint tells it apart
+        FANG_DRILL = add(items, tab, "fang_drill", () -> new PickaxeItem(FANG, props(Rarity.EPIC).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)
+                .attributes(PickaxeItem.createAttributes(FANG, 1, -3.0F))));
         ABYSSAL_CUTTER = add(items, tab, "abyssal_cutter", () -> new SwordItem(CUTTER, props(Rarity.EPIC).attributes(SwordItem.createAttributes(CUTTER, 2, -1.8F))));
         DIVE_TANK = add(items, tab, "dive_tank", () -> new ArmorItem(DIVING, ArmorItem.Type.CHESTPLATE, props(Rarity.UNCOMMON).durability(448)));
         DIVING_SUIT_LEGGINGS = add(items, tab, "diving_suit_leggings", () -> new SuitLeggings(DIVING, ArmorItem.Type.LEGGINGS, props(Rarity.UNCOMMON).durability(420)));
@@ -91,6 +96,9 @@ public final class MaterialTools
         PRESSURE_DIVE_TANK = add(items, tab, "pressure_dive_tank", () -> new ArmorItem(PRESSURE, ArmorItem.Type.CHESTPLATE, props(Rarity.EPIC).durability(520)));
         PRESSURE_SUIT_LEGGINGS = add(items, tab, "pressure_suit_leggings", () -> new SuitLeggings(PRESSURE, ArmorItem.Type.LEGGINGS, props(Rarity.EPIC).durability(420)));
         PRESSURE_FLIPPERS = add(items, tab, "pressure_flippers", () -> new ModTools.Flippers(PRESSURE, ArmorItem.Type.BOOTS, props(Rarity.EPIC).durability(350)));
+        // TRP01 Heart Tank: pressure-tier-4 chest piece (PressureGear / DiveTank), same armor look as the pressure tank
+        HEART_TANK = add(items, tab, "heart_tank", () -> new ArmorItem(PRESSURE, ArmorItem.Type.CHESTPLATE,
+                props(Rarity.EPIC).durability(800).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
         NeoForge.EVENT_BUS.register(MaterialTools.class);
         PressureGear.register();
     }
