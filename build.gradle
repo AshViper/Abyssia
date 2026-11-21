@@ -88,6 +88,14 @@ neoForge {
             systemProperty 'abyssia.contentshot', '1'
         }
 
+        // Dev-only: devtest/LangShot screenshots the text-heavy screens in each language (-PlangShot=zh_cn,ru_ru; log lines "LANGSHOT ...").
+        langShot {
+            client()
+            gameDirectory = project.file('run')
+            programArguments.addAll '--quickPlaySingleplayer', 'LangShot'
+            systemProperty 'abyssia.langshot', (project.findProperty('langShot') ?: 'zh_cn,ru_ru')
+        }
+
         server {
             server()
             gameDirectory = project.file('run')

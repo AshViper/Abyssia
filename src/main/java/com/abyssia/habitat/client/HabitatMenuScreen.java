@@ -14,12 +14,16 @@ import com.abyssia.research.Technology;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +105,7 @@ public class HabitatMenuScreen extends Screen
         List<BuildEntry> entries = entries();
         if (entries.isEmpty())
             g.drawCenteredString(font, Component.translatable("screen." + Abyssia.MODID + ".habitat.empty"), width / 2, y0 + ROW_H / 2 - 4, 0x8090A0);
-        Component lockTip = null;
+        Component lockTip = null, detailTip = null;
         for (int i = 0; i < entries.size(); i++)
         {
             BuildEntry entry = entries.get(i);
@@ -115,7 +119,18 @@ public class HabitatMenuScreen extends Screen
             else g.renderItem(new ItemStack(ModHabitat.CONSTRUCTOR.get()), x0 + 12, y + 2);
             g.drawString(font, entry.displayName(), x0 + 32, y + 2, 0xFFFFFF);
             Component detail = entry.detail();
-            if (detail != null) g.drawString(font, detail, x0 + 32, y + 11, 0xA0B0C0);
+            boolean cut = false;
+            if (detail != null)
+            {
+                // one line only (the cost row sits right below): a long detail ends in "…" and shows in full as a tooltip
+                int room = WIDTH - 32 - (lock.isPresent() ? 22 : 4);
+                cut = font.width(detail) > room;
+                if (cut)
+                    g.drawString(font, Language.getInstance().getVisualOrder(FormattedText.composite(
+                            font.substrByWidth(detail, room - font.width("…")), FormattedText.of("…"))), x0 + 32, y + 11, 0xA0B0C0);
+                else g.drawString(font, detail, x0 + 32, y + 11, 0xA0B0C0);
+            }
+            boolean overCost = false;
             int cx = x0 + 32;
             List<ItemStack> costs = entry.cost();
             int gap = costs.size() > 4 ? 3 : 8; // generators list 5-6 items
@@ -126,9 +141,13 @@ public class HabitatMenuScreen extends Screen
                 String text = have + "/" + cost.getCount();
                 g.drawString(font, text, cx + 18, y + 26, have >= cost.getCount() || creative ? 0xC0FFC0 : 0xFF5555);
                 if (mouseX >= cx && mouseX < cx + 16 && mouseY >= y + 21 && mouseY < y + 37)
+                {
                     g.renderTooltip(font, cost.getHoverName(), mouseX, mouseY);
+                    overCost = true;
+                }
                 cx += 18 + font.width(text) + gap;
             }
+            if (cut && hover && !overCost) detailTip = detail;
             if (lock.isPresent())
             {
                 // greyed row with a padlock; the tooltip names the technology
@@ -142,7 +161,13 @@ public class HabitatMenuScreen extends Screen
                 if (hover) lockTip = Component.translatable("screen." + Abyssia.MODID + ".habitat.locked", Component.translatable(lock.get().titleKey()));
             }
         }
-        if (lockTip != null) g.renderTooltip(font, lockTip, mouseX, mouseY);
+        if (lockTip != null || detailTip != null)
+        {
+            List<FormattedCharSequence> tip = new ArrayList<>();
+            if (lockTip != null) tip.add(lockTip.getVisualOrderText());
+            if (detailTip != null) tip.addAll(font.split(detailTip, 220));
+            g.renderTooltip(font, tip, mouseX, mouseY);
+        }
         g.drawCenteredString(font, Component.translatable("screen." + Abyssia.MODID + ".habitat.hint"), width / 2,
                 y0 + rows() * ROW_H + 2, 0x8090A0);
     }
