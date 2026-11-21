@@ -36,7 +36,7 @@ import java.util.WeakHashMap;
  */
 public class ExcavatorRenderer implements BlockEntityRenderer<AbyssalExcavatorBlockEntity>
 {
-    private static final String[] TIERS = {"abyssal_excavator", "abyssal_excavator_mk2"};
+    private static final String[] TIERS = {"abyssal_excavator", "abyssal_excavator_mk2", "abyssal_excavator_mk3"};
     private static final String[] LAYERS = {"c", "t", "e"};
     /** drill speed in degrees per tick while the machine works */
     private static final float WORK_SPEED = 18f;
@@ -69,7 +69,7 @@ public class ExcavatorRenderer implements BlockEntityRenderer<AbyssalExcavatorBl
     {
         BlockState state = be.getBlockState();
         Direction forward = state.hasProperty(IndustryEntityBlock.FACING) ? state.getValue(IndustryEntityBlock.FACING) : Direction.NORTH;
-        String tier = be.tier().tier >= 2 ? TIERS[1] : TIERS[0];
+        String tier = be.tier().tier >= 3 ? TIERS[2] : be.tier().tier >= 2 ? TIERS[1] : TIERS[0];
         boolean working = state.hasProperty(BlockStateProperties.LIT) && state.getValue(BlockStateProperties.LIT);
 
         // model x axis = left; anchor = centre of structure cell (2, 0, 0) = master - forward + clockwise

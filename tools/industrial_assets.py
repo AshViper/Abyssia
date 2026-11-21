@@ -57,7 +57,7 @@ TEXTURE_ALIAS = {}   # machine -> texture name override (PRC01 now has its own t
 EXCAVATORS = {
     "abyssal_excavator": ("Abyssal Excavator Mk1", "深海採掘機 Mk1"),
     "abyssal_excavator_mk2": ("Abyssal Excavator Mk2", "深海採掘機 Mk2"),
-    "abyssal_excavator_mk3": ("Abyssal Excavator Mk3", "深海採掘機 Mk3"),   # TRP01: drawn with the Mk2 models
+    "abyssal_excavator_mk3": ("Abyssal Excavator Mk3", "深海採掘機 Mk3"),   # TRP01: own exc3_* models / icon
 }
 # its invisible collision cells (lang: tools/lang_parts/ore01.json; blockstate: excavator_assets.py): no loot, pickaxe, stone tool
 EXCAVATOR_PART = "excavator_part"

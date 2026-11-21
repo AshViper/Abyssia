@@ -101,6 +101,13 @@ minecraft {
                 property 'abyssia.prcguishot', '1'
                 args '--quickPlaySingleplayer', 'PrcGuiShot'
             }
+            else if (project.hasProperty('contentShot'))
+            {
+                // Dev-only: devtest/ContentShot enters 'PrcGuiShot' and screenshots blocks/GUIs/tooltips/habitat upkeep.
+                // `gradlew runClient -PcontentShot=1`; log lines "CONTENTSHOT ...", files run/screenshots/content_*.png.
+                property 'abyssia.contentshot', '1'
+                args '--quickPlaySingleplayer', 'PrcGuiShot'
+            }
             else if (project.hasProperty('langShot'))
             {
                 // Dev-only: devtest/LangShot enters 'PrcGuiShot' and screenshots the text-heavy screens in each language.
@@ -128,6 +135,8 @@ minecraft {
             if (project.hasProperty('bas01Test')) property 'abyssia.bas01test', '1'
             // Dev-only: `gradlew runServer -Plog01Test=1` runs devtest/Log01Test (LOG01 logistics checks, log lines "LOG01 ...") and halts.
             if (project.hasProperty('log01Test')) property 'abyssia.log01test', '1'
+            // Dev-only: `gradlew runServer -Pboss02Test=1` runs devtest/Boss02Test (BOSS02 angler spawn / boss loot / titan advancement checks, log lines "BOSS02 ...") and halts.
+            if (project.hasProperty('boss02Test')) property 'abyssia.boss02test', '1'
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
         }

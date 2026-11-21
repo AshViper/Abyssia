@@ -45,6 +45,9 @@ public final class BossShot
         }
         if ("smoke".equals(System.getProperty("abyssia.bossshot"))) { smokeScenes(mc); return; }
         if ("studio".equals(System.getProperty("abyssia.bossshot"))) { studioScenes(mc); return; }
+        if ("serpent".equals(System.getProperty("abyssia.bossshot"))) { serpentScenes(mc); return; }
+        if ("far".equals(System.getProperty("abyssia.bossshot"))) { farScenes(mc); return; }
+        if ("fog".equals(System.getProperty("abyssia.bossshot"))) { fogScenes(mc); return; }
         if ("scale".equals(System.getProperty("abyssia.bossshot"))) { scaleScenes(mc); return; }
         if ("sever".equals(System.getProperty("abyssia.bossshot")) && t == 70) t = 745; // skip to the kraken scenes
         if ("mother".equals(System.getProperty("abyssia.bossshot")) && t == 70) t = 1225; // skip to the mother scenes
@@ -511,6 +514,185 @@ public final class BossShot
 
     /** 1.20.1 has no /tick command: the studio / scale scenes cannot freeze the game, so the boss keeps moving between shots. */
     private static void freeze(Minecraft mc, boolean on) {}
+
+    // ---- BOSS02 review modes: serpent (whole body), far (LOD beyond the fog), fog (colour investigation)
+
+    private static Vec3 serpH, serpT;
+
+    /** Entity / far-LOD counts for the log, as seen by this client. */
+    private static String counts(Minecraft mc)
+    {
+        int n = mc.level.getEntitiesOfClass(AbyssBoss.class, mc.player.getBoundingBox().inflate(900)).size();
+        return "clientEntities=" + n + " far=" + BossFarClient.count() + " inCombat=" + BossFarClient.inCombat();
+    }
+
+    private static void devtestSetup(Minecraft mc)
+    {
+        cmd(mc, "gamemode creative"); cmd(mc, "effect give @s minecraft:water_breathing 99999 0 true");
+        cmd(mc, "effect give @s minecraft:night_vision 99999 0 true");
+        for (String k : STUDIO_IDS) cmd(mc, "kill @e[type=abyssia:" + k + "]");
+        cmd(mc, "kill @e[tag=shotdummy]");
+        mc.options.renderDistance().set(32); // devtest only: the far shots are not capped by the render distance
+        mc.options.hideGui = true;
+    }
+
+    /** Refreshes the serpent's head and tail from the client entity when it is synced; otherwise keeps the last (or assumed) ones. */
+    private static void serpAnchor(Minecraft mc)
+    {
+        var ss = mc.level.getEntitiesOfClass(com.abyssia.entity.boss.AbyssSerpent.class, mc.player.getBoundingBox().inflate(900));
+        if (ss.isEmpty() || !ss.get(0).chain().isInitialised()) return;
+        var c = ss.get(0).chain();
+        serpH = new Vec3(c.x(0), c.y(0), c.z(0));
+        serpT = new Vec3(c.x(c.size() - 1), c.y(c.size() - 1), c.z(c.size() - 1));
+    }
+
+    private static final String[] SERP_SHOTS = {"head_side", "head_front", "side_whole", "oblique", "above", "tail"};
+
+    /**
+     * -PbossShot=serpent: a NoAI serpent (it stays put, the body lies straight; /tick freeze does not exist on 1.20.1) in the studio water,
+     * six shots serpent_1..6: head from the side / front (entity synced), then the whole body from 150-250 blocks (far LOD), the tail end.
+     */
+    private static void serpentScenes(Minecraft mc)
+    {
+        if (t == 60) { devtestSetup(mc); cmd(mc, "tp @s " + SX + " -200 " + SZ); }
+        if (t == 120)
+        {
+            cmd(mc, "summon abyssia:abyss_serpent " + SX + ".5 -200 " + SZ + ".5 {NoAI:1b,Tags:[\"bossshot\"]}");
+            serpH = new Vec3(SX + 0.5, -200, SZ + 0.5); serpT = serpH.add(0, 0, -390); // assumed until the entity is seen
+        }
+        if (t == 125) cmd(mc, "tp @s " + (SX + 32) + " -192 " + SZ + " facing " + SX + " -200 " + SZ);
+        if (t == 150)
+        {
+            serpAnchor(mc);
+            log(String.format(java.util.Locale.ROOT, "serpent anchors head=%.0f %.0f %.0f tail=%.0f %.0f %.0f length=%.0f %s",
+                    serpH.x, serpH.y, serpH.z, serpT.x, serpT.y, serpT.z, serpH.distanceTo(serpT), counts(mc)));
+        }
+        if (t < 160) return;
+        int i = (t - 160) / 50, d = (t - 160) % 50;
+        if (i >= SERP_SHOTS.length) { if (d == 0) { cmd(mc, "kill @e[type=abyssia:abyss_serpent]"); log("serpent done"); mc.stop(); } return; }
+        if (d == 0 || d == 10)
+        {
+            serpAnchor(mc);
+            Vec3 m = serpH.add(serpT).scale(0.5), dir = serpT.subtract(serpH).normalize(), up = new Vec3(0, 1, 0);
+            Vec3 right = dir.cross(up);
+            right = right.lengthSqr() < 1.0E-4 ? new Vec3(1, 0, 0) : right.normalize();
+            Vec3 cam, look;
+            switch (i)
+            {
+                case 0 -> { cam = serpH.add(right.scale(32)).add(0, 8, 0); look = serpH; }
+                case 1 -> { cam = serpH.subtract(dir.scale(45)).add(right.scale(12)).add(0, 10, 0); look = serpH; }
+                case 2 -> { cam = m.add(right.scale(220)); look = m; }
+                case 3 -> { cam = m.add(right.scale(150)).add(0, 150, 0); look = m; }
+                case 4 -> { cam = m.add(right.scale(40)).add(0, 200, 0); look = m; }
+                default -> { cam = serpT.add(right.scale(60)).add(0, 10, 0); look = serpT; }
+            }
+            tpFacing(mc, cam, look);
+        }
+        if (d == 30)
+        {
+            serpAnchor(mc);
+            log("serpent_" + (i + 1) + " (" + SERP_SHOTS[i] + "): cam=" + mc.player.blockPosition() + " camInWater=" + water(mc, mc.player.getEyePosition())
+                    + " distToHead=" + String.format("%.0f", mc.player.position().distanceTo(serpH)) + " " + counts(mc)
+                    + " fogEnd=" + String.format("%.0f", com.mojang.blaze3d.systems.RenderSystem.getShaderFogEnd()));
+            shot(mc, "serpent_" + (i + 1));
+        }
+    }
+
+    /** -PbossShot=far: kraken / mother / angler (NoAI) each looked down on from the air above the sea, +30 / +180 / +300 blocks off (far_<boss>_1..3). */
+    private static boolean farOk;
+    private static int farY;
+
+    private static void farScenes(Minecraft mc)
+    {
+        String[] ids = {"abyss_kraken", "abyss_mother", "abyss_angler"};
+        int[] offs = {30, 180, 300};
+        if (t == 60) { devtestSetup(mc); cmd(mc, "tp @s " + SX + " -200 " + SZ); }
+        if (t < 100) return;
+        int b = (t - 100) / 570, d = (t - 100) % 570;
+        if (b >= ids.length) { if (d == 0) { log("far done"); mc.stop(); } return; }
+        String id = ids[b];
+        Vec3 head = new Vec3(SX + 0.5, -200, SZ + 0.5);
+        if (d == 0) { for (String k : STUDIO_IDS) cmd(mc, "kill @e[type=abyssia:" + k + "]"); cmd(mc, "tp @s " + (SX + 30) + " -200 " + SZ + " facing " + SX + " -200 " + SZ); }
+        if (d == 20) cmd(mc, "summon abyssia:" + id + " " + SX + ".5 -200 " + SZ + ".5 {NoAI:1b,Tags:[\"bossshot\"]}");
+        for (int j = 0; j < offs.length; j++)
+        {
+            int s = 60 + j * 120;
+            double cx = SX + 0.5 + offs[j];
+            // load the chunks at the camera column first, then find the sea surface on the client level (camera = first air above it + 3)
+            if (d == s) { farOk = false; cmd(mc, String.format(java.util.Locale.ROOT, "tp @s %.1f -200 %.1f", cx, SZ + 0.5)); }
+            if (d == s + 60)
+            {
+                farOk = false;
+                int bx = (int) Math.floor(cx), bz = SZ;
+                if (mc.level.getChunkSource().hasChunk(bx >> 4, bz >> 4))
+                {
+                    for (int y = 150; y >= -200; y--)
+                        if (mc.level.getBlockState(new BlockPos(bx, y, bz)).getBlock() == net.minecraft.world.level.block.Blocks.WATER) { farY = y + 1 + 3; farOk = true; break; }
+                }
+                if (farOk) tpFacing(mc, new Vec3(cx, farY, SZ + 0.5), head);
+                else log("far " + id + " off=" + offs[j] + " SKIP no sea surface");
+            }
+            if (d == s + 70 && farOk) tpFacing(mc, new Vec3(cx, farY, SZ + 0.5), head);
+            if (d == s + 85 && farOk)
+            {
+                Vec3 eye = mc.player.getEyePosition();
+                log("far " + id + " off=" + offs[j] + " cam=" + mc.player.blockPosition() + " camBlock=" + mc.level.getBlockState(BlockPos.containing(eye)).getBlock()
+                        + " camInWater=" + water(mc, eye) + " actual=" + String.format("%.0f", mc.player.position().distanceTo(head)) + " "
+                        + counts(mc) + " BossFarClient.count()=" + BossFarClient.count() + " fogEnd=" + String.format("%.0f", com.mojang.blaze3d.systems.RenderSystem.getShaderFogEnd()));
+                shot(mc, "far_" + id.replace("abyss_", "") + "_" + (j + 1));
+            }
+        }
+        // far_<boss>_0: 110 blocks from the head at the head's depth (underwater, the old record where the model shape was visible)
+        if (d == 440) cmd(mc, String.format(java.util.Locale.ROOT, "tp @s %.1f -200 %.1f", SX + 0.5 + 110, SZ + 0.5));
+        if (d == 480 || d == 490) tpFacing(mc, new Vec3(SX + 0.5 + 110, -200, SZ + 0.5), head);
+        if (d == 500)
+        {
+            Vec3 eye = mc.player.getEyePosition();
+            log("far " + id + " off=110 cam=" + mc.player.blockPosition() + " camBlock=" + mc.level.getBlockState(BlockPos.containing(eye)).getBlock()
+                    + " camInWater=" + water(mc, eye) + " actual=" + String.format("%.0f", mc.player.position().distanceTo(head)) + " "
+                    + counts(mc) + " BossFarClient.count()=" + BossFarClient.count() + " fogEnd=" + String.format("%.0f", com.mojang.blaze3d.systems.RenderSystem.getShaderFogEnd()));
+            shot(mc, "far_" + id.replace("abyss_", "") + "_0");
+        }
+        if (d == 550) cmd(mc, "kill @e[type=abyssia:" + id + "]");
+    }
+
+    private static void fogLog(Minecraft mc, String tag)
+    {
+        var p = mc.player;
+        BlockPos bp = p.blockPosition();
+        var biome = mc.level.getBiome(bp);
+        float[] c = com.mojang.blaze3d.systems.RenderSystem.getShaderFogColor();
+        log(String.format(java.util.Locale.ROOT, "fog %s: pos=%s biome=%s biomeWaterFog=%06x biomeFog=%06x shaderFogColor=%.3f,%.3f,%.3f start=%.1f end=%.1f inCombat=%b nightVision=%b eyeY=%.1f renderDist=%.0f bosses=%d",
+                tag, bp.toShortString(), biome.unwrapKey().map(k -> k.location().toString()).orElse("?"), biome.value().getWaterFogColor(), biome.value().getFogColor(),
+                c[0], c[1], c[2], com.mojang.blaze3d.systems.RenderSystem.getShaderFogStart(), com.mojang.blaze3d.systems.RenderSystem.getShaderFogEnd(),
+                BossFarClient.inCombat(), p.hasEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION), p.getEyeY(),
+                (double) mc.gameRenderer.getRenderDistance(), mc.level.getEntitiesOfClass(AbyssBoss.class, p.getBoundingBox().inflate(900)).size()));
+    }
+
+    /**
+     * -PbossShot=fog: the studio point (SX, -200, SZ), the same position and facing before and after a boss is summoned:
+     * fog_before / fog_after (night vision on, as the studio shots) and fog_before_nonv / fog_after_nonv (night vision off).
+     */
+    private static void fogScenes(Minecraft mc)
+    {
+        String at = "tp @s " + SX + " -200 " + SZ + " 90 0";
+        switch (t)
+        {
+            case 60 -> { devtestSetup(mc); cmd(mc, at); }
+            case 110 -> cmd(mc, at);
+            case 140 -> { fogLog(mc, "before(nv)"); shot(mc, "fog_before"); }
+            case 150 -> cmd(mc, "effect clear @s minecraft:night_vision");
+            case 190 -> { fogLog(mc, "before(no nv)"); shot(mc, "fog_before_nonv"); }
+            case 200 -> cmd(mc, "effect give @s minecraft:night_vision 99999 0 true");
+            case 210 -> { cmd(mc, "abyssia boss spawnnear abyss_kraken"); cmd(mc, "execute positioned ~ ~25 ~ run " + DUMMY); }
+            case 420 -> cmd(mc, at);
+            case 450 -> { fogLog(mc, "after(nv)"); shot(mc, "fog_after"); }
+            case 460 -> cmd(mc, "effect clear @s minecraft:night_vision");
+            case 500 -> { fogLog(mc, "after(no nv)"); shot(mc, "fog_after_nonv"); }
+            case 520 -> { cmd(mc, "kill @e[type=abyssia:abyss_kraken]"); cmd(mc, "kill @e[tag=shotdummy]"); log("fog done"); mc.stop(); }
+            default -> {}
+        }
+    }
 
     /** -PbossShot=smoke: each boss summoned in the Forge test hall (134 -507 130) and photographed once (render smoke test). */
     private static void smokeScenes(Minecraft mc)

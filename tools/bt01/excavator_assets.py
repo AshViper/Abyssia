@@ -26,7 +26,7 @@ import generator_assets as ga
 
 MODEL_DIR = os.path.join(ga.ASSETS, "models", "block", "excavator")
 STATE_DIR = ga.STATE_DIR
-TIERS = {"abyssal_excavator": "exc", "abyssal_excavator_mk2": "exc2"}
+TIERS = {"abyssal_excavator": "exc", "abyssal_excavator_mk2": "exc2", "abyssal_excavator_mk3": "exc3"}
 NAMES = ("plate", "plate_dark", "hazard", "drill", "pipe", "glow", "frame", "vent")
 WIDTH = HEIGHT = DEPTH = 3
 box = ga.box
@@ -98,7 +98,7 @@ def model_json(elements, textures, prefix):
 
 def main():
     changed = total = 0
-    for block in ("excavator_part", "abyssal_excavator_mk3") + tuple(TIERS):   # TRP01: Mk3 is drawn with the Mk2 models
+    for block in ("excavator_part",) + tuple(TIERS):
         changed += ga.write(os.path.join(STATE_DIR, block + ".json"), {"variants": {"": {"model": "abyssia:block/excavator/invisible"}}})
         total += 1
     changed += ga.write(os.path.join(MODEL_DIR, "invisible.json"), {"textures": {"particle": tex_map("exc")["frame"]}})

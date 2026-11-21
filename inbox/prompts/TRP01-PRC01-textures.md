@@ -75,3 +75,16 @@ Tiles 2-5 are a cargo uplink, a dark gunmetal machine with teal fittings that be
 4. Cargo uplink side: plain plated casing with a vertical row of three small teal signal slots and four corner bolts.
 5. Cargo uplink top: plated lid with a round teal antenna dish socket in the centre and four corner bolts.
 ```
+
+## シート TRP3: 潰れ気味だった 3 アイコンの作り直し (3個 / 3列×1行、2026-11-21)
+
+TRP2 の `submarine_upgrade_serpent_scale_hull` / `submarine_upgrade_abyss_heart_cell` / `heart_tank` は 16px に落とすと細部が潰れたので、形を単純にして作り直した。抽出データは `inbox/textures/TRP01-PRC01/TRP3.txt` (decode.py で復元)。
+
+```
+Create exactly one image. Minecraft 1.20.1 item icons, hand-drawn 16x16 pixel art in the style of vanilla Minecraft items. Match the attached reference icons from the same mod (top row): same outline weight and shading. These three icons must stay readable when shrunk to a true 16x16 grid, so keep them VERY simple: one big bold silhouette each, large flat colour areas, only 4-5 colours per icon, no small details, no thin lines, no texture noise.
+Draw all 3 icons on ONE sheet image: a grid of 3 columns and 1 row of equal square cells, left to right in the order listed below. Each icon is ONE object centered in its own cell and filling most of the cell, on flat solid magenta (#FF00FF) with wide magenta gutters between cells. No labels, no text, no cell borders, no watermark. Never use magenta inside an icon.
+1 px dark outline, hard pixel edges, no anti-aliasing, no gradients, no blur, no glow halo, no drop shadow, no 3D render. Draw at exactly 16x16 logical pixels (square pixels, integer scale).
+1. Serpent-scale hull plate: a single tilted rectangular armour plate, dark teal, covered by three rows of big rounded cyan-edged scales, with a dark steel rim.
+2. Abyss heart cell: an upright battery canister with dark steel caps at top and bottom and a wide glass middle showing one big glowing violet heart shape with a bright cyan centre.
+3. Heart tank: two fat upright gunmetal diving cylinders side by side with rounded tops, joined in the middle by one big glowing violet-and-cyan heart core.
+```

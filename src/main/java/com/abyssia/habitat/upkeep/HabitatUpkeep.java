@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -233,12 +234,17 @@ public class HabitatUpkeep extends SavedData
 
     void tick(ServerLevel level)
     {
+        tick(level, level.getGameTime(), level.random);
+    }
+
+    /** tick with an explicit clock and random source (the production tick passes the level's; tests pass their own) */
+    public void tick(ServerLevel level, long now, RandomSource random)
+    {
         if (!active())
         {
             quakes.clear();
             return;
         }
-        long now = level.getGameTime();
         if (startTick < 0) startTick = now;
         boolean warning = false;
         for (Quake q : quakes.values())
@@ -261,10 +267,9 @@ public class HabitatUpkeep extends SavedData
                 else if (remaining % WEAR_INTERVAL == 0) warn(level, bases, base, q, remaining);
             }
             else if (now % QUAKE_ROLL_INTERVAL == 0 && Config.UPKEEP_QUAKES_ENABLED.get() && now - startTick >= QUAKE_STARTUP
-                    && canRollQuake(level, base) && playerNear(level, bases, base) != null)
+                    && canRollQuake(level, base, now) && playerNear(level, bases, base) != null)
             {
-                double chance = 1.0 / 60.0 * maxDepth(bases, base) * Config.UPKEEP_QUAKE_FREQUENCY.get();
-                if (level.random.nextDouble() < chance) startWarn(level, bases, base, QUAKE_WARN);
+                if (lottery(random, maxDepth(bases, base), Config.UPKEEP_QUAKE_FREQUENCY.get())) startWarn(level, bases, base, QUAKE_WARN, now);
             }
         }
     }
@@ -324,10 +329,40 @@ public class HabitatUpkeep extends SavedData
         return false;
     }
 
-    /** a non-spectator player within 96 blocks of a loaded module of the base, or null */
-    private static ServerPlayer playerNear(ServerLevel level, HabitatBases bases, int base)
+    /** test hook: players counted instead of level.players() (null = the level's, always in production) */
+    private List<? extends ServerPlayer> playersOverride;
+
+    public void setPlayersOverride(List<? extends ServerPlayer> players)
     {
-        for (ServerPlayer p : level.players())
+        playersOverride = players;
+    }
+
+    private List<? extends ServerPlayer> players(ServerLevel level)
+    {
+        return playersOverride != null ? playersOverride : level.players();
+    }
+
+    /** the start-up reference tick (game time of the first tick), -1 before it */
+    public long startTick()
+    {
+        return startTick;
+    }
+
+    /** chance of a quake per lottery for the deepest module multiplier and the configured frequency */
+    public static double rollChance(double maxDepthMult, double frequency)
+    {
+        return 1.0 / 60.0 * maxDepthMult * frequency;
+    }
+
+    public static boolean lottery(RandomSource random, double maxDepthMult, double frequency)
+    {
+        return random.nextDouble() < rollChance(maxDepthMult, frequency);
+    }
+
+    /** a non-spectator player within 96 blocks of a loaded module of the base, or null */
+    private ServerPlayer playerNear(ServerLevel level, HabitatBases bases, int base)
+    {
+        for (ServerPlayer p : players(level))
             if (!p.isSpectator() && near(level, bases, base, p)) return p;
         return null;
     }
@@ -338,9 +373,14 @@ public class HabitatUpkeep extends SavedData
      */
     public boolean canRollQuake(ServerLevel level, int base)
     {
+        return canRollQuake(level, base, level.getGameTime());
+    }
+
+    public boolean canRollQuake(ServerLevel level, int base, long now)
+    {
         if (!active() || !Config.UPKEEP_QUAKES_ENABLED.get()) return false;
         Quake q = quakes.get(base);
-        if (q != null && (q.impactAt >= 0 || level.getGameTime() < q.cooldownUntil)) return false;
+        if (q != null && (q.impactAt >= 0 || now < q.cooldownUntil)) return false;
         return anyLoaded(level, HabitatBases.get(level), base);
     }
 
@@ -364,14 +404,14 @@ public class HabitatUpkeep extends SavedData
         if (!active() || !Config.UPKEEP_QUAKES_ENABLED.get()) return false;
         Quake q = quakes.get(base);
         if (q != null && q.impactAt >= 0) return false;
-        startWarn(level, HabitatBases.get(level), base, warnTicks);
+        startWarn(level, HabitatBases.get(level), base, warnTicks, level.getGameTime());
         return true;
     }
 
-    private void startWarn(ServerLevel level, HabitatBases bases, int base, int warnTicks)
+    private void startWarn(ServerLevel level, HabitatBases bases, int base, int warnTicks, long now)
     {
         Quake q = quakes.computeIfAbsent(base, b -> new Quake());
-        q.impactAt = level.getGameTime() + warnTicks;
+        q.impactAt = now + warnTicks;
         q.messages = 0;
         warn(level, bases, base, q, warnTicks);
     }
@@ -380,7 +420,7 @@ public class HabitatUpkeep extends SavedData
     {
         q.messages++;
         Component msg = Component.translatable("message." + Abyssia.MODID + ".habitat.quake.warn", String.valueOf(remaining / 20));
-        for (ServerPlayer p : level.players())
+        for (ServerPlayer p : players(level))
         {
             if (p.isSpectator() || !near(level, bases, base, p)) continue;
             p.displayClientMessage(msg, true);
@@ -404,7 +444,7 @@ public class HabitatUpkeep extends SavedData
             level.playSound(null, c.x, c.y, c.z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 0.6f, 0.7f);
         }
         Component msg = Component.translatable("message." + Abyssia.MODID + ".habitat.quake.hit");
-        for (ServerPlayer p : level.players())
+        for (ServerPlayer p : players(level))
             if (!p.isSpectator() && near(level, bases, base, p)) p.displayClientMessage(msg, true);
     }
 
