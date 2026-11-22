@@ -524,16 +524,6 @@ public class Config
     }
 
     static {
-        BUILDER.comment("Water pressure: diving gear tier decides the safe depth (see item PressureGear)").push("pressure");
-    }
-    public static final ModConfigSpec.BooleanValue PRESSURE_ENABLED = BUILDER
-            .comment("Hurt and slow players who dive deeper than their gear tier allows (survival / adventure, not in a submarine)")
-            .define("enabled", true);
-    static {
-        BUILDER.pop();
-    }
-
-    static {
         BUILDER.comment("AB02 environment hazards of the toxic / hot / frozen deep-crust biomes (see com.abyssia.hazard.HazardZone)").push("hazard");
     }
     public static final ModConfigSpec.BooleanValue HAZARD_ENABLED = BUILDER

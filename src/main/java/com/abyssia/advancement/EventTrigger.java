@@ -8,7 +8,7 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
 
-/** abyssia:event, one-off events (pressure_damage, hazard_damage, ...). */
+/** abyssia:event, one-off events (hazard_damage, submarine_crushed, ...). */
 public class EventTrigger extends SimpleCriterionTrigger<EventTrigger.TriggerInstance>
 {
     @Override

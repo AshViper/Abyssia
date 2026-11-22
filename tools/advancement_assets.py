@@ -34,7 +34,7 @@ TABS = ("dive", "life", "engineering")
 
 # icon items missing in this mod -> close existing item (reported)
 ICON_FALLBACK = {}
-EVENTS = {"pressure_damage", "hazard_damage", "submarine_crushed", "habitat_blackout", "aquarium_birth"}
+EVENTS = {"hazard_damage", "submarine_crushed", "habitat_blackout", "aquarium_birth"}
 
 
 # ================================================================ criterion helpers
@@ -273,9 +273,6 @@ def build_list(biomes_ok, dishes_ok):
       ("海流の加護", "ポーションや料理で深海の海流の加護を得る"))
     D("into_the_deep", "twilight_zone", "abyssal_rock", "task", dive(y_max=-64),
       ("Into the Deep", "Go below Y -64 into the deep layer"), ("深層へ", "Y -64 より下の深層に入る"))
-    D("feel_the_pressure", "into_the_deep", "pressure_valve", "task", event("pressure_damage"),
-      ("Feel the Pressure", "Take damage from water pressure. Better gear raises your safe depth"),
-      ("水圧の洗礼", "水圧でダメージを受ける。装備が良いほど安全に潜れる深さが増す"))
     D("deep_sight", "into_the_deep", "minecraft:ender_eye", "task", effect("deep_sight"),
       ("Eyes of the Deep", "Gain Deep Sight"), ("深海の瞳", "深海視の効果を得る"))
     D("lightless", "into_the_deep", "abyssal_cave_rock", "task", dive(y_max=-300),

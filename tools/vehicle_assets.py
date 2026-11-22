@@ -60,9 +60,9 @@ BOSS_ITEMS = ["abyss_serpent_scale", "trench_wyrm_fang", "kraken_beak", "kraken_
 TRP01_ITEMS = {
     "heart_tank": (
         "Heart Tank", "心臓タンク", "minecraft:item/generated", "heart_tank",
-        "Chest dive tank, pressure tier 4: 1,800 s of oxygen, durability 800, no depth limit; also heat, cold and toxic proof. "
+        "Chest dive tank (gear tier 4): 1,800 s of oxygen, durability 800; also heat, cold and toxic proof. "
         "Built from an Abyss Heart, 4 Mother Bell Gel and a Pressure Dive Tank.",
-        "胸装備のダイブタンク (耐圧ティア 4)。酸素 1,800 秒、耐久 800、水深制限なし。耐熱・耐寒・耐毒つき。"
+        "胸装備のダイブタンク (装備ティア 4)。酸素 1,800 秒、耐久 800。耐熱・耐寒・耐毒つき。"
         "深淵の核 1・母の傘ゲル 4・耐圧ダイブタンク 1 で作る。"),
     "fang_drill": (
         "Fang Drill", "牙のドリル", "minecraft:item/handheld", "fang_drill",

@@ -274,10 +274,9 @@ public final class Trp01Test
         ItemStack heart = new ItemStack(MaterialTools.HEART_TANK.get()), pressure = new ItemStack(MaterialTools.PRESSURE_DIVE_TANK.get());
         int tier = PressureGear.pieceTier(heart), seconds = DiveTank.capacitySeconds(DiveTank.tankTier(heart));
         boolean tags = heart.is(HazardZone.HEAT_PROOF) && heart.is(HazardZone.COLD_PROOF) && heart.is(HazardZone.TOXIC_PROOF_CHEST);
-        result("heart_tank", tier == 4 && seconds == 1800 && heart.getMaxDamage() == 800 && tags && DiveTank.oxygen(heart) == 1800
-                        && PressureGear.safeY(tier) == Integer.MIN_VALUE,
+        result("heart_tank", tier == 4 && seconds == 1800 && heart.getMaxDamage() == 800 && tags && DiveTank.oxygen(heart) == 1800,
                 "tier=" + tier + " seconds=" + seconds + " oxygen(new)=" + DiveTank.oxygen(heart) + " durability=" + heart.getMaxDamage()
-                        + " tags(heat/cold/toxic)=" + tags + " safeY=" + PressureGear.safeY(tier));
+                        + " tags(heat/cold/toxic)=" + tags);
         result("pressure_tank_unchanged", PressureGear.pieceTier(pressure) == 3 && DiveTank.capacitySeconds(DiveTank.tankTier(pressure)) == 720
                         && pressure.getMaxDamage() == 520,
                 "tier=" + PressureGear.pieceTier(pressure) + " seconds=" + DiveTank.capacitySeconds(DiveTank.tankTier(pressure))

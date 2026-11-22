@@ -100,7 +100,6 @@ public final class MaterialTools
         HEART_TANK = add(items, tab, "heart_tank", () -> new ArmorItem(PRESSURE, ArmorItem.Type.CHESTPLATE,
                 props(Rarity.EPIC).durability(800).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
         NeoForge.EVENT_BUS.register(MaterialTools.class);
-        PressureGear.register();
     }
 
     private static Item.Properties props(Rarity rarity)
