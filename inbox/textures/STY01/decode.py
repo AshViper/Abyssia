@@ -28,6 +28,49 @@ def unrle(s):
     return ''.join(out)
 
 
+BIG_HOLE = 12
+
+
+def fill_holes(im):
+    """Transparent pixels not reachable from the border are holes: the in-page magenta test (r>170, g<110, b>170)
+    also catches vivid purples. Fill each with the most common opaque neighbour colour."""
+    px = im.load()
+    seen, stack = set(), [(x, y) for x in range(16) for y in (0, 15)] + [(x, y) for y in range(16) for x in (0, 15)]
+    while stack:
+        x, y = stack.pop()
+        if (x, y) in seen or not (0 <= x < 16 and 0 <= y < 16) or px[x, y][3] > 0:
+            continue
+        seen.add((x, y))
+        stack += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+    holes = [(x, y) for y in range(16) for x in range(16) if px[x, y][3] == 0 and (x, y) not in seen]
+    # a big enclosed hole is drawn on purpose (the rasp ring's centre): keep components larger than BIG_HOLE
+    comps, done = [], set()
+    for h in holes:
+        if h in done:
+            continue
+        comp, st = [], [h]
+        while st:
+            q = st.pop()
+            if q in done or q not in holes:
+                continue
+            done.add(q)
+            comp.append(q)
+            st += [(q[0] + 1, q[1]), (q[0] - 1, q[1]), (q[0], q[1] + 1), (q[0], q[1] - 1)]
+        comps.append(comp)
+    holes = [q for c in comps if len(c) <= BIG_HOLE for q in c]
+    for _ in range(4):
+        left = []
+        for x, y in holes:
+            nb = [px[x + dx, y + dy] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1))
+                  if 0 <= x + dx < 16 and 0 <= y + dy < 16 and px[x + dx, y + dy][3] > 0]
+            if nb:
+                px[x, y] = max(set(nb), key=nb.count)
+            else:
+                left.append((x, y))
+        holes = left
+    return im
+
+
 def outline(im):
     """Ingot-style rim: every edge pixel becomes a dark shade of the colour just inside it (vanilla ingots have
     no black outline, the rim is the item's own hue darkened, a little lighter on the lit top-left side)."""
@@ -69,9 +112,10 @@ def main(sheet):
         ox, oy = (16 - w) // 2, (16 - h) if egg else (16 - h) // 2
         for k, ch in enumerate(idx):
             c = pal[AL.index(ch)] if ch != '.' else None
-            if c and not (c[0] > 150 and c[1] < 120 and c[2] > 150):  # drop magenta fringe
+            # drop only near-pure magenta fringe (a loose test also ate the purple manganese / mushroom colours)
+            if c and (255 - c[0]) ** 2 + c[1] ** 2 + (255 - c[2]) ** 2 > 70 ** 2:
                 im.putpixel((ox + k % w, oy + k // w), pal[AL.index(ch)] + (255,))
-        tiles.append(outline(im))
+        tiles.append(outline(fill_holes(im)))
     assert len(tiles) == len(ids), (sheet, len(tiles), len(ids))
     prev = Image.new('RGBA', (len(tiles) * 104 + 8, 216), (90, 90, 100, 255))
     for k, (im, name) in enumerate(zip(tiles, ids)):
