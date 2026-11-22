@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * BT01g build entry: the aquarium, an interior fixture standing on a module floor. SIZE x SIZE footprint, HEIGHT tall
  * (the room interior is 3 blocks: floor y0 .. ceiling y4). Local x -2..2 (right), z 0..4 (forward), controller at the
- * floor centre (0, 0, 2). Dismantle: creatures come back as filled canisters, blocks become air, 80 % refund.
+ * floor centre (0, 0, 2). Dismantle: creatures come back as filled canisters, blocks become air, full refund.
  */
 public final class AquariumEntry implements BuildEntry
 {
@@ -45,7 +45,7 @@ public final class AquariumEntry implements BuildEntry
     public static final int SIZE = 5;
     /** interior height of a room (y1..y3); the spec's 4 does not fit inside a module */
     public static final int HEIGHT = 3;
-    private static final double REFUND = 0.8;
+    private static final double REFUND = 1.0;
 
     public record Placement(BlockPos origin, Direction forward) implements BuildPlacement
     {

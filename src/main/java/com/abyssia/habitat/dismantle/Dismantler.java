@@ -59,7 +59,7 @@ import java.util.Set;
  * runs through HabitatBuilder's timed job: {@link #find} picks the unit under the crosshair, {@link #check} refuses
  * occupied modules, {@link #layout} re-shells the neighbours' opened faces first and then turns the unit's blocks and
  * legs back into water, and {@link #finish} unregisters the module, removes the BuiltUnits record(s) and refunds
- * floor(paid x 0.8). A cancelled job reverts its blocks and refunds nothing. {@link #dismantleNow} does it all at once
+ * all of paid. A cancelled job reverts its blocks and refunds nothing. {@link #dismantleNow} does it all at once
  * without a UI (test harness).
  */
 public final class Dismantler
@@ -67,7 +67,7 @@ public final class Dismantler
     /** how far the tool reaches */
     public static final double REACH = HabitatPlan.MAX_DISTANCE;
     /** refund = floor(paid x NUM / DEN) */
-    private static final int REFUND_NUM = 4, REFUND_DEN = 5;
+    private static final int REFUND_NUM = 1, REFUND_DEN = 1;
     /** pool channels / islands (H10 / H12) reach this far into a neighbouring moon pool */
     private static final int POOL_REACH = 3;
     private static final String MSG = "message." + Abyssia.MODID + ".habitat.";
@@ -568,7 +568,7 @@ public final class Dismantler
     }
 
     /**
-     * Gives floor(count x 0.8) of each paid stack to the player (dropped at the player when the inventory is full;
+     * Gives each paid stack in full to the player (dropped at the player when the inventory is full;
      * at {@code at} without a player). Returns the number of items given back.
      */
     public static int refund(ServerLevel level, @Nullable Player player, List<ItemStack> paid, BlockPos at)

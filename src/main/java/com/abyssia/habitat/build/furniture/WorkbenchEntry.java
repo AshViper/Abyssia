@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * BT01h: the wall workbench as an EQUIPMENT build entry: one cell of a module's interior next to a wall (aimed wall face,
  * FACING = away from the wall). Cost = the former crafting recipe. Dismantle = the generic Dismantler fixture path
- * (the block's onRemove drops the charge slot) + 80 % refund.
+ * (the block's onRemove drops the charge slot) + full refund.
  */
 public final class WorkbenchEntry implements BuildEntry
 {

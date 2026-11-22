@@ -35,7 +35,7 @@ import java.util.Map;
 
 /**
  * BT01h: the large locker (2x1x2, four cells) as an EQUIPMENT build entry on a module's floor. Cost = the former crafting
- * recipe. Dismantle: the base cell goes first (spills the contents, clears the other cells without drops), 80 % back.
+ * recipe. Dismantle: the base cell goes first (spills the contents, clears the other cells without drops), full refund.
  */
 public final class LockerEntry implements BuildEntry
 {

@@ -175,7 +175,7 @@ public final class RelayEntry implements BuildEntry
         if (upper.is(RelayContent.RELAY_TOP.get())) WirelessPowerRelayBlock.clearCell(level, pos.above(), upper);
         for (ItemStack paid : unit.paid())
         {
-            int count = (int) Math.floor(paid.getCount() * 0.8);
+            int count = (int) Math.floor(paid.getCount());
             if (count <= 0) continue;
             ItemStack back = paid.copy();
             back.setCount(count);
