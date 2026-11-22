@@ -283,13 +283,26 @@ def loot_table(name, drops):
 
 
 
+_BOSS_ENTITY_NAMES = [
+    ("abyss_serpent", "Abyssal Serpent", "深淵の大海蛇"),
+    ("abyss_angler", "Abyss Angler", "アビスアングラー"),
+    ("abyss_kraken", "Great Kraken", "大クラーケン"),
+    ("abyss_mother", "Abyss Mother", "深淵の母"),
+    ("abyss_mother_spawn", "Mother's Brood", "母の子クラゲ"),
+    ("rock_shard", "Rock Shard", "岩片"),
+    ("trench_wyrm", "Trench Wyrm", "海溝の大ワーム"),
+    ("submarine", "Submarine", "潜水艦"),  # vehicle, kept here so lang() does not drop it
+]
+
+
 def lang():
     for code, idx in (("en_us", 0), ("ja_jp", 1)):
         path = os.path.join(ASSETS, "lang", code + ".json")
         old = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
         keep = {k: v for k, v in old.items() if not k.startswith(("entity.abyssia.", "subtitles.abyssia.entity."))
                 and not (k.startswith("item.abyssia.") and k.endswith(".dropped_by"))}
-        keep["entity.abyssia.abyss_serpent"] = ("Abyssal Serpent", "深淵の大海蛇")[idx]  # BOSS01 boss, not a species
+        for bid, ben, bja in _BOSS_ENTITY_NAMES:  # bosses and boss projectiles, not species
+            keep["entity.abyssia." + bid] = (ben, bja)[idx]
         for gid, gen, gja in GIANT_NAMES:  # GNT01 giants, not species
             keep["entity.abyssia." + gid] = (gen, gja)[idx]
         for s in species():

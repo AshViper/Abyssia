@@ -184,10 +184,10 @@ LANG = {
     f"item.{MOD}.submarine": ("Submarine", "潜水艦"),
     f"item.{MOD}.submarine.source": (
         "A one-seat submarine. Right-click to place it on water, on the ground or under water, right-click it to board. "
-        "W/S forward and back along where you look, A/D sideways, mouse to steer (including up and down), Ctrl to leave a dock, G headlights, Shift to get out. "
+        "The hull faces where you look: W/S move along the nose (look up or down to climb or dive), A/D sideways, mouse to steer, Ctrl to release the dock, G headlights, Shift to get out. "
         "Runs on its 60,000 FE battery; dock it under a Submarine Dock (built in a Moon Pool with the Habitat Constructor) to charge and repair it.",
         "一人乗りの潜水艦。右クリックで水面・地面・水中に設置し、潜水艦を右クリックで乗り込む。"
-        "W/S で視点の向きへ前後、A/D で左右、マウスで操舵（上下も）、Ctrl でドック解除、G でライト、Shift で降りる。"
+        "船体は視点の向きに向く: W/S で機首方向に前後 (視点を上下で浮上・潜行)、A/D で左右、マウスで操舵、Ctrl でドック切り離し、G でライト、Shift で降りる。"
         "60,000 FE のバッテリーで動き、潜水艦ドック（ハビタット建設ツールでムーンプールに設置）の下に入れると充電・修理される。"),
     f"block.{MOD}.submarine_dock": ("Submarine Dock", "潜水艦ドック"),
     f"block.{MOD}.submarine_dock_gangway": ("Dock Gangway", "ドックの足場"),
@@ -198,14 +198,14 @@ LANG = {
     f"message.{MOD}.habitat.dock_exists": ("This Moon Pool already has a dock", "このムーンプールにはもうドックがあります"),
     f"container.{MOD}.submarine.pod_right": ("Submarine Right Storage", "潜水艦の右収納"),
     f"container.{MOD}.submarine.pod_left": ("Submarine Left Storage", "潜水艦の左収納"),
-    f"key.{MOD}.submarine_light":("Submarine Lights", "潜水艦ライト"),
+    f"key.{MOD}.submarine_light":("Light (submarine / propulsion screw)", "ライト（潜水艦・推進スクリュー）"),
     f"message.{MOD}.submarine.hud": ("⚡ %s%%  ❤ %s%%", "⚡ %s%%  ❤ %s%%"),
     f"message.{MOD}.submarine.docked": ("  Docked - Ctrl to release", "  ドック中 — Ctrl で切り離し"),
     f"message.{MOD}.submarine_dock.status": ("Dock buffer %s / %s FE - submarine %s%%", "ドックのバッファ %s / %s FE ・ 潜水艦 %s%%"),
     f"message.{MOD}.submarine_dock.empty": ("Dock buffer %s / %s FE - no submarine docked", "ドックのバッファ %s / %s FE ・ 潜水艦なし"),
     f"tooltip.{MOD}.submarine.energy": ("Energy %s / %s FE", "エネルギー %s / %s FE"),
-    f"tooltip.{MOD}.submarine.controls": ("W/S move where you look, A/D strafe, mouse steers, Ctrl undock, G lights, Shift exit",
-                                          "W/S 視点方向へ移動、A/D 左右、マウス操舵、Ctrl ドック解除、G ライト、Shift 降車"),
+    f"tooltip.{MOD}.submarine.controls": ("W/S along view, A/D sideways, Ctrl undock, G lights, Shift exit",
+                                          "W/S 視点方向に前後、A/D 左右、Ctrl ドック切り離し、G ライト、Shift 降車"),
     # SUB03 upgrades: screen, item tooltips, sonar HUD
     f"container.{MOD}.submarine.upgrades": ("Submarine Systems", "潜水艦システム"),
     f"container.{MOD}.submarine.upgrades.status": ("⚡ %s / %s FE  ❤ %s%%", "⚡ %s / %s FE  ❤ %s%%"),

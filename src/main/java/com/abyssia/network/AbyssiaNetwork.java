@@ -16,7 +16,8 @@ public final class AbyssiaNetwork
     // 2: the deep ocean depth settings packet was removed with the deep ocean dimension. 3: natural current salt.
     // 4: habitat constructor controls (H02). 5: waypoint beacon list / settings (W01). 7: submarine lights / undock (SUB02).
     // 8: wireless power relay links (WR01). 9: large locker rename. 10: AB05 research payloads.
-    private static final String PROTOCOL = "10";
+    // 11: propulsion screw thrust / light / thrust state (I04, port of NeoForge 9e8c77f5).
+    private static final String PROTOCOL = "11";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(Abyssia.MODID, "main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
 
@@ -62,6 +63,16 @@ public final class AbyssiaNetwork
         CHANNEL.messageBuilder(com.abyssia.waypoint.BeaconTravelPacket.class, 11, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(com.abyssia.waypoint.BeaconTravelPacket::encode).decoder(com.abyssia.waypoint.BeaconTravelPacket::decode)
                 .consumerMainThread(com.abyssia.waypoint.BeaconTravelPacket::handle).add();
+        // I04 propulsion screw: thrust on/off (C2S), light toggle (C2S), thrust state of tracked players (S2C)
+        CHANNEL.messageBuilder(com.abyssia.item.electric.ScrewThrustPacket.class, 12, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(com.abyssia.item.electric.ScrewThrustPacket::encode).decoder(com.abyssia.item.electric.ScrewThrustPacket::decode)
+                .consumerMainThread(com.abyssia.item.electric.ScrewThrustPacket::handle).add();
+        CHANNEL.messageBuilder(com.abyssia.item.electric.ScrewLightPacket.class, 13, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(com.abyssia.item.electric.ScrewLightPacket::encode).decoder(com.abyssia.item.electric.ScrewLightPacket::decode)
+                .consumerMainThread(com.abyssia.item.electric.ScrewLightPacket::handle).add();
+        CHANNEL.messageBuilder(com.abyssia.item.electric.ScrewThrustStatePacket.class, 14, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(com.abyssia.item.electric.ScrewThrustStatePacket::encode).decoder(com.abyssia.item.electric.ScrewThrustStatePacket::decode)
+                .consumerMainThread(com.abyssia.item.electric.ScrewThrustStatePacket::handle).add();
     }
 
     public static void sendToServer(Object message)

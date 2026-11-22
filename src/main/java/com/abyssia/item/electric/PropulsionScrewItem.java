@@ -1,18 +1,13 @@
 package com.abyssia.item.electric;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -22,9 +17,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * I04 propulsion screw: hold right-click under water to thrust along the look vector. Player movement is computed on
- * the client, so {@link #thrust} runs in onUseTick on BOTH sides with the same formula; FE drain and the stop decision
- * are server side (the client stops when the synced stack has no FE left).
+ * I04 propulsion screw: hold left-click (main hand, eyes in water) to thrust along the look vector; G toggles a light
+ * (stack tag "Light"). Player movement is computed on the client, so {@link #thrust} runs on the client only
+ * (PropulsionScrewInput); the server (PropulsionScrewServer) only drains FE and plays the sound.
  */
 public class PropulsionScrewItem extends Item implements ElectricTools.Electric
 {
@@ -32,9 +27,11 @@ public class PropulsionScrewItem extends Item implements ElectricTools.Electric
     /** Blocks / tick of ordinary (sprint) swimming that the multipliers refer to. */
     public static final double NORMAL_SWIM_SPEED = 0.2;
     /** Thrust target = NORMAL_SWIM_SPEED * min(SPEED_FACTOR, MAX_FACTOR) * SWIM_SPEED attribute. */
-    public static final double SPEED_FACTOR = 1.8, MAX_FACTOR = 2.0;
+    public static final double SPEED_FACTOR = 2.0, MAX_FACTOR = 2.0;
     /** Fraction of the gap to the target velocity closed per tick (currents are added after this and still show). */
     public static final double ACCEL = 0.2;
+
+    private static final String TAG_LIGHT = "Light";
 
     public PropulsionScrewItem(Properties props) { super(props); }
 
@@ -47,58 +44,41 @@ public class PropulsionScrewItem extends Item implements ElectricTools.Electric
         return NORMAL_SWIM_SPEED * Math.min(SPEED_FACTOR, MAX_FACTOR) * swim;
     }
 
-    /** One thrust tick: pulls the velocity toward look * target. Same call on client and server. */
+    /** Velocity pull strength that makes the steady-state speed equal the target (see NeoForge PropulsionScrewItem). */
+    private static double pullFactor(Player player)
+    {
+        double d = player.isSprinting() ? 0.9 : 0.8;
+        return (1.0 - d * (1.0 - ACCEL)) / (d * ACCEL);
+    }
+
+    /** One thrust tick: pulls the velocity toward look * target. Client only (movement is client-authoritative). */
     public static void thrust(Player player)
     {
-        Vec3 target = player.getLookAngle().scale(targetSpeed(player));
+        if (!player.level().isClientSide) return;
+        applyThrust(player);
+    }
+
+    /** The thrust formula without the side check (devtest). */
+    public static void applyThrust(Player player)
+    {
+        Vec3 target = player.getLookAngle().scale(targetSpeed(player) * pullFactor(player));
         Vec3 v = player.getDeltaMovement();
         player.setDeltaMovement(v.add(target.subtract(v).scale(ACCEL)));
         player.fallDistance = 0.0F;
-        player.hurtMarked = true;
     }
 
-    private static boolean inWater(Player player) { return player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()); }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
+    public static boolean isLightOn(ItemStack stack)
     {
-        ItemStack stack = player.getItemInHand(hand);
-        if (ElectricTools.getEnergy(stack) <= 0)
-        {
-            ElectricTools.emptyMessage(player);
-            return InteractionResultHolder.fail(stack);
-        }
-        if (!inWater(player)) return InteractionResultHolder.pass(stack);
-        player.startUsingItem(hand);
-        return InteractionResultHolder.consume(stack);
+        return stack.getItem() instanceof PropulsionScrewItem && stack.hasTag() && stack.getTag().getBoolean(TAG_LIGHT);
     }
 
-    @Override
-    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remaining)
+    /** Server: flips the light flag on the stack and clicks like a lever. */
+    public static void toggleLight(Player player, ItemStack stack)
     {
-        if (!(entity instanceof Player player)) return;
-        boolean creative = player.getAbilities().instabuild;
-        if (!inWater(player) || (!creative && ElectricTools.getEnergy(stack) <= 0))
-        {
-            if (!level.isClientSide && ElectricTools.getEnergy(stack) <= 0) ElectricTools.emptyMessage(player);
-            player.stopUsingItem();
-            return;
-        }
-        if (!level.isClientSide)
-        {
-            ElectricTools.consume(stack, COST_PER_TICK, player);
-            if (player.tickCount % 8 == 0)
-                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CONDUIT_AMBIENT_SHORT,
-                        SoundSource.PLAYERS, 0.6F, 0.5F);
-        }
-        else
-        {
-            Vec3 back = player.getLookAngle().scale(-0.9);
-            Vec3 at = player.getEyePosition().add(back).add(0, -0.3, 0);
-            level.addParticle(ParticleTypes.BUBBLE, at.x, at.y, at.z, back.x * 0.1, back.y * 0.1, back.z * 0.1);
-            level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, at.x, at.y, at.z, 0.0, 0.05, 0.0);
-        }
-        thrust(player);
+        boolean on = !isLightOn(stack);
+        stack.getOrCreateTag().putBoolean(TAG_LIGHT, on);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEVER_CLICK, SoundSource.PLAYERS,
+                0.5f, on ? 1.2f : 0.9f);
     }
 
     @Override
@@ -107,9 +87,6 @@ public class PropulsionScrewItem extends Item implements ElectricTools.Electric
         consumer.accept(PropulsionScrewClient.EXTENSIONS);
     }
 
-    @Override public int getUseDuration(ItemStack stack) { return 72000; }
-    @Override public UseAnim getUseAnimation(ItemStack stack) { return UseAnim.NONE; }
-    @Override public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) { return oldStack.getItem() == newStack.getItem(); }
     @Override public boolean isRepairable(ItemStack stack) { return false; }
     @Override public boolean isBarVisible(ItemStack stack) { return true; }
     @Override public int getBarWidth(ItemStack stack) { return ElectricTools.barWidth(stack); }
@@ -126,6 +103,8 @@ public class PropulsionScrewItem extends Item implements ElectricTools.Electric
     {
         ElectricTools.tooltip(stack, lines);
         lines.add(Component.translatable("tooltip.abyssia.propulsion_screw.use").withStyle(net.minecraft.ChatFormatting.GRAY));
+        lines.add(Component.translatable(isLightOn(stack) ? "tooltip.abyssia.propulsion_screw.light_on" : "tooltip.abyssia.propulsion_screw.light_off")
+                .withStyle(isLightOn(stack) ? net.minecraft.ChatFormatting.YELLOW : net.minecraft.ChatFormatting.DARK_GRAY));
     }
 
     @Override

@@ -21,7 +21,9 @@ LANG = {
     f"item.{MOD}.hand_lamp": ("Hand Lamp", "ハンドランプ"),
     # I04 propulsion screw
     f"item.{MOD}.propulsion_screw": ("Propulsion Screw", "推進スクリュー"),
-    f"tooltip.{MOD}.propulsion_screw.use": ("Hold right-click under water to thrust forward", "水中で右クリック長押しで推進"),
+    f"tooltip.{MOD}.propulsion_screw.use": ("Hold left-click under water to thrust; G toggles the light", "水中で左クリック長押しで推進、G でライト切り替え"),
+    f"tooltip.{MOD}.propulsion_screw.light_on": ("Light: on", "ライト: オン"),
+    f"tooltip.{MOD}.propulsion_screw.light_off": ("Light: off", "ライト: オフ"),
 }
 
 _RECIPES = {
@@ -97,6 +99,11 @@ def generate(write, im, data_dir):
         "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": pattern,
         "key": {k: {"item": f"{MOD}:{v}"} for k, v in key.items()},
         "result": {"item": f"{MOD}:{SCREW}", "count": 1}})
+    write(os.path.join(data_dir, MOD, "recipes", "hand_lamp.json"), {   # used to be a hand-written file
+        "type": "minecraft:crafting_shaped", "category": "equipment", "pattern": [" G ", "ICI", " B "],
+        "key": {"G": {"item": "minecraft:glass_pane"}, "I": {"item": "minecraft:iron_ingot"},
+                "C": {"item": f"{MOD}:lumen_gel"}, "B": {"item": "minecraft:redstone"}},
+        "result": {"item": f"{MOD}:hand_lamp"}})
     import hand_lamp_assets   # hand lamp 3D models (off/on) + textures, textures/item next to models/item
     hand_lamp_assets.generate(write, im, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(im("x")))),
                                                       "textures", "item"))

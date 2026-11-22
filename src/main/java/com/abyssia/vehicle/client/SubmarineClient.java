@@ -2,6 +2,8 @@ package com.abyssia.vehicle.client;
 
 import com.abyssia.Abyssia;
 import com.abyssia.habitat.client.HabitatClient;
+import com.abyssia.item.electric.PropulsionScrewItem;
+import com.abyssia.item.electric.ScrewLightPacket;
 import com.abyssia.network.AbyssiaNetwork;
 import com.abyssia.vehicle.Submarine;
 import com.abyssia.vehicle.SubmarineLightPacket;
@@ -67,9 +69,14 @@ public final class SubmarineClient
     @SubscribeEvent
     public static void key(InputEvent.Key event)
     {
-        if (event.getAction() != GLFW.GLFW_PRESS || Minecraft.getInstance().screen != null || riding() == null) return;
-        if (LIGHT.isActiveAndMatches(InputConstants.getKey(event.getKey(), event.getScanCode())))
+        Minecraft mc = Minecraft.getInstance();
+        if (event.getAction() != GLFW.GLFW_PRESS || mc.screen != null || mc.player == null) return;
+        if (!LIGHT.isActiveAndMatches(InputConstants.getKey(event.getKey(), event.getScanCode()))) return;
+        if (riding() != null)
             AbyssiaNetwork.sendToServer(new SubmarineLightPacket(SubmarineLightPacket.Action.TOGGLE_LIGHTS));
+        else if (mc.player.getMainHandItem().getItem() instanceof PropulsionScrewItem
+                || mc.player.getOffhandItem().getItem() instanceof PropulsionScrewItem)
+            AbyssiaNetwork.sendToServer(new ScrewLightPacket());
     }
 
     @SubscribeEvent
