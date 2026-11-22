@@ -8,7 +8,9 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -28,6 +30,7 @@ import java.util.Map;
  * min_y    lowest world Y of the spawn point
  * max_y    highest world Y of the spawn point
  * weight   relative weight among the species that fit
+ * biomes   optional list of biome ids or #tags the spawn point's biome must match (default: any biome)
  * cap      optional {count, radius} (same record as fauna_spawns): no more of this species while count are within radius (default 1 / 256)
  * </pre>
  */
@@ -37,15 +40,42 @@ public final class GiantSpawnRules extends SimpleJsonResourceReloadListener
     private static final Logger LOGGER = LogUtils.getLogger();
     private static volatile List<Rule> rules = List.of();
 
-    public record Rule(String species, int minY, int maxY, double weight, FaunaSpawnRule.Cap cap)
+    /** A biome id ({@code abyssia:shallows}) or a biome tag ({@code #abyssia:deep_layer}), parsed once at load. */
+    public record BiomeMatch(ResourceLocation id, boolean tag)
+    {
+        public static final Codec<BiomeMatch> CODEC = Codec.STRING.xmap(
+                str -> str.startsWith("#") ? new BiomeMatch(new ResourceLocation(str.substring(1)), true) : new BiomeMatch(new ResourceLocation(str), false),
+                m -> (m.tag ? "#" : "") + m.id);
+
+        public boolean matches(Holder<Biome> biome)
+        {
+            return tag ? biome.tags().anyMatch(t -> t.location().equals(id)) : biome.is(id);
+        }
+    }
+
+    public record Rule(String species, int minY, int maxY, double weight, FaunaSpawnRule.Cap cap, List<BiomeMatch> biomes)
     {
         public static final Codec<Rule> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.STRING.fieldOf("species").forGetter(Rule::species),
                 Codec.INT.fieldOf("min_y").forGetter(Rule::minY),
                 Codec.INT.fieldOf("max_y").forGetter(Rule::maxY),
                 Codec.doubleRange(0, 10000).fieldOf("weight").forGetter(Rule::weight),
-                FaunaSpawnRule.Cap.CODEC.optionalFieldOf("cap", new FaunaSpawnRule.Cap(1, 256)).forGetter(Rule::cap)
+                FaunaSpawnRule.Cap.CODEC.optionalFieldOf("cap", new FaunaSpawnRule.Cap(1, 256)).forGetter(Rule::cap),
+                BiomeMatch.CODEC.listOf().optionalFieldOf("biomes", List.of()).forGetter(Rule::biomes)
         ).apply(i, Rule::new));
+
+        /** Biome part only (empty biome list = any biome). */
+        public boolean matchesBiome(Holder<Biome> biome)
+        {
+            if (biomes.isEmpty()) return true;
+            for (BiomeMatch m : biomes) if (m.matches(biome)) return true;
+            return false;
+        }
+
+        public boolean matches(Holder<Biome> biome, double y)
+        {
+            return y >= minY && y <= maxY && matchesBiome(biome);
+        }
     }
 
     private GiantSpawnRules()
