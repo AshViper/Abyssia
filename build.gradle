@@ -150,6 +150,8 @@ minecraft {
             if (project.hasProperty('boss02Test')) property 'abyssia.boss02test', '1'
             // Dev-only: `gradlew runServer -Pgnt01Test=1 [-PgiantId=<id>]` runs devtest/GiantTest (GNT01 giant animal checks, log lines "GNT01 ...") and halts.
             if (project.hasProperty('gnt01Test')) property 'abyssia.gianttest', project.findProperty('giantId') ?: '1'
+            // Dev-only: `gradlew runServer -Pgnt02Test=1` runs devtest/Gnt02Test (GNT02 neutral giants / hostile bosses, log lines "GNT02 ...") and halts.
+            if (project.hasProperty('gnt02Test')) property 'abyssia.gnt02test', '1'
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
         }
