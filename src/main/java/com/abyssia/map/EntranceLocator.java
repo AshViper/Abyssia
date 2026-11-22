@@ -164,7 +164,14 @@ public final class EntranceLocator
         MapItemSavedData.addTargetDecoration(map, new BlockPos(entrance.getX(), 64, entrance.getZ()), "+", MapDecoration.Type.RED_X);
         map.setHoverName(Component.translatable("item.abyssia.abyss_chart.filled").withStyle(s -> s.withItalic(false)));
         map.getOrCreateTagElement("display").putInt("MapColor", 0x524444);
-        held.shrink(1);
-        if (!player.getInventory().add(map)) player.drop(map, false);
+        map.getOrCreateTag().putInt("CustomModelData", AbyssChartItem.CHART_MODEL_DATA);
+
+        // the chart itself turns into the map (creative would keep the chart and the map count would grow)
+        if (held.getCount() == 1) player.setItemInHand(hand, map);
+        else
+        {
+            held.shrink(1);
+            if (!player.getInventory().add(map)) player.drop(map, false);
+        }
     }
 }

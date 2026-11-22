@@ -18,6 +18,9 @@ import java.util.List;
 /** MP01: single-use chart; searches the nearest deep sea entrance (see {@link EntranceLocator}). */
 public class AbyssChartItem extends Item
 {
+    /** CustomModelData of the used chart (filled_map); matches CHART_MODEL_DATA in tools/map_assets.py. */
+    public static final int CHART_MODEL_DATA = 7340301;
+
     public AbyssChartItem(Properties properties)
     {
         super(properties);

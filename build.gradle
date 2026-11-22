@@ -134,6 +134,8 @@ minecraft {
         server {
             // `-PserverDir=<dir>` runs the server in another folder so parallel sessions do not share run/ and its ports.
             if (project.hasProperty('serverDir')) workingDirectory project.file(project.property('serverDir'))
+            // Dev-only: `gradlew runServer -Pmp02Test=1` runs devtest/Mp02Test (MP02 abyss chart checks, log lines "MP02 ...") and halts.
+            if (project.hasProperty('mp02Test')) property 'abyssia.mp02test', '1'
             // Dev-only: `gradlew runServer -Pprc01Test=1` runs devtest/Prc01Test (PRC01 checks, log lines "PRC01 ...") and halts.
             if (project.hasProperty('prc01Test')) property 'abyssia.prc01test', '1'
             // Dev-only: `gradlew runServer -Ptrp01Test=1` runs devtest/Trp01Test (TRP01 boss-material gear checks, log lines "TRP01 ...") and halts.

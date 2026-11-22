@@ -8,9 +8,13 @@ MOD = "abyssia"
 RECIPES = {
     "deep_sea_map": (["DPG", "PCP", "GPD"], {"D": "abyssia:deep_fiber", "G": "abyssia:deep_pigment",
                                               "P": "minecraft:paper", "C": "minecraft:compass"}),
-    "abyss_chart": (["SPL", "PCP", "LPS"], {"S": "abyssia:sea_cloth", "L": "abyssia:lumen_gel",
+    "abyss_chart": (["SPL", "PCP", "LPS"], {"S": "minecraft:ink_sac", "L": "minecraft:glow_ink_sac",
                                              "P": "minecraft:paper", "C": "minecraft:compass"}),
 }
+
+# custom_model_data of a used chart (vanilla filled_map): swaps the icon to abyss_chart.
+# Must match AbyssChartItem.CHART_MODEL_DATA on the Java side.
+CHART_MODEL_DATA = 7340301
 
 # key -> (English, Japanese)
 LANG = {
@@ -35,4 +39,10 @@ def generate(write, im, data_dir):
         write(os.path.join(data_dir, MOD, "recipes", name + ".json"), {
             "type": "minecraft:crafting_shaped", "category": "misc", "pattern": pattern,
             "key": {k: {"item": v} for k, v in key.items()}, "result": {"item": f"{MOD}:{name}"}})
+    # vanilla 1.20.1 filled_map model plus a custom_model_data override to the chart icon
+    mc_models = os.path.join(os.path.dirname(data_dir), "assets", "minecraft", "models", "item")
+    write(os.path.join(mc_models, "filled_map.json"), {
+        "parent": "minecraft:item/generated",
+        "textures": {"layer0": "minecraft:item/filled_map", "layer1": "minecraft:item/filled_map_markings"},
+        "overrides": [{"predicate": {"custom_model_data": CHART_MODEL_DATA}, "model": f"{MOD}:item/abyss_chart"}]})
     return len(RECIPES)
