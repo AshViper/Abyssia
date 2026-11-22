@@ -134,7 +134,7 @@ public final class ChargingStationEntry implements BuildEntry
         if (level.getBlockState(pos).is(ChargingContent.STATION.get())) level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         for (ItemStack paid : unit.paid())
         {
-            int count = (int) Math.floor(paid.getCount() * 0.8);
+            int count = (int) Math.floor(paid.getCount());
             if (count <= 0) continue;
             ItemStack back = paid.copy();
             back.setCount(count);
