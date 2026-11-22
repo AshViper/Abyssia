@@ -94,12 +94,8 @@ RECIPES = {
 }
 
 TECHS = {
-    "giant_biology": dict(type="recipe", tier="mk1", band="C", scan=["lancejaw", "lumenwing"], pre=["marine_biology"],
-                          unlocks=["abyssia:recipe/lumen_lantern"], icon="lumen_filament",
-                          en=("Giant Biology", "Giants of the deep sea are close enough to study. Unlocks the Lumen Lantern, built from lumenwing filament and lantern baleen."),
-                          ja=("巨大生物学", "深海の巨大生物を間近で観察する。灯翼の糸と灯髭で作る灯翼ランタンが作れるようになる。")),
     "giant_survey_a": dict(type="research", tier="mk1", band="D", scan=["lantern_grazer", "hush_whale", "slateback", "rift_lamprey"],
-                           pre=["giant_biology"], unlocks=[], icon="echo_organ",
+                           pre=["marine_biology"], unlocks=[], icon="echo_organ",
                            en=("Giant Survey I", "Scan the escorting, singing and burrowing giants."),
                            ja=("巨大生物調査 I", "灯髭ウオ・静寂鯨・石鱗ウオ・裂溝ヤツメをスキャンする。")),
     "giant_survey_b": dict(type="research", tier="mk2", band="E", scan=["shroud_ray", "glassback", "crestfin", "duskmaw"],

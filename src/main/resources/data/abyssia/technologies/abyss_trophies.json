@@ -1,6 +1,6 @@
 {
   "id": "abyssia:technology/abyss_trophies",
-  "type": "recipe",
+  "type": "building",
   "title": "technology.abyssia.abyss_trophies",
   "tier": "mk2",
   "depth_band": "E",
@@ -11,16 +11,12 @@
     }
   ],
   "prerequisites": [
-    "abyssia:technology/submarine_depth_mk3",
+    "abyssia:technology/submarine",
+    "abyssia:technology/survey_fish_c",
+    "abyssia:technology/survey_vents_d",
     "abyssia:technology/deep_excavation"
   ],
   "unlocks": [
-    "abyssia:recipe/submarine_upgrade_serpent_scale_hull",
-    "abyssia:recipe/submarine_upgrade_jet_thruster",
-    "abyssia:recipe/submarine_upgrade_abyss_heart_cell",
-    "abyssia:recipe/submarine_upgrade_lure_sonar",
-    "abyssia:recipe/heart_tank",
-    "abyssia:recipe/fang_drill",
     "abyssia:building/abyssal_excavator_mk3"
   ],
   "icon": "abyssia:abyss_heart"
