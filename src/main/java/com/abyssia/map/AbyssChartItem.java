@@ -17,6 +17,9 @@ import java.util.List;
 /** MP01 Abyss Chart: searches (off the main thread, see {@link EntranceLocator}) for the nearest deep entrance. */
 public class AbyssChartItem extends Item
 {
+    /** custom_model_data of the used chart (filled_map); matches CHART_MODEL_DATA in tools/map_assets.py. */
+    public static final int CHART_MODEL_DATA = 7340301;
+
     public AbyssChartItem(Properties properties)
     {
         super(properties);

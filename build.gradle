@@ -129,6 +129,14 @@ neoForge {
             systemProperty 'abyssia.qol01test', '1'
         }
 
+        // Dev-only: devtest/Mp02Test runs the MP02 abyss chart checks and halts (log lines "MP02 ...").
+        mp02Test {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'abyssia.mp02test', '1'
+        }
+
         // Dev-only: devtest/Log01Test runs the LOG01 logistics checks on a dedicated server and halts (log lines "LOG01 ...").
         log01Test {
             server()

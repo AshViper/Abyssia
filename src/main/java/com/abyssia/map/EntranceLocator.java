@@ -165,8 +165,15 @@ public final class EntranceLocator
         map.set(DataComponents.ITEM_NAME, Component.translatable("item.abyssia.abyss_chart.filled"));
         map.set(DataComponents.MAP_COLOR, new MapItemColor(MAP_COLOR));
 
-        held.consume(1, player);
-        if (!player.getInventory().add(map)) player.drop(map, false);
+        map.set(DataComponents.CUSTOM_MODEL_DATA, new net.minecraft.world.item.component.CustomModelData(AbyssChartItem.CHART_MODEL_DATA));
+
+        // the chart itself turns into the map (no consume: creative would keep the chart and the map count would grow)
+        if (held.getCount() == 1) player.setItemInHand(hand, map);
+        else
+        {
+            held.shrink(1);
+            if (!player.getInventory().add(map)) player.drop(map, false);
+        }
     }
 
     /** Server stop: forget in-flight searches and cooldowns (they belong to the world that just closed). */
