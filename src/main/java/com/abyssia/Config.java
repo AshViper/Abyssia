@@ -751,7 +751,7 @@ public class Config
             .define("gate_buildings", true);
 
     public static final ForgeConfigSpec.BooleanValue RESEARCH_JEI_HIDE_LOCKED = BUILDER
-            .comment("JEI hides recipes whose result is locked by a technology (abyssia:recipe/<item>) and the recipes of locked machines (display only)")
+            .comment("JEI hides the recipes of machines the player has not unlocked yet (display only)")
             .define("jei_hide_locked", true);
 
     static

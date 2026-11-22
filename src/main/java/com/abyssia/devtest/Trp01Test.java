@@ -204,15 +204,15 @@ public final class Trp01Test
         ResearchManager.reset(p, null);
         String[] items = {"submarine_upgrade_serpent_scale_hull", "submarine_upgrade_jet_thruster", "submarine_upgrade_abyss_heart_cell",
                 "submarine_upgrade_lure_sonar", "heart_tank", "fang_drill"};
-        int lockedBefore = 0, freeAfter = 0;
-        for (String i : items) if (!ResearchManager.isKeyUnlocked(p, ResearchManager.key("recipe", i))) lockedBefore++;
-        if (!ResearchManager.isBuildingUnlocked(p, "abyssal_excavator_mk3")) lockedBefore++;
+        // RCP01: recipes are never research-gated; only the excavator Mk3 building waits for the technology.
+        int recipesFree = 0;
+        for (String i : items) if (!ResearchManager.isKeyGated(p, ResearchManager.key("recipe", i))) recipesFree++;
+        boolean lockedBefore = !ResearchManager.isBuildingUnlocked(p, "abyssal_excavator_mk3");
         boolean unlocked = ResearchManager.unlock(p, tech);
-        for (String i : items) if (ResearchManager.isKeyUnlocked(p, ResearchManager.key("recipe", i))) freeAfter++;
-        if (ResearchManager.isBuildingUnlocked(p, "abyssal_excavator_mk3")) freeAfter++;
+        boolean freeAfter = ResearchManager.isBuildingUnlocked(p, "abyssal_excavator_mk3");
         ResearchManager.reset(p, null);
-        result("research", exists && unlocked && lockedBefore == 7 && freeAfter == 7,
-                "exists=" + exists + " lockedBefore=" + lockedBefore + "/7 unlock=" + unlocked + " freeAfter=" + freeAfter + "/7");
+        result("research", exists && unlocked && recipesFree == 6 && lockedBefore && freeAfter,
+                "exists=" + exists + " recipesUngated=" + recipesFree + "/6 mk3LockedBefore=" + lockedBefore + " unlock=" + unlocked + " mk3FreeAfter=" + freeAfter);
     }
 
     private static void submarine()
