@@ -96,7 +96,6 @@ public final class MaterialTools
         // TRP01 Heart Tank: pressure-tier-4 chest piece (PressureGear / DiveTank), same armor look as the pressure tank
         HEART_TANK = add(items, tab, "heart_tank", () -> new HeartTankItem(PRESSURE, ArmorItem.Type.CHESTPLATE, props(Rarity.EPIC).durability(800)));
         MinecraftForge.EVENT_BUS.register(MaterialTools.class);
-        PressureGear.register();
     }
 
     private static Item.Properties props(Rarity rarity)

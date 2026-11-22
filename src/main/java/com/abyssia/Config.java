@@ -580,14 +580,6 @@ public class Config
 
     static {
         BUILDER.pop();
-        BUILDER.comment("Water pressure: diving gear tier decides the safe depth (see item PressureGear)").push("pressure");
-    }
-    public static final ForgeConfigSpec.BooleanValue PRESSURE_ENABLED = BUILDER
-            .comment("Hurt and slow players who dive deeper than their gear tier allows (survival / adventure, not in a submarine)")
-            .define("enabled", true);
-
-    static {
-        BUILDER.pop();
         BUILDER.comment("Waypoint beacons (HUD markers of named, coloured beacons in the same dimension)").push("waypoint_beacon");
     }
 

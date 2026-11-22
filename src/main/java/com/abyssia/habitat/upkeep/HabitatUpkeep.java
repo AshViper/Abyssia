@@ -4,7 +4,6 @@ import com.abyssia.Abyssia;
 import com.abyssia.Config;
 import com.abyssia.habitat.power.HabitatAir;
 import com.abyssia.habitat.power.HabitatBases;
-import com.abyssia.item.PressureGear;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -125,9 +124,10 @@ public class HabitatUpkeep extends SavedData
     public static double depthMultiplier(BoundingBox box)
     {
         int y = box.minY();
-        if (y >= PressureGear.safeY(0)) return 1.0;
-        if (y >= PressureGear.safeY(1)) return 1.5;
-        if (y >= PressureGear.safeY(2)) return 2.0;
+        // depth bands formerly shared with the player pressure limits (removed 2026-11-22), kept for module upkeep
+        if (y >= 23) return 1.0;
+        if (y >= -300) return 1.5;
+        if (y >= -450) return 2.0;
         return 3.0;
     }
 
