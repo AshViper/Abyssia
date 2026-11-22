@@ -6,6 +6,8 @@ import com.abyssia.entity.giant.GiantBrain;
 import com.abyssia.entity.giant.GiantFauna;
 import com.abyssia.registry.ModGiants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,7 +22,9 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * GNT01 natural spawn of giants (see {@link GiantSpawnRules}). Every {@code giant_spawn_interval_ticks} each survival player
@@ -28,6 +32,9 @@ import java.util.List;
  * {@code giant_player_cooldown_ticks}. Limits: one non-friendly giant within 160 blocks of the player (a friendly one has
  * its own slot), one of a species within its rule's cap radius, {@code giant_max_loaded} in the whole server. The spot needs
  * water in a sphere of 8 blocks around the head and along the body line (all spawn-time lookups, nothing per tick).
+ * Guarantee: when giants are assigned to the player's biome and depth (rule {@code biomes}) and none of them is alive within
+ * 160 blocks, the roll and the cooldown are skipped and one of those species spawns (24 attempts; species cap and
+ * max_loaded still apply, the hostile/friendly-near slot does not).
  * Giants are not fauna rules, so {@link FaunaSpawner} neither spawns nor counts them.
  */
 @EventBusSubscriber(modid = Abyssia.MODID)
@@ -35,7 +42,7 @@ public final class GiantSpawner
 {
     private static final String COOLDOWN_KEY = "abyssia_giant_cd";
     private static final double MIN_DIST = 64, MAX_DIST = 112, PLAYER_RADIUS = 160;
-    private static final int ATTEMPTS = 8, FREE_SPHERE = 8, LINE_STEP = 4;
+    private static final int ATTEMPTS = 8, GUARANTEED_ATTEMPTS = 24, FREE_SPHERE = 8, LINE_STEP = 4;
 
     private GiantSpawner() {}
 
@@ -53,14 +60,19 @@ public final class GiantSpawner
             ServerLevel level = p.serverLevel();
             if (!level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) continue;
             long now = level.getGameTime();
-            if (now < p.getPersistentData().getLong(COOLDOWN_KEY)) continue;
-            if (level.random.nextDouble() >= Config.GIANT_SPAWN_CHANCE.get()) continue;
-            GiantFauna spawned = spawnNatural(level, p);
+            Set<String> must = uncoveredSet(level, p);
+            boolean guaranteed = must != null;
+            if (!guaranteed)
+            {
+                if (now < p.getPersistentData().getLong(COOLDOWN_KEY)) continue;
+                if (level.random.nextDouble() >= Config.GIANT_SPAWN_CHANCE.get()) continue;
+            }
+            GiantFauna spawned = spawnNatural(level, p, must);
             if (spawned != null)
             {
-                p.getPersistentData().putLong(COOLDOWN_KEY, now + Config.GIANT_PLAYER_COOLDOWN.get());
+                if (!guaranteed) p.getPersistentData().putLong(COOLDOWN_KEY, now + Config.GIANT_PLAYER_COOLDOWN.get());
                 loaded++;
-                com.mojang.logging.LogUtils.getLogger().info("GNT01 natural spawn {} at {} {} {} dist {} loaded {}", spawned.spec().id(),
+                com.mojang.logging.LogUtils.getLogger().info("GNT01 natural spawn{} {} at {} {} {} dist {} loaded {}", guaranteed ? " (guaranteed)" : "", spawned.spec().id(),
                         Math.round(spawned.getX()), Math.round(spawned.getY()), Math.round(spawned.getZ()), Math.round(spawned.headPos().distanceTo(p.position())), loaded);
             }
         }
@@ -74,9 +86,28 @@ public final class GiantSpawner
         return n;
     }
 
+    /**
+     * Species ids assigned to the player's biome and depth when none of them is alive within {@link #PLAYER_RADIUS};
+     * null when nothing is assigned or one is already near (normal roll path).
+     */
     @Nullable
-    private static GiantFauna spawnNatural(ServerLevel level, ServerPlayer p)
+    private static Set<String> uncoveredSet(ServerLevel level, ServerPlayer p)
     {
+        Holder<Biome> biome = level.getBiome(p.blockPosition());
+        Set<String> assigned = new HashSet<>();
+        for (GiantSpawnRules.Rule r : GiantSpawnRules.rules())
+            if (r.weight() > 0 && ModGiants.byId(r.species()) != null && r.matches(biome, p.getY())) assigned.add(r.species());
+        if (assigned.isEmpty()) return null;
+        Vec3 pp = p.position();
+        for (GiantFauna g : level.getEntitiesOfClass(GiantFauna.class, p.getBoundingBox().inflate(PLAYER_RADIUS), GiantFauna::isAlive))
+            if (g.headPos().distanceToSqr(pp) <= PLAYER_RADIUS * PLAYER_RADIUS && assigned.contains(g.spec().id())) return null;
+        return assigned;
+    }
+
+    @Nullable
+    private static GiantFauna spawnNatural(ServerLevel level, ServerPlayer p, @Nullable Set<String> only)
+    {
+        int attempts = only != null ? GUARANTEED_ATTEMPTS : ATTEMPTS;
         Vec3 pp = p.position();
         boolean hostileNear = false, friendlyNear = false;
         for (GiantFauna g : level.getEntitiesOfClass(GiantFauna.class, p.getBoundingBox().inflate(PLAYER_RADIUS), GiantFauna::isAlive))
@@ -87,21 +118,30 @@ public final class GiantSpawner
         }
         List<GiantFauna> nearby = level.getEntitiesOfClass(GiantFauna.class, p.getBoundingBox().inflate(256 + MAX_DIST), GiantFauna::isAlive);
         RandomSource random = level.random;
-        for (int attempt = 0; attempt < ATTEMPTS; attempt++)
+        for (int attempt = 0; attempt < attempts; attempt++)
         {
             double dist = MIN_DIST + random.nextDouble() * (MAX_DIST - MIN_DIST);
             double ang = random.nextDouble() * Math.PI * 2;
             double x = pp.x + Math.cos(ang) * dist, z = pp.z + Math.sin(ang) * dist;
-            double y = pp.y + (random.nextDouble() * 2 - 1) * 16;
+            // guaranteed path: a player on the sea floor has rock below, so also look up to 48 blocks above
+            double y = only != null ? pp.y - 16 + random.nextDouble() * 64 : pp.y + (random.nextDouble() * 2 - 1) * 16;
             Vec3 head = new Vec3(x, y, z);
+            Holder<Biome> biomeAt = level.getBiome(BlockPos.containing(head));
             List<GiantSpawnRules.Rule> fit = new ArrayList<>();
             double total = 0;
             for (GiantSpawnRules.Rule r : GiantSpawnRules.rules())
             {
                 ModGiants.Species sp = ModGiants.byId(r.species());
-                if (sp == null || r.weight() <= 0 || y < r.minY() || y > r.maxY()) continue;
-                boolean friendly = sp.spec().temper() == GiantBrain.Temper.FRIENDLY;
-                if (friendly ? friendlyNear : hostileNear) continue;
+                if (sp == null || r.weight() <= 0 || !r.matches(biomeAt, y)) continue;
+                if (only != null)
+                {
+                    if (!only.contains(r.species())) continue;
+                }
+                else
+                {
+                    boolean friendly = sp.spec().temper() == GiantBrain.Temper.FRIENDLY;
+                    if (friendly ? friendlyNear : hostileNear) continue;
+                }
                 if (speciesNear(nearby, sp, head, r.cap().radius()) >= r.cap().count()) continue;
                 fit.add(r);
                 total += r.weight();

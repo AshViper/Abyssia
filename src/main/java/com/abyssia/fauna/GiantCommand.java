@@ -18,7 +18,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
-/** GNT01 test commands (op level 2): {@code /abyssia giants list | spawn <id> | stats}. */
+/** GNT01 test commands (op level 2): {@code /abyssia giants list | spawn <id> | stats | coverage}. */
 @EventBusSubscriber(modid = Abyssia.MODID)
 public final class GiantCommand
 {
@@ -33,6 +33,7 @@ public final class GiantCommand
                 .then(Commands.literal("giants")
                         .then(Commands.literal("list").executes(GiantCommand::list))
                         .then(Commands.literal("stats").executes(GiantCommand::stats))
+                        .then(Commands.literal("coverage").executes(GiantCommand::coverage))
                         .then(Commands.literal("spawn")
                                 .then(Commands.argument("id", StringArgumentType.word())
                                         .suggests((ctx, b) -> SharedSuggestionProvider.suggest(ModGiants.ids(), b))
@@ -59,6 +60,24 @@ public final class GiantCommand
             say(ctx, String.format("%s %s length %.0f hp %.0f loaded %d rules:%s", sp.id(), sp.spec().temper(), sp.spec().length(), sp.spec().health(), loaded,
                     rules.length() == 0 ? " none" : rules));
         }
+        return 1;
+    }
+
+    private static int coverage(CommandContext<CommandSourceStack> ctx)
+    {
+        var biomes = ctx.getSource().getServer().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME);
+        int uncovered = 0, total = 0;
+        for (var entry : biomes.holders().sorted(java.util.Comparator.comparing(h -> h.key().location().toString())).toList())
+        {
+            if (!entry.key().location().getNamespace().equals(Abyssia.MODID)) continue;
+            total++;
+            java.util.Set<String> species = new java.util.TreeSet<>();
+            for (GiantSpawnRules.Rule r : GiantSpawnRules.rules())
+                if (r.matchesBiome(entry)) species.add(r.species() + (r.biomes().isEmpty() ? "(any)" : ""));
+            if (species.isEmpty()) uncovered++;
+            say(ctx, entry.key().location().getPath() + ": " + (species.isEmpty() ? "UNCOVERED" : String.join(", ", species)));
+        }
+        say(ctx, "coverage: " + total + " biomes, " + uncovered + " UNCOVERED");
         return 1;
     }
 
