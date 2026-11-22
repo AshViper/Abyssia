@@ -85,6 +85,15 @@ public class LayeredBiomeSource extends BiomeSource
     private final Holder<Biome> fissureBiome;
     private final float fissureMaxDepth;
     private final long fissureMaxDepthQuantized;
+    /** Upper-world lookup set by a worldgen-mod compat (worldgen/compat/TerraBlenderCompat); null = {@code upper}'s own. */
+    private volatile UpperLookup upperLookup;
+
+    /** Picks the upper-world biome for an already sampled climate point at quart (x, y, z). */
+    @FunctionalInterface
+    public interface UpperLookup
+    {
+        Holder<Biome> find(Climate.TargetPoint target, int x, int y, int z);
+    }
 
     public LayeredBiomeSource(MultiNoiseBiomeSource upper, MultiNoiseBiomeSource lower, Holder<Biome> fissureBiome, float fissureMaxDepth)
     {
@@ -103,6 +112,12 @@ public class LayeredBiomeSource extends BiomeSource
     public MultiNoiseBiomeSource lower()
     {
         return lower;
+    }
+
+    /** Called once at server start, before any chunk is generated. */
+    public void setUpperLookup(UpperLookup lookup)
+    {
+        this.upperLookup = lookup;
     }
 
     public Holder<Biome> fissureBiome()
@@ -127,7 +142,9 @@ public class LayeredBiomeSource extends BiomeSource
     {
         Climate.TargetPoint target = sampler.sample(x, y, z);
         if (y < UPPER_MIN_QUART_Y) return lower.getNoiseBiome(target);
-        return target.depth() < fissureMaxDepthQuantized ? fissureBiome : upper.getNoiseBiome(target);
+        if (target.depth() < fissureMaxDepthQuantized) return fissureBiome;
+        UpperLookup lookup = upperLookup;
+        return lookup == null ? upper.getNoiseBiome(target) : lookup.find(target, x, y, z);
     }
 
     /** F3: vanilla's biome-builder line above the deep layer; the deep layer's own climate does not fit that builder. */

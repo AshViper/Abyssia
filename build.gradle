@@ -132,6 +132,8 @@ minecraft {
         }
 
         server {
+            // `-PserverDir=<dir>` runs the server in another folder so parallel sessions do not share run/ and its ports.
+            if (project.hasProperty('serverDir')) workingDirectory project.file(project.property('serverDir'))
             // Dev-only: `gradlew runServer -Pprc01Test=1` runs devtest/Prc01Test (PRC01 checks, log lines "PRC01 ...") and halts.
             if (project.hasProperty('prc01Test')) property 'abyssia.prc01test', '1'
             // Dev-only: `gradlew runServer -Ptrp01Test=1` runs devtest/Trp01Test (TRP01 boss-material gear checks, log lines "TRP01 ...") and halts.
@@ -191,6 +193,12 @@ repositories {
         url = 'https://maven.blamejared.com'
         content { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' }
     }
+    // TerraBlender and the biome mods for the optional worldgen compatibility (worldgen/compat/TerraBlenderCompat)
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
 }
 
 dependencies {
@@ -229,6 +237,22 @@ dependencies {
     if (gradle.startParameter.taskNames.any { it.toLowerCase().contains('runclient') }) {
         runtimeOnly fg.deobf("blank:embeddium:0.3.31+mc1.20.1")
         runtimeOnly fg.deobf("blank:oculus-mc1.20.1:1.8.0")
+    }
+
+    // TerraBlender is an optional dependency (worldgen/compat/TerraBlenderCompat): compile against it, never ship it.
+    // `-PwithBiomeMods` runs Biomes O' Plenty and Oh The Biomes We've Gone (with their libraries) in dev runs;
+    // `-PwithBiomeMods=bop` leaves OTBWG out (Oh The Trees You'll Grow ships mixins with SRG targets and no refmap,
+    // so they fail to apply in this deobfuscated dev environment).
+    compileOnly fg.deobf("maven.modrinth:terrablender:${terrablender_version}")
+    if (project.hasProperty('withBiomeMods')) {
+        runtimeOnly fg.deobf("maven.modrinth:terrablender:${terrablender_version}")
+        runtimeOnly fg.deobf("maven.modrinth:glitchcore:${glitchcore_version}")
+        runtimeOnly fg.deobf("maven.modrinth:biomes-o-plenty:${bop_version}")
+        if (project.property('withBiomeMods') != 'bop') {
+            runtimeOnly fg.deobf("maven.modrinth:corgilib:${corgilib_version}")
+            runtimeOnly fg.deobf("maven.modrinth:oh-the-trees-youll-grow:${ohtheetrees_version}")
+            runtimeOnly fg.deobf("maven.modrinth:oh-the-biomes-weve-gone:${otbwg_version}")
+        }
     }
 
     // Alex's Caves compatibility check: `-PalexCaves` runs Abyssia together with Alex's Caves + Citadel (jars in ./libs).
