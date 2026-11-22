@@ -87,7 +87,7 @@ public class LayeredBiomeSource extends BiomeSource
     private final float fissureMaxDepth;
     private final long fissureMaxDepthQuantized;
     /** Upper-world lookup set by a worldgen-mod compat (worldgen/compat/TerraBlenderCompat); null = {@code upper}'s own. */
-    private UpperLookup upperLookup;
+    private volatile UpperLookup upperLookup;
 
     /** Picks the upper-world biome for an already sampled climate point at quart (x, y, z). */
     @FunctionalInterface
