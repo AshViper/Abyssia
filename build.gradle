@@ -107,7 +107,8 @@ neoForge {
 
         server {
             server()
-            gameDirectory = project.file('run')
+            // `-PserverDir=<dir>` runs the server in another folder so parallel sessions do not share run/ and its ports.
+            gameDirectory = project.file(project.findProperty('serverDir') ?: 'run')
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
@@ -215,6 +216,17 @@ dependencies {
     if (!project.hasProperty('noShaders') && gradle.startParameter.taskNames.any { it.toLowerCase().contains('runclient') }) {
         localRuntime "maven.modrinth:sodium:${sodium_version}"
         localRuntime "maven.modrinth:iris:${iris_version}"
+    }
+    // TerraBlender is an optional dependency (worldgen/compat/TerraBlenderCompat): compile against it, never ship it.
+    // `-PwithBiomeMods` runs Biomes O' Plenty and Oh The Biomes We've Gone (with their libraries) in dev runs.
+    compileOnly "maven.modrinth:terrablender:${terrablender_version}"
+    if (project.hasProperty('withBiomeMods')) {
+        localRuntime "maven.modrinth:terrablender:${terrablender_version}"
+        localRuntime "maven.modrinth:glitchcore:${glitchcore_version}"
+        localRuntime "maven.modrinth:biomes-o-plenty:${bop_version}"
+        localRuntime "maven.modrinth:corgilib:${corgilib_version}"
+        localRuntime "maven.modrinth:oh-the-trees-youll-grow:${ohtheetrees_version}"
+        localRuntime "maven.modrinth:oh-the-biomes-weve-gone:${otbwg_version}"
     }
     // Distant Horizons for checking LOD compatibility in the dev client (`-PwithDh`, client only, not shipped).
     if (project.hasProperty('withDh') && gradle.startParameter.taskNames.any { it.toLowerCase().contains('runclient') }) {

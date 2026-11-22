@@ -35,6 +35,8 @@ public class Abyssia
         com.abyssia.guide.GuideBookRegistry.register(modEventBus);
         modEventBus.addListener(com.abyssia.item.electric.ElectricTools::registerCapabilities);
         ModBlocks.register(modEventBus);
+        // Optional: biome mods built on TerraBlender (Biomes O' Plenty, Oh The Biomes We've Gone) in the normal world.
+        if (net.neoforged.fml.ModList.get().isLoaded("terrablender")) com.abyssia.worldgen.compat.TerraBlenderCompat.init();
         // industrial blocks, block entities and menu (I01); their block items join ModItems
         ModIndustry.register(modEventBus);
         ModHabitat.register(modEventBus);
