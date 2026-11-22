@@ -168,6 +168,13 @@ neoForge {
             programArgument '--nogui'
             systemProperty 'abyssia.gianttest', (project.findProperty('giantId') ?: '1')
         }
+        // Dev-only: devtest/Gnt02Test checks the giants are neutral and the bosses hostile (log lines "GNT02 ...").
+        gnt02Test {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'abyssia.gnt02test', '1'
+        }
 
         gameTestServer {
             type = "gameTestServer"

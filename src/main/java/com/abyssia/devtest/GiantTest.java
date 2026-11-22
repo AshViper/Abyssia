@@ -120,6 +120,7 @@ public final class GiantTest
      * lancejaw: reach test of the lance (a hull 6.5 ahead is hit, one 12 ahead is not). rift_lamprey: hold animation, hull speed halved
      * (the slow flag), hull damage. duskmaw: grab hold, speed halved, FE drain more than the lights alone. glassback: glow off
      * while chasing from afar, on again within 16. crestfin: hit by a player, holds crest_up in the 60 tick warning, then chases.
+     * The giants are neutral, so rift_lamprey, duskmaw and glassback are provoked at tick 1 by a hit whose damage source entity is the test hull.
      */
     private static boolean startAbility()
     {
@@ -186,6 +187,9 @@ public final class GiantTest
     {
         abTicks++;
         String id = queue.get(index);
+        // the giants are neutral: they only go for the hull after being hit by it (getEntity() == hull)
+        if (abTicks == 1 && abSub != null && java.util.List.of("rift_lamprey", "duskmaw", "glassback").contains(id))
+            giant.hurt(new net.minecraft.world.damagesource.DamageSource(level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE).getHolderOrThrow(net.minecraft.world.damagesource.DamageTypes.GENERIC), abSub), 1.0F);
         boolean done = abTicks >= 300;
         switch (id)
         {
