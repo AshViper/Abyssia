@@ -1432,6 +1432,30 @@ def recipes():
           "pattern": ["A A", "S S"], "key": {"A": {"item": "abyssia:abyssal_alloy_ingot"}, "S": {"item": "abyssia:sea_cloth"}},
           "result": {"item": "abyssia:abyssal_flippers"}})
 
+    # CR01 crystal-shard alternatives (research lock keyed by result item); they used to be hand-written files that this wipe deleted
+    write(rd("crystal_lens_from_deep_crystal"), {"type": "minecraft:smelting", "category": "misc",
+          "ingredient": {"item": "abyssia:deep_crystal_shard"}, "result": "abyssia:crystal_lens",
+          "experience": 0.5, "cookingtime": 200})
+    write(rd("marine_resin_from_crystal_shards"), {"type": "minecraft:crafting_shapeless", "category": "misc",
+          "ingredients": [{"item": "abyssia:plant_resin"}, {"item": "abyssia:marine_adhesive"}, {"tag": "abyssia:crystal_shards"}],
+          "result": {"item": "abyssia:marine_resin", "count": 3}})
+    write(rd("pressure_shell_from_pressure_crystal"), {"type": "minecraft:crafting_shaped", "category": "misc",
+          "pattern": ["NH", "RV"],
+          "key": {"N": {"item": "abyssia:corrosion_alloy_ingot"}, "H": {"item": "abyssia:pressure_crystal_shard"},
+                  "R": {"item": "abyssia:marine_resin"}, "V": {"item": "abyssia:pressure_valve"}},
+          "result": {"item": "abyssia:pressure_shell"}})
+    write(rd("submarine_upgrade_depth_mk3_from_pressure_crystal"), {"type": "minecraft:crafting_shaped", "category": "misc",
+          "pattern": ["WHW", "PUP", "WHW"],
+          "key": {"W": {"item": "abyssia:tungsten_ingot"}, "H": {"item": "abyssia:pressure_crystal_shard"},
+                  "P": {"item": "abyssia:pressure_shell"}, "U": {"item": "abyssia:submarine_upgrade_depth_mk2"}},
+          "result": {"item": "abyssia:submarine_upgrade_depth_mk3"}})
+    write(rd("submarine_upgrade_sonar_scanner_from_deep_crystal"), {"type": "minecraft:crafting_shaped", "category": "misc",
+          "pattern": ["LPL", "KOK", "RAR"],
+          "key": {"L": {"item": "abyssia:deep_crystal_shard"}, "P": {"item": "abyssia:pressure_shell"},
+                  "K": {"item": "minecraft:copper_ingot"}, "O": {"item": "abyssia:bio_oil"},
+                  "R": {"item": "minecraft:redstone"}, "A": {"item": "abyssia:abyssal_alloy_ingot"}},
+          "result": {"item": "abyssia:submarine_upgrade_sonar_scanner"}})
+
 
 def material_recipes():
     """Material system recipes (tools/material_spec.json).  Runs last so a clash with any other generated recipe
